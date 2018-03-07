@@ -28,6 +28,7 @@ import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
+import org.jlab.clara.util.EnvUtils;
 
 class Proxy {
 
@@ -38,7 +39,7 @@ class Proxy {
         try {
             context = Context.newContext();
             proxy = new org.jlab.clara.msg.sys.Proxy(context, dpe.getProxyAddress());
-            if (System.getenv("CLARA_PROXY_DEBUG") != null) {
+            if (EnvUtils.get("CLARA_PROXY_DEBUG").isPresent()) {
                 proxy.verbose();
             }
         } catch (ClaraMsgException e) {

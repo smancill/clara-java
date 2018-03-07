@@ -208,10 +208,9 @@ class RunCommand extends BaseCommand {
                         builder.environment().put("JAVA_OPTS", javaOptions);
                     }
                 }
-                String monitor = runUtils.getMonitorFrontEnd();
-                if (monitor != null) {
-                    builder.environment().put(ClaraConstants.ENV_MONITOR_FE, monitor);
-                }
+                runUtils.getMonitorFrontEnd().ifPresent(monFE ->
+                    builder.environment().put(ClaraConstants.ENV_MONITOR_FE, monFE)
+                );
                 DpeProcess dpe = new DpeProcess(name, builder);
                 backgroundDpes.put(name.language(), dpe);
             }
