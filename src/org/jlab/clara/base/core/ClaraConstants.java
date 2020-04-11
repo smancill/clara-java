@@ -31,8 +31,7 @@ package org.jlab.clara.base.core;
  */
 public final class ClaraConstants {
 
-    private ClaraConstants() {
-    }
+    private ClaraConstants() { }
 
     public static final int JAVA_PORT = 7771;
     public static final int CPP_PORT = 7781;

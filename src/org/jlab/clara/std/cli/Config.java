@@ -202,7 +202,6 @@ public class Config {
 
 
     Config() {
-
         variables = initVariables();
         environment = new HashMap<>();
     }
