@@ -23,7 +23,6 @@
 
 package org.jlab.clara.std.cli;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,11 +60,6 @@ public class Config {
      * The variable for the output directory.
      */
     public static final String OUTPUT_DIR = "outputDir";
-
-    /**
-     * The variable for the output file prefix.
-     */
-    public static final String OUT_FILE_PREFIX = "outputFilePrefix";
 
     /**
      * The variable for the session of the CLARA DPE.
@@ -233,27 +227,15 @@ public class Config {
 
         addBuilder.apply(INPUT_DIR,
                 "The input directory where the files to be processed are located.")
-//                .withInitialValue(FileUtils.claraPath("data", "input").toString())
-                .withInitialValue(FileUtils.userDataPath().toString()
-                    + File.separator + "data"
-                    + File.separator + "input")
+                .withInitialValue(FileUtils.claraPath("data", "input").toString())
                 .withParser(ConfigParsers::toExistingDirectory)
                 .withCompleter(fileCompleter());
 
         addBuilder.apply(OUTPUT_DIR,
                 "The output directory where processed files will be saved.")
-//                .withInitialValue(FileUtils.claraPath("data", "output").toString())
-            .withInitialValue(FileUtils.userDataPath().toString()
-                + File.separator + "data"
-                + File.separator + "output")
+                .withInitialValue(FileUtils.claraPath("data", "output").toString())
                 .withParser(ConfigParsers::toDirectory)
                 .withCompleter(fileCompleter());
-
-        addBuilder.apply(OUT_FILE_PREFIX,
-                "The prefix for the output filenames (a single word with no spaces, "
-                + "preferably ending with a separator like '_' o '-').")
-                .withParser(ConfigParsers::toNonWhitespace)
-                .withInitialValue("out_");
 
         addBuilder.apply(MAX_THREADS,
                 "The maximum number of processing threads to be used per node.")
@@ -273,9 +255,7 @@ public class Config {
 
         addBuilder.apply(LOG_DIR,
                 "The directory where log files will be saved.")
-//                .withInitialValue(FileUtils.claraPath("log").toString())
-                .withInitialValue(FileUtils.userDataPath().toString()
-                    + File.separator + "log")
+                .withInitialValue(FileUtils.claraPath("log").toString())
                 .withParser(ConfigParsers::toDirectory)
                 .withCompleter(fileCompleter());
 

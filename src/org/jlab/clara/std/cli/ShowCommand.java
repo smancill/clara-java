@@ -95,8 +95,6 @@ class ShowCommand extends BaseCommand {
     }
 
     private int showLogDir() {
-//        Path logDir = FileUtils.claraPath("log");
-//        return RunUtils.listFiles(logDir, "lhtr");
         return listFiles(Config.LOG_DIR, "lhtr");
     }
 
@@ -161,6 +159,6 @@ class ShowCommand extends BaseCommand {
                 logs.add(path);
             }
         }
-        return logs.toArray(new Path[0]);
+        return logs.toArray(new Path[logs.size()]);
     }
 }

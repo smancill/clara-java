@@ -50,10 +50,7 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 import org.zeromq.ZMsg;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -512,25 +509,7 @@ public final class Dpe extends AbstractActor {
         }
     }
 
-    private void printPlugin() {
-        String claraHome = System.getenv("CLARA_HOME");
-        if (claraHome != null) {
-            Scanner input;
-            try {
-                input = new Scanner(new File(claraHome + File.separator + ".version"));
-                while (input.hasNextLine()) {
-                    System.out.println(input.nextLine());
-                }
-            } catch (FileNotFoundException e) {
-                e.getMessage();
-            }
-        }
-    }
-
     private void printLogo() {
-        printPlugin();
-        System.out.print("\n");
-
         System.out.println("==========================================");
         if (isFrontEnd.get()) {
             System.out.println("               CLARA FE/DPE               ");

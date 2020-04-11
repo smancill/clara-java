@@ -46,13 +46,7 @@ if [ -z "${CLASSPATH}" ]; then
     # Add every plugin
     for plugin in "${plugins_dir}"/*/; do
         plugin=${plugin%*/}
-        if [ "${plugin##*/}" = "clas12" ]; then # COAT has special needs
-            CLASSPATH+=":${plugin}/lib/clas/*:${plugin}/lib/services/*"
-        elif [ "${plugin##*/}" = "grapes" ]; then # Grapes also has special needs
-            CLASSPATH+=":${plugin}/lib/core/*:${plugin}/lib/services/*"
-        else
-            CLASSPATH+=":${plugin}/services/*:${plugin}/lib/*"
-        fi
+        CLASSPATH+=":${plugin}/services/*:${plugin}/lib/*"
     done
 
     CLASSPATH+=":${CLARA_HOME}/services/*"
@@ -63,20 +57,13 @@ fi
 java_lib_path=
 for plugin in "${plugins_dir}"/*/; do
     plugin=${plugin%*/}
-    if [ "${plugin##*/}" = "clas12" ]; then # COAT has special needs
-        java_lib_path+=":${plugin}/lib/clas"
-    elif [ "${plugin##*/}" = "grapes" ]; then # Grapes also has special needs
-        java_lib_path+=":${plugin}/lib/core"
-    else
-        java_lib_path+=":${plugin}/lib"
-    fi
+    java_lib_path+=":${plugin}/lib"
 done
 
 if [ -n "${JAVA_OPTS}" ]; then
     jvm_options=(${JAVA_OPTS})
 else
     jvm_options=(-Xms1024m -XX:+UseNUMA -XX:+UseBiasedLocking)
-#jvm_options=(-Xms3g -Xmx3g -XX:NewRatio=3 -XX:MaxNewSize=1g -XX:SurvivorRatio=6 -XX:+UseNUMA -XX:+TieredCompilation -XX:+UseBiasedLocking -XX:+AggressiveOpts)
 fi
 
 java_wrapper=${CLARA_HOME}/lib/clara/run-java

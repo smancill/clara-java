@@ -26,14 +26,11 @@ package org.jlab.clara.std.cli;
 import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -56,46 +52,17 @@ final class FarmCommands {
     private static final String FARM_MEMORY = "farm.memory";
     private static final String FARM_TRACK = "farm.track";
     private static final String FARM_OS = "farm.os";
-    private static final String FARM_NODE = "farm.node";
-    private static final String FARM_EXCLUSIVE = "farm.exclusive";
     private static final String FARM_CPU = "farm.cpu";
     private static final String FARM_DISK = "farm.disk";
     private static final String FARM_TIME = "farm.time";
     private static final String FARM_SYSTEM = "farm.system";
-    private static final String FARM_H_SCALE = "farm.scaling";
 
-    private static final int DEFAULT_FARM_H_SCALE = 0;
-    private static final int DEFAULT_FARM_MEMORY = 0;
-    private static final int DEFAULT_FARM_CORES = 0;
+    private static final int DEFAULT_FARM_MEMORY = 40;
+    private static final int DEFAULT_FARM_CORES = 16;
     private static final int DEFAULT_FARM_DISK_SPACE = 5;
     private static final int DEFAULT_FARM_TIME = 24 * 60;
-    private static final String DEFAULT_FARM_OS = "general";
-    private static final String DEFAULT_FARM_NODE = "";
-    private static final String DEFAULT_FARM_EXCLUSIVE = "";
+    private static final String DEFAULT_FARM_OS = "centos7";
     private static final String DEFAULT_FARM_TRACK = "debug";
-
-    private static final String[] FARM18_NUMAS = new String[]{
-        "0-2,5,6,10-12,15,16,40-42,45,46,50-52,55,56",
-        "3,4,7-9,13,14,17-19,43,44,47-49,53,54,57-59",
-        "20-22,25,26,30-32,35,36,60-62,65,66,70-72,75,76",
-        "23,24,27-29,33,34,37-39,63,64,67-69,73,74,77-79"
-    };
-    private static final String[] FARM16_NUMAS = new String[]{
-        "0-17,36-53",
-        "18-35,54-71",
-    };
-    private static final String[] FARM14_NUMAS = new String[]{
-        "0-11,24-35",
-        "12-23,36-47",
-    };
-    private static final String[] FARM13_NUMAS = new String[]{
-        "0-7,16-23",
-        "8-15,24-31",
-    };
-    private static final String[] QCD12S_NUMAS = new String[]{
-        "0-7,16-23",
-        "8-15,24-31",
-    };
 
     private static final String JLAB_SYSTEM = "jlab";
     private static final String PBS_SYSTEM = "pbs";
@@ -106,18 +73,15 @@ final class FarmCommands {
     private static final String JLAB_SUB_CMD = "jsub";
     private static final String PBS_SUB_CMD = "qsub";
 
-    private static final String JLAB_STAT_CMD = "slurmJobs";
+    private static final String JLAB_STAT_CMD = "jobstat";
     private static final String PBS_STAT_CMD = "qstat";
 
     private static final Configuration FTL_CONFIG = new Configuration(Configuration.VERSION_2_3_25);
 
     static final Path PLUGIN = FileUtils.claraPath("plugins", "clas12");
 
-    static final Path CLARA_USER_DATA = FileUtils.userDataPath();
 
-
-    private FarmCommands() {
-    }
+    private FarmCommands() { }
 
     private static void configTemplates() {
         Path tplDir = getTemplatesDir();
@@ -128,7 +92,7 @@ final class FarmCommands {
             FTL_CONFIG.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
             FTL_CONFIG.setLogTemplateExceptions(false);
         } catch (IOException e) {
-            throw new IllegalStateException("Missing CLAS12 templates directory: " + tplDir);
+            throw new IllegalStateException("Missing CLARA templates directory: " + tplDir);
         }
     }
 
@@ -167,69 +131,45 @@ final class FarmCommands {
         addBuilder.apply(FARM_OS, "Farm resource OS.")
             .withInitialValue(DEFAULT_FARM_OS);
 
-        addBuilder.apply(FARM_NODE,
-            "Preferred farm node flavor (JLAB specific, e.g. farm16, farm18, etc.)")
-            .withInitialValue(DEFAULT_FARM_NODE);
-
-        addBuilder.apply(FARM_EXCLUSIVE,
-            "Exclusive farm node request (JLAB specific, e.g. farm16, farm18, etc. or any)")
-            .withInitialValue(DEFAULT_FARM_EXCLUSIVE);
-
-        addBuilder.apply(FARM_STAGE, "Local directory to stage reconstruction files. "
-        + "value = \"default\" will stage files into the JLAB farm specific directory.")
+        addBuilder.apply(FARM_STAGE, "Local directory to stage reconstruction files.")
             .withParser(ConfigParsers::toDirectory);
 
         addBuilder.apply(FARM_TRACK, "Farm job track.")
             .withInitialValue(DEFAULT_FARM_TRACK);
 
-        addBuilder.apply(FARM_H_SCALE, "Farm horizontal scaling factor."
-            + " Split the list of input files into chunks of the given size"
-            + " to be processed in parallel within separate farm jobs.")
-            .withParser(ConfigParsers::toNonNegativeInteger)
-            .withInitialValue(DEFAULT_FARM_H_SCALE);
-
         addBuilder.apply(FARM_SYSTEM, "Farm batch system. Accepts pbs and jlab.")
             .withExpectedValues(JLAB_SYSTEM, PBS_SYSTEM)
             .withInitialValue(JLAB_SYSTEM);
-
 
         vl.forEach(builder::withConfigVariable);
     }
 
     private static String defaultConfigFile() {
-        String out = "undefined";
-        Path ymlPath = CLARA_USER_DATA.resolve("config/services.yaml");
+        Path ymlPath = PLUGIN.resolve("config/services.yml");
         if (Files.exists(ymlPath)) {
-            out = ymlPath.toString();
-        } else {
-            Path compatibilityPath = PLUGIN.resolve("config/services.yaml");
-            if (Files.exists(compatibilityPath)) {
-                out = compatibilityPath.toString();
-            }
+            return ymlPath.toString();
         }
-        return out;
+        Path compatibilityPath = PLUGIN.resolve("config/services.yaml");
+        if (Files.exists(compatibilityPath)) {
+            return compatibilityPath.toString();
+        }
+        return ymlPath.toString();
     }
 
     private static String defaultFileList() {
-        String out = "undefined";
-        Path filesPath = CLARA_USER_DATA.resolve("config/files.txt");
+        Path filesPath = PLUGIN.resolve("config/files.txt");
         if (Files.exists(filesPath)) {
-            out = filesPath.toString();
-        } else {
-            Path compatibilityPath = PLUGIN.resolve("config/files.txt");
-            if (Files.exists(compatibilityPath)) {
-                return compatibilityPath.toString();
-            }
+            return filesPath.toString();
         }
-        return out;
+        Path compatibilityPath = PLUGIN.resolve("config/files.list");
+        if (Files.exists(compatibilityPath)) {
+            return compatibilityPath.toString();
+        }
+        return filesPath.toString();
     }
 
     static boolean hasPlugin() {
         return Files.isDirectory(PLUGIN);
-    }
-
-    static boolean hasUserDataDir() {
-        return Files.isDirectory(CLARA_USER_DATA);
     }
 
     static void register(ClaraShell.Builder builder) {
@@ -251,7 +191,7 @@ final class FarmCommands {
 
         protected Path getJobScript(String ext) {
             String name = String.format("farm_%s", runUtils.getSession());
-            return CLARA_USER_DATA.resolve("config/" + name + ext);
+            return PLUGIN.resolve("config/" + name + ext);
         }
     }
 
@@ -268,53 +208,8 @@ final class FarmCommands {
             if (system.equals(JLAB_SYSTEM)) {
                 if (CommandUtils.checkProgram(JLAB_SUB_CMD)) {
                     try {
-                        // check to see if we have exclusive node request
-                        switch (config.getString(FARM_EXCLUSIVE)) {
-                            case "farm18":
-                                config.setValue(FARM_NODE, "farm18");
-                                config.setValue(FARM_CPU, 0);
-                                config.setValue(FARM_MEMORY, 0);
-                                config.setValue(Config.MAX_THREADS, 20);
-                                break;
-                            case "farm16":
-                                config.setValue(FARM_NODE, "farm16"); //cores = 72
-                                config.setValue(FARM_CPU, 0);
-                                config.setValue(FARM_MEMORY, 0);
-                                config.setValue(Config.MAX_THREADS, 32);
-                                break;
-                            case "farm14":
-                                config.setValue(FARM_NODE, "farm14"); //cores = 48
-                                config.setValue(FARM_CPU, 0);
-                                config.setValue(FARM_MEMORY, 0);
-                                config.setValue(Config.MAX_THREADS, 24);
-                                break;
-                            case "farm13":
-                                config.setValue(FARM_NODE, "farm13"); //cores = 32
-                                config.setValue(FARM_CPU, 0);
-                                config.setValue(FARM_MEMORY, 0);
-                                config.setValue(Config.MAX_THREADS, 16);
-                                break;
-                            case "qcd12s":
-                                config.setValue(FARM_NODE, "qcd12s"); //cores = 32
-                                config.setValue(FARM_CPU, 0);
-                                config.setValue(FARM_MEMORY, 0);
-                                config.setValue(Config.MAX_THREADS, 16);
-                            case "any":
-                                config.setValue(FARM_CPU, 0);
-                                config.setValue(FARM_MEMORY, 0);
-//                                config.setValue(Config.MAX_THREADS, 64);
-                                break;
-                            default:
-                                break;
-                        }
-
-                        int horizScale = config.getInt(FARM_H_SCALE);
-                        if (horizScale > 0) {
-                            return splitIntoMultipleJobs(horizScale);
-                        } else {
-                            Path jobFile = createJLabScript();
-                            return CommandUtils.runProcess(JLAB_SUB_CMD, jobFile.toString());
-                        }
+                        Path jobFile = createJLabScript();
+                        return CommandUtils.runProcess(JLAB_SUB_CMD, jobFile.toString());
                     } catch (IOException e) {
                         writer.println("Error: could not set job:  " + e.getMessage());
                         return EXIT_ERROR;
@@ -350,67 +245,15 @@ final class FarmCommands {
             return EXIT_ERROR;
         }
 
-        private int splitIntoMultipleJobs(int filesPerJob) throws IOException, TemplateException {
-            String description = config.getString(Config.DESCRIPTION);
-            Path fileList = Paths.get(config.getString(Config.FILES_LIST));
-            try {
-                Path dotDir = Paths.get(CLARA_USER_DATA.toString(), "config",
-                    "." + runUtils.getSession());
-                FileUtils.deleteFileTree(dotDir);
-                FileUtils.createDirectories(dotDir);
-
-                List<List<String>> filePartitions = partitionFiles(fileList, filesPerJob);
-                for (int i = 0; i < filePartitions.size(); i++) {
-                    Path subFileList = dotDir.resolve(appendIndex(description, i));
-                    try (BufferedWriter writer = Files.newBufferedWriter(subFileList)) {
-                        for (String inputFile : filePartitions.get(i)) {
-                            writer.write(inputFile);
-                            writer.newLine();
-                        }
-                    }
-                    config.setValue(Config.DESCRIPTION, appendIndex(description, i));
-                    config.setValue(Config.FILES_LIST, subFileList.toString());
-
-                    Path jobFile = createJLabScript();
-                    int stat = CommandUtils.runProcess(JLAB_SUB_CMD, jobFile.toString());
-                    if (stat != EXIT_SUCCESS) {
-                        return stat;
-                    }
-                }
-                return EXIT_SUCCESS;
-            } finally {
-                config.setValue(Config.DESCRIPTION, description);
-                config.setValue(Config.FILES_LIST, fileList);
-            }
-        }
-
         private String getClaraCommand() {
-            //vg
-            StringBuilder sb = new StringBuilder();
-            sb.append("mkdir ");
-            sb.append(config.getString(Config.LOG_DIR));
-            sb.append(File.separator);
-            sb.append("$SLURM_JOB_ID");
-            sb.append("; ");
-            //vg
-
             Path wrapper = FileUtils.claraPath("lib", "clara", "run-clara");
             SystemCommandBuilder cmd = new SystemCommandBuilder(wrapper);
 
             cmd.addOption("-i", config.getString(Config.INPUT_DIR));
             cmd.addOption("-o", config.getString(Config.OUTPUT_DIR));
-            cmd.addOption("-z", config.getString(Config.OUT_FILE_PREFIX));
-//            cmd.addOption("-x", config.getString(Config.LOG_DIR));
-
-            cmd.addOption("-x", config.getString(Config.LOG_DIR) + File.separator + "$SLURM_JOB_ID"); //vg
 
             if (config.hasValue(FARM_STAGE)) {
-                if (config.getString(FARM_STAGE).equals("default")) {
-                    cmd.addOption("-l", "/scratch/slurm/$SLURM_JOB_ID");
-
-                } else {
-                    cmd.addOption("-l", config.getString(FARM_STAGE));
-                }
+                cmd.addOption("-l", config.getString(FARM_STAGE));
             }
             if (config.hasValue(Config.MAX_THREADS)) {
                 cmd.addOption("-t", config.getInt(Config.MAX_THREADS));
@@ -433,131 +276,12 @@ final class FarmCommands {
             if (config.hasValue(Config.FRONTEND_PORT)) {
                 cmd.addOption("-P", config.getInt(Config.FRONTEND_PORT));
             }
-
             cmd.addArgument(config.getString(Config.SERVICES_FILE));
             cmd.addArgument(config.getString(Config.FILES_LIST));
 
             cmd.multiLine(true);
 
-            sb.append(cmd.toString()); //vg
-            return sb.toString(); //vg
-
-//            return cmd.toString();
-        }
-
-        private String getClaraCommandAffinity(String affinity,
-                                               String session,
-                                               String filesList) {
-            String exec = FileUtils.claraPathAffinity(
-                affinity,
-                File.separator + "lib",
-                File.separator + "clara",
-                File.separator + "/run-clara ");
-            SystemCommandBuilder cmd = new SystemCommandBuilder();
-
-            cmd.addOptionNoSplit("-i", config.getString(Config.INPUT_DIR));
-            cmd.addOption("-o", config.getString(Config.OUTPUT_DIR));
-            cmd.addOption("-z", config.getString(Config.OUT_FILE_PREFIX));
-
-            cmd.addOption("-x", config.getString(Config.LOG_DIR) + File.separator + "$SLURM_JOB_ID");
-
-//            cmd.addOption("-x", config.getString(Config.LOG_DIR));
-            if (config.hasValue(FARM_STAGE)) {
-                if (config.getString(FARM_STAGE).equals("default")) {
-                    cmd.addOption("-l", "/scratch/slurm/$SLURM_JOB_ID");
-
-                } else {
-                    cmd.addOption("-l", config.getString(FARM_STAGE));
-                }
-            }
-            if (config.hasValue(Config.MAX_THREADS)) {
-                cmd.addOption("-t", config.getInt(Config.MAX_THREADS));
-            } else {
-                cmd.addOption("-t", config.getInt(FARM_CPU));
-            }
-            if (config.hasValue(Config.REPORT_EVENTS)) {
-                cmd.addOption("-r", config.getInt(Config.REPORT_EVENTS));
-            }
-            if (config.hasValue(Config.SKIP_EVENTS)) {
-                cmd.addOption("-k", config.getInt(Config.SKIP_EVENTS));
-            }
-            if (config.hasValue(Config.MAX_EVENTS)) {
-                cmd.addOption("-e", config.getInt(Config.MAX_EVENTS));
-            }
-            cmd.addOption("-s", session);
-            if (config.hasValue(Config.FRONTEND_HOST)) {
-                cmd.addOption("-H", config.getString(Config.FRONTEND_HOST));
-            }
-            if (config.hasValue(Config.FRONTEND_PORT)) {
-                cmd.addOption("-P", config.getInt(Config.FRONTEND_PORT));
-            }
-
-            cmd.addArgument(config.getString(Config.SERVICES_FILE));
-            cmd.addArgument(filesList);
-
-            cmd.multiLine(true);
-
-            return exec + " " + cmd.toString();
-        }
-
-        private String getClaraCommandAffinityList(String[] affinities) {
-            StringBuilder sb = new StringBuilder();
-
-            //vg
-            sb.append("mkdir ");
-            sb.append(config.getString(Config.LOG_DIR));
-            sb.append(File.separator);
-            sb.append("$SLURM_JOB_ID");
-            sb.append("; ");
-            //vg
-
-            String description = config.getString(Config.DESCRIPTION);
-            Path fileList = Paths.get(config.getString(Config.FILES_LIST));
-            Path dotDir = Paths.get(CLARA_USER_DATA.toString(), "config",
-                ".aff." + runUtils.getSession());
-            try {
-                FileUtils.deleteFileTree(dotDir);
-                FileUtils.createDirectories(dotDir);
-
-                List<String> files = Files.lines(fileList)
-                    .collect(Collectors.toList());
-
-                int splitFactor = files.size() / affinities.length;
-
-                if (splitFactor > 0) {
-                    List<List<String>>
-                        filePartitions = partitionFilesForAffinity(fileList,
-                        splitFactor,
-                        affinities.length);
-
-                    for (int i = 0; i < filePartitions.size(); i++) {
-                        Path subFileList = dotDir.resolve(appendIndex(description, i));
-                        BufferedWriter writer = Files.newBufferedWriter(subFileList);
-                        for (String inputFile : filePartitions.get(i)) {
-                            writer.write(inputFile);
-                            writer.newLine();
-                        }
-                        writer.close();
-
-                        sb.append(getClaraCommandAffinity(affinities[i],
-                            runUtils.getSession() + "_" + i,
-                            subFileList.toString())).append(" &\n");
-//                            subFileList.toString())).append("> /dev/null 2>&1 &\n");
-                        sb.append("a" + i + "=$!\n");
-                        sb.append("sleep 10 \n");
-                    }
-                    for (int i = 0; i < filePartitions.size(); i++) {
-                        sb.append("echo waiting pid = $a" + i + " \n");
-                        sb.append("wait ${a" + i + "}\n");
-                    }
-                } else {
-                    System.err.println("Error: Data set is too small for "
-                        + "farm.exclusive and/or farm.scaling settings.");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return sb.toString();
+            return cmd.toString();
         }
 
         private Path createClaraScript(Model model) throws IOException, TemplateException {
@@ -608,7 +332,6 @@ final class FarmCommands {
             model.put("user", EnvUtils.userName());
             model.put("clara", "dir", EnvUtils.claraHome());
             model.put("clas12", "dir", PLUGIN);
-            model.put("user_data", "dir", EnvUtils.claraUserData());
 
             // set monitor FE
             String monitor = runUtils.getMonitorFrontEnd();
@@ -630,39 +353,8 @@ final class FarmCommands {
 
             // set farm command
             model.put("farm", "javaOpts", getJVMOptions());
+            model.put("farm", "command", getClaraCommand());
 
-            String farmExclusive = config.getString(FARM_EXCLUSIVE);
-            if (farmExclusive.equals("")) {
-                model.put("farm", "command", getClaraCommand());
-            } else {
-                switch (farmExclusive) {
-                    case "farm18":
-                        model.put("farm", "command",
-                            getClaraCommandAffinityList(FARM18_NUMAS));
-                        break;
-                    case "farm16":
-                        model.put("farm", "command",
-                            getClaraCommandAffinityList(FARM16_NUMAS));
-                        break;
-                    case "farm14":
-                        model.put("farm", "command",
-                            getClaraCommandAffinityList(FARM14_NUMAS));
-                        break;
-                    case "farm13":
-                        model.put("farm", "command",
-                            getClaraCommandAffinityList(FARM13_NUMAS));
-                        break;
-                    case "qcd12s":
-                        model.put("farm", "command",
-                            getClaraCommandAffinityList(QCD12S_NUMAS));
-                        break;
-                    case "any":
-                        model.put("farm", "command", getClaraCommand());
-                        break;
-                    default:
-                        break;
-                }
-            }
             return model;
         }
 
@@ -684,6 +376,7 @@ final class FarmCommands {
             return jvmOpts;
         }
     }
+
 
     static class ShowFarmStatus extends FarmCommand {
 
@@ -712,6 +405,7 @@ final class FarmCommands {
             return EXIT_ERROR;
         }
     }
+
 
     static class ShowFarmSub extends FarmCommand {
 
@@ -778,49 +472,5 @@ final class FarmCommands {
         } catch (UnknownHostException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-
-    private static List<List<String>> partitionFiles(Path fileList, int filesPerJob)
-            throws IOException {
-        List<String> files = Files.lines(fileList)
-            .collect(Collectors.toList());
-        List<List<String>> groupedFiles = new ArrayList<>();
-        for (int i = 0; i < files.size(); i += filesPerJob) {
-            int end = Math.min(files.size(), i + filesPerJob);
-            groupedFiles.add(files.subList(i, end));
-        }
-        return groupedFiles;
-    }
-
-    private static List<List<String>> partitionFilesForAffinity(
-        Path fileList, int filesPerJob, int numaSize)
-            throws IOException {
-        List<String> files = Files.lines(fileList, Charset.defaultCharset())
-            .collect(Collectors.toList());
-
-        List<List<String>> groupedFiles = new ArrayList<>();
-        for (int i = 0; i < files.size(); i += filesPerJob) {
-            int end = Math.min(files.size(), i + filesPerJob);
-            groupedFiles.add(files.subList(i, end));
-        }
-        if (groupedFiles.size() > numaSize) {
-            List<String> last = groupedFiles.get(groupedFiles.size() - 1);
-            groupedFiles.remove(groupedFiles.size() - 1);
-            List<String> trueLast = groupedFiles.get(groupedFiles.size() - 1);
-            groupedFiles.remove(groupedFiles.size() - 1);
-
-            List<String> fLast = new ArrayList<>();
-            fLast.addAll(last);
-            fLast.addAll(trueLast);
-            groupedFiles.add(fLast);
-        }
-
-        return groupedFiles;
-    }
-
-
-    private static String appendIndex(String str, int index) {
-        return String.format("%s_%03d", str, index);
     }
 }

@@ -23,13 +23,8 @@
 
 package org.jlab.clara.std.orchestrators;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
@@ -266,7 +261,7 @@ abstract class AbstractOrchestrator {
             subscribe(node);
 
             if (options.stageFiles) {
-                node.setPaths(paths.inputDir, paths.outputDir, paths.stageDir, paths.prefix);
+                node.setPaths(paths.inputDir, paths.outputDir, paths.stageDir);
                 clearLocalStage(node);
             }
             node.setConfiguration(setup.configuration);
@@ -280,7 +275,6 @@ abstract class AbstractOrchestrator {
             freeNodes.add(node);
             stats.add(node);
         } catch (OrchestratorException e) {
-            System.exit(1);
             // TODO cleanup
             throw e;
         }
@@ -381,38 +375,6 @@ abstract class AbstractOrchestrator {
         }
     }
 
-    private void exitAll() {
-        // check to see if .pid file exists in the log directory
-        // NOTE: looks in $CLARA_USER_DATA/log dir only
-        String logDir = System.getenv("CLARA_USER_DATA");
-        if (logDir != null) {
-            String fileName = logDir
-                + File.separator
-                + "log"
-                + File.separator
-                + "."
-                + setup.session
-                + "_dpe.pid";
-
-            Path path = Paths.get(fileName);
-            if (Files.exists(path)) {
-                // open and read the pid
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader(fileName));
-                    String pid = reader.readLine();
-                    reader.close();
-                    System.err.println("Severe Error. Exiting DPE ( PID = "
-                        + pid
-                        + ") and Orchestrator. Data processing will be terminated.");
-                    // running external process to kill the DPE
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-
-    }
 
     void processFile(WorkerNode node, WorkerFile recFile) {
         try {

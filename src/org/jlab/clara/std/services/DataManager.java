@@ -54,7 +54,6 @@ public class DataManager implements Engine {
     private static final String CONF_INPUT_PATH = "input_path";
     private static final String CONF_OUTPUT_PATH = "output_path";
     private static final String CONF_STAGE_PATH = "stage_path";
-    private static final String CONF_OUT_PREFIX = "out_prefix";
 
     private static final String REQUEST_TYPE = "type";
     private static final String REQUEST_EXEC = "exec";
@@ -76,7 +75,7 @@ public class DataManager implements Engine {
     private final String baseDir;
 
     private volatile DirectoryPaths directoryPaths;
-    private volatile String outputPrefix = "out_";
+    private volatile String outputPrefix;
 
     /**
      * Creates a new data manager service.
@@ -141,7 +140,6 @@ public class DataManager implements Engine {
             System.out.printf("%s service: stage path set to %s%n", NAME, paths.stagePath);
         }
         directoryPaths = paths;
-        outputPrefix = data.getString(CONF_OUT_PREFIX);
     }
 
     JSONObject getConfiguration() {
@@ -296,18 +294,8 @@ public class DataManager implements Engine {
             FileUtils.createDirectories(outputPath);
 
             CommandLine cmdLine = new CommandLine("mv");
-
-//            cmdLine.addArgument(files.stagedOutputFile.toString());
-//            cmdLine.addArgument(files.outputFile.toString());
-
-//             modified 09.12.18. Stage back multiple output files. vg
-            Files.list(directoryPaths.stagePath).forEach(name -> {
-                    name.startsWith(files.stagedOutputFile.toString());
-                    cmdLine.addArgument(name.toString());
-                }
-            );
-            cmdLine.addArgument(outputPath.toString());
-//                                                                  vg
+            cmdLine.addArgument(files.stagedOutputFile.toString());
+            cmdLine.addArgument(files.outputFile.toString());
 
             DefaultExecutor executor = new DefaultExecutor();
             PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
@@ -466,7 +454,7 @@ public class DataManager implements Engine {
     @Override
     public void reset() {
         directoryPaths = new DirectoryPaths(baseDir);
-//        outputPrefix = "out_";
+        outputPrefix = "out_";
     }
 
     @Override

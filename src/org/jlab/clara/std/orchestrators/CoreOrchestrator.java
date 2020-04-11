@@ -119,7 +119,7 @@ class CoreOrchestrator {
         try {
             return base.query()
                        .canonicalNames(ClaraFilters.containersByDpe(dpe))
-                       .syncRun(33, TimeUnit.SECONDS);
+                       .syncRun(3, TimeUnit.SECONDS);
         } catch (TimeoutException | ClaraException e) {
             throw new OrchestratorException(e);
         }
@@ -130,7 +130,7 @@ class CoreOrchestrator {
         try {
             return base.query()
                        .canonicalNames(ClaraFilters.servicesByDpe(dpe))
-                       .syncRun(33, TimeUnit.SECONDS);
+                       .syncRun(3, TimeUnit.SECONDS);
         } catch (TimeoutException | ClaraException e) {
             throw new OrchestratorException(e);
         }
@@ -334,7 +334,7 @@ class CoreOrchestrator {
         try {
             return base.query()
                        .runtimeData(ClaraFilters.servicesByDpe(dpe))
-                       .syncRun(33, TimeUnit.SECONDS);
+                       .syncRun(5, TimeUnit.SECONDS);
         } catch (ClaraException | TimeoutException e) {
             throw new OrchestratorException(e);
         }

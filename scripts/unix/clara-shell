@@ -21,34 +21,11 @@
 # For more information contact author at gurjyan@jlab.org
 # Department of Experimental Nuclear Physics, Jefferson Lab.
 
-
 BASEDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)
 
 if [ -z "${CLARA_HOME}" ]; then
     CLARA_HOME=${BASEDIR}
     export CLARA_HOME
-fi
-if [ -z "${CLARA_USER_DATA}" ]; then
-    echo "Warning: CLARA_USER_DATA environmental variable is not assigned.
-         It will be set to point to the CLARA_HOME/plugins/clas12.
-         Note that you might face permission exceptions. "
-     export CLARA_USER_DATA="${CLARA_HOME}/plugins/clas12"
-else
-   if [ ! -d "${CLARA_USER_DATA}/config" ]; then
-     mkdir -p "${CLARA_USER_DATA}/config"
-   fi
-   if [ ! -d "${CLARA_USER_DATA}/log" ]; then
-     mkdir -p "${CLARA_USER_DATA}/log"
-   fi
-   if [ ! -d "${CLARA_USER_DATA}/data" ]; then
-     mkdir -p "${CLARA_USER_DATA}/data"
-   fi
-   if [ ! -d "${CLARA_USER_DATA}/data/input" ]; then
-        mkdir -p "${CLARA_USER_DATA}/data/input"
-   fi
-   if [ ! -d "${CLARA_USER_DATA}/data/output" ]; then
-        mkdir -p "${CLARA_USER_DATA}/data/output"
-   fi
 fi
 
 # find plugins directory
@@ -69,11 +46,7 @@ if [ -z "${CLASSPATH}" ]; then
     # Add every plugin
     for plugin in "${plugins_dir}"/*/; do
         plugin=${plugin%*/}
-        if [ "${plugin##*/}" = "clas12" ]; then # COAT has special needs
-            CLASSPATH+=":${plugin}/lib/clas/*:${plugin}/lib/services/*"
-        else
-            CLASSPATH+=":${plugin}/services/*:${plugin}/lib/*"
-        fi
+        CLASSPATH+=":${plugin}/services/*:${plugin}/lib/*"
     done
 
     CLASSPATH+=":${CLARA_HOME}/services/*"

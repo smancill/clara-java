@@ -46,11 +46,7 @@ if [ -z "${CLASSPATH}" ]; then
     # Add every plugin
     for plugin in "${plugins_dir}"/*/; do
         plugin=${plugin%*/}
-        if [ "${plugin##*/}" = "clas12" ]; then # COAT has special needs
-            CLASSPATH+=":${plugin}/lib/clas/*:${plugin}/lib/services/*"
-        else
-            CLASSPATH+=":${plugin}/services/*:${plugin}/lib/*"
-        fi
+        CLASSPATH+=":${plugin}/services/*:${plugin}/lib/*"
     done
 
     CLASSPATH+=":${CLARA_HOME}/services/*"
@@ -61,11 +57,7 @@ fi
 java_lib_path=
 for plugin in "${plugins_dir}"/*/; do
     plugin=${plugin%*/}
-    if [ "${plugin##*/}" = "clas12" ]; then # COAT has special needs
-        java_lib_path+=":${plugin}/lib/clas"
-    else
-        java_lib_path+=":${plugin}/lib"
-    fi
+    java_lib_path+=":${plugin}/lib"
 done
 
 if [ -n "${JAVA_OPTS}" ]; then

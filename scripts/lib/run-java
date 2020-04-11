@@ -21,26 +21,6 @@
 # For more information contact author at gurjyan@jlab.org
 # Department of Experimental Nuclear Physics, Jefferson Lab.
 
-java_dist=
-case "$(uname)" in
-    "Linux")
-        if [ "$(uname -m)" = "x86_64" ]; then
-            java_dist=$CLARA_HOME/jre/linux-64/jre
-        else
-            java_dist=$CLARA_HOME/jre/linux-i586/jre
-        fi
-        ;;
-
-    "Darwin")
-        java_dist=$CLARA_HOME/jre/macosx-64/jre/Contents/Home
-        ;;
-
-    *)  ;;
-esac
-if [ -n "$java_dist" ] && [ -d "$java_dist" ]; then
-    export JAVA_HOME="$java_dist"
-fi
-
 if [ -n "$JAVA_HOME" ]; then
     java_bin="$JAVA_HOME/bin/java"
 else

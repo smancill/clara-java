@@ -181,13 +181,12 @@ class WorkerNode {
         return new ServiceConfig(userConfig, model);
     }
 
-    void setPaths(Path inputPath, Path outputPath, Path stagePath, String outFilePrefix) {
+    void setPaths(Path inputPath, Path outputPath, Path stagePath) {
         try {
             JSONObject data = new JSONObject();
             data.put("input_path", inputPath);
             data.put("output_path", outputPath);
             data.put("stage_path", stagePath);
-            data.put("out_prefix", outFilePrefix);
             orchestrator.syncConfig(stageName, data, 2, TimeUnit.MINUTES);
         } catch (ClaraException | TimeoutException e) {
             throw new OrchestratorException("Could not configure directories", e);
@@ -203,7 +202,7 @@ class WorkerNode {
             data.put("file", currentFile.inputName);
 
             Logging.info("Staging file %s on %s", currentFile.inputName, name());
-            EngineData result = orchestrator.syncSend(stageName, data, 15, TimeUnit.MINUTES);
+            EngineData result = orchestrator.syncSend(stageName, data, 5, TimeUnit.MINUTES);
 
             if (!result.getStatus().equals(EngineStatus.ERROR)) {
                 String rs = (String) result.getData();

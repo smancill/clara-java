@@ -151,15 +151,7 @@ class ServiceEngine {
         try {
             inData = getEngineData(message);
             parseComposition(inData);
-
             outData = executeEngine(inData);
-
-            if (outData.getStatusSeverity() == 13) {
-                Logging.error("SevereError in the engine = %s: %s",
-                    inData.getEngineName(),  inData.getDescription());
-                System.exit(13);
-            }
-
             sysReport.addExecutionTime(executionTime);
         } catch (Exception e) {
             Logging.error("UNHANDLED EXCEPTION ON SERVICE EXECUTION: %s", base.getName());

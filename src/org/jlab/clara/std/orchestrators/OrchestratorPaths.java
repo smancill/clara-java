@@ -32,34 +32,27 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 class OrchestratorPaths {
 
     static final String INPUT_DIR = FileUtils.claraPath("data", "input").toString();
     static final String OUTPUT_DIR = FileUtils.claraPath("data", "output").toString();
     static final String STAGE_DIR = File.separator + "scratch";
-    static final String OUTPUT_FILE_PREFIX = "out_";
 
     final List<WorkerFile> allFiles;
 
     final Path inputDir;
     final Path outputDir;
     final Path stageDir;
-    final String prefix;
 
 
     static class Builder {
 
-        private List<WorkerFile> allFiles;
-        private Stream<String> afStream = null;
-
+        private final List<WorkerFile> allFiles;
 
         private Path inputDir = Paths.get(INPUT_DIR);
         private Path outputDir = Paths.get(OUTPUT_DIR);
         private Path stageDir = Paths.get(STAGE_DIR);
-        private String prefix = OUTPUT_FILE_PREFIX;
-
 
         Builder(String inputFile, String outputFile) {
             Path inputPath = Paths.get(inputFile);
@@ -74,10 +67,9 @@ class OrchestratorPaths {
         }
 
         Builder(List<String> inputFiles) {
-            afStream = inputFiles.stream();
             this.allFiles = inputFiles.stream()
                     .peek(f -> checkValidFileName(f))
-                    .map(f -> new WorkerFile(f, prefix + f))
+                    .map(f -> new WorkerFile(f, "out_" + f))
                     .collect(Collectors.toList());
         }
 
@@ -88,15 +80,6 @@ class OrchestratorPaths {
 
         Builder withOutputDir(String outputDir) {
             this.outputDir = Paths.get(outputDir).toAbsolutePath().normalize();
-            return this;
-        }
-
-        Builder withOutputFilePrefix(String prefix) {
-            this.prefix = prefix;
-            this.allFiles = afStream
-                    .peek(f -> checkValidFileName(f))
-                    .map(f -> new WorkerFile(f, prefix + f))
-                    .collect(Collectors.toList());
             return this;
         }
 
@@ -126,7 +109,6 @@ class OrchestratorPaths {
         this.inputDir = builder.inputDir;
         this.outputDir = builder.outputDir;
         this.stageDir = builder.stageDir;
-        this.prefix = builder.prefix;
     }
 
     Path inputFilePath(WorkerFile recFile) {

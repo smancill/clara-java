@@ -55,22 +55,6 @@ public final class FileUtils {
         return Paths.get(EnvUtils.claraHome(), args);
     }
 
-    public static Path userDataPath() {
-        return Paths.get(EnvUtils.claraUserData());
-    }
-
-    public static String claraPathAffinity(String affinity, String... args) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("/bin/taskset -c ");
-        sb.append(affinity);
-        sb.append(" ");
-        sb.append(EnvUtils.claraHome());
-        for (String s:args) {
-            sb.append(s);
-        }
-        return sb.toString();
-    }
-
     public static Path getFileName(Path path) {
         Path fileName = path.getFileName();
         if (fileName == null) {
