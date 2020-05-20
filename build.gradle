@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017.  Jefferson Lab (JLab). All rights reserved.
+ * Copyright (c) 2020.  Sebastián Mancilla
  *
  * Permission to use, copy, modify, and distribute  this software and its
  * documentation for educational, research, and not-for-profit purposes,
@@ -23,7 +24,7 @@
 
 plugins {
     id 'java-library'
-    id 'maven'
+    id 'maven-publish'
 
     id 'checkstyle'
     id 'com.github.spotbugs' version '4.2.0'
@@ -32,9 +33,9 @@ plugins {
     id 'idea'
 }
 
-group = 'org.jlab.coda'
-archivesBaseName = 'jclara'
-version = '4.3-SNAPSHOT'
+group = 'dev.smancill.clara'
+archivesBaseName = 'clara'
+version = '5.0-SNAPSHOT'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -45,7 +46,6 @@ configurations {
     all {
          resolutionStrategy.cacheChangingModulesFor 30, 'minutes'
     }
-    deployerJars
 }
 
 sourceSets {
@@ -81,7 +81,6 @@ dependencies {
     implementation 'org.freemarker:freemarker:2.3.26-incubating'
     implementation 'net.sf.jopt-simple:jopt-simple:4.9'
     implementation 'com.google.code.findbugs:jsr305:3.0.1'
-    deployerJars 'org.apache.maven.wagon:wagon-ssh-external:2.12'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
@@ -112,13 +111,10 @@ javadoc {
     exclude "org/jlab/clara/sys/ccc/**"
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            configuration = configurations.deployerJars
-            repository(url: 'scpexe://clas12@jlabl1.jlab.org/group/clas/www/clasweb/html/clas12maven') {
-                authentication(userName: 'clas12')
-            }
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
         }
     }
 }

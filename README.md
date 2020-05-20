@@ -3,14 +3,6 @@
 A micro-services framework to provide a heterogeneous computing environment for efficient
 Big Data processing.
 
-[![Build Status](https://travis-ci.org/JeffersonLab/clara-java.svg?branch=master)](https://travis-ci.org/JeffersonLab/clara-java)
-[![Javadoc](https://img.shields.io/badge/javadoc-4.3--SNAPSHOT-blue.svg?style=flat)](https://claraweb.jlab.org/clara/api/java/v4.3)
-
-
-## Documentation
-
-The reference documentation is available at <https://claraweb.jlab.org>.
-
 
 ## Build notes
 
@@ -94,5 +86,3 @@ and the [Intellij IDEA Gradle Help](https://www.jetbrains.com/help/idea/2016.2/g
 * Vardan Gyurjyan
 * Sebastián Mancilla
 * Ricardo Oyarzún
-
-For assistance send email to [clara@jlab.org](mailto:clara@jlab.org).
