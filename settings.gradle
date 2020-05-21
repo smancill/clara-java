@@ -1,0 +1,7 @@
+rootProject.name = 'clara'
+include 'clara-platform'
+include 'clara-core'
+include 'clara-api'
+include 'clara-std'
+include 'clara-shell'
+include 'clara-examples'

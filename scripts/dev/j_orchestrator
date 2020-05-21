@@ -1,3 +1,5 @@
 #!/bin/sh
 
-exec ./scripts/exec-class org.jlab.clara.std.orchestrators.GenericOrchestrator "$@"
+exec ./scripts/exec-class \
+    clara-client \
+    org.jlab.clara.std.orchestrators.GenericOrchestrator "$@"

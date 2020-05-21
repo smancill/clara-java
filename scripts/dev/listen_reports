@@ -1,3 +1,5 @@
 #!/bin/sh
 
-exec ./scripts/exec-class -t org.jlab.clara.sys.DpeReportTest "$@"
+exec ./scripts/exec-class -t \
+    clara-core \
+    org.jlab.clara.sys.DpeReportTest "$@"
