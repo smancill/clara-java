@@ -1,0 +1,34 @@
+<html>
+ <body>
+  xMsg is a lightweight, yet full featured publish/subscribe messaging system,
+  presenting asynchronous publish/subscribe inter-process communication
+  protocol.
+  <p>
+  xMsg publisher can send messages of any topic. xMsg subscribers subscribe to
+  topics of interest and provide callbacks to handle messages as they arrive,
+  Neither publisher nor subscriber knows of each others existence. Thus
+  publishers and subscribers are completely independent of each others.
+  <p>
+  xMsg stores connections in a connection pool for efficiency reasons.
+  The ZMQ socket libraries is used to manage connections.
+  To solve dynamic discovery problem in pub/sub environment the need of a proxy
+  server is unavoidable, and the ZMQ proxy is used to connect publishers with
+  subscribers.
+  An in-memory registration database is also provided to register and discover
+  xMsg actors by topics of interest.
+  <p>
+  Int short, the entire xMsg actor API consist of:
+  <ul>
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#getConnection      getConnection}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#cacheConnection    cacheConnection}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#destroyConnection  destroyConnection}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#publish      publish}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#syncPublish  syncPublish}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#subscribe    subscribe}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#unsubscribe  unsubscribe}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#register     register}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#deregister   deregister}
+    <li> {@link org.jlab.coda.xmsg.core.xMsg#discover     discover}
+  </ul>
+ </body>
+</html>

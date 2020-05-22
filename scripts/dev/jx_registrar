@@ -1,0 +1,3 @@
+#!/bin/sh
+
+./scripts/exec-class org.jlab.coda.xmsg.sys.xMsgRegistrar "$@"

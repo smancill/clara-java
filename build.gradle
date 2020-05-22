@@ -1,0 +1,333 @@
+/*
+ * Copyright (C) 2017. Jefferson Lab (JLAB). All Rights Reserved.
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for governmental use, educational, research, and not-for-profit
+ * purposes, without fee and without a signed licensing agreement.
+ *
+ * IN NO EVENT SHALL JLAB BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF JLAB HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * JLAB SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE. THE CLARA SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
+ * HEREUNDER IS PROVIDED "AS IS". JLAB HAS NO OBLIGATION TO PROVIDE MAINTENANCE,
+ * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ *
+ * This software was developed under the United States Government License.
+ * For more information contact author at gurjyan@jlab.org
+ * Department of Experimental Nuclear Physics, Jefferson Lab.
+ */
+
+plugins {
+    id 'java-library'
+    id 'maven'
+    id 'com.google.protobuf' version '0.8.10'
+
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '1.6.9'
+
+    id 'eclipse'
+    id 'idea'
+}
+
+group = 'org.jlab.coda'
+version = '2.4-SNAPSHOT'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+defaultTasks 'build'
+
+
+configurations {
+    deployerJars
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir 'src'
+        }
+        java {
+            srcDir 'src'
+        }
+    }
+    test {
+        java {
+            srcDir 'test'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api 'org.zeromq:jeromq:0.4.3'
+    api 'com.google.protobuf:protobuf-java:3.6.1'
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    deployerJars 'org.apache.maven.wagon:wagon-ssh-external:2.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.0'
+    testImplementation 'org.hamcrest:hamcrest-library:2.1'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
+}
+
+
+ext {
+    generatedProtoDir = "${buildDir.name}/generated/source/proto/main/java"
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.6.1'
+        if (project.hasProperty('protocPath')) {
+            path = protocPath
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    if (JavaVersion.current() > JavaVersion.VERSION_1_8) {
+        options.compilerArgs += ['--release', '8']
+    }
+}
+
+
+javadoc {
+    options.overview = 'src/org/jlab/coda/xmsg/overview.html'
+    options.charSet = 'utf8'
+    options.encoding = 'utf8'
+    options.docEncoding = 'utf8'
+
+    exclude "org/jlab/coda/xmsg/examples/**"
+    exclude "org/jlab/coda/xmsg/net/*Factory.java"
+    exclude "org/jlab/coda/xmsg/sys/*/*.java"
+}
+
+
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+    from generatedProtoDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            configuration = configurations.deployerJars
+            repository(url: 'scpexe://clas12@jlabl1.jlab.org/group/clas/www/clasweb/html/clas12maven') {
+                authentication(userName: 'clas12')
+            }
+        }
+    }
+}
+
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+    useJUnitPlatform {
+        excludeTags 'integration'
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'integration'
+    }
+    testLogging {
+        showStandardStreams = true
+        events 'started', 'passed', 'failed'
+    }
+    outputs.upToDateWhen { false }
+}
+
+
+def deploySpec = copySpec {
+    into ('lib') {
+        from configurations.runtimeClasspath
+        from jar.archiveFile
+    }
+
+    from ('scripts/unix') {
+        include 'jx_*'
+        into 'bin'
+        fileMode 0755
+    }
+}
+
+task deploy(type: Copy, dependsOn: install) {
+    def dest = "$System.env.CLARA_HOME"
+
+    into dest
+    with deploySpec
+
+    doFirst {
+        if (dest == 'null') {
+            throw new GradleException('CLARA_HOME not set')
+        }
+    }
+}
+
+
+ext.classPathCache = file("${buildDir}/tmp/classpath")
+ext.testClassPathCache = file("${buildDir}/tmp/test_classpath")
+
+task cacheClasspath {
+    doLast {
+        if (!classPathCache.isFile()) {
+            classPathCache.parentFile.mkdirs()
+            classPathCache.createNewFile()
+        }
+        classPathCache.write sourceSets.main.runtimeClasspath.asPath
+        testClassPathCache.write sourceSets.test.runtimeClasspath.asPath
+    }
+}
+cacheClasspath.inputs.files sourceSets.main.runtimeClasspath
+cacheClasspath.inputs.files sourceSets.test.runtimeClasspath
+cacheClasspath.outputs.files classPathCache
+cacheClasspath.outputs.files testClassPathCache
+
+task printClasspath {
+    doLast {
+        println classPathCache.text
+    }
+}
+
+build.dependsOn cacheClasspath
+printClasspath.dependsOn cacheClasspath
+
+
+def ciMode() {
+    if (hasProperty("ciMode")) {
+        return ciMode.toBoolean()
+    }
+    return false
+}
+
+checkstyle {
+    toolVersion = '8.22'
+    configFile = file('config/quality/checkstyle.xml')
+    configProperties['samedir'] = file('config/quality')
+}
+
+spotbugs {
+    toolVersion = '3.1.12'
+    ignoreFailures = true
+    effort = 'max'
+    reportLevel = 'medium'
+    excludeFilter = file('config/quality/findbugs-exclude.xml')
+}
+
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    def useXml = ciMode()
+    reports {
+        xml.enabled = useXml
+        html.enabled = !xml.enabled
+    }
+}
+
+// Marker task to enable SpotBugs.
+task spotbugs(
+    group: 'Verification',
+    description: 'Marker task to enable SpotBugs.'
+)
+
+task checkSpotBugsResults {
+    doLast {
+        def bugsFound = 0
+        [spotbugsMain, spotbugsTest].forEach {
+            bugsFound += printSpotBugs it.reports.xml.destination
+        }
+        if (bugsFound > 0) {
+            throw new GradleException("$bugsFound SpotBugs rule violations were found.")
+        }
+    }
+}
+
+def printSpotBugs(File xml) {
+    def slurped = new XmlSlurper().parse(xml)
+    def bugs = slurped.BugInstance
+
+    bugs.each { bug ->
+        def line = bug.SourceLine
+        logger.error "[SpotBugs] ${line.@sourcepath}:${line.@start}:${line.@end} [${bug.@type}]"
+    }
+    bugs.size()
+}
+
+if (ciMode()) {
+    checkSpotBugsResults.mustRunAfter spotbugsMain, spotbugsTest
+    check.dependsOn checkSpotBugsResults
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    tasks.spotbugsMain.onlyIf {
+        taskGraph.hasTask((tasks.spotbugs))
+    }
+    tasks.spotbugsTest.onlyIf {
+        taskGraph.hasTask((tasks.spotbugs))
+    }
+    tasks.checkSpotBugsResults.onlyIf {
+        taskGraph.hasTask((tasks.spotbugs))
+    }
+}
+
+
+
+eclipse {
+    classpath {
+        file {
+            defaultOutputDir = file("${buildDir}/eclipse")
+            whenMerged { classpath ->
+                classpath.entries.each { source ->
+                    if (source.kind == 'src' && source.hasProperty('output')) {
+                        source.output = "${buildDir.getName()}/eclipse"
+                    }
+                }
+                classpath.entries.add(new org.gradle.plugins.ide.eclipse.model.SourceFolder(generatedProtoDir, null))
+            }
+            withXml { xml ->
+                xml.asNode().find {
+                    it.@kind == 'src' && it.@path == generatedProtoDir
+                }
+                .appendNode('attributes')
+                .appendNode('attribute', [name:'ignore_optional_problems', value:'true'])
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        sourceDirs += file(generatedProtoDir)
+        excludeDirs -= buildDir
+        buildDir.listFiles({d,f->f != 'generated'} as FilenameFilter).each {excludeDirs += it}
+    }
+}
+
+task checkOutputProtoDir {
+    doLast {
+        def gsd = file(generatedProtoDir)
+        if (!gsd.exists()) {
+            gsd.mkdirs()
+        }
+    }
+}
+
+tasks.idea.dependsOn(checkOutputProtoDir)

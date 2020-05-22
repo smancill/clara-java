@@ -1,0 +1,3 @@
+#!/bin/sh
+
+./scripts/exec-class -t org.jlab.coda.xmsg.core.SyncPublishTest "$@"

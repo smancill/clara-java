@@ -1,0 +1,26 @@
+#!/bin/sh
+
+if [ -n "${JAVA_HOME}" ]; then
+    java_bin="${JAVA_HOME}/bin/java"
+else
+    java_bin=java
+fi
+
+if [ "$1" = "-t" ]; then
+    shift
+    cache_file=./build/tmp/test_classpath
+else
+    cache_file=./build/tmp/classpath
+fi
+
+class_path=$(cat "${cache_file}")
+
+# export XMSG_CONNECTION_TIMEOUT=1000;
+# export XMSG_SUBSCRIPTION_TIMEOUT=2000;
+
+# export XMSG_NO_CHECK_CONNECTION=1;
+# export XMSG_NO_CHECK_SUBSCRIPTION=1;
+# export XMSG_POST_CONNECTION_SLEEP=100;
+# export XMSG_POST_SUBSCRIPTION_SLEEP=100;
+
+"${java_bin}" -cp "${class_path}" "$@"
