@@ -56,16 +56,7 @@ configure(subprojectList) {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
-    configurations {
-        all {
-            resolutionStrategy.cacheChangingModulesFor 30, 'minutes'
-        }
-    }
-
     repositories {
-        maven {
-            url 'https://clasweb.jlab.org/clas12maven/'
-        }
         mavenCentral()
     }
 
@@ -148,7 +139,6 @@ project(':clara-platform') {
 
 configure(subprojectList) {
     ext.libs = [
-        xmsg: 'org.jlab.coda:xmsg:2.3',
         json: 'org.json:json:20160810',
         snakeyaml: 'org.yaml:snakeyaml:1.18',
         jeromq: 'org.zeromq:jeromq:0.4.3',
@@ -239,7 +229,8 @@ project(':clara-msg') {
 
 project(':clara-api') {
     dependencies {
-        api libs.xmsg
+        api project(':clara-msg')
+
         api libs.json
         implementation libs.snakeyaml
         implementation libs.jopt
