@@ -30,7 +30,7 @@ import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -55,9 +55,9 @@ public final class DataUtil {
      * which is hidden to users.
      *
      * @param data {@link org.jlab.clara.engine.EngineData} object
-     * @return {@link xMsgMeta.Builder} object
+     * @return {@link MetaData.Builder} object
      */
-    public static xMsgMeta.Builder getMetadata(EngineData data) {
+    public static MetaData.Builder getMetadata(EngineData data) {
         return DATA_ACCESSOR.getMetadata(data);
     }
 
@@ -75,16 +75,16 @@ public final class DataUtil {
                                         Set<EngineDataType> dataTypes)
             throws ClaraException {
 
-        xMsgMeta.Builder metadata = DATA_ACCESSOR.getMetadata(data);
+        MetaData.Builder metadata = DATA_ACCESSOR.getMetadata(data);
         String mimeType = metadata.getDataType();
         for (EngineDataType dt : dataTypes) {
             if (dt.mimeType().equals(mimeType)) {
                 try {
                     ByteBuffer bb = dt.serializer().write(data.getData());
                     if (bb.order() == ByteOrder.BIG_ENDIAN) {
-                        metadata.setByteOrder(xMsgMeta.Endian.Big);
+                        metadata.setByteOrder(MetaData.Endian.Big);
                     } else {
-                        metadata.setByteOrder(xMsgMeta.Endian.Little);
+                        metadata.setByteOrder(MetaData.Endian.Little);
                     }
                     return new xMsgMessage(topic, metadata, bb.array());
                 } catch (ClaraException e) {
@@ -114,13 +114,13 @@ public final class DataUtil {
      */
     public static EngineData deserialize(xMsgMessage msg, Set<EngineDataType> dataTypes)
             throws ClaraException {
-        xMsgMeta.Builder metadata = msg.getMetaData();
+        MetaData.Builder metadata = msg.getMetaData();
         String mimeType = metadata.getDataType();
         for (EngineDataType dt : dataTypes) {
             if (dt.mimeType().equals(mimeType)) {
                 try {
                     ByteBuffer bb = ByteBuffer.wrap(msg.getData());
-                    if (metadata.getByteOrder() == xMsgMeta.Endian.Little) {
+                    if (metadata.getByteOrder() == MetaData.Endian.Little) {
                         bb.order(ByteOrder.LITTLE_ENDIAN);
                     }
                     Object userData = dt.serializer().read(bb);
@@ -154,8 +154,8 @@ public final class DataUtil {
             defaultAccessor = accessor;
         }
 
-        protected abstract xMsgMeta.Builder getMetadata(EngineData data);
+        protected abstract MetaData.Builder getMetadata(EngineData data);
 
-        protected abstract EngineData build(Object data, xMsgMeta.Builder metadata);
+        protected abstract EngineData build(Object data, MetaData.Builder metadata);
     }
 }

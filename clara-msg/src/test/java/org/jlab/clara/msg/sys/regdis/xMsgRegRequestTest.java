@@ -24,7 +24,7 @@
 package org.jlab.clara.msg.sys.regdis;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,11 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class xMsgRegRequestTest {
 
-    private xMsgRegistration.Builder data;
+    private RegData.Builder data;
 
     @BeforeEach
     public void setup() {
-        xMsgRegistration.OwnerType type = xMsgRegistration.OwnerType.SUBSCRIBER;
+        RegData.OwnerType type = RegData.OwnerType.SUBSCRIBER;
         data = newRegistration("asimov", "10.2.9.1", type, "writer.scifi:books");
     }
 

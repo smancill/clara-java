@@ -29,8 +29,8 @@ import org.jlab.clara.msg.core.xMsgCallBack;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.data.xMsgD.xMsgData;
-import org.jlab.clara.msg.data.xMsgM;
+import org.jlab.clara.msg.data.MetaDataProto;
+import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 import org.jlab.clara.msg.data.xMsgMimeType;
 import org.jlab.clara.msg.data.xMsgRegInfo;
 import org.jlab.clara.msg.errors.xMsgException;
@@ -140,9 +140,9 @@ public class Subscriber extends xMsg {
          */
         private List<Integer> parseData(xMsgMessage msg) {
             try {
-                xMsgM.xMsgMeta.Builder metadata = msg.getMetaData();
+                MetaDataProto.MetaData.Builder metadata = msg.getMetaData();
                 if (metadata.getDataType().equals(xMsgMimeType.ARRAY_SFIXED32)) {
-                    xMsgData data = xMsgData.parseFrom(msg.getData());
+                    PlainData data = PlainData.parseFrom(msg.getData());
                     return data.getFLSINT32AList();
                 }
             } catch (InvalidProtocolBufferException e) {

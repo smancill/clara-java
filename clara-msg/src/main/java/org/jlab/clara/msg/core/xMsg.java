@@ -23,10 +23,10 @@
 
 package org.jlab.clara.msg.core;
 
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.data.xMsgRegInfo;
 import org.jlab.clara.msg.data.xMsgRegQuery;
 import org.jlab.clara.msg.data.xMsgRegRecord;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
@@ -686,7 +686,7 @@ public class xMsg implements AutoCloseable {
             throws xMsgException {
         xMsgRegDriver regDriver = connectionManager.getRegistrarConnection(address);
         try {
-            xMsgRegistration.Builder reg = createRegistration(info);
+            RegData.Builder reg = createRegistration(info);
             reg.setDescription(info.description());
             regDriver.addRegistration(myName, reg.build(), timeout);
             connectionManager.releaseRegistrarConnection(regDriver);
@@ -743,7 +743,7 @@ public class xMsg implements AutoCloseable {
             throws xMsgException {
         xMsgRegDriver regDriver = connectionManager.getRegistrarConnection(address);
         try {
-            xMsgRegistration.Builder reg = createRegistration(info);
+            RegData.Builder reg = createRegistration(info);
             regDriver.removeRegistration(myName, reg.build(), timeout);
             connectionManager.releaseRegistrarConnection(regDriver);
         } catch (ZMQException | xMsgException e) {
@@ -806,8 +806,8 @@ public class xMsg implements AutoCloseable {
             throws xMsgException {
         xMsgRegDriver regDriver = connectionManager.getRegistrarConnection(address);
         try {
-            xMsgRegistration.Builder reg = query.data();
-            Set<xMsgRegistration> result;
+            RegData.Builder reg = query.data();
+            Set<RegData> result;
             switch (query.category()) {
                 case MATCHING:
                     result = regDriver.findRegistration(myName, reg.build(), timeout);
@@ -869,7 +869,7 @@ public class xMsg implements AutoCloseable {
         return threadPool.getMaximumPoolSize();
     }
 
-    private xMsgRegistration.Builder createRegistration(xMsgRegInfo info) {
+    private RegData.Builder createRegistration(xMsgRegInfo info) {
         return xMsgRegFactory.newRegistration(myName, setup.proxyAddress(),
                                               info.type(), info.topic());
     }

@@ -25,7 +25,7 @@ package org.jlab.clara.msg.sys.regdis;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.zeromq.ZFrame;
 import org.zeromq.ZMsg;
@@ -46,7 +46,7 @@ public class xMsgRegResponse {
     private final String topic;
     private final String sender;
     private final String status;
-    private final Set<xMsgRegistration> data;
+    private final Set<RegData> data;
 
     /**
      * Constructs a success response. No registration data is returned.
@@ -75,7 +75,7 @@ public class xMsgRegResponse {
      * @param sender the sender of the response
      * @param data the registration data
      */
-    public xMsgRegResponse(String topic, String sender, Set<xMsgRegistration> data) {
+    public xMsgRegResponse(String topic, String sender, Set<RegData> data) {
         this.topic = topic;
         this.sender = sender;
         this.status = xMsgRegConstants.SUCCESS;
@@ -131,7 +131,7 @@ public class xMsgRegResponse {
         while (!msg.isEmpty()) {
             ZFrame dataFrame = msg.pop();
             try {
-                data.add(xMsgRegistration.parseFrom(dataFrame.getData()));
+                data.add(RegData.parseFrom(dataFrame.getData()));
             } catch (InvalidProtocolBufferException e) {
                 throw new xMsgException("could not parse registrar server response", e);
             }
@@ -149,7 +149,7 @@ public class xMsgRegResponse {
         msg.addString(topic);
         msg.addString(sender);
         msg.addString(status);
-        for (xMsgRegistration d : data) {
+        for (RegData d : data) {
             msg.add(d.toByteArray());
         }
         return msg;
@@ -188,7 +188,7 @@ public class xMsgRegResponse {
      * empty. It can also be empty when no registration data is found for the
      * given request.
      */
-    public Set<xMsgRegistration> data() {
+    public Set<RegData> data() {
         return data;
     }
 

@@ -23,11 +23,11 @@
 
 option optimize_for = SPEED;
 
-option java_outer_classname = "xMsgR";
+option java_outer_classname = "RegDataProto";
 
 package org.jlab.clara.msg.data;
 
-message xMsgRegistration {
+message RegData {
 
     required string name = 1;
     optional string description = 2 [default = "undefined"];
@@ -45,5 +45,4 @@ message xMsgRegistration {
         PUBLISHER = 1;
         SUBSCRIBER = 2;
     }
-
 }

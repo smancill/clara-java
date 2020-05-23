@@ -24,7 +24,7 @@
 package org.jlab.clara.msg.data;
 
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 /**
@@ -34,14 +34,14 @@ import org.jlab.clara.msg.net.xMsgProxyAddress;
  */
 public class xMsgRegRecord {
 
-    private final xMsgRegistration data;
+    private final RegData data;
 
     /**
      * Creates a record wrapping the given registration data.
      *
      * @param regb the registration data
      */
-    public xMsgRegRecord(xMsgRegistration regb) {
+    public xMsgRegRecord(RegData regb) {
         data = regb;
     }
 
@@ -59,7 +59,7 @@ public class xMsgRegRecord {
      *
      * @return the type of the actor
      */
-    public xMsgRegistration.OwnerType type() {
+    public RegData.OwnerType type() {
         return data.getOwnerType();
     }
 
@@ -95,7 +95,7 @@ public class xMsgRegRecord {
      *
      * @return the wrapped registration data object.
      */
-    public xMsgRegistration data() {
+    public RegData data() {
         return data;
     }
 

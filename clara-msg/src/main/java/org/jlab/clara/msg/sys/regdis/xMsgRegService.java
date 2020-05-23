@@ -24,7 +24,7 @@
 package org.jlab.clara.msg.sys.regdis;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.net.xMsgRegAddress;
@@ -147,7 +147,7 @@ public class xMsgRegService implements Runnable {
 
         try {
             // prepare the set to store registration info going back to the requester
-            Set<xMsgRegistration> registration = new HashSet<>();
+            Set<RegData> registration = new HashSet<>();
 
             // create a xMsgRegRequest object from the serialized 0MQ message
             xMsgRegRequest request = new xMsgRegRequest(requestMsg);
@@ -177,38 +177,38 @@ public class xMsgRegService implements Runnable {
                 subscribers.remove(request.text());
 
             } else if (topic.equals(xMsgRegConstants.FIND_PUBLISHER)) {
-                xMsgRegistration data = request.data();
+                RegData data = request.data();
                 logDiscovery("publishers ", data);
                 registration = publishers.find(data.getDomain(),
                                                data.getSubject(),
                                                data.getType());
 
             } else if (topic.equals(xMsgRegConstants.FIND_SUBSCRIBER)) {
-                xMsgRegistration data = request.data();
+                RegData data = request.data();
                 logDiscovery("subscribers", data);
                 registration = subscribers.rfind(data.getDomain(),
                                                  data.getSubject(),
                                                  data.getType());
 
             } else if (topic.equals(xMsgRegConstants.FILTER_PUBLISHER)) {
-                xMsgRegistration data = request.data();
+                RegData data = request.data();
                 logFilter("publishers ", data);
                 registration = publishers.filter(data);
 
             } else if (topic.equals(xMsgRegConstants.FILTER_SUBSCRIBER)) {
-                xMsgRegistration data = request.data();
+                RegData data = request.data();
                 logFilter("subscribers", data);
                 registration = subscribers.filter(data);
 
             } else if (topic.equals(xMsgRegConstants.EXACT_PUBLISHER)) {
-                xMsgRegistration data = request.data();
+                RegData data = request.data();
                 logFilter("publishers with exact topic ", data);
                 registration = publishers.same(data.getDomain(),
                                                data.getSubject(),
                                                data.getType());
 
             } else if (topic.equals(xMsgRegConstants.EXACT_SUBSCRIBER)) {
-                xMsgRegistration data = request.data();
+                RegData data = request.data();
                 logFilter("subscribers with exact topic ", data);
                 registration = subscribers.same(data.getDomain(),
                                                 data.getSubject(),
@@ -239,19 +239,19 @@ public class xMsgRegService implements Runnable {
     }
 
 
-    private void logRegistration(String action, String type, xMsgRegistration data) {
+    private void logRegistration(String action, String type, RegData data) {
         LOGGER.fine(() -> String.format("%s %s name = %s  host = %s  port = %d  topic = %s:%s:%s",
                 action, type, data.getName(),
                 data.getHost(), data.getPort(),
                 data.getDomain(), data.getSubject(), data.getType()));
     }
 
-    private void logDiscovery(String type, xMsgRegistration data) {
+    private void logDiscovery(String type, RegData data) {
         LOGGER.fine(() -> String.format("search %s topic = %s:%s:%s",
                 type, data.getDomain(), data.getSubject(), data.getType()));
     }
 
-    private void logFilter(String type, xMsgRegistration data) {
+    private void logFilter(String type, RegData data) {
         LOGGER.fine(() -> {
             StringBuilder sb = new StringBuilder();
             sb.append("search ").append(type);

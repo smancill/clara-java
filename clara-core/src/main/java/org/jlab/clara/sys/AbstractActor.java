@@ -31,7 +31,7 @@ import org.jlab.clara.msg.core.xMsgCallBack;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgSubscription;
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.msg.errors.xMsgException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -107,7 +107,7 @@ abstract class AbstractActor {
         return sub;
     }
 
-    void sendResponse(xMsgMessage msg, xMsgMeta.Status status, String data) {
+    void sendResponse(xMsgMessage msg, MetaData.Status status, String data) {
         try {
             xMsgMessage repMsg = MessageUtil.buildRequest(msg.getReplyTopic(), data);
             repMsg.getMetaData().setAuthor(base.getName());

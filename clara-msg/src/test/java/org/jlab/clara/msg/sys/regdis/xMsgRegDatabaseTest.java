@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,16 +39,16 @@ import static org.hamcrest.Matchers.is;
 
 public class xMsgRegDatabaseTest {
 
-    private static final xMsgRegistration.OwnerType TYPE = xMsgRegistration.OwnerType.PUBLISHER;
+    private static final RegData.OwnerType TYPE = RegData.OwnerType.PUBLISHER;
 
-    private final xMsgRegistration.Builder asimov1;
-    private final xMsgRegistration.Builder bradbury1;
-    private final xMsgRegistration.Builder asimov2;
-    private final xMsgRegistration.Builder bradbury2;
-    private final xMsgRegistration.Builder twain1;
-    private final xMsgRegistration.Builder twain2;
-    private final xMsgRegistration.Builder brando2;
-    private final xMsgRegistration.Builder tolkien1;
+    private final RegData.Builder asimov1;
+    private final RegData.Builder bradbury1;
+    private final RegData.Builder asimov2;
+    private final RegData.Builder bradbury2;
+    private final RegData.Builder twain1;
+    private final RegData.Builder twain2;
+    private final RegData.Builder brando2;
+    private final RegData.Builder tolkien1;
 
     private xMsgRegDatabase db;
 
@@ -77,7 +77,7 @@ public class xMsgRegDatabaseTest {
         db = new xMsgRegDatabase();
     }
 
-    private void register(xMsgRegistration.Builder... regs) {
+    private void register(RegData.Builder... regs) {
         Stream.of(regs).forEach(r -> db.register(r.build()));
     }
 
@@ -85,7 +85,7 @@ public class xMsgRegDatabaseTest {
         register(asimov1, asimov2, bradbury1, bradbury2, brando2, twain1, twain2, tolkien1);
     }
 
-    private void remove(xMsgRegistration.Builder... regs) {
+    private void remove(RegData.Builder... regs) {
         Stream.of(regs).forEach(r -> db.remove(r.build()));
     }
 
@@ -306,7 +306,7 @@ public class xMsgRegDatabaseTest {
     public void filterByDomain() throws Exception {
         registerAll();
 
-        xMsgRegistration filter = newFilter().setDomain("writer").build();
+        RegData filter = newFilter().setDomain("writer").build();
 
         assertThat(db.filter(filter),
                    is(setOf(asimov1, asimov2, bradbury1, bradbury2, twain1, twain2, tolkien1)));
@@ -317,7 +317,7 @@ public class xMsgRegDatabaseTest {
     public void filterBySubject() throws Exception {
         registerAll();
 
-        xMsgRegistration filter = newFilter().setSubject("adventure").build();
+        RegData filter = newFilter().setSubject("adventure").build();
 
         assertThat(db.filter(filter), is(setOf(twain1, twain2, tolkien1)));
     }
@@ -327,7 +327,7 @@ public class xMsgRegDatabaseTest {
     public void filterByType() throws Exception {
         registerAll();
 
-        xMsgRegistration filter = newFilter().setType("books").build();
+        RegData filter = newFilter().setType("books").build();
 
         assertThat(db.filter(filter),
                    is(setOf(asimov1, asimov2, bradbury1, bradbury2)));
@@ -338,7 +338,7 @@ public class xMsgRegDatabaseTest {
     public void filterByAddress() throws Exception {
         registerAll();
 
-        xMsgRegistration filter = newFilter().setHost("10.2.9.2").build();
+        RegData filter = newFilter().setHost("10.2.9.2").build();
 
         assertThat(db.filter(filter),
                    is(setOf(asimov2, bradbury2, brando2, twain2)));
@@ -349,7 +349,7 @@ public class xMsgRegDatabaseTest {
     public void filterUnregisteredTopicReturnsEmpty() throws Exception {
         register(asimov1, twain2, tolkien1);
 
-        xMsgRegistration filter = newFilter().setDomain("artist").build();
+        RegData filter = newFilter().setDomain("artist").build();
 
         assertThat(db.filter(filter), is(empty()));
     }
@@ -372,14 +372,12 @@ public class xMsgRegDatabaseTest {
     }
 
 
-    private static xMsgRegistration.Builder newRegistration(String name,
-                                                            String host,
-                                                            String topic) {
+    private static RegData.Builder newRegistration(String name, String host, String topic) {
         return xMsgRegFactory.newRegistration(name, host, TYPE, xMsgTopic.wrap(topic));
     }
 
 
-    private static xMsgRegistration.Builder newFilter() {
+    private static RegData.Builder newFilter() {
         return xMsgRegFactory.newFilter(TYPE);
     }
 
@@ -389,7 +387,7 @@ public class xMsgRegDatabaseTest {
     }
 
 
-    private static Set<xMsgRegistration> setOf(xMsgRegistration.Builder... regs) {
-        return Stream.of(regs).map(xMsgRegistration.Builder::build).collect(Collectors.toSet());
+    private static Set<RegData> setOf(RegData.Builder... regs) {
+        return Stream.of(regs).map(RegData.Builder::build).collect(Collectors.toSet());
     }
 }

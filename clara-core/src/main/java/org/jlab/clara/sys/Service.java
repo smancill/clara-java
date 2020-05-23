@@ -32,7 +32,7 @@ import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgSubscription;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.sys.RequestParser.RequestException;
 import org.jlab.clara.sys.report.ServiceReport;
 
@@ -213,7 +213,7 @@ class Service extends AbstractActor {
                 throw new RequestException("Invalid report request: " + report);
         }
         if (msg.hasReplyTopic()) {
-            sendResponse(msg, xMsgMeta.Status.INFO, setup.request());
+            sendResponse(msg, MetaData.Status.INFO, setup.request());
         }
     }
 
@@ -278,10 +278,10 @@ class Service extends AbstractActor {
         @Override
         public void callback(xMsgMessage msg) {
             try {
-                xMsgMeta.Builder metadata = msg.getMetaData();
+                MetaData.Builder metadata = msg.getMetaData();
                 if (!metadata.hasAction()) {
                     setup(msg);
-                } else if (metadata.getAction().equals(xMsgMeta.ControlAction.CONFIGURE)) {
+                } else if (metadata.getAction().equals(MetaData.ControlAction.CONFIGURE)) {
                     configure(msg);
                 } else {
                     execute(msg);
@@ -289,7 +289,7 @@ class Service extends AbstractActor {
             } catch (Exception e) {
                 e.printStackTrace();
                 if (msg.hasReplyTopic()) {
-                    sendResponse(msg, xMsgMeta.Status.ERROR, e.getMessage());
+                    sendResponse(msg, MetaData.Status.ERROR, e.getMessage());
                 }
             }
         }

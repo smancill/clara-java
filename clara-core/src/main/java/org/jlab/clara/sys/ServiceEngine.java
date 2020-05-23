@@ -34,7 +34,7 @@ import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.sys.ccc.CompositionCompiler;
 import org.jlab.clara.sys.ccc.ServiceState;
 import org.jlab.clara.sys.report.ServiceReport;
@@ -232,7 +232,7 @@ class ServiceEngine {
         return outData;
     }
 
-    private void updateMetadata(xMsgMeta.Builder inMeta, xMsgMeta.Builder outMeta) {
+    private void updateMetadata(MetaData.Builder inMeta, MetaData.Builder outMeta) {
         outMeta.setAuthor(base.getName());
         outMeta.setVersion(engine.getVersion());
 
@@ -314,7 +314,7 @@ class ServiceEngine {
 
 
     private EngineData getEngineData(xMsgMessage message) throws ClaraException {
-        xMsgMeta.Builder metadata = message.getMetaData();
+        MetaData.Builder metadata = message.getMetaData();
         String mimeType = metadata.getDataType();
         if (mimeType.equals(ClaraConstants.SHARED_MEMORY_KEY)) {
             sysReport.incrementShrmReads();
@@ -335,11 +335,11 @@ class ServiceEngine {
             SharedMemory.putEngineData(receiver, base.getName(), id, data);
             sysReport.incrementShrmWrites();
 
-            xMsgMeta.Builder metadata = xMsgMeta.newBuilder();
+            MetaData.Builder metadata = MetaData.newBuilder();
             metadata.setAuthor(base.getName());
             metadata.setComposition(data.getComposition());
             metadata.setCommunicationId(id);
-            metadata.setAction(xMsgMeta.ControlAction.EXECUTE);
+            metadata.setAction(MetaData.ControlAction.EXECUTE);
             metadata.setDataType(ClaraConstants.SHARED_MEMORY_KEY);
 
             return new xMsgMessage(topic, metadata, ClaraConstants.SHARED_MEMORY_KEY.getBytes());
@@ -352,7 +352,7 @@ class ServiceEngine {
 
 
     private String getReplyTo(xMsgMessage message) {
-        xMsgMeta.Builder meta = message.getMetaData();
+        MetaData.Builder meta = message.getMetaData();
         if (meta.hasReplyTo()) {
             return meta.getReplyTo();
         }

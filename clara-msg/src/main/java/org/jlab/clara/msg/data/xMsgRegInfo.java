@@ -24,14 +24,14 @@
 package org.jlab.clara.msg.data;
 
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 
 /**
  * Defines the parameters to register an xMsg actor with the registrar service.
  */
 public final class xMsgRegInfo {
 
-    private final xMsgRegistration.OwnerType type;
+    private final RegData.OwnerType type;
     private final xMsgTopic topic;
     private final String description;
 
@@ -43,7 +43,7 @@ public final class xMsgRegInfo {
      * @return the information required to (de)register an xMsg actor as a publisher
      */
     public static xMsgRegInfo publisher(xMsgTopic topic, String description) {
-        return new xMsgRegInfo(xMsgRegistration.OwnerType.PUBLISHER, topic, description);
+        return new xMsgRegInfo(RegData.OwnerType.PUBLISHER, topic, description);
     }
 
     /**
@@ -64,7 +64,7 @@ public final class xMsgRegInfo {
      * @return the information required to (de)register an xMsg actor as a subscriber
      */
     public static xMsgRegInfo subscriber(xMsgTopic topic, String description) {
-        return new xMsgRegInfo(xMsgRegistration.OwnerType.SUBSCRIBER, topic, description);
+        return new xMsgRegInfo(RegData.OwnerType.SUBSCRIBER, topic, description);
     }
 
     /**
@@ -77,7 +77,7 @@ public final class xMsgRegInfo {
         return subscriber(topic, "");
     }
 
-    private xMsgRegInfo(xMsgRegistration.OwnerType type, xMsgTopic topic, String description) {
+    private xMsgRegInfo(RegData.OwnerType type, xMsgTopic topic, String description) {
         this.type = type;
         this.topic = topic;
         this.description = description;
@@ -88,7 +88,7 @@ public final class xMsgRegInfo {
      *
      * @return the registration type
      */
-    public xMsgRegistration.OwnerType type() {
+    public RegData.OwnerType type() {
         return type;
     }
 

@@ -29,7 +29,7 @@ import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
@@ -64,7 +64,7 @@ import static org.hamcrest.Matchers.is;
 @Tag("integration")
 public class ClaraQueriesTest {
 
-    private static final xMsgRegistration.OwnerType TYPE = xMsgRegistration.OwnerType.SUBSCRIBER;
+    private static final RegData.OwnerType TYPE = RegData.OwnerType.SUBSCRIBER;
 
     private static TestData data;
 
@@ -244,7 +244,7 @@ public class ClaraQueriesTest {
             return set;
         }
 
-        private void register(xMsgRegistration data) {
+        private void register(RegData data) {
             try {
                 driver.addRegistration("test", data);
             } catch (xMsgException e) {
@@ -1106,22 +1106,22 @@ public class ClaraQueriesTest {
     }
 
 
-    private static xMsgRegistration regData(DpeName name) {
+    private static RegData regData(DpeName name) {
         return registration(name, xMsgTopic.build("dpe", name.canonicalName()));
     }
 
 
-    private static xMsgRegistration regData(ContainerName name) {
+    private static RegData regData(ContainerName name) {
         return registration(name, xMsgTopic.build("container", name.canonicalName()));
     }
 
 
-    private static xMsgRegistration regData(ServiceName name) {
+    private static RegData regData(ServiceName name) {
         return registration(name, xMsgTopic.wrap(name.canonicalName()));
     }
 
 
-    private static xMsgRegistration registration(ClaraName name, xMsgTopic topic) {
+    private static RegData registration(ClaraName name, xMsgTopic topic) {
         return xMsgRegFactory.newRegistration(name.canonicalName(), name.address(), TYPE, topic)
                              .build();
     }

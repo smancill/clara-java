@@ -23,7 +23,7 @@
 
 package org.jlab.clara.msg.sys.regdis;
 
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,12 +42,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class xMsgRegResponseTest {
 
-    private xMsgRegistration.Builder data1;
-    private xMsgRegistration.Builder data2;
+    private RegData.Builder data1;
+    private RegData.Builder data2;
 
     @BeforeEach
     public void setup() {
-        xMsgRegistration.OwnerType type = xMsgRegistration.OwnerType.SUBSCRIBER;
+        RegData.OwnerType type = RegData.OwnerType.SUBSCRIBER;
         data1 = newRegistration("asimov", "10.2.9.1", type, "writer.scifi:books");
         data2 = newRegistration("bradbury", "10.2.9.1", type, "writer.scifi:books");
     }
@@ -78,7 +78,7 @@ public class xMsgRegResponseTest {
 
     @Test
     public void createDataResponse() throws Exception {
-        Set<xMsgRegistration> data = new HashSet<>(Arrays.asList(data1.build(), data2.build()));
+        Set<RegData> data = new HashSet<>(Arrays.asList(data1.build(), data2.build()));
         xMsgRegResponse sendResponse = new xMsgRegResponse("foo:bar", "registration_fe", data);
         xMsgRegResponse recvResponse = new xMsgRegResponse(sendResponse.msg());
 

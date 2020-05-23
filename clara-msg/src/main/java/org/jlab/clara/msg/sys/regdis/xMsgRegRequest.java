@@ -24,7 +24,7 @@
 package org.jlab.clara.msg.sys.regdis;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.zeromq.ZFrame;
 import org.zeromq.ZMsg;
@@ -47,7 +47,7 @@ class xMsgRegRequest {
      * @param sender the sender of the response
      * @param data the registration data of the request
      */
-    xMsgRegRequest(String topic, String sender, xMsgRegistration data) {
+    xMsgRegRequest(String topic, String sender, RegData data) {
         this.topic = topic;
         this.sender = sender;
         this.data = data.toByteArray();
@@ -119,8 +119,8 @@ class xMsgRegRequest {
      *
      * @throws InvalidProtocolBufferException when the data is corrupted
      */
-    public xMsgRegistration data() throws InvalidProtocolBufferException {
-        return xMsgRegistration.parseFrom(data);
+    public RegData data() throws InvalidProtocolBufferException {
+        return RegData.parseFrom(data);
     }
 
     /**

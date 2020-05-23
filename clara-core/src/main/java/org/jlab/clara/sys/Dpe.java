@@ -36,7 +36,7 @@ import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgSubscription;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
@@ -907,13 +907,13 @@ public final class Dpe extends AbstractActor {
                 }
 
                 if (msg.hasReplyTopic()) {
-                    sendResponse(msg, xMsgMeta.Status.INFO, response);
+                    sendResponse(msg, MetaData.Status.INFO, response);
                 }
 
             } catch (RequestException | DpeException e) {
                 Logging.error("%s", e.getMessage());
                 if (msg.hasReplyTopic()) {
-                    sendResponse(msg, xMsgMeta.Status.ERROR, e.getMessage());
+                    sendResponse(msg, MetaData.Status.ERROR, e.getMessage());
                 }
             }
         }

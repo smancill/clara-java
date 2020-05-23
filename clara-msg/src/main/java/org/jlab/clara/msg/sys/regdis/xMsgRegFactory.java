@@ -24,7 +24,7 @@
 package org.jlab.clara.msg.sys.regdis;
 
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 /**
@@ -43,10 +43,10 @@ public final class xMsgRegFactory {
      * @param topic the topic to be registered
      * @return the registration data
      */
-    public static xMsgRegistration.Builder newRegistration(String name,
-                                                           String host,
-                                                           xMsgRegistration.OwnerType type,
-                                                           xMsgTopic topic) {
+    public static RegData.Builder newRegistration(String name,
+                                                  String host,
+                                                  RegData.OwnerType type,
+                                                  xMsgTopic topic) {
         return newRegistration(name, new xMsgProxyAddress(host), type, topic);
     }
 
@@ -59,11 +59,11 @@ public final class xMsgRegFactory {
      * @param topic the topic to be registered
      * @return the registration data
      */
-    public static xMsgRegistration.Builder newRegistration(String name,
-                                                           xMsgProxyAddress address,
-                                                           xMsgRegistration.OwnerType type,
-                                                           xMsgTopic topic) {
-        xMsgRegistration.Builder regb = xMsgRegistration.newBuilder();
+    public static RegData.Builder newRegistration(String name,
+                                                  xMsgProxyAddress address,
+                                                  RegData.OwnerType type,
+                                                  xMsgTopic topic) {
+        RegData.Builder regb = RegData.newBuilder();
         regb.setName(name);
         regb.setHost(address.host());
         regb.setPort(address.pubPort());
@@ -81,8 +81,8 @@ public final class xMsgRegFactory {
      * @param type the type of the actor (publisher or subscriber)
      * @return the registration data to filter actors
      */
-    public static xMsgRegistration.Builder newFilter(xMsgRegistration.OwnerType type) {
-        xMsgRegistration.Builder filter = xMsgRegistration.newBuilder();
+    public static RegData.Builder newFilter(RegData.OwnerType type) {
+        RegData.Builder filter = RegData.newBuilder();
         filter.setName(xMsgRegConstants.UNDEFINED);
         filter.setHost(xMsgRegConstants.UNDEFINED);
         filter.setPort(0);

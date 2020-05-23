@@ -32,8 +32,7 @@ import org.jlab.clara.msg.core.xMsgCallBack;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta.Builder;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.sys.xMsgRegistrar;
@@ -82,49 +81,49 @@ class FrontEnd {
     }
 
 
-    private void startDpe(RequestParser parser, xMsgMeta.Builder meta)
+    private void startDpe(RequestParser parser, MetaData.Builder meta)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void stopDpe(RequestParser parser, Builder metadata)
+    private void stopDpe(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void setFrontEnd(RequestParser parser, Builder metadata)
+    private void setFrontEnd(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void pingDpe(RequestParser parser, Builder metadata)
+    private void pingDpe(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void startContainer(RequestParser parser, Builder metadata)
+    private void startContainer(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void stopContainer(RequestParser parser, Builder metadata)
+    private void stopContainer(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void startService(RequestParser parser, Builder metadata)
+    private void startService(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void stopService(RequestParser parser, Builder metadata)
+    private void stopService(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
@@ -175,7 +174,7 @@ class FrontEnd {
 
         @Override
         public void callback(xMsgMessage msg) {
-            xMsgMeta.Builder metadata = msg.getMetaData();
+            MetaData.Builder metadata = msg.getMetaData();
             try {
                 RequestParser parser = RequestParser.build(msg);
                 String cmd = parser.nextString();

@@ -23,9 +23,9 @@
 
 package org.jlab.clara.msg.core;
 
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.data.xMsgRegInfo;
 import org.jlab.clara.msg.data.xMsgRegQuery;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
 import org.jlab.clara.msg.net.xMsgRegAddress;
 import org.jlab.clara.msg.sys.regdis.xMsgRegDriver;
 import org.jlab.clara.msg.sys.xMsgConnectionFactory;
@@ -33,8 +33,8 @@ import org.jlab.clara.msg.sys.regdis.RegistrationDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType.PUBLISHER;
-import static org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType.SUBSCRIBER;
+import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.PUBLISHER;
+import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.SUBSCRIBER;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
@@ -71,7 +71,7 @@ public class xMsgTest {
     public void registerPublisher() throws Exception {
         core.register(xMsgRegInfo.publisher(topic, "test pub"), regAddr, 1000);
 
-        xMsgRegistration.Builder expected = createRegistration(PUBLISHER, topic);
+        RegData.Builder expected = createRegistration(PUBLISHER, topic);
         expected.setDescription("test pub");
 
         verify(driver).addRegistration(eq(name), eq(expected.build()), eq(1000L));
@@ -82,7 +82,7 @@ public class xMsgTest {
     public void registerSubscriber() throws Exception {
         core.register(xMsgRegInfo.subscriber(topic, "test sub"), regAddr, 1000);
 
-        xMsgRegistration.Builder expected = createRegistration(SUBSCRIBER, topic);
+        RegData.Builder expected = createRegistration(SUBSCRIBER, topic);
         expected.setDescription("test sub");
 
         verify(driver).addRegistration(eq(name), eq(expected.build()), eq(1000L));
@@ -93,7 +93,7 @@ public class xMsgTest {
     public void removePublisher() throws Exception {
         core.deregister(xMsgRegInfo.publisher(topic), regAddr, 1500);
 
-        xMsgRegistration.Builder expected = createRegistration(PUBLISHER, topic);
+        RegData.Builder expected = createRegistration(PUBLISHER, topic);
 
         verify(driver).removeRegistration(eq(name), eq(expected.build()), eq(1500L));
     }
@@ -103,7 +103,7 @@ public class xMsgTest {
     public void removeSubscriber() throws Exception {
         core.deregister(xMsgRegInfo.subscriber(topic), regAddr, 1500);
 
-        xMsgRegistration.Builder expected = createRegistration(SUBSCRIBER, topic);
+        RegData.Builder expected = createRegistration(SUBSCRIBER, topic);
 
         verify(driver).removeRegistration(eq(name), eq(expected.build()), eq(1500L));
     }
@@ -169,8 +169,7 @@ public class xMsgTest {
     }
 
 
-    private xMsgRegistration.Builder createRegistration(xMsgRegistration.OwnerType regType,
-                                                        xMsgTopic topic) {
+    private RegData.Builder createRegistration(RegData.OwnerType regType, xMsgTopic topic) {
         return RegistrationDataFactory.newRegistration(name, regType, topic.toString());
     }
 }

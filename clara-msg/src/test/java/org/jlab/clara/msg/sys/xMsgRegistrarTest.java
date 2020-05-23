@@ -25,10 +25,10 @@ package org.jlab.clara.msg.sys;
 
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
+import org.jlab.clara.msg.data.RegDataProto.RegData.Builder;
+import org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType;
 import org.jlab.clara.msg.data.xMsgRegQuery;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.Builder;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.net.xMsgRegAddress;
@@ -52,7 +52,7 @@ public class xMsgRegistrarTest {
 
     private xMsgRegDriver driver;
 
-    private Set<xMsgRegistration> registration = new HashSet<>();
+    private Set<RegData> registration = new HashSet<>();
     private String name = "registrat_test";
 
     @Test
@@ -118,7 +118,7 @@ public class xMsgRegistrarTest {
         System.out.println("INFO: Registering " + size + " random actors...");
         for (int i = 0; i < size; i++) {
             Builder rndReg = RegistrationDataFactory.randomRegistration();
-            xMsgRegistration data = rndReg.build();
+            RegData data = rndReg.build();
             driver.addRegistration(name, data);
             registration.add(data);
         }
@@ -131,12 +131,12 @@ public class xMsgRegistrarTest {
         int first = new Random().nextInt(registration.size() - size);
         int end = first + size;
         int i = 0;
-        Iterator<xMsgRegistration> it = registration.iterator();
+        Iterator<RegData> it = registration.iterator();
         while (it.hasNext()) {
             if (i == end) {
                 break;
             }
-            xMsgRegistration reg = it.next();
+            RegData reg = it.next();
             if (i >= first) {
                 it.remove();
                 driver.removeRegistration(name, reg);
@@ -195,16 +195,16 @@ public class xMsgRegistrarTest {
         ResultAssert checker = new ResultAssert("topic", regType);
         for (String topic : RegistrationDataFactory.testTopics) {
             Builder data = getQuery(regType).matching(xMsgTopic.wrap(topic)).data();
-            Predicate<xMsgRegistration> predicate = discoveryPredicate(regType, topic);
+            Predicate<RegData> predicate = discoveryPredicate(regType, topic);
 
-            Set<xMsgRegistration> result = driver.findRegistration(name, data.build());
-            Set<xMsgRegistration> expected = find(regType, predicate);
+            Set<RegData> result = driver.findRegistration(name, data.build());
+            Set<RegData> expected = find(regType, predicate);
 
             checker.assertThat(topic, result, expected);
         }
     }
 
-    private Predicate<xMsgRegistration> discoveryPredicate(OwnerType regType, String topic) {
+    private Predicate<RegData> discoveryPredicate(OwnerType regType, String topic) {
         final xMsgTopic searchTopic = xMsgTopic.wrap(topic);
         if (regType == OwnerType.PUBLISHER) {
             return r -> searchTopic.isParent(getTopic(r));
@@ -233,8 +233,8 @@ public class xMsgRegistrarTest {
         for (String domain : domains) {
             Builder data = getQuery(regType).withDomain(domain).data();
 
-            Set<xMsgRegistration> result = driver.filterRegistration(name, data.build());
-            Set<xMsgRegistration> expected = find(regType, e -> e.getDomain().equals(domain));
+            Set<RegData> result = driver.filterRegistration(name, data.build());
+            Set<RegData> expected = find(regType, e -> e.getDomain().equals(domain));
 
             checker.assertThat(domain, result, expected);
         }
@@ -252,8 +252,8 @@ public class xMsgRegistrarTest {
         for (String subject : subjects) {
             Builder data = getQuery(regType).withSubject(subject).data();
 
-            Set<xMsgRegistration> result = driver.filterRegistration(name, data.build());
-            Set<xMsgRegistration> expected = find(regType, e -> e.getSubject().equals(subject));
+            Set<RegData> result = driver.filterRegistration(name, data.build());
+            Set<RegData> expected = find(regType, e -> e.getSubject().equals(subject));
 
             checker.assertThat(subject, result, expected);
         }
@@ -271,8 +271,8 @@ public class xMsgRegistrarTest {
         for (String type : types) {
             Builder data = getQuery(regType).withType(type).data();
 
-            Set<xMsgRegistration> result = driver.filterRegistration(name, data.build());
-            Set<xMsgRegistration> expected = find(regType, e -> e.getType().equals(type));
+            Set<RegData> result = driver.filterRegistration(name, data.build());
+            Set<RegData> expected = find(regType, e -> e.getType().equals(type));
 
             checker.assertThat(type, result, expected);
         }
@@ -284,8 +284,8 @@ public class xMsgRegistrarTest {
         for (String host : RegistrationDataFactory.testHosts) {
             Builder data = getQuery(regType).withHost(host).data();
 
-            Set<xMsgRegistration> result = driver.filterRegistration(name, data.build());
-            Set<xMsgRegistration> expected = find(regType, e -> e.getHost().equals(host));
+            Set<RegData> result = driver.filterRegistration(name, data.build());
+            Set<RegData> expected = find(regType, e -> e.getHost().equals(host));
 
             checker.assertThat(host, result, expected);
         }
@@ -298,8 +298,8 @@ public class xMsgRegistrarTest {
             xMsgTopic searchTopic = xMsgTopic.wrap(topic);
             Builder data = getQuery(regType).withSame(searchTopic).data();
 
-            Set<xMsgRegistration> result = driver.sameRegistration(name, data.build());
-            Set<xMsgRegistration> expected = find(regType, r -> getTopic(r).equals(searchTopic));
+            Set<RegData> result = driver.sameRegistration(name, data.build());
+            Set<RegData> expected = find(regType, r -> getTopic(r).equals(searchTopic));
 
             checker.assertThat(topic, result, expected);
         }
@@ -309,8 +309,8 @@ public class xMsgRegistrarTest {
     private void allActors(OwnerType regType) throws xMsgException {
         Builder data = getQuery(regType).all().data();
 
-        Set<xMsgRegistration> result = driver.filterRegistration(name, data.build());
-        Set<xMsgRegistration> expected = find(regType, e -> true);
+        Set<RegData> result = driver.filterRegistration(name, data.build());
+        Set<RegData> expected = find(regType, e -> true);
 
         String owner = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
         if (result.equals(expected)) {
@@ -324,8 +324,8 @@ public class xMsgRegistrarTest {
     }
 
 
-    private Set<xMsgRegistration> find(OwnerType regType,
-                                       Predicate<xMsgRegistration> predicate) {
+    private Set<RegData> find(OwnerType regType,
+                                       Predicate<RegData> predicate) {
         return registration.stream()
                            .filter(r -> r.getOwnerType() == regType)
                            .filter(predicate)
@@ -333,7 +333,7 @@ public class xMsgRegistrarTest {
     }
 
 
-    private xMsgTopic getTopic(xMsgRegistration reg) {
+    private xMsgTopic getTopic(RegData reg) {
         return xMsgTopic.build(reg.getDomain(), reg.getSubject(), reg.getType());
     }
 
@@ -358,8 +358,8 @@ public class xMsgRegistrarTest {
         }
 
         private void assertThat(String data,
-                                Set<xMsgRegistration> result,
-                                Set<xMsgRegistration> expected) {
+                                Set<RegData> result,
+                                Set<RegData> expected) {
             if (result.equals(expected)) {
                 String owner = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
                 System.out.printf("Found %3d %s with %s %s%n",

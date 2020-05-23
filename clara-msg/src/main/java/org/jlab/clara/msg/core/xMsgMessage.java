@@ -24,8 +24,8 @@
 package org.jlab.clara.msg.core;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.jlab.clara.msg.data.xMsgD.xMsgData;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
+import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 import org.jlab.clara.msg.data.xMsgMimeType;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.zeromq.ZFrame;
@@ -43,7 +43,7 @@ import java.util.List;
  * An xMsg message is composed of a <i>topic</i>, <i>metadata</i> and binary data.
  * The {@link xMsgTopic topic} to which the message is published will be used by
  * subscribers to filter messages of interest.
- * The {@link xMsgMeta metadata} is a protobuf class with fields that can be
+ * The {@link MetaData metadata} is a protobuf class with fields that can be
  * used to describe the data of the message and the communication request the
  * message is part of. At minimum, the {@code dataType} field is required to
  * indicate the mime-type of the binary data.
@@ -58,7 +58,7 @@ import java.util.List;
 public class xMsgMessage {
 
     private final xMsgTopic topic;
-    private final xMsgMeta.Builder metaData;
+    private final MetaData.Builder metaData;
     private final byte[] data;
 
     /**
@@ -76,7 +76,7 @@ public class xMsgMessage {
      * @param metaData the metadata of the message
      * @param data     serialized data
      */
-    public xMsgMessage(xMsgTopic topic, xMsgMeta.Builder metaData, byte[] data) {
+    public xMsgMessage(xMsgTopic topic, MetaData.Builder metaData, byte[] data) {
         this.topic = topic;
         this.metaData = metaData;
         this.data = data;
@@ -100,7 +100,7 @@ public class xMsgMessage {
      */
     public xMsgMessage(xMsgTopic topic, String mimeType, byte[] data) {
         this.topic = topic;
-        this.metaData = xMsgMeta.newBuilder();
+        this.metaData = MetaData.newBuilder();
         this.metaData.setDataType(mimeType);
         this.data = data;
     }
@@ -122,7 +122,7 @@ public class xMsgMessage {
 
         try {
             this.topic = xMsgTopic.wrap(topicFrame.getData());
-            xMsgMeta metaDataObj = xMsgMeta.parseFrom(metaDataFrame.getData());
+            MetaData metaDataObj = MetaData.parseFrom(metaDataFrame.getData());
             this.metaData = metaDataObj.toBuilder();
             this.data = dataFrame.getData();
         } catch (InvalidProtocolBufferException e) {
@@ -158,7 +158,7 @@ public class xMsgMessage {
      *
      * @return a reference to the metadata of the message
      */
-    public xMsgMeta.Builder getMetaData() {
+    public MetaData.Builder getMetaData() {
         return metaData;
     }
 
@@ -260,47 +260,47 @@ public class xMsgMessage {
 
         byte[] ba = null;
         final String mimeType;
-        xMsgData.Builder xd = xMsgData.newBuilder();
+        PlainData.Builder pd = PlainData.newBuilder();
 
         if (data instanceof String) {
             mimeType = xMsgMimeType.STRING;
-            xd.setSTRING((String) data);
+            pd.setSTRING((String) data);
 
         } else if (data instanceof Integer) {
             mimeType = xMsgMimeType.SFIXED32;
-            xd.setFLSINT32((Integer) data);
+            pd.setFLSINT32((Integer) data);
 
         } else if (data instanceof Long) {
             mimeType = xMsgMimeType.SFIXED64;
-            xd.setFLSINT64((Long) data);
+            pd.setFLSINT64((Long) data);
 
         } else if (data instanceof Float) {
             mimeType = xMsgMimeType.FLOAT;
-            xd.setFLOAT((Float) data);
+            pd.setFLOAT((Float) data);
 
         } else if (data instanceof Double) {
             mimeType = xMsgMimeType.DOUBLE;
-            xd.setDOUBLE((Double) data);
+            pd.setDOUBLE((Double) data);
 
         } else if (data instanceof String[]) {
             mimeType = xMsgMimeType.ARRAY_STRING;
-            xd.addAllSTRINGA(Arrays.asList((String[]) data));
+            pd.addAllSTRINGA(Arrays.asList((String[]) data));
 
         } else if (data instanceof Integer[]) {
             mimeType = xMsgMimeType.ARRAY_SFIXED32;
-            xd.addAllFLSINT32A(Arrays.asList((Integer[]) data));
+            pd.addAllFLSINT32A(Arrays.asList((Integer[]) data));
 
         } else if (data instanceof Long[]) {
             mimeType = xMsgMimeType.ARRAY_SFIXED64;
-            xd.addAllFLSINT64A(Arrays.asList((Long[]) data));
+            pd.addAllFLSINT64A(Arrays.asList((Long[]) data));
 
         } else if (data instanceof Float[]) {
             mimeType = xMsgMimeType.ARRAY_FLOAT;
-            xd.addAllFLOATA(Arrays.asList((Float[]) data));
+            pd.addAllFLOATA(Arrays.asList((Float[]) data));
 
         } else if (data instanceof Double[]) {
             mimeType = xMsgMimeType.ARRAY_DOUBLE;
-            xd.addAllDOUBLEA(Arrays.asList((Double[]) data));
+            pd.addAllDOUBLEA(Arrays.asList((Double[]) data));
 
         } else if (data instanceof byte[]) {
             mimeType = xMsgMimeType.BYTES;
@@ -316,7 +316,7 @@ public class xMsgMessage {
         }
 
         if (ba == null) {
-            ba = xd.build().toByteArray();
+            ba = pd.build().toByteArray();
         }
 
         return new xMsgMessage(topic, mimeType, ba);
@@ -335,66 +335,66 @@ public class xMsgMessage {
             String dataType = message.getMimeType();
 
             if (dataType.equals(xMsgMimeType.STRING)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasSTRING()) {
-                    return xd.getSTRING();
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasSTRING()) {
+                    return pd.getSTRING();
                 }
 
             } else if (dataType.equals(xMsgMimeType.SFIXED32)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasFLSINT32()) {
-                    return xd.getFLSINT32();
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasFLSINT32()) {
+                    return pd.getFLSINT32();
                 }
 
             } else if (dataType.equals(xMsgMimeType.SFIXED64)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasFLSINT64()) {
-                    return xd.getFLSINT64();
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasFLSINT64()) {
+                    return pd.getFLSINT64();
                 }
 
             } else if (dataType.equals(xMsgMimeType.FLOAT)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasFLOAT()) {
-                    return xd.getFLOAT();
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasFLOAT()) {
+                    return pd.getFLOAT();
                 }
 
             } else if (dataType.equals(xMsgMimeType.DOUBLE)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasDOUBLE()) {
-                    return xd.getDOUBLE();
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasDOUBLE()) {
+                    return pd.getDOUBLE();
                 }
 
             } else if (dataType.equals(xMsgMimeType.ARRAY_STRING)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<String> list = xd.getSTRINGAList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<String> list = pd.getSTRINGAList();
                 if (!list.isEmpty()) {
                     return list.toArray(new String[0]);
                 }
 
             } else if (dataType.equals(xMsgMimeType.ARRAY_SFIXED32)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<Integer> list = xd.getFLSINT32AList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<Integer> list = pd.getFLSINT32AList();
                 if (!list.isEmpty()) {
                     return list.toArray(new Integer[0]);
                 }
 
             } else if (dataType.equals(xMsgMimeType.ARRAY_SFIXED64)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<Long> list = xd.getFLSINT64AList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<Long> list = pd.getFLSINT64AList();
                 if (!list.isEmpty()) {
                     return list.toArray(new Long[0]);
                 }
 
             } else if (dataType.equals(xMsgMimeType.ARRAY_FLOAT)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<Float> list = xd.getFLOATAList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<Float> list = pd.getFLOATAList();
                 if (!list.isEmpty()) {
                     return list.toArray(new Float[0]);
                 }
 
             } else if (dataType.equals(xMsgMimeType.ARRAY_DOUBLE)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<Double> list = xd.getDOUBLEAList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<Double> list = pd.getDOUBLEAList();
                 if (!list.isEmpty()) {
                     return list.toArray(new Double[0]);
                 }
@@ -435,70 +435,70 @@ public class xMsgMessage {
             byte[] data = message.getData();
 
             if (dataType.equals(String.class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasSTRING()) {
-                    return dataType.cast(xd.getSTRING());
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasSTRING()) {
+                    return dataType.cast(pd.getSTRING());
                 }
 
             } else if (dataType.equals(Integer.class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasFLSINT32()) {
-                    return dataType.cast(xd.getFLSINT32());
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasFLSINT32()) {
+                    return dataType.cast(pd.getFLSINT32());
                 }
 
             } else if (dataType.equals(Long.class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasFLSINT64()) {
-                    return dataType.cast(xd.getFLSINT64());
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasFLSINT64()) {
+                    return dataType.cast(pd.getFLSINT64());
                 }
 
             } else if (dataType.equals(Float.class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasFLOAT()) {
-                    return dataType.cast(xd.getFLOAT());
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasFLOAT()) {
+                    return dataType.cast(pd.getFLOAT());
                 }
 
             } else if (dataType.equals(Double.class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                if (xd.hasDOUBLE()) {
-                    return dataType.cast(xd.getDOUBLE());
+                PlainData pd = PlainData.parseFrom(data);
+                if (pd.hasDOUBLE()) {
+                    return dataType.cast(pd.getDOUBLE());
                 }
 
             } else if (dataType.equals(String[].class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<String> list = xd.getSTRINGAList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<String> list = pd.getSTRINGAList();
                 if (!list.isEmpty()) {
                     String[] array = list.toArray(new String[0]);
                     return dataType.cast(array);
                 }
 
             } else if (dataType.equals(Integer[].class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<Integer> list = xd.getFLSINT32AList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<Integer> list = pd.getFLSINT32AList();
                 if (!list.isEmpty()) {
                     Integer[] array = list.toArray(new Integer[0]);
                     return dataType.cast(array);
                 }
 
             } else if (dataType.equals(Long[].class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<Long> list = xd.getFLSINT64AList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<Long> list = pd.getFLSINT64AList();
                 if (!list.isEmpty()) {
                     Long[] array = list.toArray(new Long[0]);
                     return dataType.cast(array);
                 }
 
             } else if (dataType.equals(Float[].class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<Float> list = xd.getFLOATAList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<Float> list = pd.getFLOATAList();
                 if (!list.isEmpty()) {
                     Float[] array = list.toArray(new Float[0]);
                     return dataType.cast(array);
                 }
 
             } else if (dataType.equals(Double[].class)) {
-                xMsgData xd = xMsgData.parseFrom(data);
-                List<Double> list = xd.getDOUBLEAList();
+                PlainData pd = PlainData.parseFrom(data);
+                List<Double> list = pd.getDOUBLEAList();
                 if (!list.isEmpty()) {
                     Double[] array = list.toArray(new Double[0]);
                     return dataType.cast(array);
@@ -529,7 +529,7 @@ public class xMsgMessage {
      */
     public static xMsgMessage createResponse(xMsgMessage msg) {
         xMsgTopic resTopic = xMsgTopic.wrap(msg.metaData.getReplyTo());
-        xMsgMeta.Builder resMeta = xMsgMeta.newBuilder(msg.metaData.build());
+        MetaData.Builder resMeta = MetaData.newBuilder(msg.metaData.build());
         resMeta.clearReplyTo();
         return new xMsgMessage(resTopic, resMeta, msg.data);
     }

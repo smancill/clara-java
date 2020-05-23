@@ -33,7 +33,7 @@ import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.util.report.ReportType;
 
@@ -151,8 +151,8 @@ public final class ClaraRequests {
 
         @Override
         Boolean parseData(xMsgMessage msg) throws ClaraException {
-            xMsgMeta.Status status = msg.getMetaData().getStatus();
-            if (status == xMsgMeta.Status.ERROR) {
+            MetaData.Status status = msg.getMetaData().getStatus();
+            if (status == MetaData.Status.ERROR) {
                 // TODO: use specific "request" exception
                 throw new ClaraException(new String(msg.getData()));
             }
@@ -308,13 +308,13 @@ public final class ClaraRequests {
                 extends BaseRequest<D, T> {
 
         private final EngineData userData;
-        private final xMsgMeta.ControlAction action;
+        private final MetaData.ControlAction action;
         private final Composition composition;
 
         protected Set<EngineDataType> dataTypes;
 
         ServiceRequest(ClaraBase base, ClaraComponent frontEnd, ServiceName service,
-                       xMsgMeta.ControlAction action,
+                       MetaData.ControlAction action,
                        EngineData data, Set<EngineDataType> dataTypes) {
             super(base, frontEnd, service.canonicalName());
             this.userData = data;
@@ -324,7 +324,7 @@ public final class ClaraRequests {
         }
 
         ServiceRequest(ClaraBase base, ClaraComponent frontEnd, Composition composition,
-                       xMsgMeta.ControlAction action,
+                       MetaData.ControlAction action,
                        EngineData data, Set<EngineDataType> dataTypes) {
             super(base, frontEnd, composition.firstService());
             this.userData = data;
@@ -362,7 +362,7 @@ public final class ClaraRequests {
         @Override
         xMsgMessage msg() throws ClaraException {
             xMsgMessage msg = DataUtil.serialize(topic, userData, dataTypes);
-            xMsgMeta.Builder meta = msg.getMetaData();
+            MetaData.Builder meta = msg.getMetaData();
             meta.setAuthor(base.getName());
             meta.setAction(action);
             meta.setComposition(composition.toString());
@@ -379,7 +379,7 @@ public final class ClaraRequests {
         ServiceConfigRequest(ClaraBase base, ClaraComponent frontEnd, ServiceName service,
                              EngineData data, Set<EngineDataType> dataTypes) {
             super(base, frontEnd, service,
-                  xMsgMeta.ControlAction.CONFIGURE, data, dataTypes);
+                  MetaData.ControlAction.CONFIGURE, data, dataTypes);
         }
 
         @Override
@@ -398,7 +398,7 @@ public final class ClaraRequests {
                               Composition composition,
                               EngineData data, Set<EngineDataType> dataTypes) {
             super(base, frontEnd, composition,
-                  xMsgMeta.ControlAction.EXECUTE, data, dataTypes);
+                  MetaData.ControlAction.EXECUTE, data, dataTypes);
         }
 
         @Override

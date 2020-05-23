@@ -31,8 +31,8 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jlab.clara.msg.data.xMsgD.xMsgData;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
+import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 import org.jlab.clara.msg.data.xMsgMimeType;
 import org.junit.jupiter.api.Test;
 
@@ -104,7 +104,7 @@ public class xMsgMessageTest {
     @Test
     public void createWithoutByteOrder() throws Exception {
         byte[] data = new byte[] {0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
-        xMsgMeta.Builder meta = xMsgMeta.newBuilder();
+        MetaData.Builder meta = MetaData.newBuilder();
         meta.setDataType("test/binary");
 
         xMsgMessage msg = new xMsgMessage(testTopic, meta, data);
@@ -116,8 +116,8 @@ public class xMsgMessageTest {
     @Test
     public void createAndSetByteOrder() throws Exception {
         byte[] data = new byte[] {0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
-        xMsgMeta.Builder meta = xMsgMeta.newBuilder();
-        meta.setByteOrder(xMsgMeta.Endian.Little);
+        MetaData.Builder meta = MetaData.newBuilder();
+        meta.setByteOrder(MetaData.Endian.Little);
         meta.setDataType("test/binary");
 
         xMsgMessage msg = new xMsgMessage(testTopic, meta, data);
@@ -129,7 +129,7 @@ public class xMsgMessageTest {
     @Test
     public void createSimpleResponse() throws Exception {
         byte[] data = new byte[] {0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
-        xMsgMeta.Builder meta = xMsgMeta.newBuilder();
+        MetaData.Builder meta = MetaData.newBuilder();
         meta.setReplyTo("return_123");
         meta.setDataType("test/binary");
 
@@ -145,7 +145,7 @@ public class xMsgMessageTest {
     @Test
     public void createDataResponse() throws Exception {
         byte[] data = new byte[] {0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
-        xMsgMeta.Builder meta = xMsgMeta.newBuilder();
+        MetaData.Builder meta = MetaData.newBuilder();
         meta.setReplyTo("return_123");
         meta.setDataType("test/binary");
 
@@ -153,7 +153,7 @@ public class xMsgMessageTest {
         xMsgMessage res = xMsgMessage.createResponse(msg, 1000);
 
         assertThat(res.getTopic().toString(), is("return_123"));
-        assertThat(xMsgData.parseFrom(res.getData()).getFLSINT32(), is(1000));
+        assertThat(PlainData.parseFrom(res.getData()).getFLSINT32(), is(1000));
         assertThat(res.getMetaData().getDataType(), is(xMsgMimeType.SFIXED32));
         assertFalse(res.getMetaData().hasReplyTo());
     }

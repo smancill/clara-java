@@ -23,13 +23,11 @@
 
 option optimize_for = SPEED;
 
-option java_outer_classname = "xMsgM";
+option java_outer_classname = "MetaDataProto";
 
 package org.jlab.clara.msg.data;
 
-
-// ... Metta-data class ...
-message xMsgMeta {
+message MetaData {
 
     // ... Communication section ...
     // Version
@@ -114,5 +112,4 @@ message xMsgMeta {
     enum SubControlAction {
         SKIP = 0;
     }
-
 }

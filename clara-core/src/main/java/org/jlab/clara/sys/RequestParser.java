@@ -25,19 +25,19 @@ package org.jlab.clara.sys;
 
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.data.xMsgM.xMsgMetaOrBuilder;
+import org.jlab.clara.msg.data.MetaDataProto.MetaDataOrBuilder;
 
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 final class RequestParser {
 
-    private final xMsgMetaOrBuilder cmdMeta;
+    private final MetaDataOrBuilder cmdMeta;
     private final String cmdData;
     private final StringTokenizer tokenizer;
 
 
-    private RequestParser(xMsgMetaOrBuilder meta, String data) {
+    private RequestParser(MetaDataOrBuilder meta, String data) {
         cmdMeta = meta;
         cmdData = data;
         tokenizer = new StringTokenizer(cmdData, ClaraConstants.DATA_SEP);

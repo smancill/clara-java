@@ -25,8 +25,8 @@ package org.jlab.clara.msg.sys.regdis;
 
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.data.xMsgRegQuery;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.Builder;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
+import org.jlab.clara.msg.data.RegDataProto.RegData.Builder;
 import org.jlab.clara.msg.net.xMsgRegAddress;
 import org.jlab.clara.msg.net.xMsgSocketFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,8 +38,8 @@ import java.util.Set;
 
 import static org.jlab.clara.msg.sys.regdis.RegistrationDataFactory.newRegistration;
 
-import static org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType.PUBLISHER;
-import static org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType.SUBSCRIBER;
+import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.PUBLISHER;
+import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.SUBSCRIBER;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -205,18 +205,18 @@ public class xMsgRegDriverTest {
 
         Builder pub1 = newRegistration("bradbury1", PUBLISHER, topic);
         Builder pub2 = newRegistration("bradbury2", PUBLISHER, topic);
-        Set<xMsgRegistration> regData = new HashSet<>(Arrays.asList(pub1.build(), pub2.build()));
+        Set<RegData> regData = new HashSet<>(Arrays.asList(pub1.build(), pub2.build()));
 
         setResponse(new xMsgRegResponse("", "", regData));
 
-        Set<xMsgRegistration> regRes = driver.findRegistration(sender, data.build());
+        Set<RegData> regRes = driver.findRegistration(sender, data.build());
 
         assertThat(regRes, is(regData));
     }
 
 
 
-    private void assertRequest(xMsgRegistration data, String topic, long timeout)
+    private void assertRequest(RegData data, String topic, long timeout)
             throws Exception {
         xMsgRegRequest request = new xMsgRegRequest(topic, sender, data);
         verify(driver).request(request, timeout);

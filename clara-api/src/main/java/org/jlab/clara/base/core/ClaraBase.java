@@ -32,7 +32,6 @@ import org.jlab.clara.msg.core.xMsgSetup;
 import org.jlab.clara.msg.core.xMsgSubscription;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.data.xMsgR;
 import org.jlab.clara.msg.data.xMsgRegInfo;
 import org.jlab.clara.msg.data.xMsgRegQuery;
 import org.jlab.clara.msg.data.xMsgRegRecord;
@@ -316,7 +315,7 @@ public class ClaraBase extends xMsg {
      * @param regHost registrar server host
      * @param regPort registrar server port
      * @param topic   the canonical name of an actor: {@link xMsgTopic}
-     * @return set of {@link xMsgR.xMsgRegistration} objects
+     * @return set of {@link org.jlab.clara.msg.data.RegDataProto.RegData} objects
      * @throws IOException
      * @throws xMsgException
      */
@@ -332,7 +331,7 @@ public class ClaraBase extends xMsg {
      *
      * @param regHost registrar server host
      * @param topic   the canonical name of an actor: {@link xMsgTopic}
-     * @return set of {@link xMsgR.xMsgRegistration} objects
+     * @return set of {@link org.jlab.clara.msg.data.RegDataProto.RegData} objects
      * @throws IOException
      * @throws xMsgException
      */
@@ -347,7 +346,7 @@ public class ClaraBase extends xMsg {
      * assuming registrar is running on a local host, using the default port.
      *
      * @param topic the canonical name of an actor: {@link xMsgTopic}
-     * @return set of {@link xMsgR.xMsgRegistration} objects
+     * @return set of {@link org.jlab.clara.msg.data.RegDataProto.RegData} objects
      * @throws IOException
      * @throws xMsgException
      */

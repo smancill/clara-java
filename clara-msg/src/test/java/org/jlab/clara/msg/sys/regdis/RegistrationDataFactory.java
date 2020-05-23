@@ -25,8 +25,8 @@ package org.jlab.clara.msg.sys.regdis;
 
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.Builder;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType;
+import org.jlab.clara.msg.data.RegDataProto.RegData.Builder;
+import org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType;
 
 import java.util.Random;
 

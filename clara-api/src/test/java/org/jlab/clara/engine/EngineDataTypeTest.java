@@ -23,8 +23,8 @@
 
 package org.jlab.clara.engine;
 
-import org.jlab.clara.msg.data.xMsgD.xMsgData;
-import org.jlab.clara.msg.data.xMsgD.xMsgPayload;
+import org.jlab.clara.msg.data.PlainDataProto.PayloadData;
+import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -114,7 +114,7 @@ public class EngineDataTypeTest {
 
     @Test
     public void testNativeDataSerializer() throws Exception {
-        xMsgData.Builder builder = xMsgData.newBuilder();
+        PlainData.Builder builder = PlainData.newBuilder();
 
         builder.setFLSINT32(56);
         builder.setDOUBLE(5.6);
@@ -126,7 +126,7 @@ public class EngineDataTypeTest {
         ClaraSerializer s = dt.serializer();
 
         ByteBuffer b = s.write(builder.build());
-        xMsgData d = (xMsgData) s.read(b);
+        PlainData d = (PlainData) s.read(b);
 
         assertThat(d, is(builder.build()));
     }
@@ -134,23 +134,23 @@ public class EngineDataTypeTest {
 
     @Test
     public void testNativePayloadSerializer() throws Exception {
-        xMsgPayload.Builder payload = xMsgPayload.newBuilder();
+        PayloadData.Builder payload = PayloadData.newBuilder();
 
-        xMsgData data1 = xMsgData.newBuilder()
-                                 .addDOUBLEA(1)
-                                 .addDOUBLEA(4.5)
-                                 .addDOUBLEA(5.8)
-                                 .build();
-        xMsgPayload.Item.Builder item1 = xMsgPayload.Item.newBuilder();
+        PlainData data1 = PlainData.newBuilder()
+                                   .addDOUBLEA(1)
+                                   .addDOUBLEA(4.5)
+                                   .addDOUBLEA(5.8)
+                                   .build();
+        PayloadData.Item.Builder item1 = PayloadData.Item.newBuilder();
         item1.setData(data1);
         item1.setName("doubles");
 
-        xMsgData data2 = xMsgData.newBuilder()
-                                 .addFLOATA(4.3f)
-                                 .addFLOATA(4.5f)
-                                 .addFLOATA(5.8f)
-                                 .build();
-        xMsgPayload.Item.Builder item2 = xMsgPayload.Item.newBuilder();
+        PlainData data2 = PlainData.newBuilder()
+                                   .addFLOATA(4.3f)
+                                   .addFLOATA(4.5f)
+                                   .addFLOATA(5.8f)
+                                   .build();
+        PayloadData.Item.Builder item2 = PayloadData.Item.newBuilder();
         item2.setData(data2);
         item2.setName("floats");
 
@@ -159,7 +159,7 @@ public class EngineDataTypeTest {
         ClaraSerializer s = dt.serializer();
 
         ByteBuffer b = s.write(payload.build());
-        xMsgPayload p = (xMsgPayload) s.read(b);
+        PayloadData p = (PayloadData) s.read(b);
 
         assertThat(p, is(payload.build()));
     }

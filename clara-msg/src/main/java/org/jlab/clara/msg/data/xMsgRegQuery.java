@@ -24,7 +24,7 @@
 package org.jlab.clara.msg.data;
 
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.sys.regdis.xMsgRegFactory;
 import org.jlab.clara.msg.net.xMsgAddressUtils;
 
@@ -33,7 +33,7 @@ import org.jlab.clara.msg.net.xMsgAddressUtils;
  */
 public final class xMsgRegQuery {
 
-    private final xMsgRegistration.Builder data;
+    private final RegData.Builder data;
     private final Category category;
 
     /**
@@ -52,7 +52,7 @@ public final class xMsgRegQuery {
      * @return a queries factory
      */
     public static Factory publishers() {
-        return new Factory(xMsgRegistration.OwnerType.PUBLISHER);
+        return new Factory(RegData.OwnerType.PUBLISHER);
     }
 
     /**
@@ -71,7 +71,7 @@ public final class xMsgRegQuery {
      * @return a queries factory
      */
     public static Factory subscribers() {
-        return new Factory(xMsgRegistration.OwnerType.SUBSCRIBER);
+        return new Factory(RegData.OwnerType.SUBSCRIBER);
     }
 
 
@@ -99,9 +99,9 @@ public final class xMsgRegQuery {
      */
     public static final class Factory {
 
-        private final xMsgRegistration.Builder data;
+        private final RegData.Builder data;
 
-        private Factory(xMsgRegistration.OwnerType type) {
+        private Factory(RegData.OwnerType type) {
             data = xMsgRegFactory.newFilter(type);
         }
 
@@ -189,7 +189,7 @@ public final class xMsgRegQuery {
     }
 
 
-    private xMsgRegQuery(xMsgRegistration.Builder data, Category category) {
+    private xMsgRegQuery(RegData.Builder data, Category category) {
         this.data = data;
         this.category = category;
     }
@@ -199,7 +199,7 @@ public final class xMsgRegQuery {
      *
      * @return the query as a registration data object
      */
-    public xMsgRegistration.Builder data() {
+    public RegData.Builder data() {
         return data;
     }
 

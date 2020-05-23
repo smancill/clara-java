@@ -23,8 +23,7 @@
 
 package org.jlab.clara.msg.sys.regdis;
 
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgRegAddress;
 import org.jlab.clara.msg.net.xMsgSocketFactory;
@@ -113,7 +112,7 @@ public class xMsgRegDriver {
      * @param data the registration data
      * @throws xMsgException
      */
-    public void addRegistration(String sender, xMsgRegistration data)
+    public void addRegistration(String sender, RegData data)
             throws xMsgException {
         addRegistration(sender, data, xMsgRegConstants.REGISTRATION_TIMEOUT);
     }
@@ -126,7 +125,7 @@ public class xMsgRegDriver {
      * @param timeout the milliseconds to wait for a response
      * @throws xMsgException
      */
-    public void addRegistration(String sender, xMsgRegistration data, long timeout)
+    public void addRegistration(String sender, RegData data, long timeout)
             throws xMsgException {
         String topic = selectTopic(data.getOwnerType(),
                                    xMsgRegConstants.REGISTER_PUBLISHER,
@@ -143,7 +142,7 @@ public class xMsgRegDriver {
      * @param data the registration data
      * @throws xMsgException
      */
-    public void removeRegistration(String sender, xMsgRegistration data)
+    public void removeRegistration(String sender, RegData data)
             throws xMsgException {
         removeRegistration(sender, data, xMsgRegConstants.REGISTRATION_TIMEOUT);
     }
@@ -156,7 +155,7 @@ public class xMsgRegDriver {
      * @param timeout the milliseconds to wait for a response
      * @throws xMsgException
      */
-    public void removeRegistration(String sender, xMsgRegistration data, long timeout)
+    public void removeRegistration(String sender, RegData data, long timeout)
             throws xMsgException {
         String topic = selectTopic(data.getOwnerType(),
                                    xMsgRegConstants.REMOVE_PUBLISHER,
@@ -210,7 +209,7 @@ public class xMsgRegDriver {
      * @return set of publishers or subscribers to the required topic.
      * @throws xMsgException
      */
-    public Set<xMsgRegistration> findRegistration(String sender, xMsgRegistration data)
+    public Set<RegData> findRegistration(String sender, RegData data)
             throws xMsgException {
         return findRegistration(sender, data, xMsgRegConstants.DISCOVERY_TIMEOUT);
     }
@@ -226,9 +225,7 @@ public class xMsgRegDriver {
      * @return set of publishers or subscribers to the required topic.
      * @throws xMsgException
      */
-    public Set<xMsgRegistration> findRegistration(String sender,
-                                                  xMsgRegistration data,
-                                                  long timeout)
+    public Set<RegData> findRegistration(String sender, RegData data, long timeout)
             throws xMsgException {
         String topic = selectTopic(data.getOwnerType(),
                                    xMsgRegConstants.FIND_PUBLISHER,
@@ -259,7 +256,7 @@ public class xMsgRegDriver {
      * @return set of publishers or subscribers that match the given terms.
      * @throws xMsgException
      */
-    public Set<xMsgRegistration> filterRegistration(String sender, xMsgRegistration data)
+    public Set<RegData> filterRegistration(String sender, RegData data)
             throws xMsgException {
         return filterRegistration(sender, data, xMsgRegConstants.DISCOVERY_TIMEOUT);
     }
@@ -285,9 +282,7 @@ public class xMsgRegDriver {
      * @return set of publishers or subscribers that match the given terms.
      * @throws xMsgException
      */
-    public Set<xMsgRegistration> filterRegistration(String sender,
-                                                    xMsgRegistration data,
-                                                    long timeout)
+    public Set<RegData> filterRegistration(String sender, RegData data, long timeout)
             throws xMsgException {
         String topic = selectTopic(data.getOwnerType(),
                                    xMsgRegConstants.FILTER_PUBLISHER,
@@ -317,8 +312,7 @@ public class xMsgRegDriver {
      * @return set of publishers or subscribers that have the exact same topic.
      * @throws xMsgException
      */
-    public Set<xMsgRegistration> sameRegistration(String sender,
-                                                  xMsgRegistration data)
+    public Set<RegData> sameRegistration(String sender, RegData data)
             throws xMsgException {
         return sameRegistration(sender, data, xMsgRegConstants.DISCOVERY_TIMEOUT);
     }
@@ -343,9 +337,7 @@ public class xMsgRegDriver {
      * @return set of publishers or subscribers that have the exact same topic.
      * @throws xMsgException
      */
-    public Set<xMsgRegistration> sameRegistration(String sender,
-                                                  xMsgRegistration data,
-                                                  long timeout)
+    public Set<RegData> sameRegistration(String sender, RegData data, long timeout)
             throws xMsgException {
         String topic = selectTopic(data.getOwnerType(),
                                    xMsgRegConstants.EXACT_PUBLISHER,
@@ -365,7 +357,7 @@ public class xMsgRegDriver {
      * @return set of publishers or subscribers to the required topic.
      * @throws xMsgException
      */
-    public Set<xMsgRegistration> allRegistration(String sender, xMsgRegistration data)
+    public Set<RegData> allRegistration(String sender, RegData data)
             throws xMsgException {
         return allRegistration(sender, data, xMsgRegConstants.DISCOVERY_TIMEOUT);
     }
@@ -380,9 +372,7 @@ public class xMsgRegDriver {
      * @return set of publishers or subscribers to the required topic.
      * @throws xMsgException
      */
-    public Set<xMsgRegistration> allRegistration(String sender,
-                                                 xMsgRegistration data,
-                                                 long timeout)
+    public Set<RegData> allRegistration(String sender, RegData data, long timeout)
             throws xMsgException {
         String topic = selectTopic(data.getOwnerType(),
                                    xMsgRegConstants.ALL_PUBLISHER,
@@ -409,7 +399,7 @@ public class xMsgRegDriver {
     }
 
 
-    private static String selectTopic(OwnerType type, String pubTopic, String subTopic) {
+    private static String selectTopic(RegData.OwnerType type, String pubTopic, String subTopic) {
         switch (type) {
             case PUBLISHER: return pubTopic;
             case SUBSCRIBER: return subTopic;

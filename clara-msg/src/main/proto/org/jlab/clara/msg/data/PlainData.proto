@@ -22,12 +22,11 @@
  */
 
 option optimize_for = SPEED;
-option java_outer_classname = "xMsgD";
+option java_outer_classname = "PlainDataProto";
 
 package org.jlab.clara.msg.data;
 
-// ... Data class ...
-message xMsgData {
+message PlainData {
 
     optional sint32 VLSINT32 = 1; // variable length signed int32
     optional sint64 VLSINT64 = 2; // variable length signed int64
@@ -49,12 +48,11 @@ message xMsgData {
 
 }
 
-//... Payload class ...
-message xMsgPayload {
+message PayloadData {
 
     message Item {
         required string name =1; // payload name
-        required xMsgData data = 2; // data
+        required PlainData data = 2; // data
     }
 
     repeated Item item = 1;

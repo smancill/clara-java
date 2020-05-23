@@ -24,7 +24,7 @@
 package org.jlab.clara.engine;
 
 import org.jlab.clara.base.core.DataUtil.EngineDataAccessor;
-import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 
 /**
  * Engine data passed in/out to the service engine.
@@ -32,22 +32,22 @@ import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
 public class EngineData {
 
     private Object data;
-    private xMsgMeta.Builder metadata;
+    private MetaData.Builder metadata;
 
     /**
      * Creates an empty engine data object.
      * The user-data must be set with {@link #setData}.
      */
     public EngineData() {
-        this.metadata = xMsgMeta.newBuilder();
+        this.metadata = MetaData.newBuilder();
     }
 
-    private EngineData(Object data, xMsgMeta.Builder metadata) {
+    private EngineData(Object data, MetaData.Builder metadata) {
         this.data = data;
         this.metadata = metadata;
     }
 
-    private xMsgMeta.Builder getMetadata() {
+    private MetaData.Builder getMetadata() {
         return metadata;
     }
 
@@ -143,7 +143,7 @@ public class EngineData {
      * @return the status of the data
      */
     public EngineStatus getStatus() {
-        xMsgMeta.Status status = metadata.getStatus();
+        MetaData.Status status = metadata.getStatus();
         switch (status) {
             case INFO:
                 return EngineStatus.INFO;
@@ -194,13 +194,13 @@ public class EngineData {
         }
         switch (status) {
             case INFO:
-                metadata.setStatus(xMsgMeta.Status.INFO);
+                metadata.setStatus(MetaData.Status.INFO);
                 break;
             case WARNING:
-                metadata.setStatus(xMsgMeta.Status.WARNING);
+                metadata.setStatus(MetaData.Status.WARNING);
                 break;
             case ERROR:
-                metadata.setStatus(xMsgMeta.Status.ERROR);
+                metadata.setStatus(MetaData.Status.ERROR);
                 break;
             default:
                 throw new IllegalStateException("Unknown status " + status);
@@ -332,12 +332,12 @@ public class EngineData {
     private static class Accessor extends EngineDataAccessor {
 
         @Override
-        protected xMsgMeta.Builder getMetadata(EngineData data) {
+        protected MetaData.Builder getMetadata(EngineData data) {
             return data.getMetadata();
         }
 
         @Override
-        protected EngineData build(Object data, xMsgMeta.Builder metadata) {
+        protected EngineData build(Object data, MetaData.Builder metadata) {
             return new EngineData(data, metadata);
         }
     }

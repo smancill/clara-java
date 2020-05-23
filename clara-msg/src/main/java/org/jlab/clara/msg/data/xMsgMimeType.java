@@ -27,8 +27,9 @@ package org.jlab.clara.msg.data;
  * Predefined types supported by xMsg.
  * <p>
  * Primitive and arrays of primitives will be stored inside a
- * {@link org.jlab.clara.msg.core.xMsgMessage} as part of
- * a protocol buffers {@link org.jlab.clara.msg.data.xMsgD.xMsgData} object.
+ * {@link org.jlab.clara.msg.core.xMsgMessage xMsgMessage} as part of
+ * a protocol buffers
+ * {@link org.jlab.clara.msg.data.PlainDataProto.PlainData PlainData} object.
  * Language specific types will be serialized and stored as a byte-array
  * (serialization for these types only work on actors of the same language).
  *
@@ -119,9 +120,9 @@ public final class xMsgMimeType {
     public static final String ARRAY_BYTES = "binary/array-bytes";
 
     /**
-     * A {@link org.jlab.clara.msg.data.xMsgD.xMsgData} object.
+     * A {@link org.jlab.clara.msg.data.PlainDataProto.PlainData PlainData} object.
      */
-    public static final String XMSG_DATA = "binary/native";
+    public static final String PLAIN_DATA = "binary/clara-plain";
 
     /**
      * A Java object.

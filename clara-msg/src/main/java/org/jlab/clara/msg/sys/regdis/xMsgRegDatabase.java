@@ -24,7 +24,7 @@
 package org.jlab.clara.msg.sys.regdis;
 
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  */
 class xMsgRegDatabase {
 
-    private final ConcurrentMap<String, ConcurrentMap<xMsgTopic, Set<xMsgRegistration>>>
+    private final ConcurrentMap<String, ConcurrentMap<xMsgTopic, Set<RegData>>>
             db = new ConcurrentHashMap<>();
 
     /**
@@ -51,14 +51,14 @@ class xMsgRegDatabase {
      *
      * @param regData the description of the actor
      */
-    public void register(xMsgRegistration regData) {
-        ConcurrentMap<xMsgTopic, Set<xMsgRegistration>> map =
+    public void register(RegData regData) {
+        ConcurrentMap<xMsgTopic, Set<RegData>> map =
                 db.computeIfAbsent(regData.getDomain(), k -> new ConcurrentHashMap<>());
         xMsgTopic key = generateKey(regData);
         if (map.containsKey(key)) {
             map.get(key).add(regData);
         } else {
-            Set<xMsgRegistration> regSet = new HashSet<>();
+            Set<RegData> regSet = new HashSet<>();
             regSet.add(regData);
             map.put(key, regSet);
         }
@@ -70,14 +70,14 @@ class xMsgRegDatabase {
      *
      * @param regData the description of the actor
      */
-    public void remove(xMsgRegistration regData) {
-        ConcurrentMap<xMsgTopic, Set<xMsgRegistration>> map = db.get(regData.getDomain());
+    public void remove(RegData regData) {
+        ConcurrentMap<xMsgTopic, Set<RegData>> map = db.get(regData.getDomain());
         if (map == null) {
             return;
         }
         xMsgTopic key = generateKey(regData);
         if (map.containsKey(key)) {
-            Set<xMsgRegistration> set = map.get(key);
+            Set<RegData> set = map.get(key);
             set.removeIf(r -> r.getName().equals(regData.getName())
                            && r.getHost().equals(regData.getHost()));
             if (set.isEmpty()) {
@@ -95,10 +95,10 @@ class xMsgRegDatabase {
      * @param host the host of the actors that should be removed
      */
     public void remove(String host) {
-        for (ConcurrentMap<xMsgTopic, Set<xMsgRegistration>> map : db.values()) {
-            Iterator<Entry<xMsgTopic, Set<xMsgRegistration>>> dbIt = map.entrySet().iterator();
+        for (ConcurrentMap<xMsgTopic, Set<RegData>> map : db.values()) {
+            Iterator<Entry<xMsgTopic, Set<RegData>>> dbIt = map.entrySet().iterator();
             while (dbIt.hasNext()) {
-                Entry<xMsgTopic, Set<xMsgRegistration>> dbEntry = dbIt.next();
+                Entry<xMsgTopic, Set<RegData>> dbEntry = dbIt.next();
                 dbEntry.getValue().removeIf(reg -> reg.getHost().equals(host));
                 if (dbEntry.getValue().isEmpty()) {
                     dbIt.remove();
@@ -108,7 +108,7 @@ class xMsgRegDatabase {
     }
 
 
-    private xMsgTopic generateKey(xMsgRegistration regData) {
+    private xMsgTopic generateKey(RegData regData) {
         return xMsgTopic.build(regData.getDomain(), regData.getSubject(), regData.getType());
     }
 
@@ -136,9 +136,9 @@ class xMsgRegDatabase {
      * @param type the searched type (it can be undefined)
      * @return the set of all actors that are matched by the topic
      */
-    public Set<xMsgRegistration> find(String domain, String subject, String type) {
-        Set<xMsgRegistration> result = new HashSet<>();
-        ConcurrentMap<xMsgTopic, Set<xMsgRegistration>> map = db.get(domain);
+    public Set<RegData> find(String domain, String subject, String type) {
+        Set<RegData> result = new HashSet<>();
+        ConcurrentMap<xMsgTopic, Set<RegData>> map = db.get(domain);
         if (map == null) {
             return result;
         }
@@ -175,9 +175,9 @@ class xMsgRegDatabase {
      * @param type the searched type (it can be undefined)
      * @return the set of all actors that match the topic
      */
-    public Set<xMsgRegistration> rfind(String domain, String subject, String type) {
-        Set<xMsgRegistration> result = new HashSet<>();
-        ConcurrentMap<xMsgTopic, Set<xMsgRegistration>> map = db.get(domain);
+    public Set<RegData> rfind(String domain, String subject, String type) {
+        Set<RegData> result = new HashSet<>();
+        ConcurrentMap<xMsgTopic, Set<RegData>> map = db.get(domain);
         if (map == null) {
             return result;
         }
@@ -208,13 +208,13 @@ class xMsgRegDatabase {
      * @param data the searched terms
      * @return the set of all actors that match the terms
      */
-    public Set<xMsgRegistration> filter(xMsgRegistration data) {
+    public Set<RegData> filter(RegData data) {
         Filter filter = new Filter(data);
-        for (Entry<String, ConcurrentMap<xMsgTopic, Set<xMsgRegistration>>> level : db.entrySet()) {
+        for (Entry<String, ConcurrentMap<xMsgTopic, Set<RegData>>> level : db.entrySet()) {
             if (!filter.matchDomain(level.getKey())) {
                 continue;
             }
-            for (Entry<xMsgTopic, Set<xMsgRegistration>> entry : level.getValue().entrySet()) {
+            for (Entry<xMsgTopic, Set<RegData>> entry : level.getValue().entrySet()) {
                 filter.filter(entry.getKey(), entry.getValue());
             }
         }
@@ -245,9 +245,9 @@ class xMsgRegDatabase {
      * @param type the searched type (it can be undefined)
      * @return the set of all actors that have the same topic
      */
-    public Set<xMsgRegistration> same(String domain, String subject, String type) {
-        Set<xMsgRegistration> result = new HashSet<>();
-        ConcurrentMap<xMsgTopic, Set<xMsgRegistration>> map = db.get(domain);
+    public Set<RegData> same(String domain, String subject, String type) {
+        Set<RegData> result = new HashSet<>();
+        ConcurrentMap<xMsgTopic, Set<RegData>> map = db.get(domain);
         if (map == null) {
             return result;
         }
@@ -266,7 +266,7 @@ class xMsgRegDatabase {
      *
      * @return the set of all actors
      */
-    public Set<xMsgRegistration> all() {
+    public Set<RegData> all() {
         return db.values()
                  .stream()
                  .flatMap(m -> m.values().stream())
@@ -293,7 +293,7 @@ class xMsgRegDatabase {
      *
      * @see #topics
      */
-    public Set<xMsgRegistration> get(String topic) {
+    public Set<RegData> get(String topic) {
         return get(xMsgTopic.wrap(topic));
     }
 
@@ -303,12 +303,12 @@ class xMsgRegDatabase {
      *
      * @see #topics
      */
-    public Set<xMsgRegistration> get(xMsgTopic topic) {
-        ConcurrentMap<xMsgTopic, Set<xMsgRegistration>> map = db.get(topic.domain());
+    public Set<RegData> get(xMsgTopic topic) {
+        ConcurrentMap<xMsgTopic, Set<RegData>> map = db.get(topic.domain());
         if (map == null) {
             return new HashSet<>();
         }
-        Set<xMsgRegistration> result = map.get(topic);
+        Set<RegData> result = map.get(topic);
         if (result == null) {
             return new HashSet<>();
         }
@@ -319,7 +319,7 @@ class xMsgRegDatabase {
 
     private final class Filter {
 
-        private final Set<xMsgRegistration> result = new HashSet<>();
+        private final Set<RegData> result = new HashSet<>();
 
         private final TopicFilter domain;
         private final TopicFilter subject;
@@ -349,21 +349,21 @@ class xMsgRegDatabase {
             private final String host;
             private final int port;
 
-            private AddressFilter(xMsgRegistration data) {
+            private AddressFilter(RegData data) {
                 this.host = data.getHost();
                 this.port = data.getPort();
                 this.filter = !host.equals(xMsgRegConstants.UNDEFINED);
             }
         }
 
-        private Filter(xMsgRegistration data) {
+        private Filter(RegData data) {
             this.domain = new TopicFilter(data.getDomain());
             this.subject = new TopicFilter(data.getSubject());
             this.type = new TopicFilter(data.getType());
             this.address = new AddressFilter(data);
         }
 
-        public void filter(xMsgTopic topic, Set<xMsgRegistration> actors) {
+        public void filter(xMsgTopic topic, Set<RegData> actors) {
             if (matchTopic(topic)) {
                 if (filterAddress()) {
                     actors.stream().filter(this::matchAddress).forEach(result::add);
@@ -377,7 +377,7 @@ class xMsgRegDatabase {
             return address.filter;
         }
 
-        public Set<xMsgRegistration> result() {
+        public Set<RegData> result() {
             return result;
         }
 
@@ -391,7 +391,7 @@ class xMsgRegDatabase {
                 && (type.any    || topic.type().equals(type.value));
         }
 
-        public boolean matchAddress(xMsgRegistration actor) {
+        public boolean matchAddress(RegData actor) {
             return actor.getHost().equals(address.host)
                     && (address.port == 0 || actor.getPort() == address.port);
         }
