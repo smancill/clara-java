@@ -214,9 +214,9 @@ project(':clara-msg') {
     }
 
     javadoc {
-        exclude "org/jlab/coda/xmsg/examples/**"
-        exclude "org/jlab/coda/xmsg/net/*Factory.java"
-        exclude "org/jlab/coda/xmsg/sys/*/*.java"
+        exclude "org/jlab/clara/msg/examples/**"
+        exclude "org/jlab/clara/msg/net/*Factory.java"
+        exclude "org/jlab/clara/msg/sys/*/*.java"
     }
 
     integrationTest {

@@ -46,7 +46,7 @@ import org.jlab.clara.base.DpeName;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingTopic;
 import org.jlab.clara.util.EnvUtils;
-import org.jlab.coda.xmsg.core.xMsgUtil;
+import org.jlab.clara.msg.core.xMsgUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

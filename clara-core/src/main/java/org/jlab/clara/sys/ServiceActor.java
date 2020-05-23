@@ -26,11 +26,11 @@ package org.jlab.clara.sys;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.core.xMsgConnection;
-import org.jlab.coda.xmsg.core.xMsgConnectionPool;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.xMsgConnection;
+import org.jlab.clara.msg.core.xMsgConnectionPool;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 class ServiceActor {
 

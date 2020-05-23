@@ -27,10 +27,10 @@ import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.util.EnvUtils;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.sys.report.ContainerReport;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.excp.xMsgException;
+import org.jlab.clara.util.EnvUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -23,10 +23,10 @@
 
 package org.jlab.clara.base.core;
 
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgMimeType;
+import org.jlab.clara.msg.core.xMsgConstants;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.data.xMsgMimeType;
 
 public final class MessageUtil {
 

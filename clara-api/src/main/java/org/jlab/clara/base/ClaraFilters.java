@@ -23,9 +23,9 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgRegQuery;
-import org.jlab.coda.xmsg.data.xMsgRegRecord;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.data.xMsgRegQuery;
+import org.jlab.clara.msg.data.xMsgRegRecord;
 
 /**
  * The standard filters to select CLARA DPEs, containers or services.

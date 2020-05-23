@@ -26,8 +26,8 @@ package org.jlab.clara.engine;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.data.xMsgD.xMsgData;
-import org.jlab.coda.xmsg.data.xMsgD.xMsgPayload;
+import org.jlab.clara.msg.data.xMsgD.xMsgData;
+import org.jlab.clara.msg.data.xMsgD.xMsgPayload;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;

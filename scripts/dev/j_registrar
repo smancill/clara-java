@@ -2,4 +2,4 @@
 
 exec ./scripts/exec-class \
     clara-msg \
-    org.jlab.coda.xmsg.sys.xMsgRegistrar "$@"
+    org.jlab.clara.msg.sys.xMsgRegistrar "$@"

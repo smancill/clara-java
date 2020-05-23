@@ -25,12 +25,12 @@ package org.jlab.clara.base.core;
 
 import org.jlab.clara.base.ClaraUtil;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.core.xMsgConnection;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgMimeType;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.xMsgConnection;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.data.xMsgMimeType;
+import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

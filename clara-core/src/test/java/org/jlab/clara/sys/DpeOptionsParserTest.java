@@ -23,8 +23,8 @@
 
 package org.jlab.clara.sys;
 
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 import org.jlab.clara.sys.DpeOptionsParser.DpeOptionsException;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

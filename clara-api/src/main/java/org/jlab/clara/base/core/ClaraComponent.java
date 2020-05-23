@@ -25,9 +25,9 @@ package org.jlab.clara.base.core;
 
 // checkstyle.off: ParameterNumber
 import org.jlab.clara.base.ClaraUtil;
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.xMsgConstants;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 import java.text.MessageFormat;
 
@@ -561,7 +561,7 @@ public final class ClaraComponent {
      * Returns the topic of the CLARA component, i.e. the topic of the xMsg subscriber.
      * Note that all CLARA components are registered as xMsg subscribers.
      *
-     * @return {@link org.jlab.coda.xmsg.core.xMsgTopic} object
+     * @return {@link xMsgTopic} object
      */
     public xMsgTopic getTopic() {
         return topic;
@@ -659,7 +659,7 @@ public final class ClaraComponent {
     /**
      * Returns the DPE proxy address.
      *
-     * @return {@link org.jlab.coda.xmsg.net.xMsgProxyAddress} object
+     * @return {@link xMsgProxyAddress} object
      */
     public xMsgProxyAddress getProxyAddress() {
         return new xMsgProxyAddress(getDpeHost(), getDpePort());

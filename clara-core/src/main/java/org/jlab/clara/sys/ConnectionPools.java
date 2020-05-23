@@ -23,9 +23,9 @@
 
 package org.jlab.clara.sys;
 
-import org.jlab.coda.xmsg.core.xMsgConnectionPool;
-import org.jlab.coda.xmsg.core.xMsgUtil;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.xMsgConnectionPool;
+import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 class ConnectionPools implements AutoCloseable {
 

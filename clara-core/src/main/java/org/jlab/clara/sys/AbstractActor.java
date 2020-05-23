@@ -27,12 +27,12 @@ import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.core.xMsgCallBack;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgSubscription;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
-import org.jlab.coda.xmsg.excp.xMsgException;
+import org.jlab.clara.msg.core.xMsgCallBack;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgSubscription;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.errors.xMsgException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

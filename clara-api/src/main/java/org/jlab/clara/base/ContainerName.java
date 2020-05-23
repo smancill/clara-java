@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.core.xMsgConstants;
+import org.jlab.clara.msg.core.xMsgConstants;
 
 /**
  * Unique identifier of a CLARA container.

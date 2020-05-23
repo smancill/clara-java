@@ -24,21 +24,22 @@
 package org.jlab.clara.base.core;
 
 import org.jlab.clara.base.error.ClaraException;
+import org.jlab.clara.msg.core.xMsg;
+import org.jlab.clara.msg.core.xMsgCallBack;
+import org.jlab.clara.msg.core.xMsgConnection;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgSetup;
+import org.jlab.clara.msg.core.xMsgSubscription;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.data.xMsgR;
+import org.jlab.clara.msg.data.xMsgRegInfo;
+import org.jlab.clara.msg.data.xMsgRegQuery;
+import org.jlab.clara.msg.data.xMsgRegRecord;
+import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgRegAddress;
 import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.report.ReportType;
-import org.jlab.coda.xmsg.core.xMsg;
-import org.jlab.coda.xmsg.core.xMsgCallBack;
-import org.jlab.coda.xmsg.core.xMsgConnection;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgSetup;
-import org.jlab.coda.xmsg.core.xMsgSubscription;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.core.xMsgUtil;
-import org.jlab.coda.xmsg.data.xMsgRegInfo;
-import org.jlab.coda.xmsg.data.xMsgRegQuery;
-import org.jlab.coda.xmsg.data.xMsgRegRecord;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgRegAddress;
 
 import java.io.IOException;
 import java.util.Set;
@@ -314,8 +315,8 @@ public class ClaraBase extends xMsg {
      *
      * @param regHost registrar server host
      * @param regPort registrar server port
-     * @param topic   the canonical name of an actor: {@link org.jlab.coda.xmsg.core.xMsgTopic}
-     * @return set of {@link org.jlab.coda.xmsg.data.xMsgR.xMsgRegistration} objects
+     * @param topic   the canonical name of an actor: {@link xMsgTopic}
+     * @return set of {@link xMsgR.xMsgRegistration} objects
      * @throws IOException
      * @throws xMsgException
      */
@@ -330,8 +331,8 @@ public class ClaraBase extends xMsg {
      * assuming registrar is running using the default port.
      *
      * @param regHost registrar server host
-     * @param topic   the canonical name of an actor: {@link org.jlab.coda.xmsg.core.xMsgTopic}
-     * @return set of {@link org.jlab.coda.xmsg.data.xMsgR.xMsgRegistration} objects
+     * @param topic   the canonical name of an actor: {@link xMsgTopic}
+     * @return set of {@link xMsgR.xMsgRegistration} objects
      * @throws IOException
      * @throws xMsgException
      */
@@ -345,8 +346,8 @@ public class ClaraBase extends xMsg {
      * Retrieves CLARA actor registration information from the xMsg registrar service,
      * assuming registrar is running on a local host, using the default port.
      *
-     * @param topic the canonical name of an actor: {@link org.jlab.coda.xmsg.core.xMsgTopic}
-     * @return set of {@link org.jlab.coda.xmsg.data.xMsgR.xMsgRegistration} objects
+     * @param topic the canonical name of an actor: {@link xMsgTopic}
+     * @return set of {@link xMsgR.xMsgRegistration} objects
      * @throws IOException
      * @throws xMsgException
      */
@@ -364,7 +365,7 @@ public class ClaraBase extends xMsg {
      *
      * @param component dpe as a {@link ClaraComponent#dpe()} object
      * @param timeout sync request timeout
-     * @return message {@link org.jlab.coda.xmsg.core.xMsgMessage}
+     * @return message {@link xMsgMessage}
      *         back from a dpe.
      * @throws IOException
      * @throws xMsgException

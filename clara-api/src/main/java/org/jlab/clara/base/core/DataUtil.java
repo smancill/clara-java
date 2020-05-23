@@ -28,9 +28,9 @@ import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -55,7 +55,7 @@ public final class DataUtil {
      * which is hidden to users.
      *
      * @param data {@link org.jlab.clara.engine.EngineData} object
-     * @return {@link org.jlab.coda.xmsg.data.xMsgM.xMsgMeta.Builder} object
+     * @return {@link xMsgMeta.Builder} object
      */
     public static xMsgMeta.Builder getMetadata(EngineData data) {
         return DATA_ACCESSOR.getMetadata(data);
@@ -100,13 +100,13 @@ public final class DataUtil {
     }
 
     /**
-     * De-serializes data of the message {@link org.jlab.coda.xmsg.core.xMsgMessage},
+     * De-serializes data of the message {@link xMsgMessage},
      * represented as a byte[] into an object of az type defined using the mimeType/dataType
      * of the meta-data (also as a part of the xMsgMessage). Second argument is used to
      * pass the serialization routine as a method of the
      * {@link org.jlab.clara.engine.EngineDataType} object.
      *
-     * @param msg {@link org.jlab.coda.xmsg.core.xMsgMessage} object
+     * @param msg {@link xMsgMessage} object
      * @param dataTypes set of {@link org.jlab.clara.engine.EngineDataType} objects
      * @return {@link org.jlab.clara.engine.EngineData} object containing de-serialized data object
      *          and metadata

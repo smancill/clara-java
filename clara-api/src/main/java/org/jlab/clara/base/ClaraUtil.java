@@ -26,9 +26,9 @@ package org.jlab.clara.base;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.engine.EngineDataType;
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.core.xMsgUtil;
+import org.jlab.clara.msg.core.xMsgConstants;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.xMsgUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

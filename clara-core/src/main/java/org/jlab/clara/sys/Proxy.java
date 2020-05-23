@@ -25,10 +25,10 @@ package org.jlab.clara.sys;
 
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.core.xMsgUtil;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgContext;
-import org.jlab.coda.xmsg.sys.xMsgProxy;
+import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgContext;
+import org.jlab.clara.msg.sys.xMsgProxy;
 
 class Proxy {
 

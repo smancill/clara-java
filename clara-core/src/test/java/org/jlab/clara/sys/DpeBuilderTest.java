@@ -23,8 +23,8 @@
 
 package org.jlab.clara.sys;
 
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 import org.jlab.clara.sys.Dpe.Builder;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;

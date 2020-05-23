@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.data.xMsgRegQuery;
+import org.jlab.clara.msg.data.xMsgRegQuery;
 
 /**
  * A filter to select services.

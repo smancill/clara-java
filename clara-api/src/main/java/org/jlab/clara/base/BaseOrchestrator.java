@@ -34,8 +34,8 @@ import org.jlab.clara.base.ClaraSubscriptions.ServiceSubscriptionBuilder;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.engine.EngineDataType;
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgSubscription;
+import org.jlab.clara.msg.core.xMsgConstants;
+import org.jlab.clara.msg.core.xMsgSubscription;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;

@@ -23,8 +23,8 @@
 
 package org.jlab.clara.engine;
 
-import org.jlab.coda.xmsg.data.xMsgD.xMsgData;
-import org.jlab.coda.xmsg.data.xMsgD.xMsgPayload;
+import org.jlab.clara.msg.data.xMsgD.xMsgData;
+import org.jlab.clara.msg.data.xMsgD.xMsgPayload;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;

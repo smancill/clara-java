@@ -31,11 +31,11 @@ import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.util.report.ReportType;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
-import org.jlab.coda.xmsg.excp.xMsgException;
 
 import java.util.Collections;
 import java.util.HashSet;

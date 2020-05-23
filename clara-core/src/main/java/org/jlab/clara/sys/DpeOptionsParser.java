@@ -28,8 +28,8 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 import org.jlab.clara.util.OptUtils;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
 
 import java.util.concurrent.TimeUnit;
 

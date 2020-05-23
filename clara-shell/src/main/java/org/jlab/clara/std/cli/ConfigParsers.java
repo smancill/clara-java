@@ -25,7 +25,7 @@ package org.jlab.clara.std.cli;
 
 import org.jlab.clara.util.ArgUtils;
 import org.jlab.clara.util.FileUtils;
-import org.jlab.coda.xmsg.core.xMsgUtil;
+import org.jlab.clara.msg.core.xMsgUtil;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

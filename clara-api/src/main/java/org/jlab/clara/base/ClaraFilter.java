@@ -23,8 +23,8 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.data.xMsgRegQuery;
-import org.jlab.coda.xmsg.data.xMsgRegRecord;
+import org.jlab.clara.msg.data.xMsgRegQuery;
+import org.jlab.clara.msg.data.xMsgRegRecord;
 import org.json.JSONObject;
 
 import java.util.ArrayList;

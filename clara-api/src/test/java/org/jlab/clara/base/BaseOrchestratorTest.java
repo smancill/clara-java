@@ -30,9 +30,9 @@ import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

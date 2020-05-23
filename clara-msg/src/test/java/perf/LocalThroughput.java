@@ -25,12 +25,12 @@ package perf;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.jlab.coda.xmsg.core.xMsg;
-import org.jlab.coda.xmsg.core.xMsgSubscription;
-import org.jlab.coda.xmsg.core.xMsgTopic;
+import org.jlab.clara.msg.core.xMsg;
+import org.jlab.clara.msg.core.xMsgSubscription;
+import org.jlab.clara.msg.core.xMsgTopic;
 
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 public final class LocalThroughput {
 

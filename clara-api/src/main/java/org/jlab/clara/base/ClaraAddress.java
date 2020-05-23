@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 /**
  * The address where a CLARA component is listening messages.

@@ -31,9 +31,9 @@ import org.jlab.clara.base.DataRingTopic;
 import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.error.ClaraException;
+import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingListener;
-import org.jlab.coda.xmsg.core.xMsgConstants;
 
 import java.util.Arrays;
 import java.util.List;

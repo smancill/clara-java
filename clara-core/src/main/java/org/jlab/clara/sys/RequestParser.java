@@ -24,8 +24,8 @@
 package org.jlab.clara.sys;
 
 import org.jlab.clara.base.core.ClaraConstants;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMetaOrBuilder;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.data.xMsgM.xMsgMetaOrBuilder;
 
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;

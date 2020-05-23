@@ -23,13 +23,13 @@
 
 package perf;
 
-import org.jlab.coda.xmsg.core.xMsg;
-import org.jlab.coda.xmsg.core.xMsgConnection;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgContext;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.xMsg;
+import org.jlab.clara.msg.core.xMsgConnection;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgContext;
+import org.jlab.clara.msg.net.xMsgProxyAddress;
 
 public final class RemoteThroughput {
 

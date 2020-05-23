@@ -28,16 +28,16 @@ import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
+import org.jlab.clara.msg.core.xMsgCallBack;
+import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.data.xMsgM.xMsgMeta.Builder;
+import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgContext;
+import org.jlab.clara.msg.sys.xMsgRegistrar;
 import org.jlab.clara.sys.RequestParser.RequestException;
-import org.jlab.coda.xmsg.core.xMsgCallBack;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.core.xMsgUtil;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta.Builder;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgContext;
-import org.jlab.coda.xmsg.sys.xMsgRegistrar;
 
 class FrontEnd {
 
