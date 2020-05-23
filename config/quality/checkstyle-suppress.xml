@@ -10,6 +10,7 @@
   <suppress checks="Javadoc.*" files="org[\\/]jlab[\\/]clara[\\/]sys[\\/]ccc"/>
   <suppress checks="Javadoc.*" files="org[\\/]jlab[\\/]clara[\\/]sys[\\/]report"/>
   <suppress checks="Javadoc.*" files="org[\\/]jlab[\\/]clara[\\/]util"/>
+  <suppress checks="Javadoc.*" files="org[\\/]jlab[\\/]coda[\\/]xmsg[\\/]sys[\\/].+[\\/].+\.java"/>
   <suppress checks="Javadoc.*" files=".*Test\.java"/>
 
   <!-- TODO remove once checkstyle#7064 is done -->

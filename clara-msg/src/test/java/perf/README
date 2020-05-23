@@ -3,7 +3,7 @@ on several terminals:
 
 1. Start an xMsg proxy:
 
-    $ ./scripts/dev/jx_proxy
+    $ ./scripts/dev/j_proxy
 
 2. Start the subscriber. Pass the message size and the expected number of
    messages:

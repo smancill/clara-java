@@ -99,7 +99,7 @@ public class xMsgRegistrar {
     }
 
     private static void usage(PrintStream out) {
-        out.printf("usage: jx_registrar [options]%n%n  Options:%n");
+        out.printf("usage: j_registrar [options]%n%n  Options:%n");
         out.printf("  %-22s  %s%n", "-port <port>", "use the given port");
         out.printf("  %-22s  %s%n", "-verbose", "print debug information");
     }
