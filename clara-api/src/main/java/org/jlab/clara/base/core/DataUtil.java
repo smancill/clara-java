@@ -28,8 +28,8 @@ import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 
 import java.nio.ByteBuffer;
@@ -70,9 +70,9 @@ public final class DataUtil {
      * @param dataTypes the set of registered data types
      * @throws ClaraException if the data could not be serialized
      */
-    public static xMsgMessage serialize(xMsgTopic topic,
-                                        EngineData data,
-                                        Set<EngineDataType> dataTypes)
+    public static Message serialize(Topic topic,
+                                    EngineData data,
+                                    Set<EngineDataType> dataTypes)
             throws ClaraException {
 
         MetaData.Builder metadata = DATA_ACCESSOR.getMetadata(data);
@@ -86,7 +86,7 @@ public final class DataUtil {
                     } else {
                         metadata.setByteOrder(MetaData.Endian.Little);
                     }
-                    return new xMsgMessage(topic, metadata, bb.array());
+                    return new Message(topic, metadata, bb.array());
                 } catch (ClaraException e) {
                     throw new ClaraException("Could not serialize " + mimeType, e);
                 }
@@ -94,25 +94,25 @@ public final class DataUtil {
         }
         if (mimeType.equals(EngineDataType.STRING.mimeType())) {
             ByteBuffer bb = EngineDataType.STRING.serializer().write(data.getData());
-            return new xMsgMessage(topic, metadata, bb.array());
+            return new Message(topic, metadata, bb.array());
         }
         throw new ClaraException("Unsupported mime-type = " + mimeType);
     }
 
     /**
-     * De-serializes data of the message {@link xMsgMessage},
+     * De-serializes data of the message {@link Message},
      * represented as a byte[] into an object of az type defined using the mimeType/dataType
-     * of the meta-data (also as a part of the xMsgMessage). Second argument is used to
+     * of the meta-data (also as a part of the Message). Second argument is used to
      * pass the serialization routine as a method of the
      * {@link org.jlab.clara.engine.EngineDataType} object.
      *
-     * @param msg {@link xMsgMessage} object
+     * @param msg {@link Message} object
      * @param dataTypes set of {@link org.jlab.clara.engine.EngineDataType} objects
      * @return {@link org.jlab.clara.engine.EngineData} object containing de-serialized data object
      *          and metadata
      * @throws ClaraException
      */
-    public static EngineData deserialize(xMsgMessage msg, Set<EngineDataType> dataTypes)
+    public static EngineData deserialize(Message msg, Set<EngineDataType> dataTypes)
             throws ClaraException {
         MetaData.Builder metadata = msg.getMetaData();
         String mimeType = metadata.getDataType();

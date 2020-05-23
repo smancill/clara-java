@@ -25,12 +25,12 @@ package perf;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.jlab.clara.msg.core.xMsg;
-import org.jlab.clara.msg.core.xMsgSubscription;
-import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.Actor;
+import org.jlab.clara.msg.core.Subscription;
+import org.jlab.clara.msg.core.Topic;
 
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.ProxyAddress;
 
 public final class LocalThroughput {
 
@@ -55,12 +55,12 @@ public final class LocalThroughput {
         final CountDownLatch finished = new CountDownLatch(1);
         final Timer timer = new Timer();
 
-        try (xMsg subscriber = new xMsg("throughput_subscriber", 1)) {
+        try (Actor subscriber = new Actor("throughput_subscriber", 1)) {
 
-            xMsgProxyAddress address = new xMsgProxyAddress(bindTo);
-            xMsgTopic topic = xMsgTopic.wrap("thr_topic");
+            ProxyAddress address = new ProxyAddress(bindTo);
+            Topic topic = Topic.wrap("thr_topic");
 
-            xMsgSubscription sub = subscriber.subscribe(address, topic, msg -> {
+            Subscription sub = subscriber.subscribe(address, topic, msg -> {
                 int size = msg.getDataSize();
                 if (size != messageSize) {
                     printf("Message of incorrect size received " + size);
@@ -95,7 +95,7 @@ public final class LocalThroughput {
 
             subscriber.unsubscribe(sub);
 
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             e.printStackTrace();
             System.exit(1);
         } catch (InterruptedException e) {

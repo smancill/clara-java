@@ -13,7 +13,7 @@
   <Match>
     <Or>
       <Class name="~.*\.*Test" />
-      <Class name="~.*\.RegistrationDataFactory" />
+      <Class name="~.*\.RegDataFactory" />
     </Or>
     <Bug category="MALICIOUS_CODE" />
   </Match>

@@ -23,11 +23,11 @@
 
 package org.jlab.clara.msg.examples;
 
-import org.jlab.clara.msg.core.xMsg;
-import org.jlab.clara.msg.core.xMsgConnection;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgRegInfo;
+import org.jlab.clara.msg.core.Actor;
+import org.jlab.clara.msg.core.Connection;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.RegInfo;
 
 /**
  * An example of a publisher that publishes data for ever.
@@ -36,7 +36,7 @@ import org.jlab.clara.msg.data.xMsgRegInfo;
  *
  * Published data is a byte array with a specified size.
  */
-public class Publisher extends xMsg {
+public class Publisher extends Actor {
 
     Publisher() {
         super("test_publisher");
@@ -57,10 +57,10 @@ public class Publisher extends xMsg {
             String subject = "test_subject";
             String type = "test_type";
             String description = "test_description";
-            xMsgTopic topic = xMsgTopic.build(domain, subject, type);
+            Topic topic = Topic.build(domain, subject, type);
 
             // register this publisher
-            publisher.register(xMsgRegInfo.publisher(topic, description));
+            publisher.register(RegInfo.publisher(topic, description));
 
             // get the data size to be sent periodically
             int dataSize = Integer.parseInt(args[0]);
@@ -70,12 +70,12 @@ public class Publisher extends xMsg {
             byte[] b = new byte[dataSize];
 
             // create the data message to the specified topic
-            xMsgMessage msg = new xMsgMessage(topic, "data/binary", b);
+            Message msg = new Message(topic, "data/binary", b);
 
             System.out.printf("Publishing to = %s%n", topic);
 
             // connect to the local proxy
-            try (xMsgConnection con = publisher.getConnection()) {
+            try (Connection con = publisher.getConnection()) {
                 // publish data for ever
                 while (true) {
                     publisher.publish(con, msg);

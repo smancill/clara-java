@@ -23,12 +23,12 @@
 
 package org.jlab.clara.msg.examples;
 
-import org.jlab.clara.msg.core.xMsg;
-import org.jlab.clara.msg.core.xMsgConnection;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.data.xMsgRegInfo;
+import org.jlab.clara.msg.core.Actor;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Connection;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.RegInfo;
 
 /**
  * An example of a publisher that sync publishes data for ever.
@@ -39,7 +39,7 @@ import org.jlab.clara.msg.data.xMsgRegInfo;
  *
  * Published data is a hard-coded integer.
  */
-public class SyncPublisher extends xMsg {
+public class SyncPublisher extends Actor {
 
     SyncPublisher() {
         super("test_sync_publisher");
@@ -53,29 +53,29 @@ public class SyncPublisher extends xMsg {
             final String subject = "test_subject";
             final String type = "test_type";
             final String description = "test_description";
-            xMsgTopic topic = xMsgTopic.build(domain, subject, type);
+            Topic topic = Topic.build(domain, subject, type);
 
             // register this publisher
-            publisher.register(xMsgRegInfo.publisher(topic, description));
+            publisher.register(RegInfo.publisher(topic, description));
 
             // create a simple message
-            xMsgMessage msg = xMsgMessage.createFrom(topic, 111);
+            Message msg = Message.createFrom(topic, 111);
 
             // connect to the local proxy
-            try (xMsgConnection con = publisher.getConnection()) {
+            try (Connection con = publisher.getConnection()) {
                 int counter = 1;
                 while (true) {
                     System.out.println("Publishing " + counter);
                     long t1 = System.nanoTime();
 
                     //sync publish data. Note this will block for up to 5sec for data to arrive.
-                    /* xMsgMessage recData = */ publisher.syncPublish(con, msg, 5000);
+                    /* Message recData = */ publisher.syncPublish(con, msg, 5000);
 
                     long t2 = System.nanoTime();
                     double delta = (t2 - t1) / 1000000.0;
                     System.out.printf("Received response in %.3f ms%n", delta);
                     counter++;
-                    xMsgUtil.sleep(100);
+                    ActorUtils.sleep(100);
                 }
             }
         } catch (Exception e) {

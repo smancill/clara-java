@@ -2,4 +2,4 @@
 
 exec ./scripts/exec-class \
     clara-msg \
-    org.jlab.clara.msg.sys.xMsgProxy "$@"
+    org.jlab.clara.msg.sys.Proxy "$@"

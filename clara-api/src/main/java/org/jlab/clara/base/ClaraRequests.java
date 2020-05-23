@@ -31,10 +31,10 @@ import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MetaDataProto.MetaData;
-import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.util.report.ReportType;
 
 import java.util.Collections;
@@ -61,14 +61,14 @@ public final class ClaraRequests {
         final ClaraBase base;
 
         final ClaraComponent frontEnd;
-        final xMsgTopic topic;
+        final Topic topic;
 
         BaseRequest(ClaraBase base,
                     ClaraComponent frontEnd,
                     String topic) {
             this.base = base;
             this.frontEnd = frontEnd;
-            this.topic = xMsgTopic.wrap(topic);
+            this.topic = Topic.wrap(topic);
         }
 
         /**
@@ -79,7 +79,7 @@ public final class ClaraRequests {
         public void run() throws ClaraException {
             try {
                 base.send(frontEnd, msg());
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 throw new ClaraException("Cannot send message", e);
             }
         }
@@ -99,9 +99,9 @@ public final class ClaraRequests {
                     throw new IllegalArgumentException("Invalid timeout: " + wait);
                 }
                 long timeout = unit.toMillis(wait);
-                xMsgMessage response = base.syncSend(frontEnd, msg(), timeout);
+                Message response = base.syncSend(frontEnd, msg(), timeout);
                 return parseData(response);
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 throw new ClaraException("Cannot sync send message", e);
             }
         }
@@ -116,14 +116,14 @@ public final class ClaraRequests {
          *
          * @throws ClaraException if the message could not be created
          */
-        abstract xMsgMessage msg() throws ClaraException;
+        abstract Message msg() throws ClaraException;
 
         /**
          * Parses the data returned by a sync request.
          *
          * @throws ClaraException if the data could not be parsed
          */
-        abstract T parseData(xMsgMessage msg) throws ClaraException;
+        abstract T parseData(Message msg) throws ClaraException;
     }
 
     /**
@@ -143,14 +143,14 @@ public final class ClaraRequests {
         abstract String getData();
 
         @Override
-        xMsgMessage msg() throws ClaraException {
-            xMsgMessage msg = MessageUtil.buildRequest(topic, getData());
+        Message msg() throws ClaraException {
+            Message msg = MessageUtil.buildRequest(topic, getData());
             msg.getMetaData().setAuthor(base.getName());
             return msg;
         }
 
         @Override
-        Boolean parseData(xMsgMessage msg) throws ClaraException {
+        Boolean parseData(Message msg) throws ClaraException {
             MetaData.Status status = msg.getMetaData().getStatus();
             if (status == MetaData.Status.ERROR) {
                 // TODO: use specific "request" exception
@@ -360,8 +360,8 @@ public final class ClaraRequests {
         }
 
         @Override
-        xMsgMessage msg() throws ClaraException {
-            xMsgMessage msg = DataUtil.serialize(topic, userData, dataTypes);
+        Message msg() throws ClaraException {
+            Message msg = DataUtil.serialize(topic, userData, dataTypes);
             MetaData.Builder meta = msg.getMetaData();
             meta.setAuthor(base.getName());
             meta.setAction(action);
@@ -383,7 +383,7 @@ public final class ClaraRequests {
         }
 
         @Override
-        EngineData parseData(xMsgMessage msg) throws ClaraException {
+        EngineData parseData(Message msg) throws ClaraException {
             return DataUtil.deserialize(msg, dataTypes);
         }
     }
@@ -402,7 +402,7 @@ public final class ClaraRequests {
         }
 
         @Override
-        EngineData parseData(xMsgMessage msg) throws ClaraException {
+        EngineData parseData(Message msg) throws ClaraException {
             return DataUtil.deserialize(msg, dataTypes);
         }
     }

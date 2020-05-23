@@ -123,12 +123,12 @@ public class EngineDataType {
      */
     public static final EngineDataType JSON = buildJson();
     /**
-     * A native xMsg data object.
+     * A native data object.
      */
     public static final EngineDataType NATIVE_DATA = buildNative();
 
     /**
-     * A native xMsg payload object.
+     * A native payload object.
      */
     public static final EngineDataType NATIVE_PAYLOAD = buildPayload();
 

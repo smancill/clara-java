@@ -24,23 +24,23 @@
 package org.jlab.clara.sys;
 
 import org.jlab.clara.base.core.ClaraConstants;
-import org.jlab.clara.msg.core.xMsg;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.Actor;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.ProxyAddress;
 import org.json.JSONObject;
 
 public final class DpeReportTest {
 
     public static void main(String[] args) {
-        xMsgProxyAddress dpeAddress = new xMsgProxyAddress("localhost");
+        ProxyAddress dpeAddress = new ProxyAddress("localhost");
         if (args.length > 0) {
             int port = Integer.parseInt(args[0]);
-            dpeAddress = new xMsgProxyAddress("localhost", port);
+            dpeAddress = new ProxyAddress("localhost", port);
         }
-        xMsgTopic jsonTopic = xMsgTopic.build(ClaraConstants.DPE_REPORT);
-        try (xMsg subscriber = new xMsg("report_subscriber")) {
+        Topic jsonTopic = Topic.build(ClaraConstants.DPE_REPORT);
+        try (Actor subscriber = new Actor("report_subscriber")) {
             subscriber.subscribe(dpeAddress, jsonTopic, (msg) -> {
                 try {
                     String data = new String(msg.getData());
@@ -50,8 +50,8 @@ public final class DpeReportTest {
                     e.printStackTrace();
                 }
             });
-            xMsgUtil.keepAlive();
-        } catch (xMsgException e) {
+            ActorUtils.keepAlive();
+        } catch (ClaraMsgException e) {
             e.printStackTrace();
         }
     }

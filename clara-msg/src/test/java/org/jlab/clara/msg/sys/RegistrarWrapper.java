@@ -23,23 +23,23 @@
 
 package org.jlab.clara.msg.sys;
 
-import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgContext;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.Context;
 
 // checkstyle.off: JavadocType
 // checkstyle.off: JavadocMethod
 public class RegistrarWrapper implements AutoCloseable {
 
-    private xMsgContext context = xMsgContext.newContext();
-    private xMsgRegistrar registrar = null;
+    private Context context = Context.newContext();
+    private Registrar registrar = null;
 
     public RegistrarWrapper() {
         try {
-            registrar = new xMsgRegistrar(context);
+            registrar = new Registrar(context);
             registrar.start();
-            xMsgUtil.sleep(100);
-        } catch (xMsgException e) {
+            ActorUtils.sleep(100);
+        } catch (ClaraMsgException e) {
             System.err.println(e.getMessage());
         }
     }

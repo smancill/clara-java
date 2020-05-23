@@ -31,9 +31,9 @@ import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
-import org.jlab.clara.msg.core.xMsgCallBack;
-import org.jlab.clara.msg.core.xMsgSubscription;
-import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Subscription;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.util.ArgUtils;
 import org.json.JSONObject;
 
@@ -57,14 +57,14 @@ public class ClaraSubscriptions {
 
         final ClaraBase base;
         final ClaraComponent frontEnd;
-        final xMsgTopic topic;
+        final Topic topic;
 
-        final Map<String, xMsgSubscription> subscriptions;
+        final Map<String, Subscription> subscriptions;
 
         BaseSubscription(ClaraBase base,
-                         Map<String, xMsgSubscription> subscriptions,
+                         Map<String, Subscription> subscriptions,
                          ClaraComponent frontEnd,
-                         xMsgTopic topic) {
+                         Topic topic) {
             this.base = base;
             this.frontEnd = frontEnd;
             this.topic = topic;
@@ -85,14 +85,14 @@ public class ClaraSubscriptions {
             if (subscriptions.containsKey(key)) {
                 throw new IllegalStateException("duplicated subscription to: " + frontEnd);
             }
-            xMsgCallBack wrapperCallback = wrap(callback);
-            xMsgSubscription handler = base.listen(frontEnd, topic, wrapperCallback);
+            Callback wrapperCallback = wrap(callback);
+            Subscription handler = base.listen(frontEnd, topic, wrapperCallback);
             subscriptions.put(key, handler);
         }
 
         public void stop() {
             String key = frontEnd.getDpeHost() + ClaraConstants.MAPKEY_SEP + topic;
-            xMsgSubscription handler = subscriptions.remove(key);
+            Subscription handler = subscriptions.remove(key);
             if (handler != null) {
                 base.unsubscribe(handler);
             }
@@ -103,7 +103,7 @@ public class ClaraSubscriptions {
             return (D) this;
         }
 
-        abstract xMsgCallBack wrap(C callback);
+        abstract Callback wrap(C callback);
     }
 
 
@@ -116,10 +116,10 @@ public class ClaraSubscriptions {
         private Set<EngineDataType> dataTypes;
 
         ServiceSubscription(ClaraBase base,
-                            Map<String, xMsgSubscription> subscriptions,
+                            Map<String, Subscription> subscriptions,
                             Set<EngineDataType> dataTypes,
                             ClaraComponent frontEnd,
-                            xMsgTopic topic) {
+                            Topic topic) {
             super(base, subscriptions, frontEnd, topic);
             this.dataTypes = dataTypes;
         }
@@ -151,7 +151,7 @@ public class ClaraSubscriptions {
         }
 
         @Override
-        xMsgCallBack wrap(final EngineCallback userCallback) {
+        Callback wrap(final EngineCallback userCallback) {
             return msg -> {
                 try {
                     userCallback.callback(DataUtil.deserialize(msg, dataTypes));
@@ -171,14 +171,14 @@ public class ClaraSubscriptions {
             extends BaseSubscription<JsonReportSubscription, GenericCallback> {
 
         JsonReportSubscription(ClaraBase base,
-                               Map<String, xMsgSubscription> subscriptions,
+                               Map<String, Subscription> subscriptions,
                                ClaraComponent frontEnd,
-                               xMsgTopic topic) {
+                               Topic topic) {
             super(base, subscriptions, frontEnd, topic);
         }
 
         @Override
-        xMsgCallBack wrap(final GenericCallback userCallback) {
+        Callback wrap(final GenericCallback userCallback) {
             return msg -> {
                 try {
                     String mimeType = msg.getMimeType();
@@ -202,8 +202,8 @@ public class ClaraSubscriptions {
     public static class BaseDpeReportSubscription extends JsonReportSubscription {
 
         BaseDpeReportSubscription(ClaraBase base,
-                                  Map<String, xMsgSubscription> subscriptions,
-                                  ClaraComponent frontEnd, xMsgTopic topic) {
+                                  Map<String, Subscription> subscriptions,
+                                  ClaraComponent frontEnd, Topic topic) {
             super(base, subscriptions, frontEnd, topic);
         }
 
@@ -226,14 +226,14 @@ public class ClaraSubscriptions {
             extends BaseSubscription<DpeReportSubscription, DpeReportCallback> {
 
         DpeReportSubscription(ClaraBase base,
-                               Map<String, xMsgSubscription> subscriptions,
+                               Map<String, Subscription> subscriptions,
                                ClaraComponent frontEnd,
-                               xMsgTopic topic) {
+                               Topic topic) {
             super(base, subscriptions, frontEnd, topic);
         }
 
         @Override
-        xMsgCallBack wrap(final DpeReportCallback userCallback) {
+        Callback wrap(final DpeReportCallback userCallback) {
             return msg -> {
                 try {
                     String mimeType = msg.getMimeType();
@@ -261,13 +261,13 @@ public class ClaraSubscriptions {
      */
     public static class ServiceSubscriptionBuilder {
         private final ClaraBase base;
-        private final Map<String, xMsgSubscription> subscriptions;
+        private final Map<String, Subscription> subscriptions;
         private final Set<EngineDataType> dataTypes;
         private final ClaraComponent frontEnd;
         private final ClaraName component;
 
         ServiceSubscriptionBuilder(ClaraBase base,
-                                   Map<String, xMsgSubscription> subscriptions,
+                                   Map<String, Subscription> subscriptions,
                                    Set<EngineDataType> dataTypes,
                                    ClaraComponent frontEnd,
                                    ClaraName service) {
@@ -320,7 +320,7 @@ public class ClaraSubscriptions {
                                            getTopic(ClaraConstants.DATA, component));
         }
 
-        private xMsgTopic getTopic(String prefix, ClaraName service) {
+        private Topic getTopic(String prefix, ClaraName service) {
             return MessageUtil.buildTopic(prefix, service.canonicalName());
         }
     }
@@ -331,12 +331,12 @@ public class ClaraSubscriptions {
      */
     public static class GlobalSubscriptionBuilder {
         private final ClaraBase base;
-        private final Map<String, xMsgSubscription> subscriptions;
+        private final Map<String, Subscription> subscriptions;
         private final Set<EngineDataType> dataTypes;
         private final ClaraComponent frontEnd;
 
         GlobalSubscriptionBuilder(ClaraBase base,
-                               Map<String, xMsgSubscription> subscriptions,
+                               Map<String, Subscription> subscriptions,
                                Set<EngineDataType> dataTypes,
                                ClaraComponent frontEnd) {
             this.base = base;
@@ -352,7 +352,7 @@ public class ClaraSubscriptions {
          * @return a subscription to listen DPE alive reports
          */
         public JsonReportSubscription aliveDpes() {
-            xMsgTopic topic = MessageUtil.buildTopic(ClaraConstants.DPE_ALIVE, "");
+            Topic topic = MessageUtil.buildTopic(ClaraConstants.DPE_ALIVE, "");
             return new JsonReportSubscription(base, subscriptions, frontEnd, topic);
         }
 
@@ -369,7 +369,7 @@ public class ClaraSubscriptions {
             if (session == null) {
                 throw new IllegalArgumentException("null session argument");
             }
-            xMsgTopic topic = buildMatchingTopic(ClaraConstants.DPE_ALIVE, session);
+            Topic topic = buildMatchingTopic(ClaraConstants.DPE_ALIVE, session);
             return new JsonReportSubscription(base, subscriptions, frontEnd, topic);
         }
 
@@ -380,7 +380,7 @@ public class ClaraSubscriptions {
          * @return a subscription to listen DPE reports
          */
         public BaseDpeReportSubscription dpeReport() {
-            xMsgTopic topic = MessageUtil.buildTopic(ClaraConstants.DPE_REPORT, "");
+            Topic topic = MessageUtil.buildTopic(ClaraConstants.DPE_REPORT, "");
             return new BaseDpeReportSubscription(base, subscriptions, frontEnd, topic);
         }
 
@@ -395,7 +395,7 @@ public class ClaraSubscriptions {
          */
         public BaseDpeReportSubscription dpeReport(String session) {
             ArgUtils.requireNonNull(session, "session");
-            xMsgTopic topic = buildMatchingTopic(ClaraConstants.DPE_REPORT, session);
+            Topic topic = buildMatchingTopic(ClaraConstants.DPE_REPORT, session);
             return new BaseDpeReportSubscription(base, subscriptions, frontEnd, topic);
         }
 
@@ -405,7 +405,7 @@ public class ClaraSubscriptions {
          * @return a subscription to listen all events in the data-ring
          */
         public ServiceSubscription dataRing() {
-            xMsgTopic topic = MessageUtil.buildTopic(ClaraConstants.MONITOR_REPORT, "");
+            Topic topic = MessageUtil.buildTopic(ClaraConstants.MONITOR_REPORT, "");
             return new ServiceSubscription(base, subscriptions, dataTypes, frontEnd, topic);
         }
 
@@ -418,13 +418,13 @@ public class ClaraSubscriptions {
          */
         public ServiceSubscription dataRing(DataRingTopic ringTopic) {
             ArgUtils.requireNonNull(ringTopic, "topic");
-            xMsgTopic topic = buildMatchingTopic(ClaraConstants.MONITOR_REPORT, ringTopic.topic());
+            Topic topic = buildMatchingTopic(ClaraConstants.MONITOR_REPORT, ringTopic.topic());
             return new ServiceSubscription(base, subscriptions, dataTypes, frontEnd, topic);
         }
     }
 
 
-    private static xMsgTopic buildMatchingTopic(String prefix, String keyword) {
+    private static Topic buildMatchingTopic(String prefix, String keyword) {
         if (keyword.endsWith("*")) {
             keyword = keyword.substring(0, keyword.length() - 1);
             return MessageUtil.buildTopic(prefix, keyword);

@@ -23,42 +23,42 @@
 
 package org.jlab.clara.msg.core;
 
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
-import org.jlab.clara.msg.sys.xMsgConnectionFactory;
-import org.jlab.clara.msg.sys.pubsub.xMsgConnectionSetup;
-import org.jlab.clara.msg.sys.pubsub.xMsgListener;
-import org.jlab.clara.msg.sys.pubsub.xMsgProxyDriver;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.ProxyAddress;
+import org.jlab.clara.msg.sys.ConnectionFactory;
+import org.jlab.clara.msg.sys.pubsub.ProxyDriver;
+import org.jlab.clara.msg.sys.pubsub.ProxyDriverSetup;
+import org.jlab.clara.msg.sys.pubsub.ProxyListener;
 import org.zeromq.ZMsg;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeoutException;
 
-class ResponseListener extends xMsgListener {
+class ResponseListener extends ProxyListener {
 
-    private final xMsgConnectionFactory factory;
+    private final ConnectionFactory factory;
     private final String topic;
 
-    private final ConcurrentMap<String, xMsgMessage> responses;
+    private final ConcurrentMap<String, Message> responses;
 
-    ResponseListener(String id, xMsgConnectionFactory factory) {
+    ResponseListener(String id, ConnectionFactory factory) {
         super("poll-" + id, factory.getContext());
         this.factory = factory;
-        this.topic = xMsgTopic.build("ret", id).toString();
+        this.topic = Topic.build("ret", id).toString();
         this.responses = new ConcurrentHashMap<>();
     }
 
-    public void register(xMsgProxyAddress address) throws xMsgException {
+    public void register(ProxyAddress address) throws ClaraMsgException {
         if (items.get(address) == null) {
-            xMsgConnectionSetup setup = xMsgConnectionSetup.newBuilder().build();
-            xMsgProxyDriver connection = factory.createSubscriberConnection(address, setup);
+            ProxyDriverSetup setup = ProxyDriverSetup.newBuilder().build();
+            ProxyDriver connection = factory.createSubscriberConnection(address, setup);
             connection.subscribe(topic);
             if (!connection.checkSubscription(topic, setup.subscriptionTimeout())) {
                 connection.close();
-                throw new xMsgException("could not subscribe to " + topic);
+                throw new ClaraMsgException("could not subscribe to " + topic);
             }
-            xMsgProxyDriver value = items.putIfAbsent(address, connection);
+            ProxyDriver value = items.putIfAbsent(address, connection);
             if (value != null) {
                 connection.unsubscribe(topic);
                 connection.close();
@@ -66,22 +66,22 @@ class ResponseListener extends xMsgListener {
         }
     }
 
-    public xMsgMessage waitMessage(String topic, long timeout) throws TimeoutException {
+    public Message waitMessage(String topic, long timeout) throws TimeoutException {
         int t = 0;
         while (t < timeout) {
-            xMsgMessage repMsg = responses.remove(topic);
+            Message repMsg = responses.remove(topic);
             if (repMsg != null) {
                 return repMsg;
             }
-            xMsgUtil.sleep(1);
+            ActorUtils.sleep(1);
             t += 1;
         }
         throw new TimeoutException("no response for timeout = " + t);
     }
 
     @Override
-    public void handle(ZMsg rawMsg) throws xMsgException {
-        xMsgMessage msg = new xMsgMessage(rawMsg);
+    public void handle(ZMsg rawMsg) throws ClaraMsgException {
+        Message msg = new Message(rawMsg);
         responses.put(msg.getTopic().toString(), msg);
     }
 }

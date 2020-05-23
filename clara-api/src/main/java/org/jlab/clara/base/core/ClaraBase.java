@@ -24,19 +24,19 @@
 package org.jlab.clara.base.core;
 
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.core.xMsg;
-import org.jlab.clara.msg.core.xMsgCallBack;
-import org.jlab.clara.msg.core.xMsgConnection;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgSetup;
-import org.jlab.clara.msg.core.xMsgSubscription;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.data.xMsgRegInfo;
-import org.jlab.clara.msg.data.xMsgRegQuery;
-import org.jlab.clara.msg.data.xMsgRegRecord;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgRegAddress;
+import org.jlab.clara.msg.core.Actor;
+import org.jlab.clara.msg.core.ActorSetup;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Connection;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Subscription;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.RegInfo;
+import org.jlab.clara.msg.data.RegQuery;
+import org.jlab.clara.msg.data.RegRecord;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.RegAddress;
 import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.report.ReportType;
 
@@ -51,7 +51,7 @@ import java.util.concurrent.TimeoutException;
  * @author gurjyan
  * @since 4.x
  */
-public class ClaraBase extends xMsg {
+public class ClaraBase extends Actor {
 
     private final String claraHome;
     // reference to this component description
@@ -73,8 +73,8 @@ public class ClaraBase extends xMsg {
         this.claraHome = EnvUtils.claraHome();
     }
 
-    private static xMsgSetup setup(ClaraComponent me, ClaraComponent frontEnd) {
-        xMsgSetup.Builder builder = xMsgSetup.newBuilder()
+    private static ActorSetup setup(ClaraComponent me, ClaraComponent frontEnd) {
+        ActorSetup.Builder builder = ActorSetup.newBuilder()
                         .withProxy(me.getProxyAddress())
                         .withRegistrar(getRegAddress(frontEnd))
                         .withPoolSize(me.getSubscriptionPoolSize())
@@ -82,7 +82,7 @@ public class ClaraBase extends xMsg {
                             s.setRcvHWM(0);
                             s.setSndHWM(0);
                         })
-                        .withPostConnectionSetup(() -> xMsgUtil.sleep(100));
+                        .withPostConnectionSetup(() -> ActorUtils.sleep(100));
         if (me.isOrchestrator()) {
             builder.checkSubscription(false);
         }
@@ -119,7 +119,7 @@ public class ClaraBase extends xMsg {
     public void cacheLocalConnection() throws ClaraException {
         try {
             cacheConnection();
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             throw new ClaraException("could not connect to local proxy", e);
         }
     }
@@ -129,10 +129,10 @@ public class ClaraBase extends xMsg {
      *
      * @param component the component that shall receive the message
      * @param msg the message to be published
-     * @throws xMsgException if the message could not be sent
+     * @throws ClaraMsgException if the message could not be sent
      */
-    public void send(ClaraComponent component, xMsgMessage msg)
-            throws xMsgException {
+    public void send(ClaraComponent component, Message msg)
+            throws ClaraMsgException {
         msg.getMetaData().setSender(myName);
         publish(component.getProxyAddress(), msg);
     }
@@ -142,11 +142,11 @@ public class ClaraBase extends xMsg {
      *
      * @param component the component that shall receive the message
      * @param requestText string of the message
-     * @throws xMsgException if the message could not be sent
+     * @throws ClaraMsgException if the message could not be sent
      */
     public void send(ClaraComponent component, String requestText)
-            throws xMsgException {
-        xMsgMessage msg = MessageUtil.buildRequest(component.getTopic(), requestText);
+            throws ClaraMsgException {
+        Message msg = MessageUtil.buildRequest(component.getTopic(), requestText);
         send(component, msg);
     }
 
@@ -155,10 +155,10 @@ public class ClaraBase extends xMsg {
      *
      * @param con the connection that shall be used to publish the message
      * @param msg the message to be published
-     * @throws xMsgException if the message could not be sent
+     * @throws ClaraMsgException if the message could not be sent
      */
-    public void send(xMsgConnection con, xMsgMessage msg)
-            throws xMsgException {
+    public void send(Connection con, Message msg)
+            throws ClaraMsgException {
         msg.getMetaData().setSender(myName);
         publish(con, msg);
     }
@@ -167,10 +167,10 @@ public class ClaraBase extends xMsg {
      * Sends a message to the address of this CLARA component.
      *
      * @param msg the message to be published
-     * @throws xMsgException if the message could not be sent
+     * @throws ClaraMsgException if the message could not be sent
      */
-    public void send(xMsgMessage msg)
-            throws xMsgException {
+    public void send(Message msg)
+            throws ClaraMsgException {
         send(me, msg);
     }
 
@@ -178,10 +178,10 @@ public class ClaraBase extends xMsg {
      * Sends a text message to this CLARA component.
      *
      * @param msgText string of the message
-     * @throws xMsgException if the message could not be sent
+     * @throws ClaraMsgException if the message could not be sent
      */
     public void send(String msgText)
-            throws xMsgException {
+            throws ClaraMsgException {
         send(me, msgText);
     }
 
@@ -191,11 +191,11 @@ public class ClaraBase extends xMsg {
      * @param component the component that shall receive the message
      * @param msg the message to be published
      * @param timeout in milliseconds
-     * @throws xMsgException if the message could not be sent
+     * @throws ClaraMsgException if the message could not be sent
      * @throws TimeoutException if a response was not received
      */
-    public xMsgMessage syncSend(ClaraComponent component, xMsgMessage msg, long timeout)
-            throws xMsgException, TimeoutException {
+    public Message syncSend(ClaraComponent component, Message msg, long timeout)
+            throws ClaraMsgException, TimeoutException {
         msg.getMetaData().setSender(myName);
         return syncPublish(component.getProxyAddress(), msg, timeout);
     }
@@ -206,12 +206,12 @@ public class ClaraBase extends xMsg {
      * @param component the component that shall receive the message
      * @param requestText string of the message
      * @param timeout in milli seconds
-     * @throws xMsgException if the message could not be sent
+     * @throws ClaraMsgException if the message could not be sent
      * @throws TimeoutException if a response was not received
      */
-    public xMsgMessage syncSend(ClaraComponent component, String requestText, long timeout)
-            throws xMsgException, TimeoutException {
-        xMsgMessage msg = MessageUtil.buildRequest(component.getTopic(), requestText);
+    public Message syncSend(ClaraComponent component, String requestText, long timeout)
+            throws ClaraMsgException, TimeoutException {
+        Message msg = MessageUtil.buildRequest(component.getTopic(), requestText);
         return syncSend(component, msg, timeout);
     }
 
@@ -223,7 +223,7 @@ public class ClaraBase extends xMsg {
      * @return a handler to the subscription
      * @throws ClaraException if the subscription could not be started
      */
-    public xMsgSubscription listen(ClaraComponent component, xMsgCallBack callback)
+    public Subscription listen(ClaraComponent component, Callback callback)
             throws ClaraException {
         return listen(me, component.getTopic(), callback);
     }
@@ -238,11 +238,11 @@ public class ClaraBase extends xMsg {
      * @return a handler to the subscription
      * @throws ClaraException if the subscription could not be started
      */
-    public xMsgSubscription listen(ClaraComponent component, xMsgTopic topic, xMsgCallBack callback)
+    public Subscription listen(ClaraComponent component, Topic topic, Callback callback)
             throws ClaraException {
         try {
             return subscribe(component.getProxyAddress(), topic, callback);
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             throw new ClaraException("could not subscribe to " + topic);
         }
     }
@@ -256,7 +256,7 @@ public class ClaraBase extends xMsg {
      * @return a handler to the subscription
      * @throws ClaraException if the subscription could not be started
      */
-    public xMsgSubscription listen(xMsgTopic topic, xMsgCallBack callback)
+    public Subscription listen(Topic topic, Callback callback)
             throws ClaraException {
         return listen(me, topic, callback);
     }
@@ -266,7 +266,7 @@ public class ClaraBase extends xMsg {
      *
      * @param handle the subscription handler
      */
-    public void stopListening(xMsgSubscription handle) {
+    public void stopListening(Subscription handle) {
         unsubscribe(handle);
     }
 
@@ -284,11 +284,11 @@ public class ClaraBase extends xMsg {
      * @param description a description of the component
      * @throws ClaraException if registration failed
      */
-    public void register(xMsgTopic topic, String description) throws ClaraException {
-        xMsgRegAddress regAddress = getRegAddress(frontEnd);
+    public void register(Topic topic, String description) throws ClaraException {
+        RegAddress regAddress = getRegAddress(frontEnd);
         try {
-            register(xMsgRegInfo.subscriber(topic, description), regAddress);
-        } catch (xMsgException e) {
+            register(RegInfo.subscriber(topic, description), regAddress);
+        } catch (ClaraMsgException e) {
             throw new ClaraException("could not register with front-end = " + regAddress, e);
         }
     }
@@ -300,63 +300,63 @@ public class ClaraBase extends xMsg {
      * @param topic the subscribed topic
      * @throws ClaraException if removing the registration failed
      */
-    public void removeRegistration(xMsgTopic topic) throws ClaraException {
-        xMsgRegAddress regAddress = getRegAddress(frontEnd);
+    public void removeRegistration(Topic topic) throws ClaraException {
+        RegAddress regAddress = getRegAddress(frontEnd);
         try {
-            deregister(xMsgRegInfo.subscriber(topic), regAddress);
-        } catch (xMsgException e) {
+            deregister(RegInfo.subscriber(topic), regAddress);
+        } catch (ClaraMsgException e) {
             throw new ClaraException("could not deregister from front-end = " + regAddress, e);
         }
     }
 
     /**
-     * Retrieves CLARA actor registration information from the xMsg registrar service.
+     * Retrieves CLARA actor registration information from the registrar service.
      *
      * @param regHost registrar server host
      * @param regPort registrar server port
-     * @param topic   the canonical name of an actor: {@link xMsgTopic}
+     * @param topic   the canonical name of an actor: {@link Topic}
      * @return set of {@link org.jlab.clara.msg.data.RegDataProto.RegData} objects
      * @throws IOException
-     * @throws xMsgException
+     * @throws ClaraMsgException
      */
-    public Set<xMsgRegRecord> discover(String regHost, int regPort, xMsgTopic topic)
-            throws IOException, xMsgException {
-        xMsgRegAddress regAddress = new xMsgRegAddress(regHost, regPort);
-        return discover(xMsgRegQuery.subscribers(topic), regAddress, 1000);
+    public Set<RegRecord> discover(String regHost, int regPort, Topic topic)
+            throws IOException, ClaraMsgException {
+        RegAddress regAddress = new RegAddress(regHost, regPort);
+        return discover(RegQuery.subscribers(topic), regAddress, 1000);
     }
 
     /**
-     * Retrieves CLARA actor registration information from the xMsg registrar service,
+     * Retrieves CLARA actor registration information from the registrar service,
      * assuming registrar is running using the default port.
      *
      * @param regHost registrar server host
-     * @param topic   the canonical name of an actor: {@link xMsgTopic}
+     * @param topic   the canonical name of an actor: {@link Topic}
      * @return set of {@link org.jlab.clara.msg.data.RegDataProto.RegData} objects
      * @throws IOException
-     * @throws xMsgException
+     * @throws ClaraMsgException
      */
-    public Set<xMsgRegRecord> discover(String regHost, xMsgTopic topic)
-            throws IOException, xMsgException {
-        xMsgRegAddress regAddress = new xMsgRegAddress(regHost);
-        return discover(xMsgRegQuery.subscribers(topic), regAddress);
+    public Set<RegRecord> discover(String regHost, Topic topic)
+            throws IOException, ClaraMsgException {
+        RegAddress regAddress = new RegAddress(regHost);
+        return discover(RegQuery.subscribers(topic), regAddress);
     }
 
     /**
-     * Retrieves CLARA actor registration information from the xMsg registrar service,
+     * Retrieves CLARA actor registration information from the registrar service,
      * assuming registrar is running on a local host, using the default port.
      *
-     * @param topic the canonical name of an actor: {@link xMsgTopic}
+     * @param topic the canonical name of an actor: {@link Topic}
      * @return set of {@link org.jlab.clara.msg.data.RegDataProto.RegData} objects
      * @throws IOException
-     * @throws xMsgException
+     * @throws ClaraMsgException
      */
-    public Set<xMsgRegRecord> discover(xMsgTopic topic)
-            throws IOException, xMsgException {
-        return discover(xMsgRegQuery.subscribers(topic));
+    public Set<RegRecord> discover(Topic topic)
+            throws IOException, ClaraMsgException {
+        return discover(RegQuery.subscribers(topic));
     }
 
-    public static xMsgRegAddress getRegAddress(ClaraComponent fe) {
-        return new xMsgRegAddress(fe.getDpeHost(), fe.getDpePort() + ClaraConstants.REG_PORT_SHIFT);
+    public static RegAddress getRegAddress(ClaraComponent fe) {
+        return new RegAddress(fe.getDpeHost(), fe.getDpePort() + ClaraConstants.REG_PORT_SHIFT);
     }
 
     /**
@@ -364,19 +364,19 @@ public class ClaraBase extends xMsg {
      *
      * @param component dpe as a {@link ClaraComponent#dpe()} object
      * @param timeout sync request timeout
-     * @return message {@link xMsgMessage}
+     * @return message {@link Message}
      *         back from a dpe.
      * @throws IOException
-     * @throws xMsgException
+     * @throws ClaraMsgException
      * @throws TimeoutException
      */
-    public xMsgMessage pingDpe(ClaraComponent component, int timeout)
-            throws IOException, xMsgException, TimeoutException {
+    public Message pingDpe(ClaraComponent component, int timeout)
+            throws IOException, ClaraMsgException, TimeoutException {
 
         if (component.isDpe()) {
             String data = MessageUtil.buildData(ReportType.INFO.getValue());
-            xMsgTopic topic = component.getTopic();
-            xMsgMessage msg = MessageUtil.buildRequest(topic, data);
+            Topic topic = component.getTopic();
+            Message msg = MessageUtil.buildRequest(topic, data);
             return syncSend(component, msg, timeout);
         }
         return null;

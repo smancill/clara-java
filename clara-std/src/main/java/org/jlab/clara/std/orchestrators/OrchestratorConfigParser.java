@@ -43,10 +43,10 @@ import java.util.stream.Collectors;
 
 import org.jlab.clara.base.ClaraLang;
 import org.jlab.clara.base.DpeName;
+import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingTopic;
 import org.jlab.clara.util.EnvUtils;
-import org.jlab.clara.msg.core.xMsgUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -408,7 +408,7 @@ public class OrchestratorConfigParser {
 
     static String hostAddress(String host) {
         try {
-            return xMsgUtil.toHostAddress(host);
+            return ActorUtils.toHostAddress(host);
         } catch (UncheckedIOException e) {
             throw error("node name not known: " + host);
         }

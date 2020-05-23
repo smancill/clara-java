@@ -23,13 +23,13 @@
 
 package perf;
 
-import org.jlab.clara.msg.core.xMsg;
-import org.jlab.clara.msg.core.xMsgConnection;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgContext;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.Actor;
+import org.jlab.clara.msg.core.Connection;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.Context;
+import org.jlab.clara.msg.net.ProxyAddress;
 
 public final class RemoteThroughput {
 
@@ -45,24 +45,24 @@ public final class RemoteThroughput {
         final int messageSize = Integer.parseInt(argv[1]);
         final long messageCount = Long.parseLong(argv[2]);
 
-        final xMsgProxyAddress address = new xMsgProxyAddress(bindTo);
+        final ProxyAddress address = new ProxyAddress(bindTo);
 
-        try (xMsg publisher = new xMsg("thr_publisher");
-             xMsgConnection con = publisher.getConnection(address)) {
+        try (Actor publisher = new Actor("thr_publisher");
+             Connection con = publisher.getConnection(address)) {
             System.out.println("Publishing messages...");
-            xMsgTopic topic = xMsgTopic.wrap("thr_topic");
+            Topic topic = Topic.wrap("thr_topic");
             byte[] data = new byte[messageSize];
             for (int i = 0; i < messageCount; i++) {
-                xMsgMessage msg = new xMsgMessage(topic, "data/binary", data);
+                Message msg = new Message(topic, "data/binary", data);
                 publisher.publish(con, msg);
             }
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             e.printStackTrace();
             System.exit(1);
         }
 
         // wait until all messages are published
-        xMsgContext.getInstance().destroy();
+        Context.getInstance().destroy();
         System.out.println("Done!");
     }
 

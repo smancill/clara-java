@@ -23,12 +23,12 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.net.ProxyAddress;
 
 /**
  * The address where a CLARA component is listening messages.
  */
-public class ClaraAddress extends xMsgProxyAddress {
+public class ClaraAddress extends ProxyAddress {
 
     ClaraAddress(String host) {
         super(host);

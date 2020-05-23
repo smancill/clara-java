@@ -28,7 +28,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.util.OptUtils;
 
 import java.util.concurrent.TimeUnit;
@@ -60,8 +60,8 @@ class DpeOptionsParser {
     private OptionSet options;
 
     private boolean fe;
-    private xMsgProxyAddress localAddress;
-    private xMsgProxyAddress frontEndAddress;
+    private ProxyAddress localAddress;
+    private ProxyAddress frontEndAddress;
 
 
     DpeOptionsParser() {
@@ -103,7 +103,7 @@ class DpeOptionsParser {
             // Get local DPE address
             String localHost = valueOf(dpeHost, Dpe.DEFAULT_PROXY_HOST);
             int localPort = valueOf(dpePort, Dpe.DEFAULT_PROXY_PORT);
-            localAddress = new xMsgProxyAddress(localHost, localPort);
+            localAddress = new ProxyAddress(localHost, localPort);
 
             if (fe) {
                 // Get local FE address (use same local DPE address)
@@ -115,7 +115,7 @@ class DpeOptionsParser {
                 }
                 String host = options.valueOf(feHost);
                 int port = valueOf(fePort, Dpe.DEFAULT_PROXY_PORT);
-                frontEndAddress = new xMsgProxyAddress(host, port);
+                frontEndAddress = new ProxyAddress(host, port);
             }
 
         } catch (OptionException e) {
@@ -138,11 +138,11 @@ class DpeOptionsParser {
         }
     }
 
-    public xMsgProxyAddress localAddress() {
+    public ProxyAddress localAddress() {
         return localAddress;
     }
 
-    public xMsgProxyAddress  frontEnd() {
+    public ProxyAddress frontEnd() {
         return frontEndAddress;
     }
 

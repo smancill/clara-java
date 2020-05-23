@@ -34,7 +34,7 @@ message RegData {
     required string host = 3;
     required sfixed32 port = 4;
 
-    // xMsg topic definition
+    // Actor topic definition
     required string domain = 5;
     optional string subject = 6 [default = "undefined"];
     optional string type = 7 [default = "undefined"];

@@ -29,68 +29,68 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
-import org.jlab.clara.msg.net.xMsgRegAddress;
-import org.jlab.clara.msg.sys.xMsgConnectionFactory;
-import org.jlab.clara.msg.sys.pubsub.xMsgConnectionSetup;
-import org.jlab.clara.msg.sys.pubsub.xMsgProxyDriver;
-import org.jlab.clara.msg.sys.regdis.xMsgRegDriver;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.ProxyAddress;
+import org.jlab.clara.msg.net.RegAddress;
+import org.jlab.clara.msg.sys.ConnectionFactory;
+import org.jlab.clara.msg.sys.pubsub.ProxyDriver;
+import org.jlab.clara.msg.sys.pubsub.ProxyDriverSetup;
+import org.jlab.clara.msg.sys.regdis.RegDriver;
 
 class ConnectionManager {
 
     // Factory
-    private final xMsgConnectionFactory factory;
+    private final ConnectionFactory factory;
 
     // pool of proxy connections
-    private final ConnectionPool<xMsgProxyAddress, xMsgProxyDriver> proxyConnections;
+    private final ConnectionPool<ProxyAddress, ProxyDriver> proxyConnections;
 
     // pool of registrar connections
-    private final ConnectionPool<xMsgRegAddress, xMsgRegDriver> registrarConnections;
+    private final ConnectionPool<RegAddress, RegDriver> registrarConnections;
 
     // default connection option
-    private volatile xMsgConnectionSetup proxySetup;
+    private volatile ProxyDriverSetup proxySetup;
 
-    ConnectionManager(xMsgConnectionFactory factory) {
-        this(factory, xMsgConnectionSetup.newBuilder().build());
+    ConnectionManager(ConnectionFactory factory) {
+        this(factory, ProxyDriverSetup.newBuilder().build());
     }
 
-    ConnectionManager(xMsgConnectionFactory factory, xMsgConnectionSetup setup) {
+    ConnectionManager(ConnectionFactory factory, ProxyDriverSetup setup) {
         this.factory = factory;
         this.proxyConnections = new ConnectionPool<>();
         this.registrarConnections = new ConnectionPool<>();
         this.proxySetup = setup;
     }
 
-    xMsgProxyDriver createProxySubscriber(xMsgProxyAddress address) throws xMsgException {
+    ProxyDriver createProxySubscriber(ProxyAddress address) throws ClaraMsgException {
         return factory.createSubscriberConnection(address, proxySetup);
     }
 
-    xMsgProxyDriver createProxyConnection(xMsgProxyAddress address) throws xMsgException {
+    ProxyDriver createProxyConnection(ProxyAddress address) throws ClaraMsgException {
         return factory.createPublisherConnection(address, proxySetup);
     }
 
-    xMsgProxyDriver getProxyConnection(xMsgProxyAddress address) throws xMsgException {
-        xMsgProxyDriver cachedConnection = proxyConnections.getConnection(address);
+    ProxyDriver getProxyConnection(ProxyAddress address) throws ClaraMsgException {
+        ProxyDriver cachedConnection = proxyConnections.getConnection(address);
         if (cachedConnection != null) {
             return cachedConnection;
         }
         return createProxyConnection(address);
     }
 
-    void releaseProxyConnection(xMsgProxyDriver connection) {
+    void releaseProxyConnection(ProxyDriver connection) {
         proxyConnections.setConnection(connection.getAddress(), connection);
     }
 
-    xMsgRegDriver getRegistrarConnection(xMsgRegAddress address) throws xMsgException {
-        xMsgRegDriver cachedConnection = registrarConnections.getConnection(address);
+    RegDriver getRegistrarConnection(RegAddress address) throws ClaraMsgException {
+        RegDriver cachedConnection = registrarConnections.getConnection(address);
         if (cachedConnection != null) {
             return cachedConnection;
         }
         return factory.createRegistrarConnection(address);
     }
 
-    void releaseRegistrarConnection(xMsgRegDriver connection) {
+    void releaseRegistrarConnection(RegDriver connection) {
         registrarConnections.setConnection(connection.getAddress(), connection);
     }
 

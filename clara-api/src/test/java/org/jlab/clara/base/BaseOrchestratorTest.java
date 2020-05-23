@@ -30,8 +30,8 @@ import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -337,7 +337,7 @@ public class BaseOrchestratorTest {
     }
 
 
-    private void assertMessage(xMsgMessage msg, String topic, String data)
+    private void assertMessage(Message msg, String topic, String data)
             throws Exception {
         MetaData.Builder msgMeta = msg.getMetaData();
         String msgData = new String(msg.getData());
@@ -348,7 +348,7 @@ public class BaseOrchestratorTest {
     }
 
 
-    private void assertMessage(xMsgMessage msg, String topic,
+    private void assertMessage(Message msg, String topic,
                                String composition, MetaData.ControlAction action) {
         MetaData.Builder msgMeta = msg.getMetaData();
 
@@ -361,7 +361,7 @@ public class BaseOrchestratorTest {
 
     private void assertSubscription(String topic) throws Exception {
         assertThat(subscription.frontEnd.getDpeCanonicalName(), is(FE_HOST));
-        assertThat(subscription.topic, is(xMsgTopic.wrap(topic)));
+        assertThat(subscription.topic, is(Topic.wrap(topic)));
     }
 
 

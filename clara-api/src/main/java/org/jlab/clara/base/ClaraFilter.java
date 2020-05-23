@@ -23,8 +23,8 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.clara.msg.data.xMsgRegQuery;
-import org.jlab.clara.msg.data.xMsgRegRecord;
+import org.jlab.clara.msg.data.RegQuery;
+import org.jlab.clara.msg.data.RegRecord;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -37,18 +37,18 @@ abstract class ClaraFilter {
     static final String TYPE_CONTAINER = "container";
     static final String TYPE_SERVICE = "service";
 
-    private final xMsgRegQuery regQuery;
+    private final RegQuery regQuery;
     private final String type;
 
-    private List<Predicate<xMsgRegRecord>> regFilters = new ArrayList<>();
+    private List<Predicate<RegRecord>> regFilters = new ArrayList<>();
     private List<Predicate<JSONObject>> filters = new ArrayList<>();
 
-    ClaraFilter(xMsgRegQuery query, String type) {
+    ClaraFilter(RegQuery query, String type) {
         this.regQuery = query;
         this.type = type;
     }
 
-    void addRegFilter(Predicate<xMsgRegRecord> predicate) {
+    void addRegFilter(Predicate<RegRecord> predicate) {
         regFilters.add(predicate);
     }
 
@@ -56,11 +56,11 @@ abstract class ClaraFilter {
         filters.add(predicate);
     }
 
-    xMsgRegQuery regQuery() {
+    RegQuery regQuery() {
         return regQuery;
     }
 
-    Predicate<xMsgRegRecord> regFilter() {
+    Predicate<RegRecord> regFilter() {
         return regFilters.stream().reduce(Predicate::and).orElse(t -> true);
     }
 

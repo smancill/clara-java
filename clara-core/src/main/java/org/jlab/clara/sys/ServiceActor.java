@@ -26,11 +26,11 @@ package org.jlab.clara.sys;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.core.xMsgConnection;
-import org.jlab.clara.msg.core.xMsgConnectionPool;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.Connection;
+import org.jlab.clara.msg.core.ConnectionPool;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.ProxyAddress;
 
 class ServiceActor {
 
@@ -50,27 +50,27 @@ class ServiceActor {
         base.cacheLocalConnection();
     }
 
-    public void send(xMsgMessage msg) throws ClaraException {
+    public void send(Message msg) throws ClaraException {
         sendMsg(connectionPools.mainPool, getLocal(), msg);
     }
 
-    public void send(xMsgProxyAddress address, xMsgMessage msg) throws ClaraException {
+    public void send(ProxyAddress address, Message msg) throws ClaraException {
         sendMsg(connectionPools.mainPool, address, msg);
     }
 
-    public void sendUncheck(xMsgMessage msg) throws ClaraException {
+    public void sendUncheck(Message msg) throws ClaraException {
         sendMsg(connectionPools.uncheckedPool, getLocal(), msg);
     }
 
-    public void sendUncheck(xMsgProxyAddress address, xMsgMessage msg) throws ClaraException {
+    public void sendUncheck(ProxyAddress address, Message msg) throws ClaraException {
         sendMsg(connectionPools.uncheckedPool, address, msg);
     }
 
-    private void sendMsg(xMsgConnectionPool pool, xMsgProxyAddress address, xMsgMessage msg)
+    private void sendMsg(ConnectionPool pool, ProxyAddress address, Message msg)
             throws ClaraException {
-        try (xMsgConnection con = pool.getConnection(address)) {
+        try (Connection con = pool.getConnection(address)) {
             base.send(con, msg);
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             throw new ClaraException("Could not send message", e);
         }
     }
@@ -83,11 +83,11 @@ class ServiceActor {
         return base.getMe().getEngineName();
     }
 
-    public xMsgProxyAddress getLocal() {
+    public ProxyAddress getLocal() {
         return base.getDefaultProxyAddress();
     }
 
-    public xMsgProxyAddress getFrontEnd() {
+    public ProxyAddress getFrontEnd() {
         return base.getFrontEnd().getProxyAddress();
     }
 }

@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.clara.msg.data.xMsgRegQuery;
+import org.jlab.clara.msg.data.RegQuery;
 
 /**
  * A filter to select containers.
@@ -31,7 +31,7 @@ import org.jlab.clara.msg.data.xMsgRegQuery;
  */
 public final class ContainerFilter extends ClaraFilter {
 
-    ContainerFilter(xMsgRegQuery query) {
+    ContainerFilter(RegQuery query) {
         super(query, TYPE_CONTAINER);
     }
 }

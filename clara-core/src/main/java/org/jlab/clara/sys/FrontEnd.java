@@ -28,33 +28,33 @@ import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.core.xMsgCallBack;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MetaDataProto.MetaData;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgContext;
-import org.jlab.clara.msg.sys.xMsgRegistrar;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.Context;
+import org.jlab.clara.msg.sys.Registrar;
 import org.jlab.clara.sys.RequestParser.RequestException;
 
 class FrontEnd {
 
     private final ClaraBase base;
 
-    private final xMsgContext context;
-    private final xMsgRegistrar registrar;
+    private final Context context;
+    private final Registrar registrar;
 
     FrontEnd(ClaraComponent frontEnd)
             throws ClaraException {
         try {
-            // create the xMsg registrar
-            context = xMsgContext.newContext();
-            registrar = new xMsgRegistrar(context, ClaraBase.getRegAddress(frontEnd));
+            // create the registrar
+            context = Context.newContext();
+            registrar = new Registrar(context, ClaraBase.getRegAddress(frontEnd));
 
-            // create the xMsg actor
+            // create the actor
             base = new ClaraBase(frontEnd, frontEnd);
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             throw new ClaraException("Could not create front-end", e);
         }
     }
@@ -65,12 +65,12 @@ class FrontEnd {
         registrar.start();
 
         // subscribe to forwarding requests
-        xMsgTopic topic = xMsgTopic.build(ClaraConstants.DPE,
+        Topic topic = Topic.build(ClaraConstants.DPE,
                                           base.getFrontEnd().getCanonicalName());
         base.listen(topic, new GatewayCallback());
         base.register(topic, base.getMe().getDescription());
 
-        xMsgUtil.sleep(100);
+        ActorUtils.sleep(100);
     }
 
 
@@ -170,10 +170,10 @@ class FrontEnd {
      *     dpeHost ? dpePort ? dpeLang ? containerName ? engineName
      * </li>
      */
-    private class GatewayCallback implements xMsgCallBack {
+    private class GatewayCallback implements Callback {
 
         @Override
-        public void callback(xMsgMessage msg) {
+        public void callback(Message msg) {
             MetaData.Builder metadata = msg.getMetaData();
             try {
                 RequestParser parser = RequestParser.build(msg);

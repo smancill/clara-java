@@ -23,7 +23,7 @@
 
 package org.jlab.clara.msg.core;
 
-import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.sys.ProxyWrapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,9 +72,9 @@ public class SubscriptionsTest {
 
     @Test
     public void unsubscribeStopsThread() throws Exception {
-        try (xMsg actor = new xMsg("test")) {
-            xMsgSubscription subscription = actor.subscribe(xMsgTopic.wrap("topic"), null);
-            xMsgUtil.sleep(1000);
+        try (Actor actor = new Actor("test")) {
+            Subscription subscription = actor.subscribe(Topic.wrap("topic"), null);
+            ActorUtils.sleep(1000);
             actor.unsubscribe(subscription);
 
             assertFalse(subscription.isAlive());
@@ -93,36 +93,36 @@ public class SubscriptionsTest {
 
         final Check check = new Check();
 
-        Thread subThread = xMsgUtil.newThread("sub-thread", () -> {
-            try (xMsg actor = new xMsg("test_subscriber")) {
-                xMsgTopic topic = xMsgTopic.wrap("test_topic");
-                xMsgSubscription sub = actor.subscribe(topic, msg -> {
-                    int i = xMsgMessage.parseData(msg, Integer.class);
+        Thread subThread = ActorUtils.newThread("sub-thread", () -> {
+            try (Actor actor = new Actor("test_subscriber")) {
+                Topic topic = Topic.wrap("test_topic");
+                Subscription sub = actor.subscribe(topic, msg -> {
+                    int i = Message.parseData(msg, Integer.class);
                     check.counter.incrementAndGet();
                     check.sum.addAndGet(i);
                 });
                 int shutdownCounter = 0;
                 while (check.counter.get() < Check.N && shutdownCounter < 100) {
                     shutdownCounter++;
-                    xMsgUtil.sleep(100);
+                    ActorUtils.sleep(100);
                 }
                 actor.unsubscribe(sub);
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 e.printStackTrace();
             }
         });
         subThread.start();
-        xMsgUtil.sleep(100);
+        ActorUtils.sleep(100);
 
-        Thread pubThread = xMsgUtil.newThread("pub-thread", () -> {
-            try (xMsg actor = new xMsg("test_publisher");
-                 xMsgConnection con = actor.getConnection()) {
-                xMsgTopic topic = xMsgTopic.wrap("test_topic");
+        Thread pubThread = ActorUtils.newThread("pub-thread", () -> {
+            try (Actor actor = new Actor("test_publisher");
+                 Connection con = actor.getConnection()) {
+                Topic topic = Topic.wrap("test_topic");
                 for (int i = 0; i < Check.N; i++) {
-                    xMsgMessage msg = xMsgMessage.createFrom(topic, i);
+                    Message msg = Message.createFrom(topic, i);
                     actor.publish(con, msg);
                 }
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 e.printStackTrace();
             }
         });
@@ -147,29 +147,29 @@ public class SubscriptionsTest {
 
         final Check check = new Check();
 
-        Thread pubThread = xMsgUtil.newThread("syncpub-thread", () -> {
-            try (xMsg subActor = new xMsg("test_subscriber");
-                 xMsg pubActor = new xMsg("test_publisher")) {
-                xMsgTopic subTopic = xMsgTopic.wrap("test_topic");
+        Thread pubThread = ActorUtils.newThread("syncpub-thread", () -> {
+            try (Actor subActor = new Actor("test_subscriber");
+                 Actor pubActor = new Actor("test_publisher")) {
+                Topic subTopic = Topic.wrap("test_topic");
                 subActor.subscribe(subTopic, msg -> {
                     try {
-                        subActor.publish(xMsgMessage.createResponse(msg));
-                    } catch (xMsgException e) {
+                        subActor.publish(Message.createResponse(msg));
+                    } catch (ClaraMsgException e) {
                         e.printStackTrace();
                     }
                 });
-                xMsgUtil.sleep(100);
-                try (xMsgConnection pubCon = subActor.getConnection()) {
-                    xMsgTopic pubTopic = xMsgTopic.wrap("test_topic");
+                ActorUtils.sleep(100);
+                try (Connection pubCon = subActor.getConnection()) {
+                    Topic pubTopic = Topic.wrap("test_topic");
                     for (int i = 0; i < Check.N; i++) {
-                        xMsgMessage msg = xMsgMessage.createFrom(pubTopic, i);
-                        xMsgMessage resMsg = pubActor.syncPublish(pubCon, msg, 1000);
-                        int data = xMsgMessage.parseData(resMsg, Integer.class);
+                        Message msg = Message.createFrom(pubTopic, i);
+                        Message resMsg = pubActor.syncPublish(pubCon, msg, 1000);
+                        int data = Message.parseData(resMsg, Integer.class);
                         check.sum += data;
                         check.counter++;
                     }
                 }
-            } catch (xMsgException | TimeoutException e) {
+            } catch (ClaraMsgException | TimeoutException e) {
                 e.printStackTrace();
             }
         });
@@ -190,29 +190,29 @@ public class SubscriptionsTest {
 
         final Check check = new Check();
 
-        Thread pubThread = xMsgUtil.newThread("syncpub-thread", () -> {
-            try (xMsg subActor = new xMsg("test_subscriber");
-                 xMsg pubActor = new xMsg("test_publisher")) {
-                xMsgTopic subTopic = xMsgTopic.wrap("test_topic");
-                xMsgSubscription sub = subActor.subscribe(subTopic, msg -> {
+        Thread pubThread = ActorUtils.newThread("syncpub-thread", () -> {
+            try (Actor subActor = new Actor("test_subscriber");
+                 Actor pubActor = new Actor("test_publisher")) {
+                Topic subTopic = Topic.wrap("test_topic");
+                Subscription sub = subActor.subscribe(subTopic, msg -> {
                     try {
                         check.received = true;
-                        xMsgUtil.sleep(1500);
-                        subActor.publish(xMsgMessage.createResponse(msg));
-                    } catch (xMsgException e) {
+                        ActorUtils.sleep(1500);
+                        subActor.publish(Message.createResponse(msg));
+                    } catch (ClaraMsgException e) {
                         e.printStackTrace();
                     }
                 });
-                xMsgUtil.sleep(100);
+                ActorUtils.sleep(100);
                 try {
-                    xMsgTopic pubTopic = xMsgTopic.wrap("test_topic");
-                    xMsgMessage msg = xMsgMessage.createFrom(pubTopic, 1);
+                    Topic pubTopic = Topic.wrap("test_topic");
+                    Message msg = Message.createFrom(pubTopic, 1);
                     pubActor.syncPublish(msg, 1000);
                 } catch (TimeoutException e) {
                     check.timeout = true;
                 }
                 subActor.unsubscribe(sub);
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 e.printStackTrace();
             }
         });
@@ -234,40 +234,40 @@ public class SubscriptionsTest {
 
         final Check check = new Check();
 
-        Thread subThread = xMsgUtil.newThread("sub-thread", () -> {
-            try (xMsg actor = new xMsg("test_subscriber")) {
-                Set<xMsgTopic> topics = new HashSet<>();
-                topics.add(xMsgTopic.wrap("1_test_topic"));
-                topics.add(xMsgTopic.wrap("2_test_topic"));
-                xMsgSubscription sub = actor.subscribe(topics, msg -> {
-                    int i = xMsgMessage.parseData(msg, Integer.class);
+        Thread subThread = ActorUtils.newThread("sub-thread", () -> {
+            try (Actor actor = new Actor("test_subscriber")) {
+                Set<Topic> topics = new HashSet<>();
+                topics.add(Topic.wrap("1_test_topic"));
+                topics.add(Topic.wrap("2_test_topic"));
+                Subscription sub = actor.subscribe(topics, msg -> {
+                    int i = Message.parseData(msg, Integer.class);
                     check.counter.incrementAndGet();
                     check.sum.addAndGet(i);
                 });
                 int shutdownCounter = 0;
                 while (check.counter.get() < Check.N && shutdownCounter < 100) {
                     shutdownCounter++;
-                    xMsgUtil.sleep(100);
+                    ActorUtils.sleep(100);
                 }
                 actor.unsubscribe(sub);
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 e.printStackTrace();
             }
         });
         subThread.start();
-        xMsgUtil.sleep(100);
+        ActorUtils.sleep(100);
 
-        Thread pubThread = xMsgUtil.newThread("pub-thread", () -> {
-            try (xMsg actor = new xMsg("test_publisher");
-                 xMsgConnection con = actor.getConnection()) {
-                xMsgTopic[] topics = new xMsgTopic[] {
-                        xMsgTopic.wrap("1_test_topic"), xMsgTopic.wrap("2_test_topic")
+        Thread pubThread = ActorUtils.newThread("pub-thread", () -> {
+            try (Actor actor = new Actor("test_publisher");
+                 Connection con = actor.getConnection()) {
+                Topic[] topics = new Topic[] {
+                        Topic.wrap("1_test_topic"), Topic.wrap("2_test_topic")
                 };
                 for (int i = 0; i < Check.N; i++) {
-                    xMsgMessage msg = xMsgMessage.createFrom(topics[i % 2], i);
+                    Message msg = Message.createFrom(topics[i % 2], i);
                     actor.publish(con, msg);
                 }
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 e.printStackTrace();
             }
         });

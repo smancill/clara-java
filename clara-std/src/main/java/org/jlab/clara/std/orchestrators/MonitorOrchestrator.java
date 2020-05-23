@@ -44,7 +44,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
-import static org.jlab.clara.msg.core.xMsgTopic.ANY;
+import static org.jlab.clara.msg.core.Topic.ANY;
 
 /**
  * Listen to reports published to the CLARA data-ring.

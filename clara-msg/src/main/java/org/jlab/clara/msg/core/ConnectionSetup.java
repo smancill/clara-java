@@ -23,8 +23,8 @@
 
 package org.jlab.clara.msg.core;
 
-import org.jlab.clara.msg.net.xMsgProxyAddress;
-import org.jlab.clara.msg.sys.pubsub.xMsgConnectionSetup;
+import org.jlab.clara.msg.net.ProxyAddress;
+import org.jlab.clara.msg.sys.pubsub.ProxyDriverSetup;
 import org.zeromq.ZMQ.Socket;
 
 import java.util.Objects;
@@ -34,18 +34,18 @@ class ConnectionSetup {
 
     abstract static class Builder<T extends Builder<T>> {
 
-        protected xMsgProxyAddress proxyAddress = new xMsgProxyAddress();
-        protected xMsgConnectionSetup.Builder conSetup = xMsgConnectionSetup.newBuilder();
+        protected ProxyAddress proxyAddress = new ProxyAddress();
+        protected ProxyDriverSetup.Builder conSetup = ProxyDriverSetup.newBuilder();
 
         /**
          * Sets the address of the default proxy.
-         * This address will be used by the xMsg pub-sub API when no address is
+         * This address will be used by the pub-sub API when no address is
          * given.
          *
          * @param address the address to the default proxy
          * @return this builder
          */
-        public T withProxy(xMsgProxyAddress address) {
+        public T withProxy(ProxyAddress address) {
             Objects.requireNonNull(address, "null proxy address");
             this.proxyAddress = address;
             return getThis();
@@ -157,11 +157,11 @@ class ConnectionSetup {
     }
 
 
-    private final xMsgProxyAddress proxyAddress;
-    private final xMsgConnectionSetup connectionSetup;
+    private final ProxyAddress proxyAddress;
+    private final ProxyDriverSetup connectionSetup;
 
-    protected ConnectionSetup(xMsgProxyAddress proxyAddress,
-                              xMsgConnectionSetup connectionSetup) {
+    protected ConnectionSetup(ProxyAddress proxyAddress,
+                              ProxyDriverSetup connectionSetup) {
         this.proxyAddress = proxyAddress;
         this.connectionSetup = connectionSetup;
     }
@@ -171,7 +171,7 @@ class ConnectionSetup {
      *
      * @return the address of the default proxy
      */
-    public xMsgProxyAddress proxyAddress() {
+    public ProxyAddress proxyAddress() {
         return proxyAddress;
     }
 
@@ -180,7 +180,7 @@ class ConnectionSetup {
      *
      * @return the connection setup
      */
-    xMsgConnectionSetup connectionSetup() {
+    ProxyDriverSetup connectionSetup() {
         return connectionSetup;
     }
 }

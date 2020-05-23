@@ -27,11 +27,11 @@ import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.Engine;
-import org.jlab.clara.msg.core.xMsgCallBack;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgSubscription;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Subscription;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.sys.RequestParser.RequestException;
 import org.jlab.clara.sys.report.ServiceReport;
@@ -61,7 +61,7 @@ class Service extends AbstractActor {
     private final ServiceSysConfig sysConfig;
     private final ServiceReport sysReport;
 
-    private xMsgSubscription subscription;
+    private Subscription subscription;
 
     /**
      * Constructor of a service.
@@ -90,7 +90,7 @@ class Service extends AbstractActor {
         sysReport = new ServiceReport(comp, userEngine, session);
 
         // Creating thread pool
-        executionPool = xMsgUtil.newThreadPool(comp.getSubscriptionPoolSize(), name);
+        executionPool = ActorUtils.newThreadPool(comp.getSubscriptionPoolSize(), name);
 
         // Creating service object pool
         enginePool = new ServiceEngine[comp.getSubscriptionPoolSize()];
@@ -124,8 +124,8 @@ class Service extends AbstractActor {
         }
 
         // subscribe and register
-        xMsgTopic topic = base.getMe().getTopic();
-        xMsgCallBack callback = new ServiceCallBack();
+        Topic topic = base.getMe().getTopic();
+        Callback callback = new ServiceCallBack();
         String description = base.getDescription();
         subscription = startRegisteredSubscription(topic, callback, description);
     }
@@ -150,7 +150,7 @@ class Service extends AbstractActor {
     }
 
 
-    private void configure(final xMsgMessage msg) throws Exception {
+    private void configure(final Message msg) throws Exception {
         while (true) {
             for (final ServiceEngine engine : enginePool) {
                 if (engine.tryAcquire()) {
@@ -170,7 +170,7 @@ class Service extends AbstractActor {
     }
 
 
-    private void execute(final xMsgMessage msg) {
+    private void execute(final Message msg) {
         while (true) {
             for (final ServiceEngine engine : enginePool) {
                 if (engine.tryAcquire()) {
@@ -190,7 +190,7 @@ class Service extends AbstractActor {
     }
 
 
-    private void setup(xMsgMessage msg) throws RequestException {
+    private void setup(Message msg) throws RequestException {
         RequestParser setup = RequestParser.build(msg);
         String report = setup.nextString();
         int value = setup.nextInteger();
@@ -273,10 +273,10 @@ class Service extends AbstractActor {
     }
 
 
-    private class ServiceCallBack implements xMsgCallBack {
+    private class ServiceCallBack implements Callback {
 
         @Override
-        public void callback(xMsgMessage msg) {
+        public void callback(Message msg) {
             try {
                 MetaData.Builder metadata = msg.getMetaData();
                 if (!metadata.hasAction()) {

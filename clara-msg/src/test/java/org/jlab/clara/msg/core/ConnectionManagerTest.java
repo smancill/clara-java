@@ -23,12 +23,12 @@
 
 package org.jlab.clara.msg.core;
 
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
-import org.jlab.clara.msg.net.xMsgRegAddress;
-import org.jlab.clara.msg.sys.xMsgConnectionFactory;
-import org.jlab.clara.msg.sys.pubsub.xMsgProxyDriver;
-import org.jlab.clara.msg.sys.regdis.xMsgRegDriver;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.ProxyAddress;
+import org.jlab.clara.msg.net.RegAddress;
+import org.jlab.clara.msg.sys.ConnectionFactory;
+import org.jlab.clara.msg.sys.pubsub.ProxyDriver;
+import org.jlab.clara.msg.sys.regdis.RegDriver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,24 +46,24 @@ import java.util.function.Function;
 
 public class ConnectionManagerTest {
 
-    private xMsgConnectionFactory factory;
+    private ConnectionFactory factory;
     private ConnectionManager manager;
 
     public ConnectionManagerTest() throws Exception {
-        factory = mock(xMsgConnectionFactory.class);
+        factory = mock(ConnectionFactory.class);
 
         when(factory.createPublisherConnection(any(), any()))
                 .thenAnswer(invocation -> {
-                    xMsgProxyAddress a = (xMsgProxyAddress) invocation.getArguments()[0];
-                    xMsgProxyDriver c = mock(xMsgProxyDriver.class);
+                    ProxyAddress a = (ProxyAddress) invocation.getArguments()[0];
+                    ProxyDriver c = mock(ProxyDriver.class);
                     when(c.getAddress()).thenReturn(a);
                     return c;
                 });
 
         when(factory.createRegistrarConnection(any()))
                 .thenAnswer(invocation -> {
-                    xMsgRegAddress a = (xMsgRegAddress) invocation.getArguments()[0];
-                    xMsgRegDriver d = mock(xMsgRegDriver.class);
+                    RegAddress a = (RegAddress) invocation.getArguments()[0];
+                    RegDriver d = mock(RegDriver.class);
                     when(d.getAddress()).thenReturn(a);
                     return d;
                 });
@@ -76,22 +76,22 @@ public class ConnectionManagerTest {
 
     @Test
     public void createProxyConnections() throws Exception {
-        createConnections(xMsgProxyAddress::new,
+        createConnections(ProxyAddress::new,
                           manager::getProxyConnection,
-                          xMsgProxyDriver::getAddress);
+                          ProxyDriver::getAddress);
     }
 
     @Test
     public void createRegistrarConnections() throws Exception {
-        createConnections(xMsgRegAddress::new,
+        createConnections(RegAddress::new,
                           manager::getRegistrarConnection,
-                          xMsgRegDriver::getAddress);
+                          RegDriver::getAddress);
     }
 
     @Test
     public void reuseProxyConnections() throws Exception {
 
-        reuseConnections(xMsgProxyAddress::new,
+        reuseConnections(ProxyAddress::new,
                          manager::getProxyConnection,
                          manager::releaseProxyConnection);
     }
@@ -99,7 +99,7 @@ public class ConnectionManagerTest {
     @Test
     public void reuseRegistrarConnections() throws Exception {
 
-        reuseConnections(xMsgRegAddress::new,
+        reuseConnections(RegAddress::new,
                          manager::getRegistrarConnection,
                          manager::releaseRegistrarConnection);
     }
@@ -148,6 +148,6 @@ public class ConnectionManagerTest {
 
     @FunctionalInterface
     public interface ConnectionBuilder<A, C> {
-        C apply(A a) throws xMsgException;
+        C apply(A a) throws ClaraMsgException;
     }
 }

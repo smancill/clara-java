@@ -1,7 +1,7 @@
 To run the performance tests, go to the base directory and run the following
 on several terminals:
 
-1. Start an xMsg proxy:
+1. Start a proxy:
 
     $ ./scripts/dev/j_proxy
 

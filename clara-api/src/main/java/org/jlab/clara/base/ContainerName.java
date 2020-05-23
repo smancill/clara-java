@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import static org.jlab.clara.msg.core.xMsgTopic.SEPARATOR;
+import static org.jlab.clara.msg.core.Topic.SEPARATOR;
 
 /**
  * Unique identifier of a CLARA container.

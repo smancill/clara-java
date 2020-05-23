@@ -23,9 +23,9 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.util.ArgUtils;
 import org.jlab.clara.util.FileUtils;
-import org.jlab.clara.msg.core.xMsgUtil;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -267,7 +267,7 @@ public final class ConfigParsers {
      */
     public static String toHostAddress(String... args) {
         String arg = requireArg(args);
-        if (xMsgUtil.isIP(arg)) {
+        if (ActorUtils.isIP(arg)) {
             return arg;
         }
         throw new IllegalArgumentException("the argument must be an IPv4 address");

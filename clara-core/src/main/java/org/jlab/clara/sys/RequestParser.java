@@ -24,7 +24,7 @@
 package org.jlab.clara.sys;
 
 import org.jlab.clara.base.core.ClaraConstants;
-import org.jlab.clara.msg.core.xMsgMessage;
+import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.data.MetaDataProto.MetaDataOrBuilder;
 
 import java.util.NoSuchElementException;
@@ -43,7 +43,7 @@ final class RequestParser {
         tokenizer = new StringTokenizer(cmdData, ClaraConstants.DATA_SEP);
     }
 
-    static RequestParser build(xMsgMessage msg) throws RequestException {
+    static RequestParser build(Message msg) throws RequestException {
         String mimeType = msg.getMimeType();
         if (mimeType.equals("text/string")) {
             return new RequestParser(msg.getMetaData(), new String(msg.getData()));

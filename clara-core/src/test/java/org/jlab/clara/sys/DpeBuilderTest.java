@@ -23,7 +23,7 @@
 
 package org.jlab.clara.sys;
 
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.sys.Dpe.Builder;
 import org.junit.jupiter.api.Test;
 
@@ -184,11 +184,11 @@ public class DpeBuilderTest {
     }
 
 
-    private xMsgProxyAddress proxy(String host) throws Exception {
-        return new xMsgProxyAddress(host, Dpe.DEFAULT_PROXY_PORT);
+    private ProxyAddress proxy(String host) throws Exception {
+        return new ProxyAddress(host, Dpe.DEFAULT_PROXY_PORT);
     }
 
-    private xMsgProxyAddress proxy(String host, int port) throws Exception {
-        return new xMsgProxyAddress(host, port);
+    private ProxyAddress proxy(String host, int port) throws Exception {
+        return new ProxyAddress(host, port);
     }
 }

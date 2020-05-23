@@ -22,6 +22,6 @@
  */
 
 /**
- * Network classes to identify and handle xMsg connections using 0MQ.
+ * Network classes to identify and handle connections using 0MQ.
  */
 package org.jlab.clara.msg.net;

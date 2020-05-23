@@ -29,7 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.sys.ProxyWrapper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -87,26 +87,26 @@ public class PublishersTest {
 
         final String rawTopic = "test_topic";
         final ProxyWrapper proxyThread;
-        final xMsg pubActor;
+        final Actor pubActor;
 
         TestRunner(boolean singlePubActor) {
             this.proxyThread = new ProxyWrapper();
-            this.pubActor = singlePubActor ? new xMsg("test_publisher") : null;
+            this.pubActor = singlePubActor ? new Actor("test_publisher") : null;
         }
 
-        abstract void receive(xMsg actor, xMsgMessage msg, Check check) throws Exception;
+        abstract void receive(Actor actor, Message msg, Check check) throws Exception;
 
-        abstract void publish(xMsg actor, xMsgMessage msg, Check check) throws Exception;
+        abstract void publish(Actor actor, Message msg, Check check) throws Exception;
 
         void run(int totalMessages, int numPublishers) throws Exception {
 
             final Check check = new Check(totalMessages);
             final CountDownLatch subReady = new CountDownLatch(1);
 
-            Thread subThread = xMsgUtil.newThread("sub-thread", () -> {
-                try (xMsg actor = new xMsg("test_subscriber")) {
-                    xMsgTopic topic = xMsgTopic.wrap(rawTopic);
-                    xMsgSubscription sub = actor.subscribe(topic, msg -> {
+            Thread subThread = ActorUtils.newThread("sub-thread", () -> {
+                try (Actor actor = new Actor("test_subscriber")) {
+                    Topic topic = Topic.wrap(rawTopic);
+                    Subscription sub = actor.subscribe(topic, msg -> {
                         try {
                             receive(actor, msg, check);
                         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class PublishersTest {
                     subReady.countDown();
                     wait(check);
                     actor.unsubscribe(sub);
-                } catch (xMsgException e) {
+                } catch (ClaraMsgException e) {
                     e.printStackTrace();
                 }
             });
@@ -130,15 +130,15 @@ public class PublishersTest {
                 final int start = i * numMessages;
                 final int end = start + numMessages;
 
-                Thread pubThread = xMsgUtil.newThread("pub-" + start, () -> {
-                    xMsg actor = pubActor;
+                Thread pubThread = ActorUtils.newThread("pub-" + start, () -> {
+                    Actor actor = pubActor;
                     try {
                         if (actor == null) {
-                            actor = new xMsg("test_publisher_" + start);
+                            actor = new Actor("test_publisher_" + start);
                         }
-                        xMsgTopic topic = xMsgTopic.build(rawTopic, Integer.toString(start));
+                        Topic topic = Topic.build(rawTopic, Integer.toString(start));
                         for (int j = start; j < end; j++) {
-                            xMsgMessage msg = xMsgMessage.createFrom(topic, j);
+                            Message msg = Message.createFrom(topic, j);
                             publish(actor, msg, check);
                         }
                     } catch (Exception e) {
@@ -165,7 +165,7 @@ public class PublishersTest {
         private void wait(Check check) {
             int counter = 0;
             while (check.counter.get() < check.n && counter < 10000) {
-                xMsgUtil.sleep(100);
+                ActorUtils.sleep(100);
                 counter += 100;
             }
         }
@@ -191,13 +191,13 @@ public class PublishersTest {
         }
 
         @Override
-        void receive(xMsg actor, xMsgMessage msg, Check check) throws Exception {
-            int i = xMsgMessage.parseData(msg, Integer.class);
+        void receive(Actor actor, Message msg, Check check) throws Exception {
+            int i = Message.parseData(msg, Integer.class);
             check.increment(i);
         }
 
         @Override
-        void publish(xMsg actor, xMsgMessage msg, Check check) throws Exception {
+        void publish(Actor actor, Message msg, Check check) throws Exception {
             actor.publish(msg);
         }
     }
@@ -210,14 +210,14 @@ public class PublishersTest {
         }
 
         @Override
-        void receive(xMsg actor, xMsgMessage msg, Check check) throws Exception {
-            actor.publish(xMsgMessage.createResponse(msg));
+        void receive(Actor actor, Message msg, Check check) throws Exception {
+            actor.publish(Message.createResponse(msg));
         }
 
         @Override
-        void publish(xMsg actor, xMsgMessage msg, Check check) throws Exception {
-            xMsgMessage res = actor.syncPublish(msg, 1000);
-            Integer r = xMsgMessage.parseData(res, Integer.class);
+        void publish(Actor actor, Message msg, Check check) throws Exception {
+            Message res = actor.syncPublish(msg, 1000);
+            Integer r = Message.parseData(res, Integer.class);
             check.increment(r);
         }
     }

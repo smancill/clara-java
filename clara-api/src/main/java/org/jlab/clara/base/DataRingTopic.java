@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.util.ArgUtils;
 
 /**
@@ -41,7 +41,7 @@ public class DataRingTopic {
      * @param state the output state of interest
      */
     public DataRingTopic(String state) {
-        this(state, xMsgTopic.ANY, xMsgTopic.ANY);
+        this(state, Topic.ANY, Topic.ANY);
     }
 
     /**
@@ -51,7 +51,7 @@ public class DataRingTopic {
      * @param session the data-processing session of interest
      */
     public DataRingTopic(String state, String session) {
-        this(state, session, xMsgTopic.ANY);
+        this(state, session, Topic.ANY);
     }
 
     /**
@@ -66,10 +66,10 @@ public class DataRingTopic {
         this.session = ArgUtils.requireNonNull(session, "session");
         this.engine = ArgUtils.requireNonEmpty(engine, "engine");
 
-        if (state.equals(xMsgTopic.ANY)) {
+        if (state.equals(Topic.ANY)) {
             throw new IllegalArgumentException("state is not defined");
         }
-        if (session.equals(xMsgTopic.ANY) && !engine.equals(xMsgTopic.ANY)) {
+        if (session.equals(Topic.ANY) && !engine.equals(Topic.ANY)) {
             throw new IllegalArgumentException("session is not defined");
         }
     }
@@ -126,10 +126,10 @@ public class DataRingTopic {
         StringBuilder sb = new StringBuilder();
         sb.append("DataRingTopic[");
         sb.append("state='").append(state).append('\'');
-        if (!session.equals(xMsgTopic.ANY)) {
+        if (!session.equals(Topic.ANY)) {
             sb.append(", session='").append(session).append('\'');
         }
-        if (!engine.equals(xMsgTopic.ANY)) {
+        if (!engine.equals(Topic.ANY)) {
             sb.append(", engine='").append(engine).append('\'');
         }
         sb.append(']');
@@ -139,12 +139,12 @@ public class DataRingTopic {
     String topic() {
         StringBuilder sb = new StringBuilder();
         sb.append(state);
-        if (!session.equals(xMsgTopic.ANY)) {
-            sb.append(xMsgTopic.SEPARATOR).append(session);
+        if (!session.equals(Topic.ANY)) {
+            sb.append(Topic.SEPARATOR).append(session);
         }
-        if (!engine.equals(xMsgTopic.ANY)) {
-            sb.append(xMsgTopic.SEPARATOR).append(engine);
-            if (!engine.endsWith(xMsgTopic.ANY)) {
+        if (!engine.equals(Topic.ANY)) {
+            sb.append(Topic.SEPARATOR).append(engine);
+            if (!engine.endsWith(Topic.ANY)) {
                 sb.append('*');
             }
         }

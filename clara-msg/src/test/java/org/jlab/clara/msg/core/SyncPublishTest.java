@@ -23,11 +23,11 @@
 
 package org.jlab.clara.msg.core;
 
-import org.jlab.clara.msg.data.xMsgRegInfo;
-import org.jlab.clara.msg.data.xMsgRegQuery;
-import org.jlab.clara.msg.data.xMsgRegRecord;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgRegAddress;
+import org.jlab.clara.msg.data.RegInfo;
+import org.jlab.clara.msg.data.RegQuery;
+import org.jlab.clara.msg.data.RegRecord;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.RegAddress;
 import org.jlab.clara.msg.sys.ProxyWrapper;
 import org.jlab.clara.msg.sys.RegistrarWrapper;
 import org.junit.jupiter.api.Tag;
@@ -64,35 +64,35 @@ public final class SyncPublishTest {
     private static final String TOPIC = "sync_pub_test";
     private static final int TIME_OUT = 1000;
 
-    private static xMsg listener(int poolSize, String name, xMsgRegAddress regAddress)
-            throws xMsgException {
-        xMsgTopic topic = xMsgTopic.build(TOPIC, name);
-        xMsg actor = new xMsg(name, regAddress, poolSize);
+    private static Actor listener(int poolSize, String name, RegAddress regAddress)
+            throws ClaraMsgException {
+        Topic topic = Topic.build(TOPIC, name);
+        Actor actor = new Actor(name, regAddress, poolSize);
         try {
-            actor.register(xMsgRegInfo.subscriber(topic, "test subscriber"));
+            actor.register(RegInfo.subscriber(topic, "test subscriber"));
             System.out.printf("Registered %s with %s%n", topic, regAddress);
             actor.subscribe(topic, msg -> {
                 try {
-                    actor.publish(xMsgMessage.createResponse(msg));
-                } catch (xMsgException e) {
+                    actor.publish(Message.createResponse(msg));
+                } catch (ClaraMsgException e) {
                     e.printStackTrace();
                 }
             });
             System.out.printf("Using %d cores to reply requests...%n", poolSize);
             return actor;
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             actor.close();
             throw e;
         }
     }
 
-    private static Result publisher(int cores, int numMessages, xMsgRegAddress regAddress)
+    private static Result publisher(int cores, int numMessages, RegAddress regAddress)
             throws Exception {
-        ThreadPoolExecutor pool = xMsgUtil.newThreadPool(cores, "sync-pub-");
+        ThreadPoolExecutor pool = ActorUtils.newThreadPool(cores, "sync-pub-");
 
-        try (xMsg actor = new xMsg("sync_tester", regAddress)) {
-            xMsgRegQuery query = xMsgRegQuery.subscribers().withDomain(TOPIC);
-            Set<xMsgRegRecord> listeners = actor.discover(query);
+        try (Actor actor = new Actor("sync_tester", regAddress)) {
+            RegQuery query = RegQuery.subscribers().withDomain(TOPIC);
+            Set<RegRecord> listeners = actor.discover(query);
             int numListeners = listeners.size();
             if (numListeners == 0) {
                 throw new RuntimeException("no subscribers registered on" + regAddress);
@@ -112,18 +112,18 @@ public final class SyncPublishTest {
                 pool.submit(() -> {
                     try {
                         for (int j = start; j < end; j++) {
-                            for (xMsgRegRecord reg : listeners) {
-                                try (xMsgConnection pubCon = actor.getConnection(reg.address())) {
-                                    xMsgMessage data = xMsgMessage.createFrom(reg.topic(), j);
-                                    xMsgMessage res = actor.syncPublish(pubCon, data, TIME_OUT);
-                                    int value = xMsgMessage.parseData(res, Integer.class);
+                            for (RegRecord reg : listeners) {
+                                try (Connection pubCon = actor.getConnection(reg.address())) {
+                                    Message data = Message.createFrom(reg.topic(), j);
+                                    Message res = actor.syncPublish(pubCon, data, TIME_OUT);
+                                    int value = Message.parseData(res, Integer.class);
                                     results.add(value);
                                 } catch (TimeoutException e) {
                                     e.printStackTrace();
                                 }
                             }
                         }
-                    } catch (xMsgException e) {
+                    } catch (ClaraMsgException e) {
                         e.printStackTrace();
                     }
                 });
@@ -137,7 +137,7 @@ public final class SyncPublishTest {
             }
 
             return results;
-        } catch (xMsgException | InterruptedException e) {
+        } catch (ClaraMsgException | InterruptedException e) {
             throw e;
         }
     }
@@ -200,12 +200,12 @@ public final class SyncPublishTest {
 
     @Test
     public void run() throws Exception {
-        xMsgRegAddress address = new xMsgRegAddress();
+        RegAddress address = new RegAddress();
         try (RegistrarWrapper registrar = new RegistrarWrapper();
              ProxyWrapper proxy = new ProxyWrapper()) {
-            try (xMsg list1 = listener(1, "foo", address);
-                 xMsg list2 = listener(1, "bar", address)) {
-                xMsgUtil.sleep(100);
+            try (Actor list1 = listener(1, "foo", address);
+                 Actor list2 = listener(1, "bar", address)) {
+                ActorUtils.sleep(100);
                 Result results = publisher(1, 1000, address);
                 assertThat(results.sum.get(), is(results.totalSum));
             }
@@ -225,11 +225,11 @@ public final class SyncPublishTest {
         String command = args[2];
 
         try {
-            xMsgRegAddress address = new xMsgRegAddress(frontEnd);
+            RegAddress address = new RegAddress(frontEnd);
             if (command.equals("listener")) {
                 int poolSize = Integer.parseInt(cores);
-                try (xMsg sub = SyncPublishTest.listener(poolSize, "local", address)) {
-                    xMsgUtil.keepAlive();
+                try (Actor sub = SyncPublishTest.listener(poolSize, "local", address)) {
+                    ActorUtils.keepAlive();
                 }
             } else {
                 int pubThreads = Integer.parseInt(cores);

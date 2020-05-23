@@ -24,16 +24,16 @@
 package org.jlab.clara.msg.examples;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.jlab.clara.msg.core.xMsg;
-import org.jlab.clara.msg.core.xMsgCallBack;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.core.Actor;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MetaDataProto;
+import org.jlab.clara.msg.data.MimeType;
 import org.jlab.clara.msg.data.PlainDataProto.PlainData;
-import org.jlab.clara.msg.data.xMsgMimeType;
-import org.jlab.clara.msg.data.xMsgRegInfo;
-import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.data.RegInfo;
+import org.jlab.clara.msg.errors.ClaraMsgException;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ import java.util.List;
  * It also includes an inner class presenting the callback to be executed at
  * every arrival of the data.
  */
-public class Subscriber extends xMsg {
+public class Subscriber extends Actor {
 
     Subscriber() {
         super("test_subscriber", 1);
@@ -53,19 +53,19 @@ public class Subscriber extends xMsg {
      * Subscribes to a hard-coded topic on the local proxy,
      * and registers with the local registrar.
      */
-    void start() throws xMsgException  {
+    void start() throws ClaraMsgException {
         // build the subscribing topic (hard-coded)
         String domain = "test_domain";
         String subject = "test_subject";
         String type = "test_type";
         String description = "test_description";
-        xMsgTopic topic = xMsgTopic.build(domain, subject, type);
+        Topic topic = Topic.build(domain, subject, type);
 
         // subscribe to default local proxy
         subscribe(topic, new MyCallBack());
 
         // register with the local registrar
-        register(xMsgRegInfo.subscriber(topic, description));
+        register(RegInfo.subscriber(topic, description));
 
         System.out.printf("Subscribed to = %s%n", topic);
     }
@@ -73,7 +73,7 @@ public class Subscriber extends xMsg {
     public static void main(String[] args) {
         try (Subscriber sub = new Subscriber()) {
             sub.start();
-            xMsgUtil.keepAlive();
+            ActorUtils.keepAlive();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,10 +86,10 @@ public class Subscriber extends xMsg {
      *
      * @param msg a received message
      */
-    private void respondBack(xMsgMessage msg, Object data) {
+    private void respondBack(Message msg, Object data) {
         try {
-            publish(xMsgMessage.createResponse(msg, data));
-        } catch (xMsgException e) {
+            publish(Message.createResponse(msg, data));
+        } catch (ClaraMsgException e) {
             e.printStackTrace();
         }
     }
@@ -97,7 +97,7 @@ public class Subscriber extends xMsg {
     /**
      * Private callback class.
      */
-    private class MyCallBack implements xMsgCallBack {
+    private class MyCallBack implements Callback {
 
         // variables for naive benchmarking
         long nr = 0;
@@ -105,7 +105,7 @@ public class Subscriber extends xMsg {
         long t2;
 
         @Override
-        public void callback(xMsgMessage msg) {
+        public void callback(Message msg) {
             if (!msg.getMetaData().hasReplyTo()) {
                 // we get the data, but will not do anything with it for
                 // communication benchmarking purposes.
@@ -138,10 +138,10 @@ public class Subscriber extends xMsg {
          * @param msg a received message
          * @return data of the message, otherwise null
          */
-        private List<Integer> parseData(xMsgMessage msg) {
+        private List<Integer> parseData(Message msg) {
             try {
                 MetaDataProto.MetaData.Builder metadata = msg.getMetaData();
-                if (metadata.getDataType().equals(xMsgMimeType.ARRAY_SFIXED32)) {
+                if (metadata.getDataType().equals(MimeType.ARRAY_SFIXED32)) {
                     PlainData data = PlainData.parseFrom(msg.getData());
                     return data.getFLSINT32AList();
                 }

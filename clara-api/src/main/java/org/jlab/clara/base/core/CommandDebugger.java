@@ -25,12 +25,12 @@ package org.jlab.clara.base.core;
 
 import org.jlab.clara.base.ClaraUtil;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.core.xMsgConnection;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.data.xMsgMimeType;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.Connection;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MimeType;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.ProxyAddress;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -81,8 +81,8 @@ public final class CommandDebugger extends ClaraBase {
         try {
             Command cmd = new Command(line);
             System.out.println("C: " + cmd);
-            try (xMsgConnection connection = getConnection(cmd.address)) {
-                xMsgMessage message = MessageUtil.buildRequest(cmd.topic, cmd.request);
+            try (Connection connection = getConnection(cmd.address)) {
+                Message message = MessageUtil.buildRequest(cmd.topic, cmd.request);
                 message.getMetaData().setAuthor(getName());
                 message.getMetaData().setSender(getName());
                 if (cmd.action.equals("send")) {
@@ -91,14 +91,14 @@ public final class CommandDebugger extends ClaraBase {
                     printResponse(syncPublish(connection, message, cmd.timeout));
                 }
             }
-        } catch (xMsgException | ClaraException | TimeoutException e) {
+        } catch (ClaraMsgException | ClaraException | TimeoutException e) {
             e.printStackTrace();
         }
     }
 
-    private void printResponse(xMsgMessage res) {
+    private void printResponse(Message res) {
         String mimeType = res.getMimeType();
-        if (mimeType.equals(xMsgMimeType.STRING)) {
+        if (mimeType.equals(MimeType.STRING)) {
             String data = new String(res.getData());
             System.out.printf("R: %s%n", data);
         } else {
@@ -110,8 +110,8 @@ public final class CommandDebugger extends ClaraBase {
     private static class Command {
 
         private final String action;
-        private final xMsgProxyAddress address;
-        private final xMsgTopic topic;
+        private final ProxyAddress address;
+        private final Topic topic;
         private final String request;
 
         private int timeout = 0;
@@ -127,14 +127,14 @@ public final class CommandDebugger extends ClaraBase {
                     timeout = Integer.parseInt(tk.nextToken());
                 }
                 String component = tk.nextToken().replace("localhost", ClaraUtil.localhost());
-                address = new xMsgProxyAddress(ClaraUtil.getDpeHost(component),
-                                               ClaraUtil.getDpePort(component));
+                address = new ProxyAddress(ClaraUtil.getDpeHost(component),
+                                           ClaraUtil.getDpePort(component));
                 if (ClaraUtil.isDpeName(component)) {
-                    topic = xMsgTopic.build("dpe", component);
+                    topic = Topic.build("dpe", component);
                 } else if (ClaraUtil.isContainerName(component)) {
-                    topic = xMsgTopic.build("dpe", component);
+                    topic = Topic.build("dpe", component);
                 } else if (ClaraUtil.isServiceName(component)) {
-                    topic = xMsgTopic.wrap(component);
+                    topic = Topic.wrap(component);
                 } else {
                     throw new ClaraException("Not a CLARA component: " + component);
                 }

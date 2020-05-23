@@ -27,17 +27,17 @@ import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.core.MessageUtil;
-import org.jlab.clara.msg.core.xMsgMessage;
-import org.jlab.clara.msg.core.xMsgTopic;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegDataProto.RegData;
-import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgContext;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
-import org.jlab.clara.msg.net.xMsgRegAddress;
-import org.jlab.clara.msg.net.xMsgSocketFactory;
-import org.jlab.clara.msg.sys.regdis.xMsgRegDriver;
-import org.jlab.clara.msg.sys.regdis.xMsgRegFactory;
-import org.jlab.clara.msg.sys.xMsgRegistrar;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.Context;
+import org.jlab.clara.msg.net.ProxyAddress;
+import org.jlab.clara.msg.net.RegAddress;
+import org.jlab.clara.msg.net.SocketFactory;
+import org.jlab.clara.msg.sys.Registrar;
+import org.jlab.clara.msg.sys.regdis.RegDriver;
+import org.jlab.clara.msg.sys.regdis.RegFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
@@ -91,20 +91,20 @@ public class ClaraQueriesTest {
         private static final String DATE = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(ClaraConstants.DATE_FORMAT));
 
-        private final xMsgContext context;
-        private final xMsgRegistrar server;
-        private final xMsgRegDriver driver;
+        private final Context context;
+        private final Registrar server;
+        private final RegDriver driver;
 
         private final Map<String, Data<DpeName>> dpes = new HashMap<>();
         private final Map<String, Data<ContainerName>> containers = new HashMap<>();
         private final Map<String, Data<ServiceName>> services = new HashMap<>();
 
-        TestData() throws xMsgException {
+        TestData() throws ClaraMsgException {
 
-            xMsgRegAddress addr = new xMsgRegAddress("localhost", 7775);
-            context = xMsgContext.newContext();
-            server = new xMsgRegistrar(context, addr);
-            driver = new xMsgRegDriver(addr, new xMsgSocketFactory(context.getContext()));
+            RegAddress addr = new RegAddress("localhost", 7775);
+            context = Context.newContext();
+            server = new Registrar(context, addr);
+            driver = new RegDriver(addr, new SocketFactory(context.getContext()));
 
             server.start();
             driver.connect();
@@ -247,7 +247,7 @@ public class ClaraQueriesTest {
         private void register(RegData data) {
             try {
                 driver.addRegistration("test", data);
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -269,7 +269,7 @@ public class ClaraQueriesTest {
 
 
     @BeforeAll
-    public static void prepare() throws xMsgException {
+    public static void prepare() throws ClaraMsgException {
         data = new TestData();
     }
 
@@ -1097,8 +1097,8 @@ public class ClaraQueriesTest {
     private static ClaraBase base() {
         return new ClaraBase(ClaraComponent.dpe(), ClaraComponent.dpe()) {
             @Override
-            public xMsgMessage syncPublish(xMsgProxyAddress address, xMsgMessage msg, long timeout)
-                    throws xMsgException, TimeoutException {
+            public Message syncPublish(ProxyAddress address, Message msg, long timeout)
+                    throws ClaraMsgException, TimeoutException {
                 JSONObject report = data.json(msg.getTopic().subject());
                 return MessageUtil.buildRequest(msg.getTopic(), report.toString());
             }
@@ -1107,23 +1107,23 @@ public class ClaraQueriesTest {
 
 
     private static RegData regData(DpeName name) {
-        return registration(name, xMsgTopic.build("dpe", name.canonicalName()));
+        return registration(name, Topic.build("dpe", name.canonicalName()));
     }
 
 
     private static RegData regData(ContainerName name) {
-        return registration(name, xMsgTopic.build("container", name.canonicalName()));
+        return registration(name, Topic.build("container", name.canonicalName()));
     }
 
 
     private static RegData regData(ServiceName name) {
-        return registration(name, xMsgTopic.wrap(name.canonicalName()));
+        return registration(name, Topic.wrap(name.canonicalName()));
     }
 
 
-    private static RegData registration(ClaraName name, xMsgTopic topic) {
-        return xMsgRegFactory.newRegistration(name.canonicalName(), name.address(), TYPE, topic)
-                             .build();
+    private static RegData registration(ClaraName name, Topic topic) {
+        return RegFactory.newRegistration(name.canonicalName(), name.address(), TYPE, topic)
+                         .build();
     }
 
 

@@ -23,32 +23,32 @@
 
 package org.jlab.clara.sys;
 
-import org.jlab.clara.msg.core.xMsgConnectionPool;
-import org.jlab.clara.msg.core.xMsgUtil;
-import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.ConnectionPool;
+import org.jlab.clara.msg.net.ProxyAddress;
 
 class ConnectionPools implements AutoCloseable {
 
-    final xMsgConnectionPool mainPool;
-    final xMsgConnectionPool uncheckedPool;
+    final ConnectionPool mainPool;
+    final ConnectionPool uncheckedPool;
 
-    ConnectionPools(xMsgProxyAddress defaultProxy) {
-        mainPool = xMsgConnectionPool.newBuilder()
+    ConnectionPools(ProxyAddress defaultProxy) {
+        mainPool = ConnectionPool.newBuilder()
                 .withProxy(defaultProxy)
                 .withPreConnectionSetup(s -> {
                     s.setRcvHWM(0);
                     s.setSndHWM(0);
                 })
-                .withPostConnectionSetup(() -> xMsgUtil.sleep(100))
+                .withPostConnectionSetup(() -> ActorUtils.sleep(100))
                 .build();
 
-        uncheckedPool = xMsgConnectionPool.newBuilder()
+        uncheckedPool = ConnectionPool.newBuilder()
                 .withProxy(defaultProxy)
                 .withPreConnectionSetup(s -> {
                     s.setRcvHWM(0);
                     s.setSndHWM(0);
                 })
-                .withPostConnectionSetup(() -> xMsgUtil.sleep(100))
+                .withPostConnectionSetup(() -> ActorUtils.sleep(100))
                 .checkConnection(false)
                 .checkSubscription(false)
                 .build();
