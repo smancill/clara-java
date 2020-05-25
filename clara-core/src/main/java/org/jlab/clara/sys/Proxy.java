@@ -38,7 +38,7 @@ class Proxy {
         try {
             context = Context.newContext();
             proxy = new org.jlab.clara.msg.sys.Proxy(context, dpe.getProxyAddress());
-            if (System.getenv("XMSG_PROXY_DEBUG") != null) {
+            if (System.getenv("CLARA_PROXY_DEBUG") != null) {
                 proxy.verbose();
             }
         } catch (ClaraMsgException e) {

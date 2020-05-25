@@ -70,8 +70,8 @@ public final class ProxyDriverSetup {
         private boolean checkSubscription;
 
         private Builder() {
-            final long postConSleep = Environment.getLong("XMSG_POST_CONNECTION_SLEEP", 0);
-            final long postSubSleep = Environment.getLong("XMSG_POST_SUBSCRIPTION_SLEEP", 10);
+            final long postConSleep = Environment.getLong("CLARA_POST_CONNECTION_SLEEP", 0);
+            final long postSubSleep = Environment.getLong("CLARA_POST_SUBSCRIPTION_SLEEP", 10);
 
             preConnection = (s) -> { };
             postConnection = () -> ThreadUtils.sleep(postConSleep);
@@ -79,13 +79,13 @@ public final class ProxyDriverSetup {
             preSubscription = (s) -> { };
             postSubscription = () -> ThreadUtils.sleep(postSubSleep);
 
-            connectionTimeout = Environment.getLong("XMSG_CONNECTION_TIMEOUT",
+            connectionTimeout = Environment.getLong("CLARA_CONNECTION_TIMEOUT",
                                                     CONNECTION_TIMEOUT);
-            subscriptionTimeout = Environment.getLong("XMSG_SUBSCRIPTION_TIMEOUT",
+            subscriptionTimeout = Environment.getLong("CLARA_SUBSCRIPTION_TIMEOUT",
                                                       SUBSCRIPTION_TIMEOUT);
 
-            checkConnection = !Environment.isDefined("XMSG_NO_CHECK_CONNECTION");
-            checkSubscription = !Environment.isDefined("XMSG_NO_CHECK_SUBSCRIPTION");
+            checkConnection = !Environment.isDefined("CLARA_NO_CHECK_CONNECTION");
+            checkSubscription = !Environment.isDefined("CLARA_NO_CHECK_SUBSCRIPTION");
         }
 
         /**

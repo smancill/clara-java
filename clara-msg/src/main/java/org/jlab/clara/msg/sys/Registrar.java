@@ -126,7 +126,7 @@ public class Registrar {
         registrar = ThreadUtils.newThread("registration-service",
                                           new RegService(context, address));
 
-        if (Environment.isDefined("XMSG_REGISTRAR_DEBUG")) {
+        if (Environment.isDefined("CLARA_REGISTRAR_DEBUG")) {
             verbose();
         }
     }

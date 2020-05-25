@@ -164,7 +164,7 @@ public class Proxy {
             throw e;
         }
 
-        if (Environment.isDefined("XMSG_PROXY_DEBUG")) {
+        if (Environment.isDefined("CLARA_PROXY_DEBUG")) {
             verbose();
         }
     }
