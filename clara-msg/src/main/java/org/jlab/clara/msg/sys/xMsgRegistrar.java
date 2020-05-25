@@ -25,7 +25,6 @@ package org.jlab.clara.msg.sys;
 
 import static java.util.Arrays.asList;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.net.xMsgRegAddress;
@@ -64,7 +63,7 @@ public class xMsgRegistrar {
             OptionSpec<Integer> portSpec = parser.accepts("port")
                     .withRequiredArg()
                     .ofType(Integer.class)
-                    .defaultsTo(xMsgConstants.REGISTRAR_PORT);
+                    .defaultsTo(xMsgRegAddress.DEFAULT_PORT);
             parser.accepts("verbose");
             parser.acceptsAll(asList("h", "help")).forHelp();
             OptionSet options = parser.parse(args);
@@ -106,7 +105,7 @@ public class xMsgRegistrar {
 
     /**
      * Constructs a registrar that uses the localhost and
-     * {@link xMsgConstants#REGISTRAR_PORT default port}.
+     * {@link xMsgRegAddress#DEFAULT_PORT default port}.
      *
      * @param context the context to handle the registrar sockets
      * @throws xMsgException if the address is already in use

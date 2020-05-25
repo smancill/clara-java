@@ -23,7 +23,6 @@
 
 package org.jlab.clara.base.core;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.data.xMsgMimeType;
@@ -36,7 +35,7 @@ public final class MessageUtil {
         StringBuilder topic  = new StringBuilder();
         topic.append(args[0]);
         for (int i = 1; i < args.length; i++) {
-            topic.append(xMsgConstants.TOPIC_SEP);
+            topic.append(xMsgTopic.SEPARATOR);
             topic.append(args[i]);
         }
         return xMsgTopic.wrap(topic.toString());

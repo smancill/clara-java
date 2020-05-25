@@ -34,7 +34,7 @@ import org.jlab.clara.base.ClaraSubscriptions.ServiceSubscriptionBuilder;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.engine.EngineDataType;
-import org.jlab.clara.msg.core.xMsgConstants;
+import org.jlab.clara.msg.core.xMsgSetup;
 import org.jlab.clara.msg.core.xMsgSubscription;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -69,7 +69,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * @throws java.io.UncheckedIOException if localhost could not be obtained
      */
     public BaseOrchestrator() {
-        this(xMsgConstants.DEFAULT_POOL_SIZE);
+        this(xMsgSetup.DEFAULT_POOL_SIZE);
     }
 
     /**
@@ -93,7 +93,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * @throws java.io.UncheckedIOException if localhost could not be obtained
      */
     public BaseOrchestrator(DpeName frontEnd) {
-        this(getUniqueName(), frontEnd, xMsgConstants.DEFAULT_POOL_SIZE);
+        this(getUniqueName(), frontEnd, xMsgSetup.DEFAULT_POOL_SIZE);
     }
 
     /**

@@ -23,7 +23,6 @@
 
 package org.jlab.clara.msg.sys.regdis;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
 
@@ -203,7 +202,7 @@ class xMsgRegDatabase {
      * <li>address
      * </ul>
      * Only defined terms will be used for matching actors.
-     * The topic parts are undefined if its value is {@link xMsgConstants#ANY}.
+     * The topic parts are undefined if its value is {@link xMsgTopic#ANY}.
      * The address is undefined if its value is {@link xMsgRegConstants#UNDEFINED}.
      *
      * @param data the searched terms
@@ -336,7 +335,7 @@ class xMsgRegDatabase {
             private final String value;
 
             private TopicFilter(String value) {
-                this.any = value.equals(xMsgConstants.ANY);
+                this.any = value.equals(xMsgTopic.ANY);
                 this.value = value;
             }
         }

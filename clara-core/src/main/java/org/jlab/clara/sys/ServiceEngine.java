@@ -32,7 +32,6 @@ import org.jlab.clara.engine.Engine;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgMessage;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.data.xMsgM.xMsgMeta;
@@ -297,7 +296,7 @@ class ServiceEngine {
 
 
     private void sendReport(String topicPrefix, EngineData data) throws ClaraException {
-        xMsgTopic topic = xMsgTopic.wrap(topicPrefix + xMsgConstants.TOPIC_SEP + base.getName());
+        xMsgTopic topic = xMsgTopic.wrap(topicPrefix + xMsgTopic.SEPARATOR + base.getName());
         xMsgMessage transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
         base.send(base.getFrontEnd(), transit);
     }
@@ -305,9 +304,9 @@ class ServiceEngine {
     private void sendMonitorData(String state, EngineData data) throws ClaraException {
         if (monitorFe != null) {
             xMsgTopic topic = xMsgTopic.wrap(ClaraConstants.MONITOR_REPORT
-                    + xMsgConstants.TOPIC_SEP + state
-                    + xMsgConstants.TOPIC_SEP + sysReport.getSession()
-                    + xMsgConstants.TOPIC_SEP + base.getEngine());
+                    + xMsgTopic.SEPARATOR + state
+                    + xMsgTopic.SEPARATOR + sysReport.getSession()
+                    + xMsgTopic.SEPARATOR + base.getEngine());
             xMsgMessage transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
             base.sendUncheck(monitorFe.getProxyAddress(), transit);
         }

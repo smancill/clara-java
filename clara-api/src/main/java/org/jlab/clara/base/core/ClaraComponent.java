@@ -25,7 +25,7 @@ package org.jlab.clara.base.core;
 
 // checkstyle.off: ParameterNumber
 import org.jlab.clara.base.ClaraUtil;
-import org.jlab.clara.msg.core.xMsgConstants;
+import org.jlab.clara.msg.core.xMsgSetup;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
 
@@ -112,10 +112,10 @@ public final class ClaraComponent {
         this.containerName = container;
         this.engineName = engine;
         this.engineClass = engineClass;
-        if (engine != null && !engine.equalsIgnoreCase(xMsgConstants.ANY)) {
+        if (engine != null && !engine.equalsIgnoreCase(xMsgTopic.ANY)) {
             topic = xMsgTopic.build(dpeCanonicalName, containerName, engineName);
             canonicalName = topic.toString();
-        } else if (container != null && !container.equalsIgnoreCase(xMsgConstants.ANY)) {
+        } else if (container != null && !container.equalsIgnoreCase(xMsgTopic.ANY)) {
             topic = xMsgTopic.build(ClaraConstants.CONTAINER, dpeCanonicalName, containerName);
             canonicalName = xMsgTopic.build(dpeCanonicalName, containerName).toString();
         } else {
@@ -421,7 +421,7 @@ public final class ClaraComponent {
                          ClaraUtil.getDpePort(containerCanonicalName),
                          ClaraUtil.getDpeLang(containerCanonicalName),
                          ClaraUtil.getContainerName(containerCanonicalName),
-                         xMsgConstants.DEFAULT_POOL_SIZE,
+                         xMsgSetup.DEFAULT_POOL_SIZE,
                          description);
     }
 
@@ -553,7 +553,7 @@ public final class ClaraComponent {
                        ClaraUtil.getContainerName(serviceCanonicalName),
                        ClaraUtil.getEngineName(serviceCanonicalName),
                        ClaraConstants.UNDEFINED,
-                       xMsgConstants.DEFAULT_POOL_SIZE, ClaraConstants.UNDEFINED,
+                       xMsgSetup.DEFAULT_POOL_SIZE, ClaraConstants.UNDEFINED,
                        ClaraConstants.UNDEFINED);
     }
 

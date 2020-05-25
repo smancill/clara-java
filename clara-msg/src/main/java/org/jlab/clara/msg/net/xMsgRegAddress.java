@@ -23,7 +23,6 @@
 
 package org.jlab.clara.msg.net;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgUtil;
 
 import java.io.UncheckedIOException;
@@ -32,6 +31,9 @@ import java.io.UncheckedIOException;
  * xMsg Registrar address.
  */
 public class xMsgRegAddress {
+
+    /** The default registrar server port. */
+    public static final int DEFAULT_PORT = 8888;
 
     private final String host;
     private final int port;
@@ -42,7 +44,7 @@ public class xMsgRegAddress {
      * @throws UncheckedIOException if the IP address of the host could not be resolved
      */
     public xMsgRegAddress() {
-        this("localhost", xMsgConstants.REGISTRAR_PORT);
+        this("localhost", DEFAULT_PORT);
     }
 
     /**
@@ -52,7 +54,7 @@ public class xMsgRegAddress {
      * @throws UncheckedIOException if the IP address of the host could not be resolved
      */
     public xMsgRegAddress(String host) {
-        this(host, xMsgConstants.REGISTRAR_PORT);
+        this(host, DEFAULT_PORT);
     }
 
     /**

@@ -25,6 +25,9 @@ package org.jlab.clara.msg.sys.regdis;
 
 public final class xMsgRegConstants {
 
+    public static final int REGISTRATION_TIMEOUT = 3000;
+    public static final int DISCOVERY_TIMEOUT = 3000;
+
     public static final String REGISTER_PUBLISHER = "registerPublisher";
     public static final String REGISTER_SUBSCRIBER = "registerSubscriber";
 

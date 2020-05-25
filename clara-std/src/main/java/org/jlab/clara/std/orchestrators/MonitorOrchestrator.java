@@ -31,7 +31,6 @@ import org.jlab.clara.base.DataRingTopic;
 import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingListener;
 
@@ -44,6 +43,8 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+
+import static org.jlab.clara.msg.core.xMsgTopic.ANY;
 
 /**
  * Listen to reports published to the CLARA data-ring.
@@ -212,10 +213,10 @@ public class MonitorOrchestrator implements AutoCloseable {
     private String getTopicLog(DataRingTopic topic) {
         StringBuilder sb = new StringBuilder();
         sb.append("state = ").append('"').append(topic.state()).append('"');
-        if (!topic.session().equals(xMsgConstants.ANY)) {
+        if (!topic.session().equals(ANY)) {
             sb.append("  session = ").append('"').append(topic.session()).append('"');
         }
-        if (!topic.engine().equals(xMsgConstants.ANY)) {
+        if (!topic.engine().equals(ANY)) {
             sb.append("  engine = ").append('"').append(topic.engine()).append('"');
         }
         return sb.toString();

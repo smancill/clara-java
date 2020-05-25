@@ -23,7 +23,6 @@
 
 package org.jlab.clara.msg.net;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgUtil;
 
 import java.io.UncheckedIOException;
@@ -32,6 +31,9 @@ import java.io.UncheckedIOException;
  * xMsg proxy address.
  */
 public class xMsgProxyAddress {
+
+    /** The default proxy server port. */
+    public static final int DEFAULT_PORT = 7771;
 
     private final String host;
     private final int pubPort;
@@ -43,7 +45,7 @@ public class xMsgProxyAddress {
      * @throws UncheckedIOException if the IP address of the host could not be resolved
      */
     public xMsgProxyAddress() {
-        this("localhost", xMsgConstants.DEFAULT_PORT);
+        this("localhost", DEFAULT_PORT);
     }
 
     /**
@@ -53,7 +55,7 @@ public class xMsgProxyAddress {
      * @throws UncheckedIOException if the IP address of the host could not be resolved
      */
     public xMsgProxyAddress(String host) {
-        this(host, xMsgConstants.DEFAULT_PORT);
+        this(host, DEFAULT_PORT);
     }
 
     /**

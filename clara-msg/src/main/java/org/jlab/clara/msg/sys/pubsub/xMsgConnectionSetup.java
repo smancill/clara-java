@@ -23,7 +23,6 @@
 
 package org.jlab.clara.msg.sys.pubsub;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgUtil;
 import org.jlab.clara.msg.sys.utils.Environment;
 import org.zeromq.ZMQ.Socket;
@@ -35,6 +34,13 @@ import java.util.function.Consumer;
  * Setup of an xMsg connection.
  */
 public final class xMsgConnectionSetup {
+
+    /** The default timeout to wait for a connection confirmation. */
+    public static final int CONNECTION_TIMEOUT = 1000;
+
+    /** The default timeout to wait for a subscription confirmation. */
+    public static final int SUBSCRIPTION_TIMEOUT = 1000;
+
 
     /**
      * Creates a new setup builder.
@@ -74,9 +80,9 @@ public final class xMsgConnectionSetup {
             postSubscription = () -> xMsgUtil.sleep(postSubSleep);
 
             connectionTimeout = Environment.getLong("XMSG_CONNECTION_TIMEOUT",
-                                                    xMsgConstants.CONNECTION_TIMEOUT);
+                                                    CONNECTION_TIMEOUT);
             subscriptionTimeout = Environment.getLong("XMSG_SUBSCRIPTION_TIMEOUT",
-                                                      xMsgConstants.SUBSCRIPTION_TIMEOUT);
+                                                      SUBSCRIPTION_TIMEOUT);
 
             checkConnection = !Environment.isDefined("XMSG_NO_CHECK_CONNECTION");
             checkSubscription = !Environment.isDefined("XMSG_NO_CHECK_SUBSCRIPTION");

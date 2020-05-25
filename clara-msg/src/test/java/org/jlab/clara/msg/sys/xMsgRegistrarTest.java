@@ -23,7 +23,6 @@
 
 package org.jlab.clara.msg.sys;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
 import org.jlab.clara.msg.data.xMsgRegQuery;
@@ -228,7 +227,7 @@ public class xMsgRegistrarTest {
         Set<String> domains = Stream.of(RegistrationDataFactory.testTopics)
                                     .map(xMsgTopic::wrap)
                                     .map(xMsgTopic::domain)
-                                    .filter(t -> !t.equals(xMsgConstants.ANY))
+                                    .filter(t -> !t.equals(xMsgTopic.ANY))
                                     .collect(Collectors.toSet());
 
         ResultAssert checker = new ResultAssert("domain", regType);
@@ -247,7 +246,7 @@ public class xMsgRegistrarTest {
         Set<String> subjects = Stream.of(RegistrationDataFactory.testTopics)
                                       .map(xMsgTopic::wrap)
                                       .map(xMsgTopic::subject)
-                                      .filter(t -> !t.equals(xMsgConstants.ANY))
+                                      .filter(t -> !t.equals(xMsgTopic.ANY))
                                       .collect(Collectors.toSet());
 
         ResultAssert checker = new ResultAssert("subject", regType);
@@ -266,7 +265,7 @@ public class xMsgRegistrarTest {
         Set<String> types = Stream.of(RegistrationDataFactory.testTopics)
                                   .map(xMsgTopic::wrap)
                                   .map(xMsgTopic::type)
-                                  .filter(t -> !t.equals(xMsgConstants.ANY))
+                                  .filter(t -> !t.equals(xMsgTopic.ANY))
                                   .collect(Collectors.toSet());
 
         ResultAssert checker = new ResultAssert("type", regType);

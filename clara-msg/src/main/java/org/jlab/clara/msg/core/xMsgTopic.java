@@ -74,12 +74,12 @@ public final class xMsgTopic {
     /**
      * A regex indicating to match any value.
      */
-    public static final String ANY = xMsgConstants.ANY;
+    public static final String ANY = "*";
 
     /**
      * The separator of the topic parts.
      */
-    public static final String SEPARATOR = xMsgConstants.TOPIC_SEP;
+    public static final String SEPARATOR = ":";
 
     private final String topic;
 

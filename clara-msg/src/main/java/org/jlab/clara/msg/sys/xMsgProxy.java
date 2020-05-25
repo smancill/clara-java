@@ -30,7 +30,6 @@ import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgUtil;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
@@ -82,7 +81,7 @@ public class xMsgProxy {
             OptionSpec<Integer> portSpec = parser.accepts("port")
                     .withRequiredArg()
                     .ofType(Integer.class)
-                    .defaultsTo(xMsgConstants.DEFAULT_PORT);
+                    .defaultsTo(xMsgProxyAddress.DEFAULT_PORT);
             parser.accepts("verbose");
             parser.acceptsAll(asList("h", "help")).forHelp();
             OptionSet options = parser.parse(args);
@@ -128,7 +127,7 @@ public class xMsgProxy {
 
     /**
      * Construct a proxy that uses the localhost and
-     * {@link xMsgConstants#DEFAULT_PORT default port}.
+     * {@link xMsgProxyAddress#DEFAULT_PORT default port}.
      *
      * @param context the context to handle the proxy sockets
      * @throws xMsgException if the address is already in use

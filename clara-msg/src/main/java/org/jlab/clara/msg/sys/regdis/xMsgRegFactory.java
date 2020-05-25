@@ -23,7 +23,6 @@
 
 package org.jlab.clara.msg.sys.regdis;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
@@ -87,9 +86,9 @@ public final class xMsgRegFactory {
         filter.setName(xMsgRegConstants.UNDEFINED);
         filter.setHost(xMsgRegConstants.UNDEFINED);
         filter.setPort(0);
-        filter.setDomain(xMsgConstants.ANY);
-        filter.setSubject(xMsgConstants.ANY);
-        filter.setType(xMsgConstants.ANY);
+        filter.setDomain(xMsgTopic.ANY);
+        filter.setSubject(xMsgTopic.ANY);
+        filter.setType(xMsgTopic.ANY);
         filter.setOwnerType(type);
         return filter;
     }

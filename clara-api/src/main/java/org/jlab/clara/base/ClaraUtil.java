@@ -26,7 +26,6 @@ package org.jlab.clara.base;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.engine.EngineDataType;
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.core.xMsgTopic;
 import org.jlab.clara.msg.core.xMsgUtil;
 
@@ -191,11 +190,11 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        int firstSep = canonicalName.indexOf(xMsgConstants.TOPIC_SEP);
+        int firstSep = canonicalName.indexOf(xMsgTopic.SEPARATOR);
         if (firstSep < 0) {
             throw new IllegalArgumentException("Not a container name: " + canonicalName);
         }
-        int secondSep = canonicalName.indexOf(xMsgConstants.TOPIC_SEP, firstSep + 1);
+        int secondSep = canonicalName.indexOf(xMsgTopic.SEPARATOR, firstSep + 1);
         if (secondSep < 0) {
             return canonicalName;
         }

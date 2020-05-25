@@ -129,7 +129,7 @@ public class xMsg implements AutoCloseable {
      * Creates an actor with default settings.
      * The local node and the standard ports will be used for both
      * default proxy and registrar, and the callback thread-pool will use the
-     * {@link xMsgConstants#DEFAULT_POOL_SIZE default pool size}.
+     * {@link xMsgSetup#DEFAULT_POOL_SIZE default pool size}.
      *
      * @param name the name of this actor
      * @see xMsgProxyAddress
@@ -139,7 +139,7 @@ public class xMsg implements AutoCloseable {
         this(name,
              new xMsgProxyAddress(),
              new xMsgRegAddress(),
-             xMsgConstants.DEFAULT_POOL_SIZE);
+             xMsgSetup.DEFAULT_POOL_SIZE);
     }
 
     /**
@@ -163,7 +163,7 @@ public class xMsg implements AutoCloseable {
      * Creates an actor specifying the default registrar to be used.
      * The local node and the standard ports will be used for the default proxy,
      * and the callback thread-pool will use the
-     * {@link xMsgConstants#DEFAULT_POOL_SIZE default pool size}.
+     * {@link xMsgSetup#DEFAULT_POOL_SIZE default pool size}.
      *
      * @param name the name of an actor
      * @param defaultRegistrar the address to the default registrar
@@ -172,7 +172,7 @@ public class xMsg implements AutoCloseable {
         this(name,
              new xMsgProxyAddress(),
              defaultRegistrar,
-             xMsgConstants.DEFAULT_POOL_SIZE);
+             xMsgSetup.DEFAULT_POOL_SIZE);
     }
 
     /**
@@ -643,7 +643,7 @@ public class xMsg implements AutoCloseable {
      * Registers this actor on the <i>default</i> registrar service.
      * The actor will be registered as communicating through messages
      * of the given topic, using the default proxy.
-     * Waits up to {@value xMsgConstants#REGISTRATION_TIMEOUT}
+     * Waits up to {@value xMsgSetup#REGISTRATION_TIMEOUT}
      * milliseconds for a status response.
      *
      * @param info the parameters of the registration
@@ -658,7 +658,7 @@ public class xMsg implements AutoCloseable {
      * Registers this actor on the specified registrar service.
      * The actor will be registered as communicating through messages
      * of the given topic, using the default proxy.
-     * Waits up to {@value xMsgConstants#REGISTRATION_TIMEOUT}
+     * Waits up to {@value xMsgSetup#REGISTRATION_TIMEOUT}
      * milliseconds for a status response.
      *
      * @param info the parameters of the registration
@@ -667,7 +667,7 @@ public class xMsg implements AutoCloseable {
      * @throws xMsgException if the registration failed
      */
     public void register(xMsgRegInfo info, xMsgRegAddress address) throws xMsgException {
-        register(info, address, xMsgConstants.REGISTRATION_TIMEOUT);
+        register(info, address, xMsgSetup.REGISTRATION_TIMEOUT);
     }
 
     /**
@@ -700,7 +700,7 @@ public class xMsg implements AutoCloseable {
      * Removes this actor from the <i>default</i> registrar service.
      * The actor will be removed from the registered actors communicating
      * through messages of the given topic.
-     * Waits up to {@value xMsgConstants#REGISTRATION_TIMEOUT}
+     * Waits up to {@value xMsgSetup#REGISTRATION_TIMEOUT}
      * milliseconds for a status response.
      *
      * @param info the parameters used to register the actor
@@ -715,7 +715,7 @@ public class xMsg implements AutoCloseable {
      * Removes this actor from the specified registrar service.
      * The actor will be removed from the registered actors communicating
      * through messages of the given topic.
-     * Waits up to {@value xMsgConstants#REGISTRATION_TIMEOUT}
+     * Waits up to {@value xMsgSetup#REGISTRATION_TIMEOUT}
      * milliseconds for a status response.
      *
      * @param info the parameters used to register the actor
@@ -724,7 +724,7 @@ public class xMsg implements AutoCloseable {
      * @throws xMsgException if the request failed
      */
     public void deregister(xMsgRegInfo info, xMsgRegAddress address) throws xMsgException {
-        deregister(info, address, xMsgConstants.REGISTRATION_TIMEOUT);
+        deregister(info, address, xMsgSetup.REGISTRATION_TIMEOUT);
     }
 
     /**
@@ -757,7 +757,7 @@ public class xMsg implements AutoCloseable {
      * A registered actor will be selected only if it matches all the parameters
      * of interest defined by the query. The registrar service will then reply
      * the registration data of all the matching actors.
-     * Waits up to {@value xMsgConstants#DISCOVERY_TIMEOUT}
+     * Waits up to {@value xMsgSetup#DISCOVERY_TIMEOUT}
      * milliseconds for a response.
      *
      * @param query the registration parameters to determine if an actor
@@ -774,7 +774,7 @@ public class xMsg implements AutoCloseable {
      * A registered actor will be selected only if it matches all the parameters
      * of interest defined by the query. The registrar service will then reply
      * the registration data of all the matching actors.
-     * Waits up to {@value xMsgConstants#DISCOVERY_TIMEOUT}
+     * Waits up to {@value xMsgSetup#DISCOVERY_TIMEOUT}
      * milliseconds for a response.
      *
      * @param query the registration parameters to determine if an actor
@@ -785,7 +785,7 @@ public class xMsg implements AutoCloseable {
      */
     public Set<xMsgRegRecord> discover(xMsgRegQuery query, xMsgRegAddress address)
             throws xMsgException {
-        return discover(query, address, xMsgConstants.DISCOVERY_TIMEOUT);
+        return discover(query, address, xMsgSetup.DISCOVERY_TIMEOUT);
     }
 
     /**

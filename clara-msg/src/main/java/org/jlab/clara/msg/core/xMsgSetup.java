@@ -26,6 +26,7 @@ package org.jlab.clara.msg.core;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
 import org.jlab.clara.msg.net.xMsgRegAddress;
 import org.jlab.clara.msg.sys.pubsub.xMsgConnectionSetup;
+import org.jlab.clara.msg.sys.regdis.xMsgRegConstants;
 
 import java.util.Objects;
 
@@ -33,6 +34,16 @@ import java.util.Objects;
  * Setup of an xMsg actor.
  */
 public final class xMsgSetup extends ConnectionSetup {
+
+    /** The default size for the callback thread pool. */
+    public static final int DEFAULT_POOL_SIZE = 2;
+
+    /** The default timeout to wait for a registration request response. */
+    public static final int REGISTRATION_TIMEOUT = xMsgRegConstants.REGISTRATION_TIMEOUT;
+
+    /** The default timeout to wait for a discovery request response. */
+    public static final int DISCOVERY_TIMEOUT = xMsgRegConstants.DISCOVERY_TIMEOUT;
+
 
     /**
      * Creates a builder to set options for an xMsg actor.
@@ -52,7 +63,7 @@ public final class xMsgSetup extends ConnectionSetup {
 
         private xMsgRegAddress registrarAddress = new xMsgRegAddress();
         private xMsgCallbackMode subscriptionMode = xMsgCallbackMode.MULTI_THREAD;
-        private int poolSize = xMsgConstants.DEFAULT_POOL_SIZE;
+        private int poolSize = DEFAULT_POOL_SIZE;
 
         /**
          * Sets the address of the default registrar.

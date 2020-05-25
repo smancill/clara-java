@@ -24,7 +24,6 @@
 package org.jlab.clara.msg.sys.regdis;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
 import org.jlab.clara.msg.errors.xMsgException;
 import org.jlab.clara.msg.net.xMsgContext;
@@ -39,6 +38,8 @@ import org.zeromq.ZMsg;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import static org.jlab.clara.msg.core.xMsgTopic.ANY;
 
 /**
  * The main registrar service or registrar (names are used interchangeably).
@@ -254,13 +255,13 @@ public class xMsgRegService implements Runnable {
         LOGGER.fine(() -> {
             StringBuilder sb = new StringBuilder();
             sb.append("search ").append(type);
-            if (!data.getDomain().equals(xMsgConstants.ANY)) {
+            if (!data.getDomain().equals(ANY)) {
                 sb.append("  domain = ").append(data.getDomain());
             }
-            if (!data.getSubject().equals(xMsgConstants.ANY)) {
+            if (!data.getSubject().equals(ANY)) {
                 sb.append("  subject = ").append(data.getSubject());
             }
-            if (!data.getType().equals(xMsgConstants.ANY)) {
+            if (!data.getType().equals(ANY)) {
                 sb.append("  type = ").append(data.getType());
             }
             if (!data.getHost().equals(xMsgRegConstants.UNDEFINED)) {

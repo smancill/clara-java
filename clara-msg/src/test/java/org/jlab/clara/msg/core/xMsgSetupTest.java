@@ -39,7 +39,7 @@ public class xMsgSetupTest {
 
         assertThat(setup.proxyAddress(), is(new xMsgProxyAddress()));
         assertThat(setup.registrarAddress(), is(new xMsgRegAddress()));
-        assertThat(setup.poolSize(), is(xMsgConstants.DEFAULT_POOL_SIZE));
+        assertThat(setup.poolSize(), is(xMsgSetup.DEFAULT_POOL_SIZE));
         assertThat(setup.subscriptionMode(), is(xMsgCallbackMode.MULTI_THREAD));
     }
 

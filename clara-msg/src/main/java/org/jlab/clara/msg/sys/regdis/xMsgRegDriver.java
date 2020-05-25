@@ -23,7 +23,6 @@
 
 package org.jlab.clara.msg.sys.regdis;
 
-import org.jlab.clara.msg.core.xMsgConstants;
 import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
 import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType;
 import org.jlab.clara.msg.errors.xMsgException;
@@ -116,7 +115,7 @@ public class xMsgRegDriver {
      */
     public void addRegistration(String sender, xMsgRegistration data)
             throws xMsgException {
-        addRegistration(sender, data, xMsgConstants.REGISTRATION_TIMEOUT);
+        addRegistration(sender, data, xMsgRegConstants.REGISTRATION_TIMEOUT);
     }
 
     /**
@@ -146,7 +145,7 @@ public class xMsgRegDriver {
      */
     public void removeRegistration(String sender, xMsgRegistration data)
             throws xMsgException {
-        removeRegistration(sender, data, xMsgConstants.REGISTRATION_TIMEOUT);
+        removeRegistration(sender, data, xMsgRegConstants.REGISTRATION_TIMEOUT);
     }
 
     /**
@@ -179,7 +178,7 @@ public class xMsgRegDriver {
      */
     public void removeAllRegistration(String sender, String host)
             throws xMsgException {
-        removeAllRegistration(sender, host, xMsgConstants.REGISTRATION_TIMEOUT);
+        removeAllRegistration(sender, host, xMsgRegConstants.REGISTRATION_TIMEOUT);
     }
 
     /**
@@ -213,7 +212,7 @@ public class xMsgRegDriver {
      */
     public Set<xMsgRegistration> findRegistration(String sender, xMsgRegistration data)
             throws xMsgException {
-        return findRegistration(sender, data, xMsgConstants.DISCOVERY_TIMEOUT);
+        return findRegistration(sender, data, xMsgRegConstants.DISCOVERY_TIMEOUT);
     }
 
     /**
@@ -251,7 +250,7 @@ public class xMsgRegDriver {
      * <li>address
      * </ul>
      * Only defined terms will be used for matching actors.
-     * To topic parts should be undefined with {@link xMsgConstants#ANY}.
+     * To topic parts should be undefined with {@link org.jlab.clara.msg.core.xMsgTopic#ANY}.
      * The address should be undefined with {@link xMsgRegConstants#UNDEFINED}.
      * The name is ignored.
      *
@@ -262,7 +261,7 @@ public class xMsgRegDriver {
      */
     public Set<xMsgRegistration> filterRegistration(String sender, xMsgRegistration data)
             throws xMsgException {
-        return filterRegistration(sender, data, xMsgConstants.DISCOVERY_TIMEOUT);
+        return filterRegistration(sender, data, xMsgRegConstants.DISCOVERY_TIMEOUT);
     }
 
     /**
@@ -276,7 +275,7 @@ public class xMsgRegDriver {
      * <li>address
      * </ul>
      * Only defined terms will be used for matching actors.
-     * To topic parts should be undefined with {@link xMsgConstants#ANY}.
+     * To topic parts should be undefined with {@link org.jlab.clara.msg.core.xMsgTopic#ANY}.
      * The address should be undefined with {@link xMsgRegConstants#UNDEFINED}.
      * The name is ignored.
      *
@@ -321,7 +320,7 @@ public class xMsgRegDriver {
     public Set<xMsgRegistration> sameRegistration(String sender,
                                                   xMsgRegistration data)
             throws xMsgException {
-        return sameRegistration(sender, data, xMsgConstants.DISCOVERY_TIMEOUT);
+        return sameRegistration(sender, data, xMsgRegConstants.DISCOVERY_TIMEOUT);
     }
 
     /**
@@ -368,7 +367,7 @@ public class xMsgRegDriver {
      */
     public Set<xMsgRegistration> allRegistration(String sender, xMsgRegistration data)
             throws xMsgException {
-        return allRegistration(sender, data, xMsgConstants.DISCOVERY_TIMEOUT);
+        return allRegistration(sender, data, xMsgRegConstants.DISCOVERY_TIMEOUT);
     }
 
     /**
