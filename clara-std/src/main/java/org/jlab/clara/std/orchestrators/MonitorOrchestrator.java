@@ -44,12 +44,13 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
-import static org.jlab.clara.msg.core.Topic.ANY;
-
 /**
  * Listen to reports published to the CLARA data-ring.
  */
 public class MonitorOrchestrator implements AutoCloseable {
+
+    // TODO: use Topic.ANY without adding a dependency to clara-msg
+    private static final String ANY = "*";
 
     private final BaseOrchestrator orchestrator;
 
@@ -140,7 +141,7 @@ public class MonitorOrchestrator implements AutoCloseable {
 
 
     private static DpeName getRingAsDpe(DataRingAddress address) {
-        return new DpeName(address.host(), address.pubPort(), ClaraLang.JAVA);
+        return new DpeName(address.host(), address.port(), ClaraLang.JAVA);
     }
 
 

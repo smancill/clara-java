@@ -438,6 +438,16 @@ public final class ClaraUtil {
     }
 
     /**
+     * Determines the IP address of the specified host.
+     *
+     * @param hostName The name of the host (accepts "localhost")
+     * @return the host IP
+     */
+    public static String toHostAddress(String hostName) {
+        return ActorUtils.toHostAddress(hostName);
+    }
+
+    /**
      * Gets the current time and returns string representation of it.
      * @return string representing the current time.
      */

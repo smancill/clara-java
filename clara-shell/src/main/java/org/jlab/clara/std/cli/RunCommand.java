@@ -134,7 +134,7 @@ class RunCommand extends BaseCommand {
                     "--session", runUtils.getSession());
 
             if (languages.contains(ClaraLang.CPP)) {
-                int cppPort = feName.address().pubPort() + 10;
+                int cppPort = feName.address().port() + 10;
                 DpeName cppName = new DpeName(feName.address().host(), cppPort, ClaraLang.CPP);
                 String cppDpe = FileUtils.claraPath("bin", "c_dpe").toString();
                 addBackgroundDpeProcess(cppName, cppDpe,
@@ -145,7 +145,7 @@ class RunCommand extends BaseCommand {
             }
 
             if (languages.contains(ClaraLang.PYTHON)) {
-                int pyPort = feName.address().pubPort() + 5;
+                int pyPort = feName.address().port() + 5;
                 DpeName pyName = new DpeName(feName.address().host(), pyPort, ClaraLang.PYTHON);
                 String pyDpe = FileUtils.claraPath("bin", "p_dpe").toString();
                 addBackgroundDpeProcess(pyName, pyDpe,
@@ -279,6 +279,6 @@ class RunCommand extends BaseCommand {
     }
 
     private static String getPort(DpeName name) {
-        return Integer.toString(name.address().pubPort());
+        return Integer.toString(name.address().port());
     }
 }

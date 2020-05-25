@@ -47,8 +47,6 @@ public final class ClaraComponent {
     public static final String SERVICE_NAME_REGEX;
     public static final String CANONICAL_NAME_REGEX;
 
-    private static final String NAME_SEP = Topic.SEPARATOR;
-
     static {
         final String ip = "(?:[0-9]{1,3}\\.){3}[0-9]{1,3}";
 
@@ -66,10 +64,10 @@ public final class ClaraComponent {
         ENGINE_NAME_REGEX = "\\w+";
 
         SERVICE_NAME_REGEX = MessageFormat.format("{1}{0}{2}{0}{3}",
-                NAME_SEP, DPE_NAME_REGEX, CONTAINER_NAME_REGEX, ENGINE_NAME_REGEX);
+                Topic.SEPARATOR, DPE_NAME_REGEX, CONTAINER_NAME_REGEX, ENGINE_NAME_REGEX);
 
         CANONICAL_NAME_REGEX = MessageFormat.format("({1})(?:{0}({2})(?:{0}({3}))?)?",
-                NAME_SEP, DPE_NAME_REGEX, CONTAINER_NAME_REGEX, ENGINE_NAME_REGEX);
+                Topic.SEPARATOR, DPE_NAME_REGEX, CONTAINER_NAME_REGEX, ENGINE_NAME_REGEX);
     }
 
     private Topic topic;

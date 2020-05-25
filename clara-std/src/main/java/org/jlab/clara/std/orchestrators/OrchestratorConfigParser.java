@@ -42,8 +42,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.jlab.clara.base.ClaraLang;
+import org.jlab.clara.base.ClaraUtil;
 import org.jlab.clara.base.DpeName;
-import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingTopic;
 import org.jlab.clara.util.EnvUtils;
@@ -408,7 +408,7 @@ public class OrchestratorConfigParser {
 
     static String hostAddress(String host) {
         try {
-            return ActorUtils.toHostAddress(host);
+            return ClaraUtil.toHostAddress(host);
         } catch (UncheckedIOException e) {
             throw error("node name not known: " + host);
         }

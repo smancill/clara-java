@@ -160,7 +160,7 @@ public final class ClaraQueries {
 
         private Stream<JSONObject> queryDpe(DpeName dpe, long timeout) {
             try {
-                ProxyAddress address = dpe.address();
+                ProxyAddress address = dpe.address().proxyAddress();
                 Message query = msg(dpe);
                 Message response = base.syncPublish(address, query, timeout);
                 String mimeType = response.getMimeType();

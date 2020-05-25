@@ -175,6 +175,7 @@ configure(subprojectList) {
 
 project(':clara-core') {
     dependencies {
+        implementation project(':clara-msg')
         implementation project(':clara-api')
 
         implementation libs.jopt
@@ -229,7 +230,7 @@ project(':clara-msg') {
 
 project(':clara-api') {
     dependencies {
-        api project(':clara-msg')
+        implementation project(':clara-msg')
 
         api libs.json
         implementation libs.snakeyaml

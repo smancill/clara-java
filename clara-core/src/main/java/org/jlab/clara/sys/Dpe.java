@@ -743,7 +743,7 @@ public final class Dpe extends AbstractActor {
             DpeName monitorFE = FrontEnd.getMonitorFrontEnd();
             if (monitorFE != null) {
                 ClaraAddress monAddr = monitorFE.address();
-                socketFactory.connectSocket(socket, monAddr.host(), monAddr.pubPort());
+                socketFactory.connectSocket(socket, monAddr.host(), monAddr.port());
                 Logging.info("Using monitoring front-end %s", monitorFE);
             }
 

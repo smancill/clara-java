@@ -1122,7 +1122,8 @@ public class ClaraQueriesTest {
 
 
     private static RegData registration(ClaraName name, Topic topic) {
-        return RegFactory.newRegistration(name.canonicalName(), name.address(), TYPE, topic)
+        ProxyAddress addr = name.address().proxyAddress();
+        return RegFactory.newRegistration(name.canonicalName(), addr, TYPE, topic)
                          .build();
     }
 
