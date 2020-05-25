@@ -379,11 +379,11 @@ gradle.taskGraph.whenReady { taskGraph ->
 eclipse {
     classpath {
         file {
-            defaultOutputDir = file("${buildDir}/eclipse")
+            defaultOutputDir = file("${buildDir.name}/eclipse/default")
             whenMerged { classpath ->
                 classpath.entries.each { source ->
                     if (source.kind == 'src' && source.hasProperty('output')) {
-                        source.output = "${buildDir.getName()}/eclipse"
+                        source.output = source.output.replace('bin', "${buildDir.name}/eclipse")
                     }
                 }
             }
