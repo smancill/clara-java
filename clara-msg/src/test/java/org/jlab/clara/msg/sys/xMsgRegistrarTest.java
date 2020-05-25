@@ -30,7 +30,6 @@ import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
 import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.Builder;
 import org.jlab.clara.msg.data.xMsgR.xMsgRegistration.OwnerType;
 import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgConnectionFactory;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.net.xMsgRegAddress;
 import org.jlab.clara.msg.sys.regdis.RegistrationDataFactory;

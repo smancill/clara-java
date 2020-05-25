@@ -23,8 +23,8 @@
 
 package org.jlab.clara.msg.sys.pubsub;
 
-import org.jlab.clara.msg.core.xMsgUtil;
 import org.jlab.clara.msg.sys.utils.Environment;
+import org.jlab.clara.msg.sys.utils.ThreadUtils;
 import org.zeromq.ZMQ.Socket;
 
 import java.util.Objects;
@@ -74,10 +74,10 @@ public final class xMsgConnectionSetup {
             final long postSubSleep = Environment.getLong("XMSG_POST_SUBSCRIPTION_SLEEP", 10);
 
             preConnection = (s) -> { };
-            postConnection = () -> xMsgUtil.sleep(postConSleep);
+            postConnection = () -> ThreadUtils.sleep(postConSleep);
 
             preSubscription = (s) -> { };
-            postSubscription = () -> xMsgUtil.sleep(postSubSleep);
+            postSubscription = () -> ThreadUtils.sleep(postSubSleep);
 
             connectionTimeout = Environment.getLong("XMSG_CONNECTION_TIMEOUT",
                                                     CONNECTION_TIMEOUT);

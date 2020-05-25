@@ -30,8 +30,8 @@ import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jlab.clara.msg.core.xMsgUtil;
 import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgAddressUtils;
 import org.jlab.clara.msg.net.xMsgContext;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
 import org.jlab.clara.msg.net.xMsgSocketFactory;
@@ -77,7 +77,7 @@ public class xMsgProxy {
             OptionParser parser = new OptionParser();
             OptionSpec<String> hostSpec = parser.accepts("host")
                     .withRequiredArg()
-                    .defaultsTo(xMsgUtil.localhost());
+                    .defaultsTo(xMsgAddressUtils.localhost());
             OptionSpec<Integer> portSpec = parser.accepts("port")
                     .withRequiredArg()
                     .ofType(Integer.class)

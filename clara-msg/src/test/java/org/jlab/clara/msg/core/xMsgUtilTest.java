@@ -32,61 +32,8 @@ import com.google.protobuf.ByteString;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 public class xMsgUtilTest {
-
-    @Test
-    public void checkValidIPs() throws Exception {
-        String[] ips = new String[] {
-            "1.1.1.1",
-            "255.255.255.255",
-            "192.168.1.1",
-            "10.10.1.1",
-            "132.254.111.10",
-            "26.10.2.10",
-            "127.0.0.1",
-        };
-
-        for (String ip : ips) {
-            assertTrue(xMsgUtil.isIP(ip), "isIP: " + ip);
-        }
-    }
-
-    @Test
-    public void checkInvalidIPs() throws Exception {
-        String[] ips = new String[] {
-            "10.10.10",
-            "10.10",
-            "10",
-            "a.a.a.a",
-            "10.10.10.a",
-            "10.10.10.256",
-            "222.222.2.999",
-            "999.10.10.20",
-            "2222.22.22.22",
-            "22.2222.22.2",
-        };
-
-        for (String ip : ips) {
-            assertFalse(xMsgUtil.isIP(ip), "is IP: " + ip);
-        }
-    }
-
-    @Test
-    public void checkOnlyIPv4() throws Exception {
-        String[] ips = new String[] {
-            "2001:cdba:0000:0000:0000:0000:3257:9652",
-            "2001:cdba:0:0:0:0:3257:9652",
-            "2001:cdba::3257:9652",
-        };
-
-        for (String ip : ips) {
-            assertFalse(xMsgUtil.isIP(ip), "is IP: " + ip);
-        }
-    }
 
     @Test
     public void uniqueReplyToGenerator() throws Exception {

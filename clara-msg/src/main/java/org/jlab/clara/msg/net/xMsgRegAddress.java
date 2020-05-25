@@ -23,8 +23,6 @@
 
 package org.jlab.clara.msg.net;
 
-import org.jlab.clara.msg.core.xMsgUtil;
-
 import java.io.UncheckedIOException;
 
 /**
@@ -71,7 +69,7 @@ public class xMsgRegAddress {
         if (port <= 0) {
             throw new IllegalArgumentException("invalid port: " + port);
         }
-        this.host = xMsgUtil.toHostAddress(host);
+        this.host = xMsgAddressUtils.toHostAddress(host);
         this.port = port;
     }
 

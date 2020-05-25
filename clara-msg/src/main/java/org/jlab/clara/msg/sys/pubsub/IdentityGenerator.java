@@ -23,7 +23,7 @@
 
 package org.jlab.clara.msg.sys.pubsub;
 
-import org.jlab.clara.msg.core.xMsgUtil;
+import org.jlab.clara.msg.net.xMsgAddressUtils;
 
 import java.util.Random;
 
@@ -36,7 +36,7 @@ final class IdentityGenerator {
 
     private static long getCtrlIdPrefix() {
         final int javaId = 1;
-        final int ipHash = xMsgUtil.localhost().hashCode() & Integer.MAX_VALUE;
+        final int ipHash = xMsgAddressUtils.localhost().hashCode() & Integer.MAX_VALUE;
         return javaId * 100000000 + (ipHash % 1000) * 100000;
     }
 

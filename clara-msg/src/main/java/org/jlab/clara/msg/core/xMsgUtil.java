@@ -25,6 +25,7 @@ package org.jlab.clara.msg.core;
 
 import com.google.protobuf.ByteString;
 
+import org.jlab.clara.msg.net.xMsgAddressUtils;
 import org.jlab.clara.msg.sys.utils.ThreadUtils;
 
 import java.io.ByteArrayInputStream;
@@ -33,28 +34,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UncheckedIOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * xMsg utility methods.
  */
 public final class xMsgUtil {
-
-    private static List<String> localHostIps = new ArrayList<>();
 
     private static final int REPLY_TO_SEQUENCE_SIZE = 1000000;
 
@@ -74,11 +64,7 @@ public final class xMsgUtil {
      * @param millis the length of time to sleep in milliseconds
      */
     public static void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            // nothing
-        }
+        ThreadUtils.sleep(millis);
     }
 
     /**
@@ -86,7 +72,7 @@ public final class xMsgUtil {
      */
     public static void keepAlive() {
         while (true) {
-            sleep(100);
+            ThreadUtils.sleep(100);
         }
     }
 
@@ -103,7 +89,7 @@ public final class xMsgUtil {
      * @throws UncheckedIOException if an I/O error occurs.
      */
     public static String localhost() {
-        return toHostAddress("localhost");
+        return xMsgAddressUtils.toHostAddress("localhost");
     }
 
     /**
@@ -120,84 +106,7 @@ public final class xMsgUtil {
      * @throws UncheckedIOException if an I/O error occurs.
      */
     public static List<String> getLocalHostIps() {
-        if (localHostIps.isEmpty()) {
-            updateLocalHostIps();
-        }
-        return localHostIps;
-    }
-
-    /**
-     * Updates the list of IPv4 addresses of the local node.
-     * <p>
-     * The address returned by {@code InetAddress.getLocalHost()} goes first.
-     * Then all non-loopback site-local addresses, and finally all other
-     * non-loopback addresses.
-     * <p>
-     * Fallbacks to the loopback address if no other address was found.
-     *
-     * @throws UncheckedIOException if an I/O error occurs.
-     */
-    public static void updateLocalHostIps() {
-        Set<String> ips = new LinkedHashSet<>();
-
-        try {
-            // prefer address returned by getLocalHost first, if any
-            InetAddress local = InetAddress.getLocalHost();
-            if (local instanceof Inet4Address && !local.isLoopbackAddress()) {
-                ips.add(local.getHostAddress());
-            }
-        } catch (IOException e) {
-            // ignore errors to try all network interfaces for an address
-        }
-
-        try {
-            Set<String> localIps = new LinkedHashSet<>();
-            Set<String> nonLocalIps = new LinkedHashSet<>();
-
-            InetAddress loopback = null;
-
-            // get all non-loopback addresses, if any
-            Enumeration<NetworkInterface> allIfaces = NetworkInterface.getNetworkInterfaces();
-            while (allIfaces.hasMoreElements()) {
-                NetworkInterface iface = allIfaces.nextElement();
-                if (!iface.isUp()) {
-                    continue;
-                }
-                Enumeration<InetAddress> allAddr = iface.getInetAddresses();
-                while (allAddr.hasMoreElements()) {
-                    InetAddress addr = allAddr.nextElement();
-                    if (addr instanceof Inet4Address) {
-                        if (addr.isLoopbackAddress()) {
-                            if (loopback == null) {
-                                loopback = addr;
-                            }
-                            continue;
-                        }
-                        if (addr.isSiteLocalAddress()) {
-                            localIps.add(addr.getHostAddress());
-                        } else {
-                            nonLocalIps.add(addr.getHostAddress());
-                        }
-                    }
-                }
-            }
-
-            ips.addAll(localIps);
-            ips.addAll(nonLocalIps);
-
-            // no non-loopback addresses found, default to loopback or throw an error
-            if (ips.isEmpty()) {
-                if (loopback != null) {
-                    ips.add(loopback.getHostAddress());
-                } else {
-                    throw new IOException("no IPv4 address found");
-                }
-            }
-
-            localHostIps = new ArrayList<>(ips);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        return xMsgAddressUtils.getLocalHostIps();
     }
 
     /**
@@ -212,24 +121,7 @@ public final class xMsgUtil {
      * @throws UncheckedIOException if the hostname could not be resolved
      */
     public static String toHostAddress(String hostName) {
-        if (isIP(hostName)) {
-            return hostName;
-        }
-
-        if (hostName.equals("localhost")) {
-            if (getLocalHostIps().size() > 0) {
-                return getLocalHostIps().get(0);
-            } else {
-                updateLocalHostIps();
-                return getLocalHostIps().get(0);
-            }
-        } else {
-            try {
-                return InetAddress.getByName(hostName).getHostAddress();
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
+        return xMsgAddressUtils.toHostAddress(hostName);
     }
 
     /**
@@ -239,27 +131,7 @@ public final class xMsgUtil {
      * @return true if host name has an IP form.
      */
     public static boolean isIP(String hostname) {
-        Pattern p = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}"
-                                   + "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
-        Matcher m = p.matcher(hostname);
-        return m.find();
-    }
-
-    /**
-     * Checks if the argument is a valid IP address.
-     *
-     * @param address the address to be validated
-     * @return the given address
-     * @throws IllegalArgumentException if the address is null or not a valid IP
-     */
-    public static String validateIP(String address) {
-        if (address == null) {
-            throw new IllegalArgumentException("null IP address");
-        }
-        if (!isIP(address)) {
-            throw new IllegalArgumentException("invalid IP address: " + address);
-        }
-        return address;
+        return xMsgAddressUtils.isIP(hostname);
     }
 
     static String getUniqueReplyTo(String subject) {

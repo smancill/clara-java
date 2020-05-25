@@ -24,9 +24,9 @@
 package org.jlab.clara.msg.data;
 
 import org.jlab.clara.msg.core.xMsgTopic;
-import org.jlab.clara.msg.core.xMsgUtil;
 import org.jlab.clara.msg.data.xMsgR.xMsgRegistration;
 import org.jlab.clara.msg.sys.regdis.xMsgRegFactory;
+import org.jlab.clara.msg.net.xMsgAddressUtils;
 
 /**
  * Defines the parameters to search actors in the registrar service.
@@ -174,7 +174,7 @@ public final class xMsgRegQuery {
          * @return a query for actors registered from the given host
          */
         public xMsgRegQuery withHost(String host) {
-            data.setHost(xMsgUtil.toHostAddress(host));
+            data.setHost(xMsgAddressUtils.toHostAddress(host));
             return new xMsgRegQuery(data, Category.FILTER);
         }
 

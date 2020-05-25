@@ -38,6 +38,19 @@ public final class ThreadUtils {
     private ThreadUtils() { }
 
     /**
+     * Thread sleep wrapper.
+     *
+     * @param millis the length of time to sleep in milliseconds
+     */
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // nothing
+        }
+    }
+
+    /**
      * A new Thread that reports uncaught exceptions.
      */
     public static Thread newThread(String name, Runnable target) {

@@ -21,13 +21,17 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-package org.jlab.clara.msg.net;
+package org.jlab.clara.msg.sys;
 
-import org.jlab.clara.msg.core.xMsgUtil;
 import org.jlab.clara.msg.errors.xMsgException;
+import org.jlab.clara.msg.net.xMsgContext;
+import org.jlab.clara.msg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.net.xMsgRegAddress;
+import org.jlab.clara.msg.net.xMsgSocketFactory;
 import org.jlab.clara.msg.sys.pubsub.xMsgConnectionSetup;
 import org.jlab.clara.msg.sys.pubsub.xMsgProxyDriver;
 import org.jlab.clara.msg.sys.regdis.xMsgRegDriver;
+import org.jlab.clara.msg.sys.utils.ThreadUtils;
 import org.zeromq.ZMQException;
 
 /**
@@ -87,7 +91,7 @@ public class xMsgConnectionFactory {
         try {
             setup.preConnection(connection.getSocket());
             connection.connect();
-            xMsgUtil.sleep(10);
+            ThreadUtils.sleep(10);
             if (setup.checkConnection() && !connection.checkConnection(setup.connectionTimeout())) {
                 throw new xMsgException("could not connect to " + connection.getAddress());
             }

@@ -24,9 +24,9 @@
 package org.jlab.clara.msg.core;
 
 import org.jlab.clara.msg.errors.xMsgException;
-import org.jlab.clara.msg.net.xMsgConnectionFactory;
 import org.jlab.clara.msg.net.xMsgProxyAddress;
 import org.jlab.clara.msg.net.xMsgRegAddress;
+import org.jlab.clara.msg.sys.xMsgConnectionFactory;
 import org.jlab.clara.msg.sys.pubsub.xMsgProxyDriver;
 import org.jlab.clara.msg.sys.regdis.xMsgRegDriver;
 import org.junit.jupiter.api.BeforeEach;
