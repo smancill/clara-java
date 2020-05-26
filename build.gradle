@@ -557,3 +557,11 @@ configure(subprojectList) {
         }
     }
 }
+
+configure(project(':clara-examples')) {
+    eclipse {
+        classpath {
+            plusConfigurations += [configurations.compileOnly]
+        }
+    }
+}
