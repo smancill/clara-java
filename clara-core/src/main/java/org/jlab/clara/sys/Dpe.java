@@ -31,21 +31,21 @@ import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.EngineDataType;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Subscription;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.Context;
+import org.jlab.clara.msg.net.ProxyAddress;
+import org.jlab.clara.msg.net.SocketFactory;
 import org.jlab.clara.sys.DpeOptionsParser.DpeOptionsException;
 import org.jlab.clara.sys.RequestParser.RequestException;
-import org.jlab.clara.util.VersionUtils;
 import org.jlab.clara.sys.report.DpeReport;
 import org.jlab.clara.sys.report.JsonReportBuilder;
-import org.jlab.coda.xmsg.core.xMsgCallBack;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgSubscription;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.core.xMsgUtil;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgContext;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
-import org.jlab.coda.xmsg.net.xMsgSocketFactory;
+import org.jlab.clara.util.VersionUtils;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 import org.zeromq.ZMsg;
@@ -64,7 +64,7 @@ import java.util.stream.IntStream;
  * (FE), which is the static point of the entire cloud. It creates and manages
  * the registration database (local and case of being assigned as an FE: global
  * database). Note this is a copy of the subscribers database resident in the
- * xMsg registration database. This also creates a shared memory for
+ * registration database. This also creates a shared memory for
  * communicating CLARA transient data objects between services within the same
  * process (this avoids data serialization and de-serialization).
  *
@@ -86,7 +86,7 @@ public final class Dpe extends AbstractActor {
     // these are guarded by start/stop synchronized blocks on parent
     private Proxy proxy = null;
     private FrontEnd frontEnd = null;
-    private xMsgSubscription subscriptionHandler;
+    private Subscription subscriptionHandler;
 
     // shared connection pools between all services
     private volatile ConnectionPools connectionPools;
@@ -115,8 +115,8 @@ public final class Dpe extends AbstractActor {
             }
 
             // config ZMQ context
-            xMsgContext.getInstance().setIOThreads(options.ioThreads());
-            xMsgContext.getInstance().setMaxSockets(options.maxSockets());
+            Context.getInstance().setIOThreads(options.ioThreads());
+            Context.getInstance().setMaxSockets(options.maxSockets());
 
             // start a dpe
             Dpe dpe = new Dpe(options.isFrontEnd(), options.localAddress(), options.frontEnd(),
@@ -145,8 +145,8 @@ public final class Dpe extends AbstractActor {
 
         final boolean isFrontEnd;
 
-        xMsgProxyAddress localAddress;
-        xMsgProxyAddress frontEndAddress;
+        ProxyAddress localAddress;
+        ProxyAddress frontEndAddress;
 
         String session = "";
 
@@ -167,7 +167,7 @@ public final class Dpe extends AbstractActor {
          */
         public Builder() {
             isFrontEnd = true;
-            localAddress = new xMsgProxyAddress(ClaraUtil.localhost(), DEFAULT_PROXY_PORT);
+            localAddress = new ProxyAddress(ClaraUtil.localhost(), DEFAULT_PROXY_PORT);
             frontEndAddress = localAddress;
         }
 
@@ -198,8 +198,8 @@ public final class Dpe extends AbstractActor {
          */
         public Builder(String frontEndHost, int frontEndPort) {
             isFrontEnd = false;
-            localAddress = new xMsgProxyAddress(ClaraUtil.localhost(), DEFAULT_PROXY_PORT);
-            frontEndAddress = new xMsgProxyAddress(frontEndHost, frontEndPort);
+            localAddress = new ProxyAddress(ClaraUtil.localhost(), DEFAULT_PROXY_PORT);
+            frontEndAddress = new ProxyAddress(frontEndHost, frontEndPort);
         }
 
         /**
@@ -209,7 +209,7 @@ public final class Dpe extends AbstractActor {
          * @return this builder, so methods can be chained
          */
         public Builder withHost(String host) {
-            localAddress = new xMsgProxyAddress(host, localAddress.pubPort());
+            localAddress = new ProxyAddress(host, localAddress.pubPort());
             if (isFrontEnd) {
                 frontEndAddress = localAddress;
             }
@@ -223,7 +223,7 @@ public final class Dpe extends AbstractActor {
          * @return this builder, so methods can be chained
          */
         public Builder withPort(int port) {
-            localAddress = new xMsgProxyAddress(localAddress.host(), port);
+            localAddress = new ProxyAddress(localAddress.host(), port);
             if (isFrontEnd) {
                 frontEndAddress = localAddress;
             }
@@ -320,8 +320,8 @@ public final class Dpe extends AbstractActor {
      * @param description textual description of the DPE
      */
     private Dpe(boolean isFrontEnd,
-                xMsgProxyAddress proxyAddress,
-                xMsgProxyAddress frontEndAddress,
+                ProxyAddress proxyAddress,
+                ProxyAddress frontEndAddress,
                 DpeConfig config,
                 String session,
                 String description) {
@@ -345,7 +345,7 @@ public final class Dpe extends AbstractActor {
     /**
      * Starts this DPE.
      * <p>
-     * Starts a local xMsg proxy server, and a local xMsg registrar service
+     * Starts a local proxy server, and a local registrar service
      * in case it is a front-end. Does proper subscriptions to receive requests
      * and starts heart beat reporting thread.
      * <p>
@@ -365,7 +365,7 @@ public final class Dpe extends AbstractActor {
      * <p>
      * Stops accepting new requests, stops the reporting thread,
      * and waits for all containers and services to shut down.
-     * The local xMsg proxy server, and the local xMsg registrar service in case
+     * The local proxy server, and the local registrar service in case
      * it is a front-end, are destroyed last.
      */
     @Override
@@ -446,7 +446,7 @@ public final class Dpe extends AbstractActor {
         try {
             connectionPools.mainPool.cacheConnection();
             return 1;
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             return 0;
         }
     }
@@ -454,14 +454,14 @@ public final class Dpe extends AbstractActor {
     private void cacheUncheckedConnection() {
         try {
             connectionPools.uncheckedPool.cacheConnection();
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             // ignore
         }
     }
 
     private void startSubscription() throws ClaraException {
-        xMsgTopic topic = xMsgTopic.build(ClaraConstants.DPE, base.getName());
-        xMsgCallBack callback = new DpeCallBack();
+        Topic topic = Topic.build(ClaraConstants.DPE, base.getName());
+        Callback callback = new DpeCallBack();
         String description = base.getDescription();
         subscriptionHandler = startRegisteredSubscription(topic, callback, description);
     }
@@ -679,7 +679,7 @@ public final class Dpe extends AbstractActor {
      */
     private class ReportService {
 
-        private final xMsgSocketFactory socketFactory;
+        private final SocketFactory socketFactory;
 
         private final DpeReport myReport;
         private final JsonReportBuilder myReportBuilder = new JsonReportBuilder();
@@ -690,7 +690,7 @@ public final class Dpe extends AbstractActor {
 
         ReportService(long periodMillis, String session) {
 
-            socketFactory = new xMsgSocketFactory(xMsgContext.getInstance().getContext());
+            socketFactory = new SocketFactory(Context.getInstance().getContext());
             myReport = new DpeReport(base, session);
             myReport.setPoolSize(base.getPoolSize());
             scheduledPingService = Executors.newSingleThreadScheduledExecutor();
@@ -735,22 +735,22 @@ public final class Dpe extends AbstractActor {
             return myReportBuilder.generateReport(myReport);
         }
 
-        // TODO: make xMsg support multiple addresses per connection
-        private Socket connect(xMsgProxyAddress feAddr) throws xMsgException {
+        // TODO: add support for multiple addresses per connection
+        private Socket connect(ProxyAddress feAddr) throws ClaraMsgException {
             Socket socket = socketFactory.createSocket(ZMQ.PUB);
             socketFactory.connectSocket(socket, feAddr.host(), feAddr.pubPort());
 
             DpeName monitorFE = FrontEnd.getMonitorFrontEnd();
             if (monitorFE != null) {
                 ClaraAddress monAddr = monitorFE.address();
-                socketFactory.connectSocket(socket, monAddr.host(), monAddr.pubPort());
+                socketFactory.connectSocket(socket, monAddr.host(), monAddr.port());
                 Logging.info("Using monitoring front-end %s", monitorFE);
             }
 
             return socket;
         }
 
-        private void send(Socket con, xMsgMessage msg) throws xMsgException {
+        private void send(Socket con, Message msg) throws ClaraMsgException {
             msg.getMetaData().setSender(base.getName());
             ZMsg zmsg = new ZMsg();
             zmsg.add(msg.getTopic().toString());
@@ -759,36 +759,36 @@ public final class Dpe extends AbstractActor {
             zmsg.send(con);
         }
 
-        private xMsgMessage aliveMessage() {
+        private Message aliveMessage() {
             return serializeJson(ClaraConstants.DPE_ALIVE, aliveReport());
         }
 
-        private xMsgMessage jsonMessage() {
+        private Message jsonMessage() {
             return serializeJson(ClaraConstants.DPE_REPORT, jsonReport());
         }
 
-        private xMsgMessage serializeJson(String topicPrefix, String json) {
-            xMsgTopic topic = xMsgTopic.build(topicPrefix, session, base.getName());
-            return new xMsgMessage(topic, EngineDataType.JSON.mimeType(), json.getBytes());
+        private Message serializeJson(String topicPrefix, String json) {
+            Topic topic = Topic.build(topicPrefix, session, base.getName());
+            return new Message(topic, EngineDataType.JSON.mimeType(), json.getBytes());
         }
 
         private void run() {
             try {
-                xMsgProxyAddress feHost = base.getFrontEnd().getProxyAddress();
+                ProxyAddress feHost = base.getFrontEnd().getProxyAddress();
                 Socket con = connect(feHost);
-                xMsgUtil.sleep(100);
+                ActorUtils.sleep(100);
                 try {
                     while (isReporting.get()) {
                         send(con, aliveMessage());
                         send(con, jsonMessage());
-                        xMsgUtil.sleep(reportPeriod);
+                        ActorUtils.sleep(reportPeriod);
                     }
-                } catch (xMsgException e) {
+                } catch (ClaraMsgException e) {
                     System.err.println("Could not publish DPE report:" + e.getMessage());
                 } finally {
                     socketFactory.closeQuietly(con);
                 }
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 System.err.println("Could not start DPE reporting thread:");
                 e.printStackTrace();
             } catch (Exception e) {
@@ -854,10 +854,10 @@ public final class Dpe extends AbstractActor {
      *     containerName ? engineName
      * </li>
      */
-    private class DpeCallBack implements xMsgCallBack {
+    private class DpeCallBack implements Callback {
 
         @Override
-        public void callback(xMsgMessage msg) {
+        public void callback(Message msg) {
             try {
                 RequestParser parser = RequestParser.build(msg);
                 String cmd = parser.nextString();
@@ -907,13 +907,13 @@ public final class Dpe extends AbstractActor {
                 }
 
                 if (msg.hasReplyTopic()) {
-                    sendResponse(msg, xMsgMeta.Status.INFO, response);
+                    sendResponse(msg, MetaData.Status.INFO, response);
                 }
 
             } catch (RequestException | DpeException e) {
                 Logging.error("%s", e.getMessage());
                 if (msg.hasReplyTopic()) {
-                    sendResponse(msg, xMsgMeta.Status.ERROR, e.getMessage());
+                    sendResponse(msg, MetaData.Status.ERROR, e.getMessage());
                 }
             }
         }

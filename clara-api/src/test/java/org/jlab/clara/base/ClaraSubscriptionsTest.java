@@ -27,9 +27,9 @@ import org.jlab.clara.base.ClaraSubscriptions.BaseSubscription;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.core.xMsgCallBack;
-import org.jlab.coda.xmsg.core.xMsgSubscription;
-import org.jlab.coda.xmsg.core.xMsgTopic;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Subscription;
+import org.jlab.clara.msg.core.Topic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -58,7 +58,7 @@ public class ClaraSubscriptionsTest {
 
     private ClaraBase baseMock;
     private EngineCallback callback;
-    private Map<String, xMsgSubscription> subscriptions;
+    private Map<String, Subscription> subscriptions;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -84,7 +84,7 @@ public class ClaraSubscriptionsTest {
 
         build(topic).start(callback);
 
-        verify(baseMock).listen(any(), eq(xMsgTopic.wrap(topic)), any());
+        verify(baseMock).listen(any(), eq(Topic.wrap(topic)), any());
     }
 
 
@@ -92,7 +92,7 @@ public class ClaraSubscriptionsTest {
     public void startSubscriptionWrapsUserCallback() throws Exception {
         TestSubscription sub = build("data:10.2.9.96_java:master:Simple");
 
-        xMsgCallBack xcb = mock(xMsgCallBack.class);
+        Callback xcb = mock(Callback.class);
         when(sub.wrap(eq(callback))).thenReturn(xcb);
 
         sub.start(callback);
@@ -114,7 +114,7 @@ public class ClaraSubscriptionsTest {
     @Test
     public void startSubscriptionStoresSubscriptionHandler() throws Exception {
         String key = "10.2.9.1#ERROR:10.2.9.96_java:master:Simple";
-        xMsgSubscription handler = mock(xMsgSubscription.class);
+        Subscription handler = mock(Subscription.class);
         when(baseMock.listen(any(), any(), any())).thenReturn(handler);
 
         build("ERROR:10.2.9.96_java:master:Simple").start(callback);
@@ -136,9 +136,9 @@ public class ClaraSubscriptionsTest {
 
     @Test
     public void stopSubscriptionUsesHandler() throws Exception {
-        xMsgSubscription handler = mock(xMsgSubscription.class);
+        Subscription handler = mock(Subscription.class);
         when(baseMock.listen(eq(FRONT_END),
-                             eq(xMsgTopic.wrap("ERROR:10.2.9.96_java:master:Simple")),
+                             eq(Topic.wrap("ERROR:10.2.9.96_java:master:Simple")),
                              any())).thenReturn(handler);
         build("ERROR:10.2.9.96_java:master:Simple").start(callback);
         build("WARNING:10.2.9.96_java:master:Simple").start(callback);
@@ -162,7 +162,7 @@ public class ClaraSubscriptionsTest {
 
 
     private TestSubscription build(String topic) {
-        return spy(new TestSubscription(baseMock, subscriptions, FRONT_END, xMsgTopic.wrap(topic)));
+        return spy(new TestSubscription(baseMock, subscriptions, FRONT_END, Topic.wrap(topic)));
     }
 
 
@@ -170,15 +170,15 @@ public class ClaraSubscriptionsTest {
             extends BaseSubscription<TestSubscription, EngineCallback> {
 
         TestSubscription(ClaraBase base,
-                         Map<String, xMsgSubscription> subscriptions,
+                         Map<String, Subscription> subscriptions,
                          ClaraComponent frontEnd,
-                         xMsgTopic topic) {
+                         Topic topic) {
             super(base, subscriptions, frontEnd, topic);
         }
 
         @Override
-        protected xMsgCallBack wrap(EngineCallback callback) {
-            return mock(xMsgCallBack.class);
+        protected Callback wrap(EngineCallback callback) {
+            return mock(Callback.class);
         }
     }
 }

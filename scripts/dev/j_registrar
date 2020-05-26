@@ -1,0 +1,5 @@
+#!/bin/sh
+
+exec ./scripts/exec-class \
+    clara-msg \
+    org.jlab.clara.msg.sys.Registrar "$@"

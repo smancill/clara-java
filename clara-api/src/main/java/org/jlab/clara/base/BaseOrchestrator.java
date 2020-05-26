@@ -34,8 +34,8 @@ import org.jlab.clara.base.ClaraSubscriptions.ServiceSubscriptionBuilder;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.engine.EngineDataType;
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgSubscription;
+import org.jlab.clara.msg.core.ActorSetup;
+import org.jlab.clara.msg.core.Subscription;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public class BaseOrchestrator implements AutoCloseable {
     private final Set<EngineDataType> dataTypes = new HashSet<>();
 
     // Map of subscription objects. Key = Clara_component_canonical_name # topic_of_subscription
-    private final Map<String, xMsgSubscription> subscriptions = new HashMap<>();
+    private final Map<String, Subscription> subscriptions = new HashMap<>();
 
     // ClaraBase reference
     private ClaraBase base;
@@ -69,7 +69,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * @throws java.io.UncheckedIOException if localhost could not be obtained
      */
     public BaseOrchestrator() {
-        this(xMsgConstants.DEFAULT_POOL_SIZE);
+        this(ActorSetup.DEFAULT_POOL_SIZE);
     }
 
     /**
@@ -93,7 +93,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * @throws java.io.UncheckedIOException if localhost could not be obtained
      */
     public BaseOrchestrator(DpeName frontEnd) {
-        this(getUniqueName(), frontEnd, xMsgConstants.DEFAULT_POOL_SIZE);
+        this(getUniqueName(), frontEnd, ActorSetup.DEFAULT_POOL_SIZE);
     }
 
     /**
@@ -134,7 +134,7 @@ public class BaseOrchestrator implements AutoCloseable {
      *
      * @return the map of running subscriptions
      */
-    Map<String, xMsgSubscription> getSubscriptions() {
+    Map<String, Subscription> getSubscriptions() {
         return subscriptions;
     }
 

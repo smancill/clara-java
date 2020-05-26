@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.core.xMsgConstants;
+import static org.jlab.clara.msg.core.Topic.SEPARATOR;
 
 /**
  * Unique identifier of a CLARA service.
@@ -54,7 +54,7 @@ public class ServiceName implements ClaraName {
     public ServiceName(ContainerName container, String engine) {
         this.container = container;
         this.engine = engine;
-        this.canonicalName = container.canonicalName() + xMsgConstants.TOPIC_SEP + engine;
+        this.canonicalName = container.canonicalName() + SEPARATOR + engine;
     }
 
     /**

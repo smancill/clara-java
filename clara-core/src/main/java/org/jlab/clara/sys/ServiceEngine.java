@@ -32,13 +32,12 @@ import org.jlab.clara.engine.Engine;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.sys.ccc.CompositionCompiler;
 import org.jlab.clara.sys.ccc.ServiceState;
 import org.jlab.clara.sys.report.ServiceReport;
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
 
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -94,7 +93,7 @@ class ServiceEngine {
         // nothing
     }
 
-    public void configure(xMsgMessage message) throws ClaraException {
+    public void configure(Message message) throws ClaraException {
 
         EngineData inputData;
         EngineData outData = null;
@@ -141,7 +140,7 @@ class ServiceEngine {
     }
 
 
-    public void execute(xMsgMessage message) throws ClaraException {
+    public void execute(Message message) throws ClaraException {
         sysConfig.addRequest();
         sysReport.incrementRequestCount();
 
@@ -233,7 +232,7 @@ class ServiceEngine {
         return outData;
     }
 
-    private void updateMetadata(xMsgMeta.Builder inMeta, xMsgMeta.Builder outMeta) {
+    private void updateMetadata(MetaData.Builder inMeta, MetaData.Builder outMeta) {
         outMeta.setAuthor(base.getName());
         outMeta.setVersion(engine.getVersion());
 
@@ -267,7 +266,7 @@ class ServiceEngine {
     private void sendResult(EngineData outData, Set<String> outLinks) throws ClaraException {
         for (String ss : outLinks) {
             ClaraComponent comp = ClaraComponent.dpe(ss);
-            xMsgMessage msg = putEngineData(outData, ss);
+            Message msg = putEngineData(outData, ss);
             base.send(comp.getProxyAddress(), msg);
         }
     }
@@ -297,25 +296,25 @@ class ServiceEngine {
 
 
     private void sendReport(String topicPrefix, EngineData data) throws ClaraException {
-        xMsgTopic topic = xMsgTopic.wrap(topicPrefix + xMsgConstants.TOPIC_SEP + base.getName());
-        xMsgMessage transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+        Topic topic = Topic.wrap(topicPrefix + Topic.SEPARATOR + base.getName());
+        Message transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
         base.send(base.getFrontEnd(), transit);
     }
 
     private void sendMonitorData(String state, EngineData data) throws ClaraException {
         if (monitorFe != null) {
-            xMsgTopic topic = xMsgTopic.wrap(ClaraConstants.MONITOR_REPORT
-                    + xMsgConstants.TOPIC_SEP + state
-                    + xMsgConstants.TOPIC_SEP + sysReport.getSession()
-                    + xMsgConstants.TOPIC_SEP + base.getEngine());
-            xMsgMessage transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+            Topic topic = Topic.wrap(ClaraConstants.MONITOR_REPORT
+                    + Topic.SEPARATOR + state
+                    + Topic.SEPARATOR + sysReport.getSession()
+                    + Topic.SEPARATOR + base.getEngine());
+            Message transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
             base.sendUncheck(monitorFe.getProxyAddress(), transit);
         }
     }
 
 
-    private EngineData getEngineData(xMsgMessage message) throws ClaraException {
-        xMsgMeta.Builder metadata = message.getMetaData();
+    private EngineData getEngineData(Message message) throws ClaraException {
+        MetaData.Builder metadata = message.getMetaData();
         String mimeType = metadata.getDataType();
         if (mimeType.equals(ClaraConstants.SHARED_MEMORY_KEY)) {
             sysReport.incrementShrmReads();
@@ -328,32 +327,32 @@ class ServiceEngine {
         }
     }
 
-    private xMsgMessage putEngineData(EngineData data, String receiver)
+    private Message putEngineData(EngineData data, String receiver)
             throws ClaraException {
-        xMsgTopic topic = xMsgTopic.wrap(receiver);
+        Topic topic = Topic.wrap(receiver);
         if (SharedMemory.containsReceiver(receiver)) {
             int id = data.getCommunicationId();
             SharedMemory.putEngineData(receiver, base.getName(), id, data);
             sysReport.incrementShrmWrites();
 
-            xMsgMeta.Builder metadata = xMsgMeta.newBuilder();
+            MetaData.Builder metadata = MetaData.newBuilder();
             metadata.setAuthor(base.getName());
             metadata.setComposition(data.getComposition());
             metadata.setCommunicationId(id);
-            metadata.setAction(xMsgMeta.ControlAction.EXECUTE);
+            metadata.setAction(MetaData.ControlAction.EXECUTE);
             metadata.setDataType(ClaraConstants.SHARED_MEMORY_KEY);
 
-            return new xMsgMessage(topic, metadata, ClaraConstants.SHARED_MEMORY_KEY.getBytes());
+            return new Message(topic, metadata, ClaraConstants.SHARED_MEMORY_KEY.getBytes());
         } else {
-            xMsgMessage output = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+            Message output = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
             sysReport.addBytesSent(output.getDataSize());
             return output;
         }
     }
 
 
-    private String getReplyTo(xMsgMessage message) {
-        xMsgMeta.Builder meta = message.getMetaData();
+    private String getReplyTo(Message message) {
+        MetaData.Builder meta = message.getMetaData();
         if (meta.hasReplyTo()) {
             return meta.getReplyTo();
         }

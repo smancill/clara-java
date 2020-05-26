@@ -26,9 +26,8 @@ package org.jlab.clara.base;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.engine.EngineDataType;
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.core.xMsgUtil;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Topic;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -160,7 +159,7 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        xMsgTopic topic = xMsgTopic.wrap(canonicalName);
+        Topic topic = Topic.wrap(canonicalName);
         return topic.domain();
     }
 
@@ -176,7 +175,7 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        xMsgTopic topic = xMsgTopic.wrap(canonicalName);
+        Topic topic = Topic.wrap(canonicalName);
         return topic.subject();
     }
 
@@ -191,11 +190,11 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        int firstSep = canonicalName.indexOf(xMsgConstants.TOPIC_SEP);
+        int firstSep = canonicalName.indexOf(Topic.SEPARATOR);
         if (firstSep < 0) {
             throw new IllegalArgumentException("Not a container name: " + canonicalName);
         }
-        int secondSep = canonicalName.indexOf(xMsgConstants.TOPIC_SEP, firstSep + 1);
+        int secondSep = canonicalName.indexOf(Topic.SEPARATOR, firstSep + 1);
         if (secondSep < 0) {
             return canonicalName;
         }
@@ -214,7 +213,7 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        xMsgTopic topic = xMsgTopic.wrap(canonicalName);
+        Topic topic = Topic.wrap(canonicalName);
         return topic.type();
     }
 
@@ -420,8 +419,8 @@ public final class ClaraUtil {
      * @return true/false
      */
     public static Boolean isRemoteService(String serviceName) {
-        xMsgTopic topic = xMsgTopic.wrap(serviceName);
-        for (String s : xMsgUtil.getLocalHostIps()) {
+        Topic topic = Topic.wrap(serviceName);
+        for (String s : ActorUtils.getLocalHostIps()) {
             if (s.equals(topic.domain())) {
                 return false;
             }
@@ -435,7 +434,17 @@ public final class ClaraUtil {
      * @return the localhost IP
      */
     public static String localhost() {
-        return xMsgUtil.localhost();
+        return ActorUtils.localhost();
+    }
+
+    /**
+     * Determines the IP address of the specified host.
+     *
+     * @param hostName The name of the host (accepts "localhost")
+     * @return the host IP
+     */
+    public static String toHostAddress(String hostName) {
+        return ActorUtils.toHostAddress(hostName);
     }
 
     /**

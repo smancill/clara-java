@@ -55,6 +55,6 @@ public class DataRingAddress extends ClaraAddress {
      * @param dpe the DPE acting as a data ring.
      */
     public DataRingAddress(DpeName dpe) {
-        super(dpe.address().host(), dpe.address().pubPort());
+        super(dpe.address().host(), dpe.address().port());
     }
 }

@@ -33,7 +33,6 @@ import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingListener;
-import org.jlab.coda.xmsg.core.xMsgConstants;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +48,9 @@ import joptsimple.OptionSpec;
  * Listen to reports published to the CLARA data-ring.
  */
 public class MonitorOrchestrator implements AutoCloseable {
+
+    // TODO: use Topic.ANY without adding a dependency to clara-msg
+    private static final String ANY = "*";
 
     private final BaseOrchestrator orchestrator;
 
@@ -139,7 +141,7 @@ public class MonitorOrchestrator implements AutoCloseable {
 
 
     private static DpeName getRingAsDpe(DataRingAddress address) {
-        return new DpeName(address.host(), address.pubPort(), ClaraLang.JAVA);
+        return new DpeName(address.host(), address.port(), ClaraLang.JAVA);
     }
 
 
@@ -212,10 +214,10 @@ public class MonitorOrchestrator implements AutoCloseable {
     private String getTopicLog(DataRingTopic topic) {
         StringBuilder sb = new StringBuilder();
         sb.append("state = ").append('"').append(topic.state()).append('"');
-        if (!topic.session().equals(xMsgConstants.ANY)) {
+        if (!topic.session().equals(ANY)) {
             sb.append("  session = ").append('"').append(topic.session()).append('"');
         }
-        if (!topic.engine().equals(xMsgConstants.ANY)) {
+        if (!topic.engine().equals(ANY)) {
             sb.append("  engine = ").append('"').append(topic.engine()).append('"');
         }
         return sb.toString();

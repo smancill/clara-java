@@ -27,12 +27,12 @@ import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.core.xMsgCallBack;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgSubscription;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
-import org.jlab.coda.xmsg.excp.xMsgException;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Subscription;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
+import org.jlab.clara.msg.errors.ClaraMsgException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -94,10 +94,10 @@ abstract class AbstractActor {
      * @throws ClaraException if the subscription could not be started or
      *                        if the registration failed
      */
-    xMsgSubscription startRegisteredSubscription(xMsgTopic topic,
-                                                 xMsgCallBack callback,
-                                                 String description) throws ClaraException {
-        xMsgSubscription sub = base.listen(topic, callback);
+    Subscription startRegisteredSubscription(Topic topic,
+                                             Callback callback,
+                                             String description) throws ClaraException {
+        Subscription sub = base.listen(topic, callback);
         try {
             base.register(topic, description);
         } catch (Exception e) {
@@ -107,13 +107,13 @@ abstract class AbstractActor {
         return sub;
     }
 
-    void sendResponse(xMsgMessage msg, xMsgMeta.Status status, String data) {
+    void sendResponse(Message msg, MetaData.Status status, String data) {
         try {
-            xMsgMessage repMsg = MessageUtil.buildRequest(msg.getReplyTopic(), data);
+            Message repMsg = MessageUtil.buildRequest(msg.getReplyTopic(), data);
             repMsg.getMetaData().setAuthor(base.getName());
             repMsg.getMetaData().setStatus(status);
             base.send(repMsg);
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             e.printStackTrace();
         }
     }

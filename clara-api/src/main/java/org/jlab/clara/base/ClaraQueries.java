@@ -28,13 +28,13 @@ import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MimeType;
+import org.jlab.clara.msg.data.RegRecord;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.util.report.JsonUtils;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgMimeType;
-import org.jlab.coda.xmsg.data.xMsgRegRecord;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
 import org.json.JSONObject;
 
 import java.util.Optional;
@@ -98,23 +98,23 @@ public final class ClaraQueries {
                 }
                 long timeout = (int) unit.toMillis(wait);
                 long start = System.currentTimeMillis();
-                Stream<xMsgRegRecord> regData = queryRegistrar(timeout);
+                Stream<RegRecord> regData = queryRegistrar(timeout);
                 long end = System.currentTimeMillis();
                 return collect(regData, timeout - (end - start));
-            } catch (xMsgException e) {
+            } catch (ClaraMsgException e) {
                 throw new ClaraException("Cannot send query", e);
             } catch (WrappedException e) {
                 throw new ClaraException("Cannot send query ", e.cause);
             }
         }
 
-        private Stream<xMsgRegRecord> queryRegistrar(long timeout) throws xMsgException {
+        private Stream<RegRecord> queryRegistrar(long timeout) throws ClaraMsgException {
             return base.discover(filter.regQuery(), ClaraBase.getRegAddress(frontEnd), timeout)
                        .stream()
                        .filter(filter.regFilter());
         }
 
-        protected abstract T collect(Stream<xMsgRegRecord> regData, long timeout);
+        protected abstract T collect(Stream<RegRecord> regData, long timeout);
 
         @SuppressWarnings("unchecked")
         protected D self() {
@@ -145,14 +145,14 @@ public final class ClaraQueries {
             this.dataKey = dataKey;
         }
 
-        protected Stream<T> query(Stream<xMsgRegRecord> regData, long timeout) {
+        protected Stream<T> query(Stream<RegRecord> regData, long timeout) {
             return dpeNames(regData)
                     .flatMap(d -> queryDpe(d, timeout))
                     .map(parseData);
         }
 
-        private Stream<DpeName> dpeNames(Stream<xMsgRegRecord> record) {
-            return record.map(xMsgRegRecord::name)
+        private Stream<DpeName> dpeNames(Stream<RegRecord> record) {
+            return record.map(RegRecord::name)
                          .map(ClaraUtil::getDpeName)
                          .distinct()
                          .map(DpeName::new);
@@ -160,22 +160,22 @@ public final class ClaraQueries {
 
         private Stream<JSONObject> queryDpe(DpeName dpe, long timeout) {
             try {
-                xMsgProxyAddress address = dpe.address();
-                xMsgMessage xmsg = msg(dpe);
-                xMsgMessage response = base.syncPublish(address, xmsg, timeout);
+                ProxyAddress address = dpe.address().proxyAddress();
+                Message query = msg(dpe);
+                Message response = base.syncPublish(address, query, timeout);
                 String mimeType = response.getMimeType();
-                if (mimeType.equals(xMsgMimeType.STRING)) {
+                if (mimeType.equals(MimeType.STRING)) {
                     String data = new String(response.getData());
                     return filterQuery(new JSONObject(data));
                 }
                 return Stream.empty();
-            } catch (TimeoutException | xMsgException e) {
+            } catch (TimeoutException | ClaraMsgException e) {
                 throw new WrappedException(e);
             }
         }
 
-        private xMsgMessage msg(DpeName dpe) {
-            xMsgTopic topic = xMsgTopic.build("dpe", dpe.canonicalName());
+        private Message msg(DpeName dpe) {
+            Topic topic = Topic.build("dpe", dpe.canonicalName());
             return MessageUtil.buildRequest(topic, ClaraConstants.REPORT_JSON);
         }
 
@@ -217,11 +217,11 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Set<T> collect(Stream<xMsgRegRecord> regData, long timeout) {
+        protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
             if (filter.useDpe()) {
                 return query(regData, timeout).collect(Collectors.toSet());
             }
-            return regData.map(xMsgRegRecord::name).map(parseReg).collect(Collectors.toSet());
+            return regData.map(RegRecord::name).map(parseReg).collect(Collectors.toSet());
         }
     }
 
@@ -247,8 +247,8 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Boolean collect(Stream<xMsgRegRecord> regData, long timeout) {
-            return regData.map(xMsgRegRecord::name).map(parseReg).findFirst().isPresent();
+        protected Boolean collect(Stream<RegRecord> regData, long timeout) {
+            return regData.map(RegRecord::name).map(parseReg).findFirst().isPresent();
         }
     }
 
@@ -269,7 +269,7 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Set<T> collect(Stream<xMsgRegRecord> regData, long timeout) {
+        protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
             return query(regData, timeout).collect(Collectors.toSet());
         }
     }
@@ -292,7 +292,7 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Optional<T> collect(Stream<xMsgRegRecord> regData, long timeout) {
+        protected Optional<T> collect(Stream<RegRecord> regData, long timeout) {
             return query(regData, timeout).findFirst();
         }
     }
@@ -315,7 +315,7 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Set<T> collect(Stream<xMsgRegRecord> regData, long timeout) {
+        protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
             return query(regData, timeout).collect(Collectors.toSet());
         }
     }
@@ -338,7 +338,7 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Optional<T> collect(Stream<xMsgRegRecord> regData, long timeout) {
+        protected Optional<T> collect(Stream<RegRecord> regData, long timeout) {
             return query(regData, timeout).findFirst();
         }
     }

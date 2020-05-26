@@ -23,9 +23,9 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgRegQuery;
-import org.jlab.coda.xmsg.data.xMsgRegRecord;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.RegQuery;
+import org.jlab.clara.msg.data.RegRecord;
 
 /**
  * The standard filters to select CLARA DPEs, containers or services.
@@ -77,8 +77,8 @@ public final class ClaraFilters {
      * @return a filter for a single DPE
      */
     static DpeFilter dpe(DpeName name) {
-        xMsgTopic topic = xMsgTopic.build("dpe", name.canonicalName());
-        return new DpeFilter(xMsgRegQuery.subscribers().withSame(topic));
+        Topic topic = Topic.build("dpe", name.canonicalName());
+        return new DpeFilter(RegQuery.subscribers().withSame(topic));
     }
 
 
@@ -120,8 +120,8 @@ public final class ClaraFilters {
      * @return a filter for a single container
      */
     static ContainerFilter container(ContainerName name) {
-        xMsgTopic topic = xMsgTopic.build("container", name.canonicalName());
-        ContainerFilter filter = new ContainerFilter(xMsgRegQuery.subscribers().withSame(topic));
+        Topic topic = Topic.build("container", name.canonicalName());
+        ContainerFilter filter = new ContainerFilter(RegQuery.subscribers().withSame(topic));
         filter.addFilter(o -> o.getString("name").equals(name.toString()));
         return filter;
     }
@@ -204,8 +204,8 @@ public final class ClaraFilters {
      * @return a filter for a single service
      */
     static ServiceFilter service(ServiceName name) {
-        xMsgTopic topic = xMsgTopic.wrap(name.canonicalName());
-        ServiceFilter filter = new ServiceFilter(xMsgRegQuery.subscribers().withSame(topic));
+        Topic topic = Topic.wrap(name.canonicalName());
+        ServiceFilter filter = new ServiceFilter(RegQuery.subscribers().withSame(topic));
         filter.addFilter(o -> o.getString("name").equals(name.toString()));
         return filter;
     }
@@ -336,44 +336,44 @@ public final class ClaraFilters {
 
 
     private static DpeFilter dpes() {
-        return new DpeFilter(xMsgRegQuery.subscribers().withDomain("dpe"));
+        return new DpeFilter(RegQuery.subscribers().withDomain("dpe"));
     }
 
 
     private static DpeFilter dpes(String host) {
-        DpeFilter filter = new DpeFilter(xMsgRegQuery.subscribers().withHost(host));
+        DpeFilter filter = new DpeFilter(RegQuery.subscribers().withHost(host));
         filter.addRegFilter(r -> r.topic().domain().equals("dpe"));
         return filter;
     }
 
 
     private static ContainerFilter containers() {
-        return new ContainerFilter(xMsgRegQuery.subscribers().withDomain("container"));
+        return new ContainerFilter(RegQuery.subscribers().withDomain("container"));
     }
 
 
     private static ContainerFilter containers(String host) {
-        ContainerFilter filter = new ContainerFilter(xMsgRegQuery.subscribers().withHost(host));
+        ContainerFilter filter = new ContainerFilter(RegQuery.subscribers().withHost(host));
         filter.addRegFilter(r -> r.topic().domain().equals("container"));
         return filter;
     }
 
 
     private static ServiceFilter services() {
-        ServiceFilter filter = new ServiceFilter(xMsgRegQuery.subscribers().all());
+        ServiceFilter filter = new ServiceFilter(RegQuery.subscribers().all());
         filter.addRegFilter(ClaraFilters::isService);
         return filter;
     }
 
 
     private static ServiceFilter services(String host) {
-        ServiceFilter filter = new ServiceFilter(xMsgRegQuery.subscribers().withHost(host));
+        ServiceFilter filter = new ServiceFilter(RegQuery.subscribers().withHost(host));
         filter.addRegFilter(ClaraFilters::isService);
         return filter;
     }
 
 
-    private static boolean isService(xMsgRegRecord record) {
+    private static boolean isService(RegRecord record) {
         String domain = record.topic().domain();
         return !domain.equals("dpe") && !domain.equals("container");
     }

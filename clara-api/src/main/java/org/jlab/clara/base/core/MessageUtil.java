@@ -23,23 +23,22 @@
 
 package org.jlab.clara.base.core;
 
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgMimeType;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MimeType;
 
 public final class MessageUtil {
 
     private MessageUtil() { }
 
-    public static  xMsgTopic buildTopic(Object... args) {
+    public static Topic buildTopic(Object... args) {
         StringBuilder topic  = new StringBuilder();
         topic.append(args[0]);
         for (int i = 1; i < args.length; i++) {
-            topic.append(xMsgConstants.TOPIC_SEP);
+            topic.append(Topic.SEPARATOR);
             topic.append(args[i]);
         }
-        return xMsgTopic.wrap(topic.toString());
+        return Topic.wrap(topic.toString());
     }
 
     public static String buildData(Object... args) {
@@ -52,7 +51,7 @@ public final class MessageUtil {
         return topic.toString();
     }
 
-    public static xMsgMessage buildRequest(xMsgTopic topic, String data) {
-        return new xMsgMessage(topic, xMsgMimeType.STRING, data.getBytes());
+    public static Message buildRequest(Topic topic, String data) {
+        return new Message(topic, MimeType.STRING, data.getBytes());
     }
 }

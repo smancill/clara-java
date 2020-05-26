@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.core.xMsgConstants;
+import static org.jlab.clara.msg.core.Topic.SEPARATOR;
 
 /**
  * Unique identifier of a CLARA container.
@@ -64,7 +64,7 @@ public class ContainerName implements ClaraName {
      */
     public ContainerName(DpeName dpe, String name) {
         this.dpe = dpe;
-        this.canonicalName = dpe.canonicalName() + xMsgConstants.TOPIC_SEP + name;
+        this.canonicalName = dpe.canonicalName() + SEPARATOR + name;
         this.name = name;
     }
 

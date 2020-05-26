@@ -28,9 +28,9 @@ import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -55,9 +55,9 @@ public final class DataUtil {
      * which is hidden to users.
      *
      * @param data {@link org.jlab.clara.engine.EngineData} object
-     * @return {@link org.jlab.coda.xmsg.data.xMsgM.xMsgMeta.Builder} object
+     * @return {@link MetaData.Builder} object
      */
-    public static xMsgMeta.Builder getMetadata(EngineData data) {
+    public static MetaData.Builder getMetadata(EngineData data) {
         return DATA_ACCESSOR.getMetadata(data);
     }
 
@@ -70,23 +70,23 @@ public final class DataUtil {
      * @param dataTypes the set of registered data types
      * @throws ClaraException if the data could not be serialized
      */
-    public static xMsgMessage serialize(xMsgTopic topic,
-                                        EngineData data,
-                                        Set<EngineDataType> dataTypes)
+    public static Message serialize(Topic topic,
+                                    EngineData data,
+                                    Set<EngineDataType> dataTypes)
             throws ClaraException {
 
-        xMsgMeta.Builder metadata = DATA_ACCESSOR.getMetadata(data);
+        MetaData.Builder metadata = DATA_ACCESSOR.getMetadata(data);
         String mimeType = metadata.getDataType();
         for (EngineDataType dt : dataTypes) {
             if (dt.mimeType().equals(mimeType)) {
                 try {
                     ByteBuffer bb = dt.serializer().write(data.getData());
                     if (bb.order() == ByteOrder.BIG_ENDIAN) {
-                        metadata.setByteOrder(xMsgMeta.Endian.Big);
+                        metadata.setByteOrder(MetaData.Endian.Big);
                     } else {
-                        metadata.setByteOrder(xMsgMeta.Endian.Little);
+                        metadata.setByteOrder(MetaData.Endian.Little);
                     }
-                    return new xMsgMessage(topic, metadata, bb.array());
+                    return new Message(topic, metadata, bb.array());
                 } catch (ClaraException e) {
                     throw new ClaraException("Could not serialize " + mimeType, e);
                 }
@@ -94,33 +94,33 @@ public final class DataUtil {
         }
         if (mimeType.equals(EngineDataType.STRING.mimeType())) {
             ByteBuffer bb = EngineDataType.STRING.serializer().write(data.getData());
-            return new xMsgMessage(topic, metadata, bb.array());
+            return new Message(topic, metadata, bb.array());
         }
         throw new ClaraException("Unsupported mime-type = " + mimeType);
     }
 
     /**
-     * De-serializes data of the message {@link org.jlab.coda.xmsg.core.xMsgMessage},
+     * De-serializes data of the message {@link Message},
      * represented as a byte[] into an object of az type defined using the mimeType/dataType
-     * of the meta-data (also as a part of the xMsgMessage). Second argument is used to
+     * of the meta-data (also as a part of the Message). Second argument is used to
      * pass the serialization routine as a method of the
      * {@link org.jlab.clara.engine.EngineDataType} object.
      *
-     * @param msg {@link org.jlab.coda.xmsg.core.xMsgMessage} object
+     * @param msg {@link Message} object
      * @param dataTypes set of {@link org.jlab.clara.engine.EngineDataType} objects
      * @return {@link org.jlab.clara.engine.EngineData} object containing de-serialized data object
      *          and metadata
      * @throws ClaraException
      */
-    public static EngineData deserialize(xMsgMessage msg, Set<EngineDataType> dataTypes)
+    public static EngineData deserialize(Message msg, Set<EngineDataType> dataTypes)
             throws ClaraException {
-        xMsgMeta.Builder metadata = msg.getMetaData();
+        MetaData.Builder metadata = msg.getMetaData();
         String mimeType = metadata.getDataType();
         for (EngineDataType dt : dataTypes) {
             if (dt.mimeType().equals(mimeType)) {
                 try {
                     ByteBuffer bb = ByteBuffer.wrap(msg.getData());
-                    if (metadata.getByteOrder() == xMsgMeta.Endian.Little) {
+                    if (metadata.getByteOrder() == MetaData.Endian.Little) {
                         bb.order(ByteOrder.LITTLE_ENDIAN);
                     }
                     Object userData = dt.serializer().read(bb);
@@ -154,8 +154,8 @@ public final class DataUtil {
             defaultAccessor = accessor;
         }
 
-        protected abstract xMsgMeta.Builder getMetadata(EngineData data);
+        protected abstract MetaData.Builder getMetadata(EngineData data);
 
-        protected abstract EngineData build(Object data, xMsgMeta.Builder metadata);
+        protected abstract EngineData build(Object data, MetaData.Builder metadata);
     }
 }

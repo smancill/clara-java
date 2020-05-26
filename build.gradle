@@ -23,6 +23,7 @@
  */
 
 plugins {
+    id 'com.google.protobuf' version '0.8.12' apply false
     id 'com.github.spotbugs' version '4.0.2' apply false
 }
 
@@ -55,16 +56,7 @@ configure(subprojectList) {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
-    configurations {
-        all {
-            resolutionStrategy.cacheChangingModulesFor 30, 'minutes'
-        }
-    }
-
     repositories {
-        maven {
-            url 'https://clasweb.jlab.org/clas12maven/'
-        }
         mavenCentral()
     }
 
@@ -147,9 +139,10 @@ project(':clara-platform') {
 
 configure(subprojectList) {
     ext.libs = [
-        xmsg: 'org.jlab.coda:xmsg:2.3',
         json: 'org.json:json:20160810',
         snakeyaml: 'org.yaml:snakeyaml:1.18',
+        jeromq: 'org.zeromq:jeromq:0.4.3',
+        protobuf: 'com.google.protobuf:protobuf-java:3.6.1',
         jline: 'org.jline:jline:3.1.3',
         commons_exec: 'org.apache.commons:commons-exec:1.3',
         freemarker: 'org.freemarker:freemarker:2.3.26-incubating',
@@ -182,6 +175,7 @@ configure(subprojectList) {
 
 project(':clara-core') {
     dependencies {
+        implementation project(':clara-msg')
         implementation project(':clara-api')
 
         implementation libs.jopt
@@ -194,9 +188,50 @@ project(':clara-core') {
     }
 }
 
+project(':clara-msg') {
+    apply plugin: 'com.google.protobuf'
+
+    ext {
+        generatedProtoDir = "${buildDir.name}/generated/source/proto/main/java"
+    }
+
+    dependencies {
+        api libs.jeromq
+        api libs.protobuf
+        implementation libs.jopt
+    }
+
+    protobuf {
+        protoc {
+            artifact = 'com.google.protobuf:protoc:3.6.1'
+            if (project.hasProperty('protocPath')) {
+                path = protocPath
+            }
+        }
+    }
+
+    sourcesJar {
+        from generatedProtoDir
+    }
+
+    javadoc {
+        exclude "org/jlab/clara/msg/examples/**"
+        exclude "org/jlab/clara/msg/net/*Factory.java"
+        exclude "org/jlab/clara/msg/sys/*/*.java"
+    }
+
+    integrationTest {
+        testLogging {
+            showStandardStreams = true
+            events 'started', 'passed', 'failed'
+        }
+    }
+}
+
 project(':clara-api') {
     dependencies {
-        api libs.xmsg
+        implementation project(':clara-msg')
+
         api libs.json
         implementation libs.snakeyaml
         implementation libs.jopt
@@ -554,6 +589,31 @@ configure(subprojectList) {
                     }
                 }
             }
+        }
+    }
+}
+
+project(':clara-msg') {
+    eclipse {
+        classpath {
+            file {
+                whenMerged { classpath ->
+                    classpath.entries.add(new org.gradle.plugins.ide.eclipse.model.SourceFolder(generatedProtoDir, null))
+                }
+                withXml { xml ->
+                    xml.asNode().find {
+                        it.@kind == 'src' && it.@path == generatedProtoDir
+                    }
+                    .appendNode('attributes')
+                    .appendNode('attribute', [name:'ignore_optional_problems', value:'true'])
+                }
+            }
+        }
+    }
+
+    idea {
+        module {
+            generatedSourceDirs += file(generatedProtoDir)
         }
     }
 }

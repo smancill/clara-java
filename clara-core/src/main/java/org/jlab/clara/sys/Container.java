@@ -27,10 +27,10 @@ import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.util.EnvUtils;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.sys.report.ContainerReport;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.excp.xMsgException;
+import org.jlab.clara.util.EnvUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -116,7 +116,7 @@ class Container extends AbstractActor {
     }
 
     private void register() throws ClaraException {
-        xMsgTopic topic = xMsgTopic.build(ClaraConstants.CONTAINER, base.getName());
+        Topic topic = Topic.build(ClaraConstants.CONTAINER, base.getName());
         base.register(topic, base.getDescription());
         isRegistered = true;
     }
@@ -139,7 +139,7 @@ class Container extends AbstractActor {
             // broadcast to the local proxy
             String data = MessageUtil.buildData(ClaraConstants.CONTAINER_DOWN, base.getName());
             base.send(base.getFrontEnd(), data);
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             Logging.error("container = %s: could not send down report: %s",
                           base.getName(), e.getMessage());
         }

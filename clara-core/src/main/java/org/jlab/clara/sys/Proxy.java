@@ -25,31 +25,30 @@ package org.jlab.clara.sys;
 
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.core.xMsgUtil;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgContext;
-import org.jlab.coda.xmsg.sys.xMsgProxy;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.Context;
 
 class Proxy {
 
-    private final xMsgContext context;
-    private final xMsgProxy proxy;
+    private final Context context;
+    private final org.jlab.clara.msg.sys.Proxy proxy;
 
     Proxy(ClaraComponent dpe) throws ClaraException {
         try {
-            context = xMsgContext.newContext();
-            proxy = new xMsgProxy(context, dpe.getProxyAddress());
-            if (System.getenv("XMSG_PROXY_DEBUG") != null) {
+            context = Context.newContext();
+            proxy = new org.jlab.clara.msg.sys.Proxy(context, dpe.getProxyAddress());
+            if (System.getenv("CLARA_PROXY_DEBUG") != null) {
                 proxy.verbose();
             }
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             throw new ClaraException("Could not create proxy", e);
         }
     }
 
     public void start() {
         proxy.start();
-        xMsgUtil.sleep(100);
+        ActorUtils.sleep(100);
     }
 
     public void stop() {

@@ -26,8 +26,8 @@ package org.jlab.clara.engine;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.data.xMsgD.xMsgData;
-import org.jlab.coda.xmsg.data.xMsgD.xMsgPayload;
+import org.jlab.clara.msg.data.PlainDataProto.PayloadData;
+import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -123,12 +123,12 @@ public class EngineDataType {
      */
     public static final EngineDataType JSON = buildJson();
     /**
-     * A native xMsg data object.
+     * A native data object.
      */
     public static final EngineDataType NATIVE_DATA = buildNative();
 
     /**
-     * A native xMsg payload object.
+     * A native payload object.
      */
     public static final EngineDataType NATIVE_PAYLOAD = buildPayload();
 
@@ -167,7 +167,7 @@ public class EngineDataType {
     }
 
     private static EngineDataType buildNative() {
-        return new EngineDataType(MimeType.NATIVE_DATA.toString(), new NativeSerializer());
+        return new EngineDataType(MimeType.NATIVE_PLAIN.toString(), new NativeSerializer());
     }
 
     private static EngineDataType buildPayload() {
@@ -220,8 +220,8 @@ public class EngineDataType {
 
         JSON            ("application/json"),
 
-        NATIVE_DATA     ("xmsg/data"),
-        NATIVE_PAYLOAD  ("xmsg/payload");
+        NATIVE_PLAIN    ("binary/clara-plain"),
+        NATIVE_PAYLOAD  ("binary/clara-payload");
 
         private final String name;
 
@@ -241,14 +241,14 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            xMsgData xData = (xMsgData) data;
+            PlainData xData = (PlainData) data;
             return ByteBuffer.wrap(xData.toByteArray());
         }
 
         @Override
         public Object read(ByteBuffer data) throws ClaraException {
             try {
-                return xMsgData.parseFrom(data.array());
+                return PlainData.parseFrom(data.array());
             } catch (InvalidProtocolBufferException e) {
                 throw new ClaraException(e.getMessage());
             }
@@ -260,14 +260,14 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            xMsgPayload payload = (xMsgPayload) data;
+            PayloadData payload = (PayloadData) data;
             return ByteBuffer.wrap(payload.toByteArray());
         }
 
         @Override
         public Object read(ByteBuffer data) throws ClaraException {
             try {
-                return xMsgPayload.parseFrom(data.array());
+                return PayloadData.parseFrom(data.array());
             } catch (InvalidProtocolBufferException e) {
                 throw new ClaraException(e.getMessage());
             }
@@ -315,7 +315,7 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            xMsgData.Builder proto = xMsgData.newBuilder();
+            PlainData.Builder proto = PlainData.newBuilder();
             switch (mimeType) {
                 case SINT32:
                     proto.setVLSINT32((Integer) data);
@@ -385,7 +385,7 @@ public class EngineDataType {
 
         @Override
         public Object read(ByteBuffer data) throws ClaraException {
-            xMsgData proto = (xMsgData) nativeSerializer.read(data);
+            PlainData proto = (PlainData) nativeSerializer.read(data);
             switch (mimeType) {
                 case SINT32:
                     return proto.getVLSINT32();

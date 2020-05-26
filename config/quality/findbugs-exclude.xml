@@ -11,7 +11,10 @@
 
   <!-- Exclude malicious code category from tests -->
   <Match>
-    <Class name="~.*\.*Test" />
+    <Or>
+      <Class name="~.*\.*Test" />
+      <Class name="~.*\.RegDataFactory" />
+    </Or>
     <Bug category="MALICIOUS_CODE" />
   </Match>
 

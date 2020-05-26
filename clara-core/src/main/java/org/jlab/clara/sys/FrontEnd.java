@@ -28,34 +28,33 @@ import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
+import org.jlab.clara.msg.core.ActorUtils;
+import org.jlab.clara.msg.core.Callback;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.net.Context;
+import org.jlab.clara.msg.sys.Registrar;
 import org.jlab.clara.sys.RequestParser.RequestException;
-import org.jlab.coda.xmsg.core.xMsgCallBack;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.core.xMsgUtil;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta.Builder;
-import org.jlab.coda.xmsg.excp.xMsgException;
-import org.jlab.coda.xmsg.net.xMsgContext;
-import org.jlab.coda.xmsg.sys.xMsgRegistrar;
 
 class FrontEnd {
 
     private final ClaraBase base;
 
-    private final xMsgContext context;
-    private final xMsgRegistrar registrar;
+    private final Context context;
+    private final Registrar registrar;
 
     FrontEnd(ClaraComponent frontEnd)
             throws ClaraException {
         try {
-            // create the xMsg registrar
-            context = xMsgContext.newContext();
-            registrar = new xMsgRegistrar(context, ClaraBase.getRegAddress(frontEnd));
+            // create the registrar
+            context = Context.newContext();
+            registrar = new Registrar(context, ClaraBase.getRegAddress(frontEnd));
 
-            // create the xMsg actor
+            // create the actor
             base = new ClaraBase(frontEnd, frontEnd);
-        } catch (xMsgException e) {
+        } catch (ClaraMsgException e) {
             throw new ClaraException("Could not create front-end", e);
         }
     }
@@ -66,12 +65,12 @@ class FrontEnd {
         registrar.start();
 
         // subscribe to forwarding requests
-        xMsgTopic topic = xMsgTopic.build(ClaraConstants.DPE,
+        Topic topic = Topic.build(ClaraConstants.DPE,
                                           base.getFrontEnd().getCanonicalName());
         base.listen(topic, new GatewayCallback());
         base.register(topic, base.getMe().getDescription());
 
-        xMsgUtil.sleep(100);
+        ActorUtils.sleep(100);
     }
 
 
@@ -82,49 +81,49 @@ class FrontEnd {
     }
 
 
-    private void startDpe(RequestParser parser, xMsgMeta.Builder meta)
+    private void startDpe(RequestParser parser, MetaData.Builder meta)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void stopDpe(RequestParser parser, Builder metadata)
+    private void stopDpe(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void setFrontEnd(RequestParser parser, Builder metadata)
+    private void setFrontEnd(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void pingDpe(RequestParser parser, Builder metadata)
+    private void pingDpe(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void startContainer(RequestParser parser, Builder metadata)
+    private void startContainer(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void stopContainer(RequestParser parser, Builder metadata)
+    private void stopContainer(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void startService(RequestParser parser, Builder metadata)
+    private void startService(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
 
 
-    private void stopService(RequestParser parser, Builder metadata)
+    private void stopService(RequestParser parser, MetaData.Builder metadata)
             throws RequestException, ClaraException {
         // TODO implement this
     }
@@ -171,11 +170,11 @@ class FrontEnd {
      *     dpeHost ? dpePort ? dpeLang ? containerName ? engineName
      * </li>
      */
-    private class GatewayCallback implements xMsgCallBack {
+    private class GatewayCallback implements Callback {
 
         @Override
-        public void callback(xMsgMessage msg) {
-            xMsgMeta.Builder metadata = msg.getMetaData();
+        public void callback(Message msg) {
+            MetaData.Builder metadata = msg.getMetaData();
             try {
                 RequestParser parser = RequestParser.build(msg);
                 String cmd = parser.nextString();

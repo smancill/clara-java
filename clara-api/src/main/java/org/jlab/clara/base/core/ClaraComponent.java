@@ -25,9 +25,9 @@ package org.jlab.clara.base.core;
 
 // checkstyle.off: ParameterNumber
 import org.jlab.clara.base.ClaraUtil;
-import org.jlab.coda.xmsg.core.xMsgConstants;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
+import org.jlab.clara.msg.core.ActorSetup;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.net.ProxyAddress;
 
 import java.text.MessageFormat;
 
@@ -47,8 +47,6 @@ public final class ClaraComponent {
     public static final String SERVICE_NAME_REGEX;
     public static final String CANONICAL_NAME_REGEX;
 
-    private static final String NAME_SEP = xMsgTopic.SEPARATOR;
-
     static {
         final String ip = "(?:[0-9]{1,3}\\.){3}[0-9]{1,3}";
 
@@ -66,13 +64,13 @@ public final class ClaraComponent {
         ENGINE_NAME_REGEX = "\\w+";
 
         SERVICE_NAME_REGEX = MessageFormat.format("{1}{0}{2}{0}{3}",
-                NAME_SEP, DPE_NAME_REGEX, CONTAINER_NAME_REGEX, ENGINE_NAME_REGEX);
+                Topic.SEPARATOR, DPE_NAME_REGEX, CONTAINER_NAME_REGEX, ENGINE_NAME_REGEX);
 
         CANONICAL_NAME_REGEX = MessageFormat.format("({1})(?:{0}({2})(?:{0}({3}))?)?",
-                NAME_SEP, DPE_NAME_REGEX, CONTAINER_NAME_REGEX, ENGINE_NAME_REGEX);
+                Topic.SEPARATOR, DPE_NAME_REGEX, CONTAINER_NAME_REGEX, ENGINE_NAME_REGEX);
     }
 
-    private xMsgTopic topic;
+    private Topic topic;
 
     private String dpeLang;
     private String dpeHost;
@@ -112,15 +110,15 @@ public final class ClaraComponent {
         this.containerName = container;
         this.engineName = engine;
         this.engineClass = engineClass;
-        if (engine != null && !engine.equalsIgnoreCase(xMsgConstants.ANY)) {
-            topic = xMsgTopic.build(dpeCanonicalName, containerName, engineName);
+        if (engine != null && !engine.equalsIgnoreCase(Topic.ANY)) {
+            topic = Topic.build(dpeCanonicalName, containerName, engineName);
             canonicalName = topic.toString();
-        } else if (container != null && !container.equalsIgnoreCase(xMsgConstants.ANY)) {
-            topic = xMsgTopic.build(ClaraConstants.CONTAINER, dpeCanonicalName, containerName);
-            canonicalName = xMsgTopic.build(dpeCanonicalName, containerName).toString();
+        } else if (container != null && !container.equalsIgnoreCase(Topic.ANY)) {
+            topic = Topic.build(ClaraConstants.CONTAINER, dpeCanonicalName, containerName);
+            canonicalName = Topic.build(dpeCanonicalName, containerName).toString();
         } else {
-            topic = xMsgTopic.build(ClaraConstants.DPE, dpeCanonicalName);
-            canonicalName = xMsgTopic.build(dpeCanonicalName).toString();
+            topic = Topic.build(ClaraConstants.DPE, dpeCanonicalName);
+            canonicalName = Topic.build(dpeCanonicalName).toString();
         }
         this.description = description;
         this.initialState = initialState;
@@ -148,8 +146,8 @@ public final class ClaraComponent {
         ClaraComponent a = new ClaraComponent(dpeLang,
                 dpeHost,
                 dpePort,
-                xMsgTopic.ANY,
-                xMsgTopic.ANY,
+                Topic.ANY,
+                Topic.ANY,
                 ClaraConstants.UNDEFINED,
                 subscriptionPoolSize,
                 description,
@@ -229,8 +227,8 @@ public final class ClaraComponent {
         ClaraComponent a = new ClaraComponent(dpeLang,
                 dpeHost,
                 dpePort,
-                xMsgTopic.ANY,
-                xMsgTopic.ANY,
+                Topic.ANY,
+                Topic.ANY,
                 ClaraConstants.UNDEFINED,
                 subscriptionPoolSize, description,
                 ClaraConstants.UNDEFINED);
@@ -344,7 +342,7 @@ public final class ClaraComponent {
                 dpeHost,
                 dpePort,
                 container,
-                xMsgTopic.ANY,
+                Topic.ANY,
                 ClaraConstants.UNDEFINED,
                 subscriptionPoolSize, description,
                 ClaraConstants.UNDEFINED);
@@ -421,7 +419,7 @@ public final class ClaraComponent {
                          ClaraUtil.getDpePort(containerCanonicalName),
                          ClaraUtil.getDpeLang(containerCanonicalName),
                          ClaraUtil.getContainerName(containerCanonicalName),
-                         xMsgConstants.DEFAULT_POOL_SIZE,
+                         ActorSetup.DEFAULT_POOL_SIZE,
                          description);
     }
 
@@ -553,17 +551,17 @@ public final class ClaraComponent {
                        ClaraUtil.getContainerName(serviceCanonicalName),
                        ClaraUtil.getEngineName(serviceCanonicalName),
                        ClaraConstants.UNDEFINED,
-                       xMsgConstants.DEFAULT_POOL_SIZE, ClaraConstants.UNDEFINED,
+                       ActorSetup.DEFAULT_POOL_SIZE, ClaraConstants.UNDEFINED,
                        ClaraConstants.UNDEFINED);
     }
 
     /**
-     * Returns the topic of the CLARA component, i.e. the topic of the xMsg subscriber.
-     * Note that all CLARA components are registered as xMsg subscribers.
+     * Returns the topic of the CLARA component, i.e. the topic of the subscriber.
+     * Note that all CLARA components are registered as subscribers.
      *
-     * @return {@link org.jlab.coda.xmsg.core.xMsgTopic} object
+     * @return {@link Topic} object
      */
-    public xMsgTopic getTopic() {
+    public Topic getTopic() {
         return topic;
     }
 
@@ -659,10 +657,10 @@ public final class ClaraComponent {
     /**
      * Returns the DPE proxy address.
      *
-     * @return {@link org.jlab.coda.xmsg.net.xMsgProxyAddress} object
+     * @return {@link ProxyAddress} object
      */
-    public xMsgProxyAddress getProxyAddress() {
-        return new xMsgProxyAddress(getDpeHost(), getDpePort());
+    public ProxyAddress getProxyAddress() {
+        return new ProxyAddress(getDpeHost(), getDpePort());
     }
 
     public String getDescription() {

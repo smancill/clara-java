@@ -23,10 +23,11 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.base.ClaraUtil;
 import org.jlab.clara.util.ArgUtils;
 import org.jlab.clara.util.FileUtils;
-import org.jlab.coda.xmsg.core.xMsgUtil;
 
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -267,10 +268,11 @@ public final class ConfigParsers {
      */
     public static String toHostAddress(String... args) {
         String arg = requireArg(args);
-        if (xMsgUtil.isIP(arg)) {
-            return arg;
+        try {
+            return ClaraUtil.toHostAddress(arg);
+        } catch (UncheckedIOException e) {
+            throw new IllegalArgumentException("argument could not be resolved to a host address");
         }
-        throw new IllegalArgumentException("the argument must be an IPv4 address");
     }
 
     private static String requireArg(String... args) {

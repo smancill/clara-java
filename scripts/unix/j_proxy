@@ -36,4 +36,4 @@ fi
 
 java_wrapper=${CLARA_HOME}/lib/clara/run-java
 
-exec "${java_wrapper}" org.jlab.coda.xmsg.sys.xMsgProxy "$@"
+exec "${java_wrapper}" org.jlab.clara.msg.sys.Proxy "$@"

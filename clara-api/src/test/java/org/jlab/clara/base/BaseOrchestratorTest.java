@@ -30,9 +30,9 @@ import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.engine.EngineStatus;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.core.xMsgTopic;
-import org.jlab.coda.xmsg.data.xMsgM.xMsgMeta;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.core.Topic;
+import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -126,7 +126,7 @@ public class BaseOrchestratorTest {
         assertRequest("10.2.9.96",
                        "10.2.9.96_java:master:E1",
                        "10.2.9.96_java:master:E1;",
-                       xMsgMeta.ControlAction.CONFIGURE);
+                       MetaData.ControlAction.CONFIGURE);
     }
 
 
@@ -144,7 +144,7 @@ public class BaseOrchestratorTest {
         assertRequest("10.2.9.96",
                        "10.2.9.96_java:master:E1",
                        "10.2.9.96_java:master:E1;",
-                       xMsgMeta.ControlAction.EXECUTE);
+                       MetaData.ControlAction.EXECUTE);
     }
 
 
@@ -160,7 +160,7 @@ public class BaseOrchestratorTest {
         assertRequest("10.2.9.96",
                        "10.2.9.96_java:master:E1",
                        "10.2.9.96_java:master:E1+10.2.9.96_java:master:E2;",
-                       xMsgMeta.ControlAction.EXECUTE);
+                       MetaData.ControlAction.EXECUTE);
     }
 
 
@@ -330,16 +330,16 @@ public class BaseOrchestratorTest {
 
 
     private void assertRequest(String host, String topic,
-                                String composition, xMsgMeta.ControlAction action)
+                                String composition, MetaData.ControlAction action)
             throws Exception {
         assertThat(request.frontEnd.getDpeHost(), is(host));
         assertMessage(request.msg(), topic, composition, action);
     }
 
 
-    private void assertMessage(xMsgMessage msg, String topic, String data)
+    private void assertMessage(Message msg, String topic, String data)
             throws Exception {
-        xMsgMeta.Builder msgMeta = msg.getMetaData();
+        MetaData.Builder msgMeta = msg.getMetaData();
         String msgData = new String(msg.getData());
 
         assertThat(msg.getTopic().toString(), is(topic));
@@ -348,9 +348,9 @@ public class BaseOrchestratorTest {
     }
 
 
-    private void assertMessage(xMsgMessage msg, String topic,
-                               String composition, xMsgMeta.ControlAction action) {
-        xMsgMeta.Builder msgMeta = msg.getMetaData();
+    private void assertMessage(Message msg, String topic,
+                               String composition, MetaData.ControlAction action) {
+        MetaData.Builder msgMeta = msg.getMetaData();
 
         assertThat(msg.getTopic().toString(), is(topic));
         assertThat(msgMeta.getAuthor(), is("test_orchestrator"));
@@ -361,7 +361,7 @@ public class BaseOrchestratorTest {
 
     private void assertSubscription(String topic) throws Exception {
         assertThat(subscription.frontEnd.getDpeCanonicalName(), is(FE_HOST));
-        assertThat(subscription.topic, is(xMsgTopic.wrap(topic)));
+        assertThat(subscription.topic, is(Topic.wrap(topic)));
     }
 
 

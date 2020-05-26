@@ -27,8 +27,8 @@ import org.jlab.clara.base.ClaraRequests.BaseRequest;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.coda.xmsg.core.xMsgMessage;
-import org.jlab.coda.xmsg.excp.xMsgException;
+import org.jlab.clara.msg.core.Message;
+import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -69,7 +69,7 @@ public class ClaraRequestsTest {
         request.run();
 
         ArgumentCaptor<ClaraComponent> compArg = ArgumentCaptor.forClass(ClaraComponent.class);
-        verify(baseMock).send(compArg.capture(), any(xMsgMessage.class));
+        verify(baseMock).send(compArg.capture(), any(Message.class));
 
         assertThat(compArg.getValue().getDpeCanonicalName(), is(FRONT_END.getDpeCanonicalName()));
     }
@@ -85,8 +85,8 @@ public class ClaraRequestsTest {
 
     @Test
     public void requestThrowsOnSendFailure() throws Exception {
-        doThrow(xMsgException.class).when(baseMock)
-                .send(any(ClaraComponent.class), any(xMsgMessage.class));
+        doThrow(ClaraMsgException.class).when(baseMock)
+                .send(any(ClaraComponent.class), any(Message.class));
 
         assertThrows(ClaraException.class, () -> request.run());
     }
@@ -105,7 +105,7 @@ public class ClaraRequestsTest {
         request.syncRun(10, TimeUnit.SECONDS);
 
         ArgumentCaptor<ClaraComponent> compArg = ArgumentCaptor.forClass(ClaraComponent.class);
-        verify(baseMock).syncSend(compArg.capture(), any(xMsgMessage.class), anyLong());
+        verify(baseMock).syncSend(compArg.capture(), any(Message.class), anyLong());
 
         assertThat(compArg.getValue().getDpeCanonicalName(), is(FRONT_END.getDpeCanonicalName()));
     }
@@ -122,21 +122,21 @@ public class ClaraRequestsTest {
     @Test
     public void syncRequestIsSentWithTimeoutInMillis() throws Exception {
         request.syncRun(20, TimeUnit.MILLISECONDS);
-        verify(baseMock).syncSend(any(ClaraComponent.class), any(xMsgMessage.class), eq(20L));
+        verify(baseMock).syncSend(any(ClaraComponent.class), any(Message.class), eq(20L));
     }
 
 
     @Test
     public void syncRequestIsSentWithTimeoutInOtherUnit() throws Exception {
         request.syncRun(10, TimeUnit.SECONDS);
-        verify(baseMock).syncSend(any(ClaraComponent.class), any(xMsgMessage.class), eq(10000L));
+        verify(baseMock).syncSend(any(ClaraComponent.class), any(Message.class), eq(10000L));
     }
 
 
     @Test
     public void syncRequestParsesResponse() throws Exception {
-        xMsgMessage response = mock(xMsgMessage.class);
-        when(baseMock.syncSend(any(ClaraComponent.class), any(xMsgMessage.class), anyLong()))
+        Message response = mock(Message.class);
+        when(baseMock.syncSend(any(ClaraComponent.class), any(Message.class), anyLong()))
               .thenReturn(response);
 
         request.syncRun(10, TimeUnit.SECONDS);
@@ -155,8 +155,8 @@ public class ClaraRequestsTest {
 
     @Test
     public void syncRequestThrowsOnSendFailure() throws Exception {
-        doThrow(xMsgException.class).when(baseMock)
-                .syncSend(any(ClaraComponent.class), any(xMsgMessage.class), anyLong());
+        doThrow(ClaraMsgException.class).when(baseMock)
+                .syncSend(any(ClaraComponent.class), any(Message.class), anyLong());
 
         assertThrows(ClaraException.class, () -> request.syncRun(10, TimeUnit.SECONDS));
     }
@@ -181,7 +181,7 @@ public class ClaraRequestsTest {
     @Test
     public void syncRequestThrowsOnTimeout() throws Exception {
         doThrow(TimeoutException.class).when(baseMock)
-                .syncSend(any(ClaraComponent.class), any(xMsgMessage.class), anyLong());
+                .syncSend(any(ClaraComponent.class), any(Message.class), anyLong());
 
         assertThrows(TimeoutException.class, () -> request.syncRun(10, TimeUnit.SECONDS));
     }
@@ -195,12 +195,12 @@ public class ClaraRequestsTest {
         }
 
         @Override
-        protected xMsgMessage msg() throws ClaraException {
-            return mock(xMsgMessage.class);
+        protected Message msg() throws ClaraException {
+            return mock(Message.class);
         }
 
         @Override
-        protected String parseData(xMsgMessage msg) throws ClaraException {
+        protected String parseData(Message msg) throws ClaraException {
             return "";
         }
     }

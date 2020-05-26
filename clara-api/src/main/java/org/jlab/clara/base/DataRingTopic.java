@@ -23,15 +23,13 @@
 
 package org.jlab.clara.base;
 
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.util.ArgUtils;
-import org.jlab.coda.xmsg.core.xMsgConstants;
 
 /**
  * The address of a CLARA data-ring.
  */
 public class DataRingTopic {
-
-    private static final String ANY = xMsgConstants.ANY;
 
     private final String state;
     private final String session;
@@ -43,7 +41,7 @@ public class DataRingTopic {
      * @param state the output state of interest
      */
     public DataRingTopic(String state) {
-        this(state, ANY, ANY);
+        this(state, Topic.ANY, Topic.ANY);
     }
 
     /**
@@ -53,7 +51,7 @@ public class DataRingTopic {
      * @param session the data-processing session of interest
      */
     public DataRingTopic(String state, String session) {
-        this(state, session, ANY);
+        this(state, session, Topic.ANY);
     }
 
     /**
@@ -68,10 +66,10 @@ public class DataRingTopic {
         this.session = ArgUtils.requireNonNull(session, "session");
         this.engine = ArgUtils.requireNonEmpty(engine, "engine");
 
-        if (state.equals(ANY)) {
+        if (state.equals(Topic.ANY)) {
             throw new IllegalArgumentException("state is not defined");
         }
-        if (session.equals(ANY) && !engine.equals(ANY)) {
+        if (session.equals(Topic.ANY) && !engine.equals(Topic.ANY)) {
             throw new IllegalArgumentException("session is not defined");
         }
     }
@@ -128,10 +126,10 @@ public class DataRingTopic {
         StringBuilder sb = new StringBuilder();
         sb.append("DataRingTopic[");
         sb.append("state='").append(state).append('\'');
-        if (!session.equals(ANY)) {
+        if (!session.equals(Topic.ANY)) {
             sb.append(", session='").append(session).append('\'');
         }
-        if (!engine.equals(ANY)) {
+        if (!engine.equals(Topic.ANY)) {
             sb.append(", engine='").append(engine).append('\'');
         }
         sb.append(']');
@@ -141,12 +139,12 @@ public class DataRingTopic {
     String topic() {
         StringBuilder sb = new StringBuilder();
         sb.append(state);
-        if (!session.equals(ANY)) {
-            sb.append(xMsgConstants.TOPIC_SEP).append(session);
+        if (!session.equals(Topic.ANY)) {
+            sb.append(Topic.SEPARATOR).append(session);
         }
-        if (!engine.equals(ANY)) {
-            sb.append(xMsgConstants.TOPIC_SEP).append(engine);
-            if (!engine.endsWith(ANY)) {
+        if (!engine.equals(Topic.ANY)) {
+            sb.append(Topic.SEPARATOR).append(engine);
+            if (!engine.endsWith(Topic.ANY)) {
                 sb.append('*');
             }
         }

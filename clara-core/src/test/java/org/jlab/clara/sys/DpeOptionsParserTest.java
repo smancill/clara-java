@@ -23,8 +23,8 @@
 
 package org.jlab.clara.sys;
 
+import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.sys.DpeOptionsParser.DpeOptionsException;
-import org.jlab.coda.xmsg.net.xMsgProxyAddress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -246,11 +246,11 @@ public class DpeOptionsParserTest {
         parser.parse(args);
     }
 
-    private xMsgProxyAddress proxy(String host) throws Exception {
-        return new xMsgProxyAddress(host, Dpe.DEFAULT_PROXY_PORT);
+    private ProxyAddress proxy(String host) throws Exception {
+        return new ProxyAddress(host, Dpe.DEFAULT_PROXY_PORT);
     }
 
-    private xMsgProxyAddress proxy(String host, int port) throws Exception {
-        return new xMsgProxyAddress(host, port);
+    private ProxyAddress proxy(String host, int port) throws Exception {
+        return new ProxyAddress(host, port);
     }
 }

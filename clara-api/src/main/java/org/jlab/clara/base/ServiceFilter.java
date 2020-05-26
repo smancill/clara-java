@@ -23,7 +23,7 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.coda.xmsg.data.xMsgRegQuery;
+import org.jlab.clara.msg.data.RegQuery;
 
 /**
  * A filter to select services.
@@ -31,7 +31,7 @@ import org.jlab.coda.xmsg.data.xMsgRegQuery;
  */
 public final class ServiceFilter extends ClaraFilter {
 
-    ServiceFilter(xMsgRegQuery query) {
+    ServiceFilter(RegQuery query) {
         super(query, TYPE_SERVICE);
     }
 }
