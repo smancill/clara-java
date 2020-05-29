@@ -21,18 +21,20 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-package org.jlab.clara.msg.net;
+package org.jlab.clara.msg.net
 
-import org.junit.jupiter.api.Test;
+import spock.lang.Rollup
+import spock.lang.Specification
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+@Rollup
+class AddressUtilsSpec extends Specification {
 
-class AddressUtilsTest {
+    def "Check valid IPs"() {
+        expect:
+        AddressUtils.isIP(ip)
 
-    @Test
-    public void checkValidIPs() throws Exception {
-        String[] ips = new String[] {
+        where:
+        ip << [
             "1.1.1.1",
             "255.255.255.255",
             "192.168.1.1",
@@ -40,16 +42,15 @@ class AddressUtilsTest {
             "132.254.111.10",
             "26.10.2.10",
             "127.0.0.1",
-        };
-
-        for (String ip : ips) {
-            assertTrue(AddressUtils.isIP(ip), "isIP: " + ip);
-        }
+        ]
     }
 
-    @Test
-    public void checkInvalidIPs() throws Exception {
-        String[] ips = new String[] {
+    def "Check invalid IPs"() {
+        expect:
+        !AddressUtils.isIP(ip)
+
+        where:
+        ip << [
             "10.10.10",
             "10.10",
             "10",
@@ -60,23 +61,18 @@ class AddressUtilsTest {
             "999.10.10.20",
             "2222.22.22.22",
             "22.2222.22.2",
-        };
-
-        for (String ip : ips) {
-            assertFalse(AddressUtils.isIP(ip), "is IP: " + ip);
-        }
+        ]
     }
 
-    @Test
-    public void checkOnlyIPv4() throws Exception {
-        String[] ips = new String[] {
+    def "Check IP only supports IPv4"() {
+        expect:
+        !AddressUtils.isIP(ip)
+
+        where:
+        ip << [
             "2001:cdba:0000:0000:0000:0000:3257:9652",
             "2001:cdba:0:0:0:0:3257:9652",
             "2001:cdba::3257:9652",
-        };
-
-        for (String ip : ips) {
-            assertFalse(AddressUtils.isIP(ip), "is IP: " + ip);
-        }
+        ]
     }
 }

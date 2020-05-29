@@ -21,16 +21,16 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-package org.jlab.clara.msg.sys.regdis;
+package org.jlab.clara.msg.sys;
 
-import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegDataProto.RegData.Builder;
 import org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType;
+import org.jlab.clara.msg.sys.regdis.RegFactory;
 
 import java.util.Random;
 
-public final class RegDataFactory {
+final class RegDataFactory {
 
     public static String[] testTopics = {
         "writer",
@@ -74,19 +74,6 @@ public final class RegDataFactory {
     }
 
 
-    public static Builder newRegistration(String name, OwnerType type, String topic) {
-        return newRegistration(name, ActorUtils.localhost(), type, topic);
-    }
-
-
-    public static Builder newRegistration(String name,
-                                          String host,
-                                          OwnerType type,
-                                          String topic) {
-        return RegFactory.newRegistration(name, host, type, Topic.wrap(topic));
-    }
-
-
     public static String random(String[] array) {
         int idx = rnd.nextInt(array.length);
         return array[idx];
@@ -98,6 +85,6 @@ public final class RegDataFactory {
         String host = random(testHosts);
         String topic = random(testTopics);
         OwnerType type = rnd.nextBoolean() ? OwnerType.PUBLISHER : OwnerType.SUBSCRIBER;
-        return newRegistration(name, host, type, topic);
+        return RegFactory.newRegistration(name, host, type, Topic.wrap(topic));
     }
 }
