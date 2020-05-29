@@ -6,49 +6,41 @@ Big Data processing.
 
 ## Build notes
 
-CLARA requires the Java 8 JDK.
+CLARA requires the Java 14 JDK.
+Prefer [AdoptOpenJDK](https://adoptopenjdk.net/) for Java binaries,
+and a Java version manager to install and switch JDKs.
 
-#### Ubuntu
+[SDKMAN!], [Jabba] or [JEnv] can be used to manage multiple Java versions.
+See this [StackOverflow answer](https://stackoverflow.com/a/52524114) for more details
+(the answer is for macOS but they work with any Unix system).
 
-Support PPAs:
+[SDKMAN!]: https://sdkman.io/
+[Jabba]: https://github.com/shyiko/jabba
+[JEnv]: https://www.jenv.be/
 
-    $ sudo apt-get install software-properties-common
+With [SDKMAN!]:
 
-Install Oracle Java 8 from the
-[Web Upd8 PPA](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html):
+``` console
+$ sdk list java
+$ sdk install java 14.0.1.hs-adpt       # there may be a newer version listed above
+$ sdk use java 14.0.1.hs-adpt
+```
 
-    $ sudo add-apt-repository ppa:webupd8team/java
-    $ sudo apt-get update
-    $ sudo apt-get install oracle-java8-installer
+With [Jabba]:
 
-Check the version:
+``` console
+$ jabba ls-remote
+$ jabba install adopt@1.14.0-1          # there may be a newer version listed above
+$ jabba use adopt@1.14.0-1
+```
 
-    $ java -version
-    java version "1.8.0_101"
-    Java(TM) SE Runtime Environment (build 1.8.0_101-b13)
-    Java HotSpot(TM) 64-Bit Server VM (build 25.101-b13, mixed mode)
+To install [AdoptOpenJDK 14] system wide,
+use the [AdoptOpenJDK DEB repo] for Ubuntu,
+or [Homebrew](https://brew.sh/) with the [AdoptOpenJDK TAP] for macOS.
 
-You may need the following package to set Java 8 as default
-(see the previous link for more details):
-
-    $ sudo apt-get install oracle-java8-set-default
-
-You can also set the default Java version with `update-alternatives`:
-
-    $ sudo update-alternatives --config java
-
-#### macOS
-
-Install Oracle Java using [Homebrew](https://brew.sh/):
-
-    $ brew cask install caskroom/versions/java8
-
-Check the version:
-
-    $ java -version
-    java version "1.8.0_92"
-    Java(TM) SE Runtime Environment (build 1.8.0_92-b14)
-    Java HotSpot(TM) 64-Bit Server VM (build 25.92-b14, mixed mode)
+[AdoptOpenJDK 14]: https://adoptopenjdk.net/releases.html?variant=openjdk14&jvmVariant=hotspot
+[AdoptOpenJDK DEB repo]: https://adoptopenjdk.net/installation.html#linux-pkg-deb
+[AdoptOpenJDK TAP]: https://github.com/AdoptOpenJDK/homebrew-openjdk
 
 
 ### Installation
