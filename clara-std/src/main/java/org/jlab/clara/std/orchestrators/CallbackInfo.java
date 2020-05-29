@@ -27,6 +27,8 @@ import org.jlab.clara.base.DataRingTopic;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.util.ArgUtils;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -176,7 +178,7 @@ final class CallbackInfo {
             try {
                 ClassLoader classLoader = getClass().getClassLoader();
                 Class<?> klass = classLoader.loadClass(classPath);
-                Object object = klass.newInstance();
+                Object object = klass.getDeclaredConstructor().newInstance();
                 try {
                     if (object instanceof EngineReportHandler) {
                         listener.listen(getEngineReportTopic(), (EngineReportHandler) object);
@@ -193,7 +195,9 @@ final class CallbackInfo {
                 }
             } catch (ClassNotFoundException e) {
                 throw new ClaraException("class not found: " + classPath);
-            } catch (IllegalAccessException | InstantiationException e) {
+            } catch (NoSuchMethodException | SecurityException
+                    | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException e) {
                 throw new ClaraException("could not create instance: " + classPath, e);
             }
         }

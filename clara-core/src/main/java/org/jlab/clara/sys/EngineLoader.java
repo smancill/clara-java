@@ -27,6 +27,7 @@ import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.Engine;
 import org.jlab.clara.engine.EngineDataType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 /**
@@ -47,7 +48,7 @@ class EngineLoader {
     public Engine load(String className) throws ClaraException {
         try {
             Class<?> aClass = classLoader.loadClass(className);
-            Object aInstance = aClass.newInstance();
+            Object aInstance = aClass.getDeclaredConstructor().newInstance();
             if (aInstance instanceof Engine) {
                 Engine engine = (Engine) aInstance;
                 validateEngine(engine);
@@ -57,7 +58,9 @@ class EngineLoader {
             }
         } catch (ClassNotFoundException e) {
             throw new ClaraException("class not found: " + className);
-        } catch (IllegalAccessException | InstantiationException e) {
+        } catch (NoSuchMethodException | SecurityException
+                | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
             throw new ClaraException("could not create instance: " + className, e);
         }
     }

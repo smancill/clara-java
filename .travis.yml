@@ -17,8 +17,7 @@ env:
 matrix:
   include:
     - os: linux
-      dist: trusty
-      jdk: oraclejdk8
+      jdk: openjdk14
 
 script:
   - ./gradlew -PciMode=true check spotbugs && ./gradlew integration

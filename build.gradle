@@ -53,8 +53,8 @@ configure(subprojectList) {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_14
+    targetCompatibility = JavaVersion.VERSION_14
 
     repositories {
         mavenCentral()
@@ -63,12 +63,6 @@ configure(subprojectList) {
     java {
         withSourcesJar()
         withJavadocJar()
-    }
-
-    tasks.withType(JavaCompile) {
-        if (JavaVersion.current() > JavaVersion.VERSION_1_8) {
-            options.compilerArgs += ['--release', '8']
-        }
     }
 
     javadoc {
