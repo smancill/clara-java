@@ -49,6 +49,7 @@ configure(subprojectList) {
     apply plugin: 'maven-publish'
 
     apply plugin: 'checkstyle'
+    apply plugin: 'codenarc'
     apply plugin: 'com.github.spotbugs'
 
     apply plugin: 'eclipse'
@@ -161,6 +162,10 @@ configure(subprojectList) {
     ]
 
     dependencies {
+        constraints {
+            codenarc(test_libs.groovy)
+        }
+
         api platform(platformProject)
 
         compileOnly libs.jsr305
@@ -510,6 +515,15 @@ configure(subprojectList) {
         configProperties['samedir'] = rootProject.file('config/quality')
     }
 
+    codenarc {
+        toolVersion = '2.0.0'
+        ignoreFailures = true
+        configFile = rootProject.file('config/quality/codenarc.groovy')
+        if (ciMode.toBoolean()) {
+            reportFormat 'console'
+        }
+    }
+
     spotbugs {
         toolVersion = '4.0.3'
         ignoreFailures = true
@@ -555,6 +569,15 @@ def printSpotBugs(File xml) {
     bugs.size()
 }
 
+task codenarc {
+    group = 'Verification'
+    description = 'Marker task to enable codenarc.'
+
+    subprojectList.each {
+        mustRunAfter it.codenarcMain, it.codenarcTest
+    }
+}
+
 task spotbugs {
     group = 'Verification'
     description = 'Marker task to enable SpotBugs.'
@@ -571,7 +594,11 @@ gradle.taskGraph.whenReady { taskGraph ->
     subprojectList.each {
         it.spotbugsMain.onlyIf { taskGraph.hasTask(spotbugs) }
         it.spotbugsTest.onlyIf { taskGraph.hasTask(spotbugs) }
+
+        it.codenarcMain.onlyIf { taskGraph.hasTask(codenarc) }
+        it.codenarcTest.onlyIf { taskGraph.hasTask(codenarc) }
     }
+
     tasks.checkSpotBugsResults.onlyIf {
         taskGraph.hasTask(tasks.spotbugs)
     }
