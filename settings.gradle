@@ -6,3 +6,5 @@ include 'clara-api'
 include 'clara-std'
 include 'clara-shell'
 include 'clara-examples'
+
+enableFeaturePreview('GROOVY_COMPILATION_AVOIDANCE')

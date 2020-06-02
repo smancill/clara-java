@@ -101,6 +101,10 @@ configure(subprojectList) {
         outputs.upToDateWhen { false }
     }
 
+    tasks.withType(GroovyCompile).configureEach {
+        options.incremental = true
+    }
+
     task allDeps(type: DependencyReportTask) {}
 
     task allDepInsight(type: DependencyInsightReportTask) doLast {}
