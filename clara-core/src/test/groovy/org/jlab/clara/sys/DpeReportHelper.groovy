@@ -21,40 +21,36 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-package org.jlab.clara.sys;
+package org.jlab.clara.sys
 
-import org.jlab.clara.base.core.ClaraConstants;
-import org.jlab.clara.msg.core.Actor;
-import org.jlab.clara.msg.core.ActorUtils;
-import org.jlab.clara.msg.core.Topic;
-import org.jlab.clara.msg.errors.ClaraMsgException;
-import org.jlab.clara.msg.net.ProxyAddress;
-import org.json.JSONObject;
+import org.jlab.clara.base.core.ClaraConstants
+import org.jlab.clara.msg.core.Actor
+import org.jlab.clara.msg.core.ActorUtils
+import org.jlab.clara.msg.core.Topic
+import org.jlab.clara.msg.errors.ClaraMsgException
+import org.jlab.clara.msg.net.ProxyAddress
+import org.json.JSONObject
 
-public final class DpeReportTest {
+class DpeReportHelper {
+    static void main(String... args) {
+        var dpeAddress = args.length == 0
+            ? new ProxyAddress("localhost")
+            : new ProxyAddress("localhost", args[0] as Integer)
 
-    public static void main(String[] args) {
-        ProxyAddress dpeAddress = new ProxyAddress("localhost");
-        if (args.length > 0) {
-            int port = Integer.parseInt(args[0]);
-            dpeAddress = new ProxyAddress("localhost", port);
-        }
-        Topic jsonTopic = Topic.build(ClaraConstants.DPE_REPORT);
-        try (Actor subscriber = new Actor("report_subscriber")) {
+        var jsonTopic = Topic.build(ClaraConstants.DPE_REPORT)
+        try (var subscriber = new Actor("report_subscriber")) {  // codenarc-disable-line
             subscriber.subscribe(dpeAddress, jsonTopic, (msg) -> {
                 try {
-                    String data = new String(msg.getData());
-                    String output = new JSONObject(data).toString(2);
-                    System.out.println(output);
+                    var data = new String(msg.data)
+                    var output = new JSONObject(data).toString(2)
+                    println output
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    e.printStackTrace()
                 }
-            });
-            ActorUtils.keepAlive();
+            })
+            ActorUtils.keepAlive()
         } catch (ClaraMsgException e) {
-            e.printStackTrace();
+            e.printStackTrace()
         }
     }
-
-    private DpeReportTest() { }
 }
