@@ -41,7 +41,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -123,10 +122,16 @@ public final class ClaraQueries {
     }
 
 
+    @FunctionalInterface
+    interface DpeReportParser {
+        Stream<JSONObject> parseComponents(JSONObject dpeReport, String sectionKey);
+    }
+
+
     abstract static class DpeQuery<D extends DpeQuery<D, T, R>, T, R>
             extends BaseQuery<D, R> {
 
-        private final BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery;
+        private final DpeReportParser parseReport;
         private final Function<JSONObject, T> parseData;
 
         private final String regKey;
@@ -135,11 +140,11 @@ public final class ClaraQueries {
         protected DpeQuery(ClaraBase base,
                            ClaraComponent frontEnd,
                            ClaraFilter filter,
-                           BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                           DpeReportParser parseReport,
                            Function<JSONObject, T> parseData,
                            String dataKey) {
             super(base, frontEnd, filter);
-            this.parseQuery = parseQuery;
+            this.parseReport = parseReport;
             this.parseData = parseData;
             this.regKey = ClaraConstants.REGISTRATION_KEY;
             this.dataKey = dataKey;
@@ -181,17 +186,18 @@ public final class ClaraQueries {
 
         private Stream<JSONObject> filterQuery(JSONObject report) {
             if (!filter.useDpe()) {
-                return parseQuery.apply(report, dataKey);
+                return parseReport.parseComponents(report, dataKey);
             }
-            Stream<JSONObject> regData = parseQuery.apply(report, regKey)
-                                                   .filter(filter.filter());
+            Stream<JSONObject> regData = parseReport
+                    .parseComponents(report, regKey)
+                    .filter(filter.filter());
             if (regKey.equals(dataKey)) {
                 return regData;
             }
             Set<String> names = regData.map(o -> o.getString("name"))
                                        .collect(Collectors.toSet());
-            return parseQuery.apply(report, dataKey)
-                             .filter(o -> names.contains(o.getString("name")));
+            return parseReport.parseComponents(report, dataKey)
+                              .filter(o -> names.contains(o.getString("name")));
         }
     }
 
@@ -208,10 +214,10 @@ public final class ClaraQueries {
         CanonicalNameQuery(ClaraBase base,
                            ClaraComponent frontEnd,
                            ClaraFilter filter,
-                           BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                           DpeReportParser parseReport,
                            Function<String, T> parseData) {
             super(base, frontEnd, filter,
-                  parseQuery, j -> parseData.apply(j.getString("name")),
+                  parseReport, j -> parseData.apply(j.getString("name")),
                   ClaraConstants.REGISTRATION_KEY);
             this.parseReg = parseData;
         }
@@ -260,9 +266,9 @@ public final class ClaraQueries {
         RegistrationQuery(ClaraBase base,
                           ClaraComponent frontEnd,
                           ClaraFilter filter,
-                          BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                          DpeReportParser parseReport,
                           Function<JSONObject, T> parseData) {
-            super(base, frontEnd, filter, parseQuery, parseData, ClaraConstants.REGISTRATION_KEY);
+            super(base, frontEnd, filter, parseReport, parseData, ClaraConstants.REGISTRATION_KEY);
         }
 
         @Override
@@ -283,9 +289,9 @@ public final class ClaraQueries {
         RegistrationData(ClaraBase base,
                          ClaraComponent frontEnd,
                          ClaraFilter filter,
-                         BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                         DpeReportParser parseReport,
                          Function<JSONObject, T> parseData) {
-            super(base, frontEnd, filter, parseQuery, parseData, ClaraConstants.REGISTRATION_KEY);
+            super(base, frontEnd, filter, parseReport, parseData, ClaraConstants.REGISTRATION_KEY);
         }
 
         @Override
@@ -306,9 +312,9 @@ public final class ClaraQueries {
         RuntimeQuery(ClaraBase base,
                      ClaraComponent frontEnd,
                      ClaraFilter filter,
-                     BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                     DpeReportParser parseReport,
                      Function<JSONObject, T> parseData) {
-            super(base, frontEnd, filter, parseQuery, parseData, ClaraConstants.RUNTIME_KEY);
+            super(base, frontEnd, filter, parseReport, parseData, ClaraConstants.RUNTIME_KEY);
         }
 
         @Override
@@ -329,9 +335,9 @@ public final class ClaraQueries {
         RuntimeData(ClaraBase base,
                     ClaraComponent frontEnd,
                     ClaraFilter filter,
-                    BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                    DpeReportParser parseReport,
                     Function<JSONObject, T> parseData) {
-            super(base, frontEnd, filter, parseQuery, parseData, ClaraConstants.RUNTIME_KEY);
+            super(base, frontEnd, filter, parseReport, parseData, ClaraConstants.RUNTIME_KEY);
         }
 
         @Override
