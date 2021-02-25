@@ -214,17 +214,17 @@ public final class ClaraQueries {
      */
     public static class CanonicalNameQuery<T> extends DpeQuery<CanonicalNameQuery<T>, T, Set<T>> {
 
-        private final Function<String, T> parseReg;
+        private final Function<String, T> parseName;
 
         CanonicalNameQuery(ClaraBase base,
                            ClaraComponent frontEnd,
                            ClaraFilter filter,
                            DpeReportParser parseReport,
-                           Function<String, T> parseData) {
+                           Function<String, T> parseName) {
             super(base, frontEnd, filter,
-                  parseReport, j -> parseData.apply(j.getString("name")),
+                  parseReport, j -> parseName.apply(j.getString("name")),
                   ClaraConstants.REGISTRATION_KEY);
-            this.parseReg = parseData;
+            this.parseName = parseName;
         }
 
         @Override
@@ -232,7 +232,7 @@ public final class ClaraQueries {
             if (filter.useDpe()) {
                 return query(regData, timeout).collect(Collectors.toSet());
             }
-            return regData.map(RegRecord::name).map(parseReg).collect(Collectors.toSet());
+            return regData.map(RegRecord::name).map(parseName).collect(Collectors.toSet());
         }
     }
 
@@ -244,19 +244,19 @@ public final class ClaraQueries {
      */
     public static class DiscoveryQuery<T> extends BaseQuery<DiscoveryQuery<T>, Boolean> {
 
-        private final Function<String, T> parseReg;
+        private final Function<String, T> parseName;
 
         DiscoveryQuery(ClaraBase base,
                        ClaraComponent frontEnd,
                        ClaraFilter filter,
-                       Function<String, T> parseReg) {
+                       Function<String, T> parseName) {
             super(base, frontEnd, filter);
-            this.parseReg = parseReg;
+            this.parseName = parseName;
         }
 
         @Override
         protected Boolean collect(Stream<RegRecord> regData, long timeout) {
-            return regData.map(RegRecord::name).map(parseReg).findFirst().isPresent();
+            return regData.map(RegRecord::name).map(parseName).findFirst().isPresent();
         }
     }
 
