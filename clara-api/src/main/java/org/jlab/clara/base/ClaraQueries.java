@@ -183,15 +183,22 @@ public final class ClaraQueries {
         }
 
         private Stream<JSONObject> filterQuery(JSONObject report) {
+            // Optimize in case there is no need to filter the reports
             if (!filter.useDpe()) {
                 return parseReport.parseComponents(report, reportKey);
             }
+
+            // Filters use registration data in order to select components
             Stream<JSONObject> regData = parseReport
                     .parseComponents(report, ClaraConstants.REGISTRATION_KEY)
                     .filter(filter.filter());
+
+            // If the query result requires registration data
             if (reportKey.equals(ClaraConstants.REGISTRATION_KEY)) {
                 return regData;
             }
+
+            // Else the query result requires runtime data
             Set<String> names = regData.map(o -> o.getString("name"))
                                        .collect(Collectors.toSet());
             return parseReport.parseComponents(report, reportKey)
