@@ -148,7 +148,13 @@ public final class ClaraQueries {
             this.reportKey = reportKey;
         }
 
-        protected Stream<T> query(Stream<RegRecord> regData, long timeout) {
+        protected R collect(Stream<RegRecord> regData, long timeout) {
+            return collect(queryDpes(regData, timeout));
+        }
+
+        protected abstract R collect(Stream<T> data);
+
+        protected Stream<T> queryDpes(Stream<RegRecord> regData, long timeout) {
             return dpeNames(regData)
                     .flatMap(d -> queryDpe(d, timeout))
                     .map(parseData);
@@ -230,9 +236,14 @@ public final class ClaraQueries {
         @Override
         protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
             if (filter.hasJsonFilter()) {
-                return query(regData, timeout).collect(Collectors.toSet());
+                return collect(queryDpes(regData, timeout));
             }
-            return regData.map(RegRecord::name).map(parseName).collect(Collectors.toSet());
+            return collect(regData.map(RegRecord::name).map(parseName));
+        }
+
+        @Override
+        protected Set<T> collect(Stream<T> data) {
+            return data.collect(Collectors.toSet());
         }
     }
 
@@ -277,8 +288,8 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
-            return query(regData, timeout).collect(Collectors.toSet());
+        protected Set<T> collect(Stream<T> data) {
+            return data.collect(Collectors.toSet());
         }
     }
 
@@ -300,8 +311,8 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Optional<T> collect(Stream<RegRecord> regData, long timeout) {
-            return query(regData, timeout).findFirst();
+        protected Optional<T> collect(Stream<T> data) {
+            return data.findFirst();
         }
     }
 
@@ -323,8 +334,8 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
-            return query(regData, timeout).collect(Collectors.toSet());
+        protected Set<T> collect(Stream<T> data) {
+            return data.collect(Collectors.toSet());
         }
     }
 
@@ -346,8 +357,8 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Optional<T> collect(Stream<RegRecord> regData, long timeout) {
-            return query(regData, timeout).findFirst();
+        protected Optional<T> collect(Stream<T> data) {
+            return data.findFirst();
         }
     }
 
