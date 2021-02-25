@@ -231,19 +231,16 @@ public final class ClaraQueries {
      *
      * @param <T> The name class of the component
      */
-    public static class DiscoveryQuery<T> extends DpeQuery<DiscoveryQuery<T>, T, Boolean> {
+    public static class DiscoveryQuery<T> extends BaseQuery<DiscoveryQuery<T>, Boolean> {
 
         private final Function<String, T> parseReg;
 
         DiscoveryQuery(ClaraBase base,
                        ClaraComponent frontEnd,
                        ClaraFilter filter,
-                       BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
-                       Function<String, T> parseData) {
-            super(base, frontEnd, filter,
-                  parseQuery, j -> parseData.apply(j.getString("name")),
-                  ClaraConstants.REGISTRATION_KEY);
-            this.parseReg = parseData;
+                       Function<String, T> parseReg) {
+            super(base, frontEnd, filter);
+            this.parseReg = parseReg;
         }
 
         @Override
@@ -398,7 +395,7 @@ public final class ClaraQueries {
          */
         public DiscoveryQuery<DpeName> discover(DpeName name) {
             return new DiscoveryQuery<>(base, frontEnd, ClaraFilters.dpe(name),
-                                        JsonUtils::dpeStream, DpeName::new);
+                                        DpeName::new);
         }
 
 
@@ -410,7 +407,7 @@ public final class ClaraQueries {
          */
         public DiscoveryQuery<ContainerName> discover(ContainerName name) {
             return new DiscoveryQuery<>(base, frontEnd, ClaraFilters.container(name),
-                                        JsonUtils::containerStream, ContainerName::new);
+                                        ContainerName::new);
         }
 
 
@@ -422,7 +419,7 @@ public final class ClaraQueries {
          */
         public DiscoveryQuery<ServiceName> discover(ServiceName name) {
             return new DiscoveryQuery<>(base, frontEnd, ClaraFilters.service(name),
-                                        JsonUtils::serviceStream, ServiceName::new);
+                                        ServiceName::new);
         }
 
 
