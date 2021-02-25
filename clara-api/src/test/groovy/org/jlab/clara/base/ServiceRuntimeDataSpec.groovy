@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016.  Jefferson Lab (JLab). All rights reserved.
+ * Copyright (c) 2017.  Jefferson Lab (JLab). All rights reserved.
  *
  * Permission to use, copy, modify, and distribute  this software and its
  * documentation for educational, research, and not-for-profit purposes,
@@ -21,27 +21,33 @@
  * Department of Experimental Nuclear Physics, Jefferson Lab.
  */
 
-package org.jlab.clara.base;
+package org.jlab.clara.base
 
-import org.junit.jupiter.api.Test;
+import org.jlab.clara.tests.Integration
+import org.jlab.clara.util.report.JsonUtils
+import org.json.JSONObject
+import spock.lang.Specification
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+@Integration
+class ServiceRuntimeDataSpec extends Specification {
 
-public class CompositionTest {
+    JSONObject json = JsonDataUtil.parseRuntimeExample()
 
-    @Test
-    public void firstServiceReturnsTheFirstOnSimpleComposition() throws Exception {
-        Composition c = new Composition("10.1.1.1:cont:S1+10.1.1.2:cont:S2");
+    def "Parse service registration data"() {
+        given:
+        var data = new ServiceRuntimeData(JsonUtils.getService(json, 1, 0))
 
-        assertThat(c.firstService(), is("10.1.1.1:cont:S1"));
-    }
-
-
-    @Test
-    public void returnTheSameStringOnSimpleComposition() throws Exception {
-        Composition c = new Composition("10.1.1.1:cont:S1+10.1.1.2:cont:S2");
-
-        assertThat(c.toString(), is("10.1.1.1:cont:S1+10.1.1.2:cont:S2"));
+        expect:
+        with(data) {
+            name().canonicalName() == "10.1.1.10_java:franklin:Engine2"
+            snapshotTime() != null
+            numRequests() == 2000
+            numFailures() == 200
+            sharedMemoryReads() == 1800
+            sharedMemoryWrites() == 1800
+            bytesReceived() == 100
+            bytesSent() == 330
+            executionTime() == 243235243543
+        }
     }
 }
