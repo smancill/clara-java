@@ -134,20 +134,18 @@ public final class ClaraQueries {
         private final DpeReportParser parseReport;
         private final Function<JSONObject, T> parseData;
 
-        private final String regKey;
-        private final String dataKey;
+        private final String reportKey;
 
         protected DpeQuery(ClaraBase base,
                            ClaraComponent frontEnd,
                            ClaraFilter filter,
                            DpeReportParser parseReport,
                            Function<JSONObject, T> parseData,
-                           String dataKey) {
+                           String reportKey) {
             super(base, frontEnd, filter);
             this.parseReport = parseReport;
             this.parseData = parseData;
-            this.regKey = ClaraConstants.REGISTRATION_KEY;
-            this.dataKey = dataKey;
+            this.reportKey = reportKey;
         }
 
         protected Stream<T> query(Stream<RegRecord> regData, long timeout) {
@@ -186,17 +184,17 @@ public final class ClaraQueries {
 
         private Stream<JSONObject> filterQuery(JSONObject report) {
             if (!filter.useDpe()) {
-                return parseReport.parseComponents(report, dataKey);
+                return parseReport.parseComponents(report, reportKey);
             }
             Stream<JSONObject> regData = parseReport
-                    .parseComponents(report, regKey)
+                    .parseComponents(report, ClaraConstants.REGISTRATION_KEY)
                     .filter(filter.filter());
-            if (regKey.equals(dataKey)) {
+            if (reportKey.equals(ClaraConstants.REGISTRATION_KEY)) {
                 return regData;
             }
             Set<String> names = regData.map(o -> o.getString("name"))
                                        .collect(Collectors.toSet());
-            return parseReport.parseComponents(report, dataKey)
+            return parseReport.parseComponents(report, reportKey)
                               .filter(o -> names.contains(o.getString("name")));
         }
     }
