@@ -45,6 +45,7 @@ ext {
 
 configure(subprojectList) {
     apply plugin: 'java-library'
+    apply plugin: 'java-test-fixtures'
     apply plugin: 'groovy'
     apply plugin: 'maven-publish'
 
@@ -92,9 +93,7 @@ configure(subprojectList) {
     }
 
     task integrationTest(type: Test) {
-        useJUnitPlatform {
-            includeTags 'integration'
-        }
+        useJUnitPlatform()
         systemProperty 'spock.configuration', rootProject.file('config/test/SpockConfigIntegration.groovy')
         testLogging {
             exceptionFormat = 'full'
@@ -189,6 +188,8 @@ project(':clara-core') {
         implementation project(':clara-api')
 
         implementation libs.jopt
+
+        testImplementation testFixtures(project(":clara-msg"))
     }
 
     javadoc {
@@ -245,6 +246,8 @@ project(':clara-api') {
         api libs.json
         implementation libs.snakeyaml
         implementation libs.jopt
+
+        testImplementation testFixtures(project(":clara-msg"))
     }
 
     javadoc {
@@ -262,6 +265,8 @@ project(':clara-std') {
         implementation libs.commons_exec
         implementation libs.freemarker
         implementation libs.jopt
+
+        testImplementation testFixtures(project(":clara-msg"))
     }
 
     javadoc {
@@ -276,6 +281,8 @@ project(':clara-shell') {
 
         api libs.jline
         implementation libs.freemarker
+
+        testImplementation testFixtures(project(":clara-msg"))
     }
 
     processResources {
