@@ -40,8 +40,8 @@ abstract class ClaraFilter {
     private final RegQuery regQuery;
     private final String type;
 
-    private List<Predicate<RegRecord>> regFilters = new ArrayList<>();
-    private List<Predicate<JSONObject>> filters = new ArrayList<>();
+    private final List<Predicate<RegRecord>> regFilters = new ArrayList<>();
+    private final List<Predicate<JSONObject>> jsonFilters = new ArrayList<>();
 
     ClaraFilter(RegQuery query, String type) {
         this.regQuery = query;
@@ -52,8 +52,8 @@ abstract class ClaraFilter {
         regFilters.add(predicate);
     }
 
-    void addFilter(Predicate<JSONObject> predicate) {
-        filters.add(predicate);
+    void addJsonFilter(Predicate<JSONObject> predicate) {
+        jsonFilters.add(predicate);
     }
 
     RegQuery regQuery() {
@@ -64,12 +64,12 @@ abstract class ClaraFilter {
         return regFilters.stream().reduce(Predicate::and).orElse(t -> true);
     }
 
-    Predicate<JSONObject> filter() {
-        return filters.stream().reduce(Predicate::and).orElse(t -> true);
+    Predicate<JSONObject> jsonFilter() {
+        return jsonFilters.stream().reduce(Predicate::and).orElse(t -> true);
     }
 
-    boolean useDpe() {
-        return !filters.isEmpty();
+    boolean hasJsonFilter() {
+        return !jsonFilters.isEmpty();
     }
 
     @Override
