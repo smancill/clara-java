@@ -32,7 +32,6 @@ import org.jlab.clara.msg.data.RegQuery;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
 import org.jlab.clara.msg.net.RegAddress;
-import org.jlab.clara.msg.sys.regdis.RegDataFactory;
 import org.jlab.clara.msg.sys.regdis.RegDriver;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
