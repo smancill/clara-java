@@ -38,9 +38,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.jlab.clara.util.FileUtils;
+import org.jline.builtins.Completers;
 import org.jline.reader.Completer;
 import org.jline.reader.impl.completer.ArgumentCompleter;
-import org.jline.reader.impl.completer.FileNameCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
 
 class SetCommand extends BaseCommand {
@@ -54,7 +54,7 @@ class SetCommand extends BaseCommand {
         List<CommandFactory> commands = new LinkedList<>();
         config.getVariables().stream().map(this::subCmd).forEach(commands::add);
 
-        commands.add(1, subCmd("files", this::setFiles, new FileNameCompleter(),
+        commands.add(1, subCmd("files", this::setFiles, new Completers.FileNameCompleter(),
                 "Set the input files to be processed (example: /mnt/data/files/*.evio). "
                         + "This will set both fileList and inputDir variables."));
 
