@@ -517,7 +517,7 @@ ext {
 
 configure(subprojectList) {
     checkstyle {
-        toolVersion = '8.32'
+        toolVersion = '8.41'
         configFile = rootProject.file('config/quality/checkstyle.xml')
         configProperties['samedir'] = rootProject.file('config/quality')
     }
