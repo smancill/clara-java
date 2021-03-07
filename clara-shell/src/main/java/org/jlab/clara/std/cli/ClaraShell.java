@@ -329,7 +329,11 @@ public final class ClaraShell implements AutoCloseable {
     private void loadHistory() {
         Path histFile = FileUtils.claraPath(HISTORY_NAME);
         reader.setVariable(LineReader.HISTORY_FILE, histFile);
-        history.load();
+        try {
+            history.load();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override

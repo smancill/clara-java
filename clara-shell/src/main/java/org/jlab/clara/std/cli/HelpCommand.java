@@ -29,6 +29,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.jlab.clara.base.ClaraUtil;
@@ -82,20 +85,28 @@ class HelpCommand extends BaseCommand {
             if (terminal.getHeight() - 2 > countLines(help)) {
                 writer.print(help);
             } else {
-                Less less = new Less(terminal);
-                less.run(new Source() {
-
+                Less less = new Less(terminal, Paths.get(""));
+                List<Source> sources = new ArrayList<>();
+                sources.add(new Source() {
                     @Override
                     public String getName() {
                         return "help " + command.getName();
                     }
 
                     @Override
-                    public InputStream read() throws IOException {
+                    public InputStream read() {
                         String text = String.format("help %s%n%s%n", command.getName(), help);
                         return new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
                     }
+
+                    @Override
+                    public Long lines() {
+                        return help.lines().count();
+                    }
                 });
+                // Less.run(Sources...) is bugged and passes an unmodifiable list to
+                // Less.run(List<Sources>), which then modifies the list, and of course it throws.
+                less.run(sources);
             }
             return EXIT_SUCCESS;
         } catch (IOException e) {

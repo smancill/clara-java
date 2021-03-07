@@ -26,8 +26,8 @@ package org.jlab.clara.msg.sys.pubsub;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.msg.net.SocketFactory;
+import org.zeromq.SocketType;
 import org.zeromq.ZFrame;
-import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Poller;
 import org.zeromq.ZMQ.Socket;
@@ -53,7 +53,7 @@ public abstract class ProxyDriver {
     }
 
 
-    private ProxyDriver(int type, ProxyAddress address, SocketFactory factory)
+    private ProxyDriver(SocketType type, ProxyAddress address, SocketFactory factory)
             throws ClaraMsgException {
         this.address = address;
         this.socket = factory.createSocket(type);
@@ -185,7 +185,7 @@ public abstract class ProxyDriver {
     static class Pub extends ProxyDriver {
 
         Pub(ProxyAddress address, SocketFactory factory) throws ClaraMsgException {
-            super(ZMQ.PUB, address, factory);
+            super(SocketType.PUB, address, factory);
         }
 
         @Override
@@ -203,7 +203,7 @@ public abstract class ProxyDriver {
     static class Sub extends ProxyDriver {
 
         Sub(ProxyAddress address, SocketFactory factory) throws ClaraMsgException {
-            super(ZMQ.SUB, address, factory);
+            super(SocketType.SUB, address, factory);
         }
 
         @Override
@@ -219,7 +219,7 @@ public abstract class ProxyDriver {
 
 
     private Socket createControlSocket(String identity) throws ClaraMsgException {
-        Socket socket = factory.createSocket(ZMQ.DEALER);
+        Socket socket = factory.createSocket(SocketType.DEALER);
         try {
             socket.setIdentity(identity.getBytes());
             factory.connectSocket(socket, address.host(), address.pubPort() + 2);
@@ -231,7 +231,7 @@ public abstract class ProxyDriver {
     }
 
     private Socket createPubSocket() throws ClaraMsgException {
-        Socket socket = factory.createSocket(ZMQ.PUB);
+        Socket socket = factory.createSocket(SocketType.PUB);
         try {
             factory.connectSocket(socket, address.host(), address.pubPort());
             return socket;

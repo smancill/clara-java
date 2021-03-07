@@ -46,7 +46,7 @@ import org.jlab.clara.sys.RequestParser.RequestException;
 import org.jlab.clara.sys.report.DpeReport;
 import org.jlab.clara.sys.report.JsonReportBuilder;
 import org.jlab.clara.util.VersionUtils;
-import org.zeromq.ZMQ;
+import org.zeromq.SocketType;
 import org.zeromq.ZMQ.Socket;
 import org.zeromq.ZMsg;
 
@@ -737,7 +737,7 @@ public final class Dpe extends AbstractActor {
 
         // TODO: add support for multiple addresses per connection
         private Socket connect(ProxyAddress feAddr) throws ClaraMsgException {
-            Socket socket = socketFactory.createSocket(ZMQ.PUB);
+            Socket socket = socketFactory.createSocket(SocketType.PUB);
             socketFactory.connectSocket(socket, feAddr.host(), feAddr.pubPort());
 
             DpeName monitorFE = FrontEnd.getMonitorFrontEnd();

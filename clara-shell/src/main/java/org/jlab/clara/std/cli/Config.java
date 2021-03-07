@@ -33,8 +33,8 @@ import java.util.function.BiFunction;
 import org.jlab.clara.util.ArgUtils;
 import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.FileUtils;
+import org.jline.builtins.Completers;
 import org.jline.reader.Completer;
-import org.jline.reader.impl.completer.FileNameCompleter;
 
 /**
  * Environment configuration for a CLARA shell session.
@@ -471,6 +471,6 @@ public class Config {
     }
 
     private static Completer fileCompleter() {
-        return new FileNameCompleter();
+        return new Completers.FileNameCompleter();
     }
 }

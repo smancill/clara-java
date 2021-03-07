@@ -124,13 +124,16 @@ class RunUtils {
             String[] args = Arrays.stream(paths)
                                   .map(Path::toString)
                                   .toArray(String[]::new);
-            Commands.less(terminal, System.out, System.err, Paths.get(""), args);
+            Commands.less(terminal, System.in, System.out, System.err, Paths.get(""), args);
             return Command.EXIT_SUCCESS;
         } catch (IOException e) {
             terminal.writer().printf("error: could not open %s log: %s%n", description, e);
             return Command.EXIT_ERROR;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            return Command.EXIT_ERROR;
+        } catch (Exception e) {
+            terminal.writer().printf("error: %s%n", e);
             return Command.EXIT_ERROR;
         }
     }
