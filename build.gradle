@@ -611,6 +611,9 @@ gradle.taskGraph.whenReady { taskGraph ->
     tasks.checkSpotBugsResults.onlyIf {
         taskGraph.hasTask(tasks.spotbugs)
     }
+
+    project(':clara-msg').extractIncludeTestFixturesProto.onlyIf { false }
+    project(':clara-msg').extractIncludeTestProto.onlyIf { false }
 }
 
 //////////////////////////////////////////////////////////////////////////////
