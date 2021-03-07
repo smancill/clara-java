@@ -24,7 +24,7 @@
 
 plugins {
     id 'com.google.protobuf' version '0.8.12' apply false
-    id 'com.github.spotbugs' version '4.0.2' apply false
+    id 'com.github.spotbugs' version '4.6.2' apply false
 }
 
 allprojects {
@@ -532,7 +532,7 @@ configure(subprojectList) {
     }
 
     spotbugs {
-        toolVersion = '4.0.3'
+        toolVersion = '4.2.2'
         ignoreFailures = true
         effort = 'max'
         reportLevel = 'medium'
