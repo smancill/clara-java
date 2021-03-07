@@ -601,9 +601,11 @@ gradle.taskGraph.whenReady { taskGraph ->
     subprojectList.each {
         it.spotbugsMain.onlyIf { taskGraph.hasTask(spotbugs) }
         it.spotbugsTest.onlyIf { taskGraph.hasTask(spotbugs) }
+        it.spotbugsTestFixtures.onlyIf { taskGraph.hasTask(spotbugs) }
 
         it.codenarcMain.onlyIf { taskGraph.hasTask(codenarc) }
         it.codenarcTest.onlyIf { taskGraph.hasTask(codenarc) }
+        it.codenarcTestFixtures.onlyIf { taskGraph.hasTask(codenarc) }
     }
 
     tasks.checkSpotBugsResults.onlyIf {
