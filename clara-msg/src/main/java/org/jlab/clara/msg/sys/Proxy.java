@@ -39,6 +39,7 @@ import org.jlab.clara.msg.sys.pubsub.CtrlConstants;
 import org.jlab.clara.msg.sys.utils.Environment;
 import org.jlab.clara.msg.sys.utils.LogUtils;
 import org.jlab.clara.msg.sys.utils.ThreadUtils;
+import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZFrame;
 import org.zeromq.ZMQ;
@@ -231,8 +232,8 @@ public class Proxy {
             Socket in = null;
             Socket out = null;
             try {
-                in = factory.createSocket(ZMQ.XSUB);
-                out = factory.createSocket(ZMQ.XPUB);
+                in = factory.createSocket(SocketType.XSUB);
+                out = factory.createSocket(SocketType.XPUB);
                 factory.bindSocket(in, addr.pubPort());
                 factory.bindSocket(out, addr.subPort());
             } catch (Exception e) {
@@ -299,9 +300,9 @@ public class Proxy {
             Socket publisher = null;
             Socket router = null;
             try {
-                control = factory.createSocket(ZMQ.SUB);
-                publisher = factory.createSocket(ZMQ.PUB);
-                router = factory.createSocket(ZMQ.ROUTER);
+                control = factory.createSocket(SocketType.SUB);
+                publisher = factory.createSocket(SocketType.PUB);
+                router = factory.createSocket(SocketType.ROUTER);
 
                 factory.connectSocket(control, addr.host(), addr.subPort());
                 factory.connectSocket(publisher, addr.host(), addr.pubPort());

@@ -27,6 +27,7 @@ import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.RegAddress;
 import org.jlab.clara.msg.net.SocketFactory;
+import org.zeromq.SocketType;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Poller;
 import org.zeromq.ZMQ.Socket;
@@ -59,7 +60,7 @@ public class RegDriver {
     public RegDriver(RegAddress address, SocketFactory factory) throws ClaraMsgException {
         this.address = address;
         this.factory = factory;
-        this.socket = factory.createSocket(ZMQ.REQ);
+        this.socket = factory.createSocket(SocketType.REQ);
     }
 
     /**

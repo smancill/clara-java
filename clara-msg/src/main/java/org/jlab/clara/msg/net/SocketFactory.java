@@ -24,6 +24,7 @@
 package org.jlab.clara.msg.net;
 
 import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.zeromq.SocketType;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
 
@@ -52,7 +53,7 @@ public class SocketFactory {
      * @return a new socket of the given type
      * @throws ClaraMsgException if the context cannot create more sockets
      */
-    public ZMQ.Socket createSocket(int type) throws ClaraMsgException {
+    public ZMQ.Socket createSocket(SocketType type) throws ClaraMsgException {
         try {
             ZMQ.Socket socket = ctx.socket(type);
             socket.setRcvHWM(0);

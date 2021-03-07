@@ -30,6 +30,7 @@ import org.jlab.clara.msg.net.Context;
 import org.jlab.clara.msg.net.RegAddress;
 import org.jlab.clara.msg.net.SocketFactory;
 import org.jlab.clara.msg.sys.utils.LogUtils;
+import org.zeromq.SocketType;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 import org.zeromq.ZMQException;
@@ -85,7 +86,7 @@ public class RegService implements Runnable {
     public RegService(Context context, RegAddress address) throws ClaraMsgException {
         factory = new SocketFactory(context.getContext());
         regAddress = address;
-        regSocket = factory.createSocket(ZMQ.REP);
+        regSocket = factory.createSocket(SocketType.REP);
         try {
             factory.bindSocket(regSocket, regAddress.port());
         } catch (Exception e) {
