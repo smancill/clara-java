@@ -164,7 +164,7 @@ public class PublishersTest {
 
         private void wait(Check check) {
             int counter = 0;
-            while (check.counter.get() < check.n && counter < 10000) {
+            while (check.counter.get() < check.n && counter < 20_000) {
                 ActorUtils.sleep(100);
                 counter += 100;
             }

@@ -38,7 +38,7 @@ public class ProxyWrapper implements AutoCloseable {
         try {
             proxy = new Proxy(context);
             proxy.start();
-            ActorUtils.sleep(100);
+            ActorUtils.sleep(250);
         } catch (ClaraMsgException e) {
             System.err.println(e.getMessage());
         }
