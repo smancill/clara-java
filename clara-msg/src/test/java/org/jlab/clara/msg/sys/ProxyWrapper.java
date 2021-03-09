@@ -27,11 +27,9 @@ import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
 
-// checkstyle.off: JavadocType
-// checkstyle.off: JavadocMethod
 public class ProxyWrapper implements AutoCloseable {
 
-    private Context context = Context.newContext();
+    private final Context context = Context.newContext();
     private Proxy proxy = null;
 
     public ProxyWrapper() {

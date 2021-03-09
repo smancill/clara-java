@@ -51,8 +51,8 @@ public class RegistrarTest {
 
     private RegDriver driver;
 
-    private Set<RegData> registration = new HashSet<>();
-    private String name = "registrat_test";
+    private final Set<RegData> registration = new HashSet<>();
+    private final String name = "registrar_test";
 
     @Test
     public void testRegistrationDataBase() throws Exception {

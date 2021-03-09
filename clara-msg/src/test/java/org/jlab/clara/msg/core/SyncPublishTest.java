@@ -44,7 +44,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 /**
- * Tests multithread sync-publication of messages to multiple registered
+ * Tests multi-thread sync-publication of messages to multiple registered
  * subscribers, distributed on multiple nodes (when running from command-line).
  * Uses N cores to concurrently send M messages to each subscriber.
  * <p>
@@ -137,8 +137,6 @@ public final class SyncPublishTest {
             }
 
             return results;
-        } catch (ClaraMsgException | InterruptedException e) {
-            throw e;
         }
     }
 
@@ -199,6 +197,7 @@ public final class SyncPublishTest {
     }
 
     @Test
+    @SuppressWarnings("unused")
     public void run() throws Exception {
         RegAddress address = new RegAddress();
         try (RegistrarWrapper registrar = new RegistrarWrapper();
@@ -212,7 +211,7 @@ public final class SyncPublishTest {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         if (args.length != 3) {
             System.out.println("usage:");
             System.out.println(" sync_pub <fe_host> <pool_size> listener");
@@ -228,7 +227,8 @@ public final class SyncPublishTest {
             RegAddress address = new RegAddress(frontEnd);
             if (command.equals("listener")) {
                 int poolSize = Integer.parseInt(cores);
-                try (Actor sub = SyncPublishTest.listener(poolSize, "local", address)) {
+                Actor sub = SyncPublishTest.listener(poolSize, "local", address);
+                try (sub) {
                     ActorUtils.keepAlive();
                 }
             } else {
