@@ -72,14 +72,14 @@ public class PublishersTest {
     @Test
     public void subscribeReceivesAllMessagesSinglePublisher() throws Exception {
         try (TestRunner test = new AsyncRunner(true)) {
-            test.run(100_000, 8);
+            test.run(100_000, 1);
         }
     }
 
     @Test
     public void syncSubscribeReceivesAllMessagesSinglePublisher() throws Exception {
         try (TestRunner test = new SyncRunner(true)) {
-            test.run(1000, 4);
+            test.run(1000, 1);
         }
     }
 
