@@ -41,7 +41,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -123,29 +122,39 @@ public final class ClaraQueries {
     }
 
 
+    @FunctionalInterface
+    interface DpeReportParser {
+        Stream<JSONObject> parseComponents(JSONObject dpeReport, String sectionKey);
+    }
+
+
     abstract static class DpeQuery<D extends DpeQuery<D, T, R>, T, R>
             extends BaseQuery<D, R> {
 
-        private final BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery;
+        private final DpeReportParser parseReport;
         private final Function<JSONObject, T> parseData;
 
-        private final String regKey;
-        private final String dataKey;
+        private final String reportKey;
 
         protected DpeQuery(ClaraBase base,
                            ClaraComponent frontEnd,
                            ClaraFilter filter,
-                           BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                           DpeReportParser parseReport,
                            Function<JSONObject, T> parseData,
-                           String dataKey) {
+                           String reportKey) {
             super(base, frontEnd, filter);
-            this.parseQuery = parseQuery;
+            this.parseReport = parseReport;
             this.parseData = parseData;
-            this.regKey = ClaraConstants.REGISTRATION_KEY;
-            this.dataKey = dataKey;
+            this.reportKey = reportKey;
         }
 
-        protected Stream<T> query(Stream<RegRecord> regData, long timeout) {
+        protected R collect(Stream<RegRecord> regData, long timeout) {
+            return collect(queryDpes(regData, timeout));
+        }
+
+        protected abstract R collect(Stream<T> data);
+
+        protected Stream<T> queryDpes(Stream<RegRecord> regData, long timeout) {
             return dpeNames(regData)
                     .flatMap(d -> queryDpe(d, timeout))
                     .map(parseData);
@@ -180,18 +189,26 @@ public final class ClaraQueries {
         }
 
         private Stream<JSONObject> filterQuery(JSONObject report) {
-            if (!filter.useDpe()) {
-                return parseQuery.apply(report, dataKey);
+            // Optimize in case there is no need to filter the reports
+            if (!filter.hasJsonFilter()) {
+                return parseReport.parseComponents(report, reportKey);
             }
-            Stream<JSONObject> regData = parseQuery.apply(report, regKey)
-                                                   .filter(filter.filter());
-            if (regKey.equals(dataKey)) {
+
+            // Filters use registration data in order to select components
+            Stream<JSONObject> regData = parseReport
+                    .parseComponents(report, ClaraConstants.REGISTRATION_KEY)
+                    .filter(filter.jsonFilter());
+
+            // If the query result requires registration data
+            if (reportKey.equals(ClaraConstants.REGISTRATION_KEY)) {
                 return regData;
             }
+
+            // Else the query result requires runtime data
             Set<String> names = regData.map(o -> o.getString("name"))
                                        .collect(Collectors.toSet());
-            return parseQuery.apply(report, dataKey)
-                             .filter(o -> names.contains(o.getString("name")));
+            return parseReport.parseComponents(report, reportKey)
+                              .filter(o -> names.contains(o.getString("name")));
         }
     }
 
@@ -203,25 +220,30 @@ public final class ClaraQueries {
      */
     public static class CanonicalNameQuery<T> extends DpeQuery<CanonicalNameQuery<T>, T, Set<T>> {
 
-        private final Function<String, T> parseReg;
+        private final Function<String, T> parseName;
 
         CanonicalNameQuery(ClaraBase base,
                            ClaraComponent frontEnd,
                            ClaraFilter filter,
-                           BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
-                           Function<String, T> parseData) {
+                           DpeReportParser parseReport,
+                           Function<String, T> parseName) {
             super(base, frontEnd, filter,
-                  parseQuery, j -> parseData.apply(j.getString("name")),
+                  parseReport, j -> parseName.apply(j.getString("name")),
                   ClaraConstants.REGISTRATION_KEY);
-            this.parseReg = parseData;
+            this.parseName = parseName;
         }
 
         @Override
         protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
-            if (filter.useDpe()) {
-                return query(regData, timeout).collect(Collectors.toSet());
+            if (filter.hasJsonFilter()) {
+                return collect(queryDpes(regData, timeout));
             }
-            return regData.map(RegRecord::name).map(parseReg).collect(Collectors.toSet());
+            return collect(regData.map(RegRecord::name).map(parseName));
+        }
+
+        @Override
+        protected Set<T> collect(Stream<T> data) {
+            return data.collect(Collectors.toSet());
         }
     }
 
@@ -231,24 +253,21 @@ public final class ClaraQueries {
      *
      * @param <T> The name class of the component
      */
-    public static class DiscoveryQuery<T> extends DpeQuery<DiscoveryQuery<T>, T, Boolean> {
+    public static class DiscoveryQuery<T> extends BaseQuery<DiscoveryQuery<T>, Boolean> {
 
-        private final Function<String, T> parseReg;
+        private final Function<String, T> parseName;
 
         DiscoveryQuery(ClaraBase base,
                        ClaraComponent frontEnd,
                        ClaraFilter filter,
-                       BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
-                       Function<String, T> parseData) {
-            super(base, frontEnd, filter,
-                  parseQuery, j -> parseData.apply(j.getString("name")),
-                  ClaraConstants.REGISTRATION_KEY);
-            this.parseReg = parseData;
+                       Function<String, T> parseName) {
+            super(base, frontEnd, filter);
+            this.parseName = parseName;
         }
 
         @Override
         protected Boolean collect(Stream<RegRecord> regData, long timeout) {
-            return regData.map(RegRecord::name).map(parseReg).findFirst().isPresent();
+            return regData.map(RegRecord::name).map(parseName).findFirst().isPresent();
         }
     }
 
@@ -263,14 +282,14 @@ public final class ClaraQueries {
         RegistrationQuery(ClaraBase base,
                           ClaraComponent frontEnd,
                           ClaraFilter filter,
-                          BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                          DpeReportParser parseReport,
                           Function<JSONObject, T> parseData) {
-            super(base, frontEnd, filter, parseQuery, parseData, ClaraConstants.REGISTRATION_KEY);
+            super(base, frontEnd, filter, parseReport, parseData, ClaraConstants.REGISTRATION_KEY);
         }
 
         @Override
-        protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
-            return query(regData, timeout).collect(Collectors.toSet());
+        protected Set<T> collect(Stream<T> data) {
+            return data.collect(Collectors.toSet());
         }
     }
 
@@ -286,14 +305,14 @@ public final class ClaraQueries {
         RegistrationData(ClaraBase base,
                          ClaraComponent frontEnd,
                          ClaraFilter filter,
-                         BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                         DpeReportParser parseReport,
                          Function<JSONObject, T> parseData) {
-            super(base, frontEnd, filter, parseQuery, parseData, ClaraConstants.REGISTRATION_KEY);
+            super(base, frontEnd, filter, parseReport, parseData, ClaraConstants.REGISTRATION_KEY);
         }
 
         @Override
-        protected Optional<T> collect(Stream<RegRecord> regData, long timeout) {
-            return query(regData, timeout).findFirst();
+        protected Optional<T> collect(Stream<T> data) {
+            return data.findFirst();
         }
     }
 
@@ -309,14 +328,14 @@ public final class ClaraQueries {
         RuntimeQuery(ClaraBase base,
                      ClaraComponent frontEnd,
                      ClaraFilter filter,
-                     BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                     DpeReportParser parseReport,
                      Function<JSONObject, T> parseData) {
-            super(base, frontEnd, filter, parseQuery, parseData, ClaraConstants.RUNTIME_KEY);
+            super(base, frontEnd, filter, parseReport, parseData, ClaraConstants.RUNTIME_KEY);
         }
 
         @Override
-        protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
-            return query(regData, timeout).collect(Collectors.toSet());
+        protected Set<T> collect(Stream<T> data) {
+            return data.collect(Collectors.toSet());
         }
     }
 
@@ -332,14 +351,14 @@ public final class ClaraQueries {
         RuntimeData(ClaraBase base,
                     ClaraComponent frontEnd,
                     ClaraFilter filter,
-                    BiFunction<JSONObject, String, Stream<JSONObject>> parseQuery,
+                    DpeReportParser parseReport,
                     Function<JSONObject, T> parseData) {
-            super(base, frontEnd, filter, parseQuery, parseData, ClaraConstants.RUNTIME_KEY);
+            super(base, frontEnd, filter, parseReport, parseData, ClaraConstants.RUNTIME_KEY);
         }
 
         @Override
-        protected Optional<T> collect(Stream<RegRecord> regData, long timeout) {
-            return query(regData, timeout).findFirst();
+        protected Optional<T> collect(Stream<T> data) {
+            return data.findFirst();
         }
     }
 
@@ -398,7 +417,7 @@ public final class ClaraQueries {
          */
         public DiscoveryQuery<DpeName> discover(DpeName name) {
             return new DiscoveryQuery<>(base, frontEnd, ClaraFilters.dpe(name),
-                                        JsonUtils::dpeStream, DpeName::new);
+                                        DpeName::new);
         }
 
 
@@ -410,7 +429,7 @@ public final class ClaraQueries {
          */
         public DiscoveryQuery<ContainerName> discover(ContainerName name) {
             return new DiscoveryQuery<>(base, frontEnd, ClaraFilters.container(name),
-                                        JsonUtils::containerStream, ContainerName::new);
+                                        ContainerName::new);
         }
 
 
@@ -422,7 +441,7 @@ public final class ClaraQueries {
          */
         public DiscoveryQuery<ServiceName> discover(ServiceName name) {
             return new DiscoveryQuery<>(base, frontEnd, ClaraFilters.service(name),
-                                        JsonUtils::serviceStream, ServiceName::new);
+                                        ServiceName::new);
         }
 
 

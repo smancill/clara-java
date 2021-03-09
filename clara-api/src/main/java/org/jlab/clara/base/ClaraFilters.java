@@ -122,7 +122,7 @@ public final class ClaraFilters {
     static ContainerFilter container(ContainerName name) {
         Topic topic = Topic.build("container", name.canonicalName());
         ContainerFilter filter = new ContainerFilter(RegQuery.subscribers().withSame(topic));
-        filter.addFilter(o -> o.getString("name").equals(name.toString()));
+        filter.addJsonFilter(o -> o.getString("name").equals(name.toString()));
         return filter;
     }
 
@@ -190,7 +190,7 @@ public final class ClaraFilters {
     public static ContainerFilter containersByName(String name) {
         ContainerFilter filter = containers();
         filter.addRegFilter(r -> ClaraUtil.getContainerName(r.name()).equals(name));
-        filter.addFilter(o -> ClaraUtil.getContainerName(o.getString("name")).equals(name));
+        filter.addJsonFilter(o -> ClaraUtil.getContainerName(o.getString("name")).equals(name));
         return filter;
     }
 
@@ -206,7 +206,7 @@ public final class ClaraFilters {
     static ServiceFilter service(ServiceName name) {
         Topic topic = Topic.wrap(name.canonicalName());
         ServiceFilter filter = new ServiceFilter(RegQuery.subscribers().withSame(topic));
-        filter.addFilter(o -> o.getString("name").equals(name.toString()));
+        filter.addJsonFilter(o -> o.getString("name").equals(name.toString()));
         return filter;
     }
 
@@ -259,7 +259,7 @@ public final class ClaraFilters {
         filter.addRegFilter(r -> {
             return ClaraUtil.getContainerCanonicalName(r.name()).equals(container);
         });
-        filter.addFilter(o -> {
+        filter.addJsonFilter(o -> {
             return ClaraUtil.getContainerCanonicalName(o.getString("name")).equals(container);
         });
         return filter;
@@ -296,7 +296,7 @@ public final class ClaraFilters {
     public static ServiceFilter servicesByName(String name) {
         ServiceFilter filter = services();
         filter.addRegFilter(r -> ClaraUtil.getEngineName(r.name()).equals(name));
-        filter.addFilter(o -> ClaraUtil.getEngineName(o.getString("name")).equals(name));
+        filter.addJsonFilter(o -> ClaraUtil.getEngineName(o.getString("name")).equals(name));
         return filter;
     }
 
@@ -313,7 +313,7 @@ public final class ClaraFilters {
      */
     public static ServiceFilter servicesByAuthor(String authorName) {
         ServiceFilter filter = services();
-        filter.addFilter(o -> o.getString("author").equals(authorName));
+        filter.addJsonFilter(o -> o.getString("author").equals(authorName));
         return filter;
     }
 
@@ -330,7 +330,7 @@ public final class ClaraFilters {
      */
     public static ServiceFilter servicesByDescription(String regex) {
         ServiceFilter filter = services();
-        filter.addFilter(o -> o.getString("description").matches(regex));
+        filter.addJsonFilter(o -> o.getString("description").matches(regex));
         return filter;
     }
 
