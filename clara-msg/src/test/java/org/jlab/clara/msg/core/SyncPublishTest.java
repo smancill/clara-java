@@ -66,9 +66,9 @@ public final class SyncPublishTest {
 
     private static Actor listener(int poolSize, String name, RegAddress regAddress)
             throws ClaraMsgException {
-        Topic topic = Topic.build(TOPIC, name);
         Actor actor = new Actor(name, regAddress, poolSize);
         try {
+            Topic topic = Topic.build(TOPIC, name);
             actor.register(RegInfo.subscriber(topic, "test subscriber"));
             System.out.printf("Registered %s with %s%n", topic, regAddress);
             actor.subscribe(topic, msg -> {
@@ -79,11 +79,11 @@ public final class SyncPublishTest {
                 }
             });
             System.out.printf("Using %d cores to reply requests...%n", poolSize);
-            return actor;
         } catch (ClaraMsgException e) {
             actor.close();
             throw e;
         }
+        return actor;
     }
 
     private static Result publisher(int cores, int numMessages, RegAddress regAddress)

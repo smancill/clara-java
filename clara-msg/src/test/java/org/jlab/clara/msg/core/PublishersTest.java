@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.LongStream;
 
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.sys.ProxyWrapper;
@@ -231,12 +232,8 @@ public class PublishersTest {
         final AtomicLong sum = new AtomicLong();
 
         Check(int n) {
-            long sum = 0;
-            for (int i = 0; i < n; i++) {
-                sum += i;
-            }
             this.n = n;
-            this.total = sum;
+            this.total = LongStream.range(0, n).sum();
         }
 
         void increment(int i) {
