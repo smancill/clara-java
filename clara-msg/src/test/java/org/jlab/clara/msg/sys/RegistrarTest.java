@@ -51,63 +51,53 @@ public class RegistrarTest {
 
     private RegDriver driver;
 
-    private Set<RegData> registration = new HashSet<>();
-    private String name = "registrat_test";
+    private final Set<RegData> registration = new HashSet<>();
+    private final String name = "registrar_test";
 
     @Test
     public void testRegistrationDataBase() throws Exception {
-        Context context = Context.newContext();
-        Registrar registrar = null;
-        try {
+        RegistrarWrapper registrar = new RegistrarWrapper();
+        try (registrar; Context context = Context.newContext()) {
             try {
-                registrar = new Registrar(context);
-                registrar.start();
-            } catch (ClaraMsgException e) {
-                System.err.println(e.getMessage());
-            }
+                ConnectionFactory factory = new ConnectionFactory(context);
+                driver = factory.createRegistrarConnection(new RegAddress());
+                ActorUtils.sleep(200);
 
-            ConnectionFactory factory = new ConnectionFactory(context);
-            driver = factory.createRegistrarConnection(new RegAddress());
-            ActorUtils.sleep(200);
+                long start = System.currentTimeMillis();
 
-            long start = System.currentTimeMillis();
+                addRandom(10000);
+                check();
 
-            addRandom(10000);
-            check();
+                removeRandom(2500);
+                check();
 
-            removeRandom(2500);
-            check();
+                addRandom(1000);
+                check();
 
-            addRandom(1000);
-            check();
+                removeRandomHost();
+                check();
 
-            removeRandomHost();
-            check();
+                addRandom(1000);
+                check();
 
-            addRandom(1000);
-            check();
+                removeRandom(2500);
+                filter();
 
-            removeRandom(2500);
-            filter();
+                addRandom(1000);
+                same();
 
-            addRandom(1000);
-            same();
+                removeRandom(2500);
+                all();
 
-            removeRandom(2500);
-            all();
+                removeAll();
+                check();
 
-            removeAll();
-            check();
-
-            long end = System.currentTimeMillis();
-            System.out.println("Total time: " + (end - start) / 1000.0);
-        } finally {
-            if (driver != null) {
-                driver.close();
-            }
-            context.close();
-            if (registrar != null) {
-                registrar.shutdown();
+                long end = System.currentTimeMillis();
+                System.out.println("Total time: " + (end - start) / 1000.0);
+            } finally {
+                if (driver != null) {
+                    driver.close();
+                }
             }
         }
     }

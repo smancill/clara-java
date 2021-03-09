@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.LongStream;
 
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.sys.ProxyWrapper;
@@ -39,7 +40,7 @@ import static org.hamcrest.Matchers.is;
 
 
 /**
- * Tests multithread publication of messages to a single subscriber.
+ * Tests multi-thread publication of messages to a single subscriber.
  * Uses N cores to concurrently send a total of M messages.
  * <p>
  * It can be a single actor using N threads in parallel, or N parallel actors
@@ -55,30 +56,30 @@ import static org.hamcrest.Matchers.is;
 public class PublishersTest {
 
     @Test
-    public void suscribeReceivesAllMessages() throws Exception {
+    public void subscribeReceivesAllMessages() throws Exception {
         try (TestRunner test = new AsyncRunner(false)) {
             test.run(100_000, 8);
         }
     }
 
     @Test
-    public void syncSuscribeReceivesAllMessages() throws Exception {
+    public void syncSubscribeReceivesAllMessages() throws Exception {
         try (TestRunner test = new SyncRunner(false)) {
             test.run(1000, 4);
         }
     }
 
     @Test
-    public void suscribeReceivesAllMessagesSinglePublisher() throws Exception {
+    public void subscribeReceivesAllMessagesSinglePublisher() throws Exception {
         try (TestRunner test = new AsyncRunner(true)) {
-            test.run(100_000, 8);
+            test.run(100_000, 1);
         }
     }
 
     @Test
-    public void syncSuscribeReceivesAllMessagesSinglePublisher() throws Exception {
+    public void syncSubscribeReceivesAllMessagesSinglePublisher() throws Exception {
         try (TestRunner test = new SyncRunner(true)) {
-            test.run(1000, 4);
+            test.run(1000, 1);
         }
     }
 
@@ -191,7 +192,7 @@ public class PublishersTest {
         }
 
         @Override
-        void receive(Actor actor, Message msg, Check check) throws Exception {
+        void receive(Actor actor, Message msg, Check check) {
             int i = Message.parseData(msg, Integer.class);
             check.increment(i);
         }
@@ -227,16 +228,12 @@ public class PublishersTest {
         final int n;
         final long total;
 
-        AtomicInteger counter = new AtomicInteger();
-        AtomicLong sum = new AtomicLong();
+        final AtomicInteger counter = new AtomicInteger();
+        final AtomicLong sum = new AtomicLong();
 
         Check(int n) {
-            long sum = 0;
-            for (int i = 0; i < n; i++) {
-                sum += i;
-            }
             this.n = n;
-            this.total = sum;
+            this.total = LongStream.range(0, n).sum();
         }
 
         void increment(int i) {

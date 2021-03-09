@@ -27,20 +27,28 @@ import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
 
-// checkstyle.off: JavadocType
-// checkstyle.off: JavadocMethod
+/**
+ * A wrapper that creates a registrar if one is not running yet.
+ * But if there is a registrar running already, prefer that one.
+ */
 public class RegistrarWrapper implements AutoCloseable {
 
-    private Context context = Context.newContext();
-    private Registrar registrar = null;
+    private final Context context = Context.newContext();
+    private final Registrar registrar;
 
     public RegistrarWrapper() {
+        registrar = tryMakeRegistrar();
+    }
+
+    private Registrar tryMakeRegistrar() {
         try {
-            registrar = new Registrar(context);
+            var registrar = new Registrar(context);
             registrar.start();
             ActorUtils.sleep(100);
+            return registrar;
         } catch (ClaraMsgException e) {
             System.err.println(e.getMessage());
+            return null;
         }
     }
 

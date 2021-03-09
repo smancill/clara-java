@@ -65,7 +65,7 @@ public class SubscriptionsTest {
 
 
     @AfterEach
-    public void teardown() {
+    public void tearDown() {
         proxyThread.close();
     }
 
@@ -87,8 +87,9 @@ public class SubscriptionsTest {
         class Check {
             static final int N = 10000;
             static final long SUM_N = 49995000L;
-            AtomicInteger counter = new AtomicInteger();
-            AtomicLong sum = new AtomicLong();
+
+            final AtomicInteger counter = new AtomicInteger();
+            final AtomicLong sum = new AtomicLong();
         }
 
         final Check check = new Check();
@@ -141,13 +142,14 @@ public class SubscriptionsTest {
         class Check {
             static final int N = 100;
             static final long SUM_N = 4950L;
+
             int counter = 0;
             long sum = 0;
         }
 
         final Check check = new Check();
 
-        Thread pubThread = ActorUtils.newThread("syncpub-thread", () -> {
+        Thread pubThread = ActorUtils.newThread("sync-pub-thread", () -> {
             try (Actor subActor = new Actor("test_subscriber");
                  Actor pubActor = new Actor("test_publisher")) {
                 Topic subTopic = Topic.wrap("test_topic");
@@ -190,7 +192,7 @@ public class SubscriptionsTest {
 
         final Check check = new Check();
 
-        Thread pubThread = ActorUtils.newThread("syncpub-thread", () -> {
+        Thread pubThread = ActorUtils.newThread("sync-pub-thread", () -> {
             try (Actor subActor = new Actor("test_subscriber");
                  Actor pubActor = new Actor("test_publisher")) {
                 Topic subTopic = Topic.wrap("test_topic");
@@ -228,8 +230,9 @@ public class SubscriptionsTest {
         class Check {
             static final int N = 10000;
             static final long SUM_N = 49995000L;
-            AtomicInteger counter = new AtomicInteger();
-            AtomicLong sum = new AtomicLong();
+
+            final AtomicInteger counter = new AtomicInteger();
+            final AtomicLong sum = new AtomicLong();
         }
 
         final Check check = new Check();
@@ -261,7 +264,8 @@ public class SubscriptionsTest {
             try (Actor actor = new Actor("test_publisher");
                  Connection con = actor.getConnection()) {
                 Topic[] topics = new Topic[] {
-                        Topic.wrap("1_test_topic"), Topic.wrap("2_test_topic")
+                    Topic.wrap("1_test_topic"),
+                    Topic.wrap("2_test_topic")
                 };
                 for (int i = 0; i < Check.N; i++) {
                     Message msg = Message.createFrom(topics[i % 2], i);

@@ -30,9 +30,10 @@ import org.jlab.clara.msg.sys.regdis.RegFactory;
 
 import java.util.Random;
 
+// checkstyle.off: ConstantName
 final class RegDataFactory {
 
-    public static String[] testTopics = {
+    public static final String[] testTopics = {
         "writer",
         "writer:adventures",
         "writer:adventures:books",
@@ -50,13 +51,17 @@ final class RegDataFactory {
         "actor:drama:movies",
         "actor:drama:series",
     };
-    public static String[] testNames = {"A", "B", "C", "D", "E",
-                                        "F", "G", "H", "I", "J",
-                                        "K", "L", "M", "N", "O",
-                                        "P", "Q", "R", "S", "T",
-                                        "U", "V", "W", "X", "Y",
-                                        "Z"};
-    public static String[] testHosts = {
+
+    public static final String[] testNames = {
+        "A", "B", "C", "D", "E",
+        "F", "G", "H", "I", "J",
+        "K", "L", "M", "N", "O",
+        "P", "Q", "R", "S", "T",
+        "U", "V", "W", "X", "Y",
+        "Z"
+    };
+
+    public static final String[] testHosts = {
         "10.2.9.50",  "10.2.9.60",
         "10.2.9.51",  "10.2.9.61",
         "10.2.9.52",  "10.2.9.62",
@@ -68,17 +73,15 @@ final class RegDataFactory {
         "10.2.9.58",  "10.2.9.68",
         "10.2.9.59",  "10.2.9.69",
     };
-    private static Random rnd = new Random();
 
-    private RegDataFactory() {
-    }
+    private static final Random rnd = new Random();
 
+    private RegDataFactory() { }
 
     public static String random(String[] array) {
         int idx = rnd.nextInt(array.length);
         return array[idx];
     }
-
 
     public static Builder randomRegistration() {
         String name = random(testNames);
