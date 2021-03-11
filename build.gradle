@@ -56,8 +56,8 @@ configure(subprojectList) {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    sourceCompatibility = JavaVersion.VERSION_14
-    targetCompatibility = JavaVersion.VERSION_14
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
 
     repositories {
         mavenCentral()
@@ -72,6 +72,7 @@ configure(subprojectList) {
         options.charSet = 'utf8'
         options.encoding = 'utf8'
         options.docEncoding = 'utf8'
+        options.addStringOption('Xdoclint:none', '-quiet')
     }
 
     publishing {
