@@ -401,10 +401,9 @@ public class RegDriver {
 
 
     private static String selectTopic(RegData.OwnerType type, String pubTopic, String subTopic) {
-        switch (type) {
-            case PUBLISHER: return pubTopic;
-            case SUBSCRIBER: return subTopic;
-            default: throw new RuntimeException("invalid registration owner-type: " + type);
-        }
+        return switch (type) {
+            case PUBLISHER -> pubTopic;
+            case SUBSCRIBER -> subTopic;
+        };
     }
 }

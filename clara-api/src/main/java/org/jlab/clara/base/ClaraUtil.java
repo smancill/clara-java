@@ -291,16 +291,12 @@ public final class ClaraUtil {
     }
 
     private static int getPort(String fullName, int index) {
-        switch (fullName.charAt(index)) {
-            case 'j': case 'J':
-                return ClaraConstants.JAVA_PORT;
-            case 'c': case 'C':
-                return ClaraConstants.CPP_PORT;
-            case 'p': case 'P':
-                return ClaraConstants.PYTHON_PORT;
-            default:
-                throw new IllegalArgumentException("Invalid language:" + fullName);
-        }
+        return switch (fullName.charAt(index)) {
+            case 'j', 'J' -> ClaraConstants.JAVA_PORT;
+            case 'c', 'C' -> ClaraConstants.CPP_PORT;
+            case 'p', 'P' -> ClaraConstants.PYTHON_PORT;
+            default -> throw new IllegalArgumentException("Invalid language:" + fullName);
+        };
     }
 
     /**

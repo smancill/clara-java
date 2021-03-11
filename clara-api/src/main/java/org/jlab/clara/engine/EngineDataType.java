@@ -317,68 +317,24 @@ public class EngineDataType {
         public ByteBuffer write(Object data) throws ClaraException {
             PlainData.Builder proto = PlainData.newBuilder();
             switch (mimeType) {
-                case SINT32:
-                    proto.setVLSINT32((Integer) data);
-                    break;
-                case SINT64:
-                    proto.setVLSINT64((Long) data);
-                    break;
-                case SFIXED32:
-                    proto.setFLSINT32((Integer) data);
-                    break;
-                case SFIXED64:
-                    proto.setFLSINT64((Long) data);
-                    break;
-                case DOUBLE:
-                    proto.setDOUBLE((Double) data);
-                    break;
-                case FLOAT:
-                    proto.setFLOAT((Float) data);
-                    break;
-                case STRING:
-                    proto.setSTRING((String) data);
-                    break;
-                case BYTES:
-                    proto.setBYTES((ByteString) data);
-                    break;
+                case SINT32 -> proto.setVLSINT32((Integer) data);
+                case SINT64 -> proto.setVLSINT64((Long) data);
+                case SFIXED32 -> proto.setFLSINT32((Integer) data);
+                case SFIXED64 -> proto.setFLSINT64((Long) data);
+                case DOUBLE -> proto.setDOUBLE((Double) data);
+                case FLOAT -> proto.setFLOAT((Float) data);
+                case STRING -> proto.setSTRING((String) data);
+                case BYTES -> proto.setBYTES((ByteString) data);
 
-                case ARRAY_SINT32: {
-                    Integer[] a = (Integer[]) data;
-                    proto.addAllVLSINT32A(Arrays.asList(a));
-                    break;
-                }
-                case ARRAY_SINT64: {
-                    Long[] a = (Long[]) data;
-                    proto.addAllVLSINT64A(Arrays.asList(a));
-                    break;
-                }
-                case ARRAY_SFIXED32: {
-                    Integer[] a = (Integer[]) data;
-                    proto.addAllFLSINT32A(Arrays.asList(a));
-                    break;
-                }
-                case ARRAY_SFIXED64: {
-                    Long[] a = (Long[]) data;
-                    proto.addAllFLSINT64A(Arrays.asList(a));
-                    break;
-                }
-                case ARRAY_DOUBLE: {
-                    Double[] a = (Double[]) data;
-                    proto.addAllDOUBLEA(Arrays.asList(a));
-                    break;
-                }
-                case ARRAY_FLOAT: {
-                    Float[] a = (Float[]) data;
-                    proto.addAllFLOATA(Arrays.asList(a));
-                    break;
-                }
-                case ARRAY_STRING: {
-                    String[] a = (String[]) data;
-                    proto.addAllSTRINGA(Arrays.asList(a));
-                    break;
-                }
-                default:
-                    throw new IllegalStateException("Invalid mime-type: " + mimeType.toString());
+                case ARRAY_SINT32 -> proto.addAllVLSINT32A(Arrays.asList((Integer[]) data));
+                case ARRAY_SINT64 -> proto.addAllVLSINT64A(Arrays.asList((Long[]) data));
+                case ARRAY_SFIXED32 -> proto.addAllFLSINT32A(Arrays.asList((Integer[]) data));
+                case ARRAY_SFIXED64 -> proto.addAllFLSINT64A(Arrays.asList((Long[]) data));
+                case ARRAY_DOUBLE -> proto.addAllDOUBLEA(Arrays.asList((Double[]) data));
+                case ARRAY_FLOAT -> proto.addAllFLOATA(Arrays.asList((Float[]) data));
+                case ARRAY_STRING -> proto.addAllSTRINGA(Arrays.asList((String[]) data));
+
+                default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
             }
             return nativeSerializer.write(proto.build());
         }
@@ -386,76 +342,26 @@ public class EngineDataType {
         @Override
         public Object read(ByteBuffer data) throws ClaraException {
             PlainData proto = (PlainData) nativeSerializer.read(data);
-            switch (mimeType) {
-                case SINT32:
-                    return proto.getVLSINT32();
-                case SINT64:
-                    return proto.getVLSINT64();
-                case SFIXED32:
-                    return proto.getFLSINT32();
-                case SFIXED64:
-                    return proto.getFLSINT64();
-                case DOUBLE:
-                    return proto.getDOUBLE();
-                case FLOAT:
-                    return proto.getFLOAT();
-                case STRING:
-                    return proto.getSTRING();
-                case BYTES:
-                    return proto.getBYTES();
+            return switch (mimeType) {
+                case SINT32 -> proto.getVLSINT32();
+                case SINT64 -> proto.getVLSINT64();
+                case SFIXED32 -> proto.getFLSINT32();
+                case SFIXED64 -> proto.getFLSINT64();
+                case DOUBLE -> proto.getDOUBLE();
+                case FLOAT -> proto.getFLOAT();
+                case STRING -> proto.getSTRING();
+                case BYTES -> proto.getBYTES();
 
-                case ARRAY_SINT32: {
-                    Integer[] a = new Integer[proto.getVLSINT32ACount()];
-                    for (int i = 0; i < a.length; i++) {
-                        a[i] = proto.getVLSINT32A(i);
-                    }
-                    return a;
-                }
-                case ARRAY_SINT64: {
-                    Long[] a = new Long[proto.getVLSINT64ACount()];
-                    for (int i = 0; i < a.length; i++) {
-                        a[i] = proto.getVLSINT64A(i);
-                    }
-                    return a;
-                }
-                case ARRAY_SFIXED32: {
-                    Integer[] a = new Integer[proto.getFLSINT32ACount()];
-                    for (int i = 0; i < a.length; i++) {
-                        a[i] = proto.getFLSINT32A(i);
-                    }
-                    return a;
-                }
-                case ARRAY_SFIXED64: {
-                    Long[] a = new Long[proto.getFLSINT64ACount()];
-                    for (int i = 0; i < a.length; i++) {
-                        a[i] = proto.getFLSINT64A(i);
-                    }
-                    return a;
-                }
-                case ARRAY_DOUBLE: {
-                    Double[] a = new Double[proto.getDOUBLEACount()];
-                    for (int i = 0; i < a.length; i++) {
-                        a[i] = proto.getDOUBLEA(i);
-                    }
-                    return a;
-                }
-                case ARRAY_FLOAT: {
-                    Float[] a = new Float[proto.getFLOATACount()];
-                    for (int i = 0; i < a.length; i++) {
-                        a[i] = proto.getFLOATA(i);
-                    }
-                    return a;
-                }
-                case ARRAY_STRING: {
-                    String[] a = new String[proto.getSTRINGACount()];
-                    for (int i = 0; i < a.length; i++) {
-                        a[i] = proto.getSTRINGA(i);
-                    }
-                    return a;
-                }
-                default:
-                    throw new IllegalStateException("Invalid mime-type: " + mimeType.toString());
-            }
+                case ARRAY_SINT32 -> proto.getVLSINT32AList().toArray(new Integer[0]);
+                case ARRAY_SINT64 -> proto.getVLSINT64AList().toArray(new Long[0]);
+                case ARRAY_SFIXED32 -> proto.getFLSINT32AList().toArray(new Integer[0]);
+                case ARRAY_SFIXED64 -> proto.getFLSINT64AList().toArray(new Long[0]);
+                case ARRAY_DOUBLE -> proto.getDOUBLEAList().toArray(new Double[0]);
+                case ARRAY_FLOAT -> proto.getFLOATAList().toArray(new Float[0]);
+                case ARRAY_STRING -> proto.getSTRINGAList().toArray(new String[0]);
+
+                default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
+            };
         }
     }
 }
