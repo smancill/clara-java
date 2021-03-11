@@ -39,7 +39,7 @@ import java.util.Set;
  */
 class EngineLoader {
 
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
     EngineLoader(ClassLoader cl) {
         classLoader = cl;

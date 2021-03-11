@@ -26,6 +26,7 @@ package org.jlab.clara.util;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -104,11 +105,7 @@ public final class EnvUtils {
                 String value = environment.get(variable);
                 if (value == null) {
                     String defaultValue = matcher.group(4);
-                    if (defaultValue != null) {
-                        value = defaultValue;
-                    } else {
-                        value = "";
-                    }
+                    value = Objects.requireNonNullElse(defaultValue, "");
                 }
                 matcher.appendReplacement(sb, value);
             } else if (matcher.group(1) != null) {

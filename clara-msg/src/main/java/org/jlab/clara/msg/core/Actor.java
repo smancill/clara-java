@@ -37,7 +37,7 @@ import org.jlab.clara.msg.sys.regdis.RegDriver;
 import org.jlab.clara.msg.sys.regdis.RegFactory;
 import org.zeromq.ZMQException;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -517,7 +517,7 @@ public class Actor implements AutoCloseable {
     public Subscription subscribe(ProxyAddress address,
                                   Topic topic,
                                   Callback callback) throws ClaraMsgException {
-        return subscribe(address, new HashSet<>(Arrays.asList(topic)), callback);
+        return subscribe(address, new HashSet<>(Collections.singletonList(topic)), callback);
     }
 
     /**
@@ -875,8 +875,7 @@ public class Actor implements AutoCloseable {
     }
 
 
-    private final class RejectedCallbackHandler implements RejectedExecutionHandler {
-
+    private static final class RejectedCallbackHandler implements RejectedExecutionHandler {
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             System.err.println("Rejected callback execution for subscribed message.");

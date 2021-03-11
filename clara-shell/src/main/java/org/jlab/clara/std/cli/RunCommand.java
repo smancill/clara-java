@@ -26,7 +26,6 @@ package org.jlab.clara.std.cli;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -220,7 +219,7 @@ class RunCommand extends BaseCommand {
 
         private void destroyDpes() {
             // kill the DPEs in reverse order (the front-end last)
-            for (ClaraLang lang : Arrays.asList(ClaraLang.PYTHON, ClaraLang.CPP, ClaraLang.JAVA)) {
+            for (ClaraLang lang : List.of(ClaraLang.PYTHON, ClaraLang.CPP, ClaraLang.JAVA)) {
                 DpeProcess dpe = backgroundDpes.remove(lang);
                 if (dpe == null) {
                     continue;

@@ -317,7 +317,7 @@ class RegDatabase {
 
 
 
-    private final class Filter {
+    private static final class Filter {
 
         private final Set<RegData> result = new HashSet<>();
 
@@ -330,7 +330,7 @@ class RegDatabase {
          * Cache a topic term.
          * Avoid checking if the value is any for every actor.
          */
-        private final class TopicFilter {
+        private static final class TopicFilter {
             private final boolean any;
             private final String value;
 
@@ -344,7 +344,7 @@ class RegDatabase {
          * Cache the address
          * Avoid checking if the address is set for every actor.
          */
-        private final class AddressFilter {
+        private static final class AddressFilter {
             private final boolean filter;
             private final String host;
             private final int port;

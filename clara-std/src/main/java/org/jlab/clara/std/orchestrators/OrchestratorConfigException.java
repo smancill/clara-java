@@ -28,8 +28,6 @@ package org.jlab.clara.std.orchestrators;
  */
 public class OrchestratorConfigException extends OrchestratorException {
 
-    private static final long serialVersionUID = 7169655555225259425L;
-
     /**
      * Constructs a new exception.
      *

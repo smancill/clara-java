@@ -79,7 +79,7 @@ public final class ClaraComponent {
     private String dpeCanonicalName;
     private String containerName;
     private String engineName;
-    private String engineClass = ClaraConstants.UNDEFINED;
+    private String engineClass;
 
     private String canonicalName;
     private String description;

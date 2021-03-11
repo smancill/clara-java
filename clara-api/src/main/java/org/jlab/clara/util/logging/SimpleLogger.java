@@ -67,6 +67,7 @@ import java.util.Properties;
  * <p>This implementation is heavily inspired by
  * <a href="http://commons.apache.org/logging/">Apache Commons Logging</a>'s SimpleLog.</p>
  */
+@SuppressWarnings("ALL")
 public class SimpleLogger implements Logger {
 
     // checkstyle.off: StaticVariable

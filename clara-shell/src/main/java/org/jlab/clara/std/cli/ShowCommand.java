@@ -31,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 class ShowCommand extends BaseCommand {
@@ -153,12 +152,12 @@ class ShowCommand extends BaseCommand {
         List<Path> logs = new ArrayList<>();
         logs.add(fe);
         RunUtils runUtils = new RunUtils(config);
-        for (ClaraLang lang : Arrays.asList(ClaraLang.CPP, ClaraLang.PYTHON)) {
+        for (ClaraLang lang : List.of(ClaraLang.CPP, ClaraLang.PYTHON)) {
             Path path = runUtils.getLogFile(fe, lang);
             if (Files.exists(path)) {
                 logs.add(path);
             }
         }
-        return logs.toArray(new Path[logs.size()]);
+        return logs.toArray(new Path[0]);
     }
 }

@@ -23,8 +23,6 @@
 
 package org.jlab.clara.msg.sys;
 
-import static java.util.Arrays.asList;
-
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
 import org.jlab.clara.msg.net.RegAddress;
@@ -34,6 +32,7 @@ import org.jlab.clara.msg.sys.utils.LogUtils;
 import org.jlab.clara.msg.sys.utils.ThreadUtils;
 
 import java.io.PrintStream;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,7 +64,7 @@ public class Registrar {
                     .ofType(Integer.class)
                     .defaultsTo(RegAddress.DEFAULT_PORT);
             parser.accepts("verbose");
-            parser.acceptsAll(asList("h", "help")).forHelp();
+            parser.acceptsAll(List.of("h", "help")).forHelp();
             OptionSet options = parser.parse(args);
 
             if (options.has("help")) {

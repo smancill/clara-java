@@ -59,7 +59,7 @@ public class BaseOrchestrator implements AutoCloseable {
     private final Map<String, Subscription> subscriptions = new HashMap<>();
 
     // ClaraBase reference
-    private ClaraBase base;
+    private final ClaraBase base;
 
 
     /**

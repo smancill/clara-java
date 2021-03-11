@@ -61,7 +61,6 @@ class SaveCommand extends AbstractCommand {
     }
 
     private boolean scanAnswer() {
-        @SuppressWarnings("resource")
         Scanner scan = new Scanner(System.in);
         while (true) {
             String answer;

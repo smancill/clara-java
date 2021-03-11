@@ -117,13 +117,11 @@ class RunUtils {
         for (Path path : paths) {
             if (!Files.exists(path)) {
                 terminal.writer().printf("error: no %s log: %s%n", description, path);
-                return 1;
+                return Command.EXIT_ERROR;
             }
         }
         try {
-            String[] args = Arrays.stream(paths)
-                                  .map(Path::toString)
-                                  .toArray(String[]::new);
+            String[] args = Arrays.stream(paths).map(Path::toString).toArray(String[]::new);
             Commands.less(terminal, System.in, System.out, System.err, Paths.get(""), args);
             return Command.EXIT_SUCCESS;
         } catch (IOException e) {

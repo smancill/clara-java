@@ -38,9 +38,7 @@ class Benchmark {
 
     Benchmark(ApplicationInfo application) {
         List<ServiceInfo> services = allServices(application);
-        services.forEach(s -> {
-            runtimeStats.put(s, new Runtime());
-        });
+        services.forEach(s -> runtimeStats.put(s, new Runtime()));
     }
 
     private List<ServiceInfo> allServices(ApplicationInfo application) {

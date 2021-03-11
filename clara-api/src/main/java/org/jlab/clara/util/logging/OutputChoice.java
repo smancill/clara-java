@@ -10,6 +10,7 @@ import java.io.PrintStream;
  * @author ceki
  *
  */
+@SuppressWarnings("ALL")
 class OutputChoice {
 
     enum OutputChoiceType {

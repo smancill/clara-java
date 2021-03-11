@@ -355,14 +355,12 @@ class CoreOrchestrator {
     }
 
 
-
     interface DpeCallBack {
         void callback(DpeInfo dpe);
     }
 
 
-
-    private class DpeCallbackWrapper implements GenericCallback {
+    private static class DpeCallbackWrapper implements GenericCallback {
 
         final DpeCallBack callback;
 

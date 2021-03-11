@@ -49,7 +49,7 @@ class ConnectionManager {
     private final ConnectionPool<RegAddress, RegDriver> registrarConnections;
 
     // default connection option
-    private volatile ProxyDriverSetup proxySetup;
+    private final ProxyDriverSetup proxySetup;
 
     ConnectionManager(ConnectionFactory factory) {
         this(factory, ProxyDriverSetup.newBuilder().build());

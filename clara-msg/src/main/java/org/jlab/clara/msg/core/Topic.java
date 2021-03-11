@@ -23,7 +23,7 @@
 
 package org.jlab.clara.msg.core;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.StringTokenizer;
 
 /**
@@ -175,7 +175,7 @@ public final class Topic {
      * @param bytes binary representation of a valid topic
      */
     static Topic wrap(byte[] bytes) {
-        return new Topic(new String(bytes, Charset.forName("UTF-8")));
+        return new Topic(new String(bytes, StandardCharsets.UTF_8));
     }
 
     /**

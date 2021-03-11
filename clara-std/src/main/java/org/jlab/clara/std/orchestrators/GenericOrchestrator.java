@@ -23,7 +23,6 @@
 
 package org.jlab.clara.std.orchestrators;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -639,7 +638,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
         private final OptionSpec<String> arguments;
 
-        private OptionParser parser;
+        private final OptionParser parser;
         private OptionSet options;
 
         CommandLineBuilder() {
@@ -700,8 +699,8 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
             arguments = parser.nonOptions();
 
-            parser.acceptsAll(Arrays.asList("version"));
-            parser.acceptsAll(Arrays.asList("h", "help")).forHelp();
+            parser.acceptsAll(List.of("version"));
+            parser.acceptsAll(List.of("h", "help")).forHelp();
         }
 
         public void parse(String[] args) {

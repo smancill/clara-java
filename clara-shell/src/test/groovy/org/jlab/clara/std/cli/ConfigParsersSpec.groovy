@@ -212,9 +212,9 @@ class ConfigParsersSpec extends Specification {
         ConfigParsers.toDirectory(*args) == expected
 
         where:
-        args                    || expected
-        ["/tmp/"]             || "/tmp"
-        ["non/existing/"]    || "non/existing"
+        args              || expected
+        ["/tmp/"]         || "/tmp"
+        ["non/existing/"] || "non/existing"
     }
 
     @Integration

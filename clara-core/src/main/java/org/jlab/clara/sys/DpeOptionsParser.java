@@ -31,9 +31,8 @@ import joptsimple.OptionSpec;
 import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.util.OptUtils;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static java.util.Arrays.asList;
 
 /**
  * Parses the DPE settings from the command line.
@@ -67,14 +66,14 @@ class DpeOptionsParser {
     DpeOptionsParser() {
         parser = new OptionParser();
 
-        parser.acceptsAll(asList("fe", "frontend"));
+        parser.acceptsAll(List.of("fe", "frontend"));
 
-        dpeHost = parser.acceptsAll(asList("host")).withRequiredArg();
-        dpePort = parser.acceptsAll(asList("port"))
+        dpeHost = parser.acceptsAll(List.of("host")).withRequiredArg();
+        dpePort = parser.acceptsAll(List.of("port"))
                         .withRequiredArg().ofType(Integer.class);
 
-        feHost = parser.acceptsAll(asList("fe-host")).withRequiredArg();
-        fePort = parser.acceptsAll(asList("fe-port"))
+        feHost = parser.acceptsAll(List.of("fe-host")).withRequiredArg();
+        fePort = parser.acceptsAll(List.of("fe-port"))
                        .withRequiredArg().ofType(Integer.class);
 
         session = parser.accepts("session").withRequiredArg();
@@ -88,8 +87,8 @@ class DpeOptionsParser {
 
         description = parser.accepts("description").withRequiredArg();
 
-        parser.acceptsAll(asList("version"));
-        parser.acceptsAll(asList("h", "help")).forHelp();
+        parser.acceptsAll(List.of("version"));
+        parser.acceptsAll(List.of("h", "help")).forHelp();
     }
 
     public void parse(String[] args) {

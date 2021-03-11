@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -150,7 +151,7 @@ public final class CommandUtils {
     public static String[] uninterruptibleCommand(String... command) {
         List<String> wrapperCmd = new ArrayList<>();
         wrapperCmd.add(commandWrapper());
-        wrapperCmd.addAll(Arrays.asList(command));
+        Collections.addAll(wrapperCmd, command);
         return wrapperCmd.toArray(new String[0]);
     }
 
@@ -167,7 +168,7 @@ public final class CommandUtils {
     public static String[] uninterruptibleCommand(String[] command, Path logFile) {
         SystemCommandBuilder b = new SystemCommandBuilder(commandLogger());
         b.addArgument(logFile);
-        Arrays.asList(command).forEach(b::addArgument);
+        Arrays.stream(command).forEach(b::addArgument);
         return b.toArray();
     }
 

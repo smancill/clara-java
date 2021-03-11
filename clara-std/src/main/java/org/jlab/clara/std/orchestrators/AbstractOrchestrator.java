@@ -453,9 +453,7 @@ abstract class AbstractOrchestrator {
 
     void removeStageDirectories() {
         if (options.stageFiles) {
-            freeNodes.stream().parallel().forEach(n -> {
-                n.removeStageDir();
-            });
+            freeNodes.stream().parallel().forEach(WorkerNode::removeStageDir);
         }
     }
 
@@ -511,9 +509,7 @@ abstract class AbstractOrchestrator {
         }
 
         private synchronized void startTimer() {
-            TimerTask task = new EndOfFileTimerTask(30, 300, () -> {
-                finishCurrentFile();
-            });
+            TimerTask task = new EndOfFileTimerTask(30, 300, this::finishCurrentFile);
 
             timer = new Timer();
             timer.scheduleAtFixedRate(task, 30_000, 30_000);
@@ -533,7 +529,7 @@ abstract class AbstractOrchestrator {
         private final int timeout;
         private final Runnable timeoutAction;
 
-        private AtomicInteger timeLeft;
+        private final AtomicInteger timeLeft;
 
         EndOfFileTimerTask(int delta, int timeout, Runnable timeoutAction) {
             this.delta = delta;

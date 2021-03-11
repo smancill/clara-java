@@ -29,7 +29,6 @@ import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +60,7 @@ class OrchestratorPaths {
             String inputName = FileUtils.getFileName(inputPath).toString();
             String outputName = FileUtils.getFileName(outputPath).toString();
 
-            this.allFiles = Arrays.asList(new WorkerFile(inputName, outputName));
+            this.allFiles = List.of(new WorkerFile(inputName, outputName));
             this.inputDir = FileUtils.getParent(inputPath).toAbsolutePath().normalize();
             this.outputDir = FileUtils.getParent(outputPath).toAbsolutePath().normalize();
         }

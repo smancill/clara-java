@@ -116,8 +116,7 @@ public class OrchestratorConfigParser {
     public OrchestratorConfigParser(String configFilePath) {
         try (InputStream input = new FileInputStream(configFilePath)) {
             Yaml yaml = new Yaml();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> config = (Map<String, Object>) yaml.load(input);
+            Map<String, Object> config = yaml.load(input);
             this.config = new JSONObject(config);
         } catch (FileNotFoundException e) {
             throw error("could not open configuration file", e);

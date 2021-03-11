@@ -39,8 +39,8 @@ import java.util.StringTokenizer;
  */
 public class Composition {
 
-    private List<String> allServices = new ArrayList<>();
-    private String text;
+    private final List<String> allServices = new ArrayList<>();
+    private final String text;
 
     /**
      * Parses a composition from the given string.
