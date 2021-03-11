@@ -26,6 +26,7 @@ package org.jlab.clara.base;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegQuery;
 import org.jlab.clara.msg.data.RegRecord;
+import org.json.JSONObject;
 
 /**
  * The standard filters to select CLARA DPEs, containers or services.
@@ -44,7 +45,6 @@ public final class ClaraFilters {
         return dpes();
     }
 
-
     /**
      * Returns a filter to select all containers in the CLARA cloud.
      * The filter will select every deployed container, in every DPE, of any language.
@@ -54,7 +54,6 @@ public final class ClaraFilters {
     public static ContainerFilter allContainers() {
         return containers();
     }
-
 
     /**
      * Returns a filter to select all services in the CLARA cloud.
@@ -67,20 +66,18 @@ public final class ClaraFilters {
         return services();
     }
 
-
     /**
      * Returns a filter to select a specific DPE.
      * <p>
      * Example: the DPE {@code 10.2.9.100_java}.
      *
-     * @param name the selected DPE
+     * @param dpe the selected DPE
      * @return a filter for a single DPE
      */
-    static DpeFilter dpe(DpeName name) {
-        Topic topic = Topic.build("dpe", name.canonicalName());
-        return new DpeFilter(RegQuery.subscribers().withSame(topic));
+    static DpeFilter dpe(DpeName dpe) {
+        var topic = Topic.build("dpe", dpe.canonicalName());
+        return new DpeFilter(withTopic(topic));
     }
-
 
     /**
      * Returns a filter to select all the DPEs of the given host.
@@ -96,36 +93,35 @@ public final class ClaraFilters {
         return dpes(host);
     }
 
-
     /**
      * Returns a filter to select all the DPEs of the given language.
      * The filter will select every running DPE of the specified language.
+     * <p>
+     * Example: all the {@code java} DPEs.
      *
      * @param lang the language to filter
      * @return a filter for all DPEs of the given language
      */
     public static DpeFilter dpesByLanguage(ClaraLang lang) {
-        DpeFilter filter = dpes();
-        filter.addRegFilter(r -> ClaraUtil.getDpeLang(r.name()).equals(lang.toString()));
+        var filter = dpes();
+        filter.addRegFilter(r -> sameLang(r, lang));
         return filter;
     }
-
 
     /**
      * Returns a filter to select a specific container.
      * <p>
      * Example: the container {@code 10.2.9.100_java:master}.
      *
-     * @param name the selected container
+     * @param container the selected container
      * @return a filter for a single container
      */
-    static ContainerFilter container(ContainerName name) {
-        Topic topic = Topic.build("container", name.canonicalName());
-        ContainerFilter filter = new ContainerFilter(RegQuery.subscribers().withSame(topic));
-        filter.addJsonFilter(o -> o.getString("name").equals(name.toString()));
+    static ContainerFilter container(ContainerName container) {
+        var topic = Topic.build("container", container.canonicalName());
+        var filter = new ContainerFilter(withTopic(topic));
+        filter.addJsonFilter(o -> sameName(o, container));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the containers of the given host.
@@ -142,7 +138,6 @@ public final class ClaraFilters {
         return containers(host);
     }
 
-
     /**
      * Returns a filter to select all the containers of the given DPE.
      * A host can contain multiple DPEs of different languages.
@@ -154,28 +149,26 @@ public final class ClaraFilters {
      * @return a filter for all containers in the DPE
      */
     public static ContainerFilter containersByDpe(DpeName dpeName) {
-        ContainerFilter filter = containers(dpeName.address().host());
-        filter.addRegFilter(r -> ClaraUtil.getDpeName(r.name()).equals(dpeName.toString()));
+        var filter = containers(dpeName.address().host());
+        filter.addRegFilter(r -> sameDpe(r, dpeName));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the containers of the given language.
      * The filter will select all containers deployed on every running DPE of
      * the specified language.
      * <p>
-     * Example: all the {@code java} containers.
+     * Example: all the {@code cpp} containers.
      *
      * @param lang the language to filter
      * @return a filter for all containers of the given language
      */
     public static ContainerFilter containersByLanguage(ClaraLang lang) {
-        ContainerFilter filter = containers();
-        filter.addRegFilter(r -> ClaraUtil.getDpeLang(r.name()).equals(lang.toString()));
+        var filter = containers();
+        filter.addRegFilter(r -> sameLang(r, lang));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the containers of the given name.
@@ -188,28 +181,26 @@ public final class ClaraFilters {
      * @return a filter for all containers with the given name
      */
     public static ContainerFilter containersByName(String name) {
-        ContainerFilter filter = containers();
-        filter.addRegFilter(r -> ClaraUtil.getContainerName(r.name()).equals(name));
-        filter.addJsonFilter(o -> ClaraUtil.getContainerName(o.getString("name")).equals(name));
+        var filter = containers();
+        filter.addRegFilter(r -> ClaraUtil.getContainerName(name(r)).equals(name));
+        filter.addJsonFilter(o -> ClaraUtil.getContainerName(name(o)).equals(name));
         return filter;
     }
-
 
     /**
      * Returns a filter to select a specific service.
      * <p>
-     * Example: the container {@code 10.2.9.100_java:master:SqrRoot}.
+     * Example: the service {@code 10.2.9.100_java:master:SqrRoot}.
      *
      * @param name the selected service
      * @return a filter for a single service
      */
     static ServiceFilter service(ServiceName name) {
-        Topic topic = Topic.wrap(name.canonicalName());
-        ServiceFilter filter = new ServiceFilter(RegQuery.subscribers().withSame(topic));
-        filter.addJsonFilter(o -> o.getString("name").equals(name.toString()));
+        var topic = Topic.wrap(name.canonicalName());
+        var filter = new ServiceFilter(withTopic(topic));
+        filter.addJsonFilter(o -> sameName(o, name));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the services of the given host.
@@ -226,7 +217,6 @@ public final class ClaraFilters {
         return services(host);
     }
 
-
     /**
      * Returns a filter to select all the services of the given DPE.
      * A host can contain multiple DPEs of different languages.
@@ -238,11 +228,10 @@ public final class ClaraFilters {
      * @return a filter for all services in the DPE
      */
     public static ServiceFilter servicesByDpe(DpeName dpeName) {
-        ServiceFilter filter = services(dpeName.address().host());
-        filter.addRegFilter(r -> ClaraUtil.getDpeName(r.name()).equals(dpeName.toString()));
+        var filter = services(dpeName.address().host());
+        filter.addRegFilter(r -> sameDpe(r, dpeName));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the services of the given container.
@@ -250,21 +239,15 @@ public final class ClaraFilters {
      * <p>
      * Example: all the services on the container {@code 10.2.9.100_cpp:master}.
      *
-     * @param containerName the selected container
+     * @param container the selected container
      * @return a filter for all services in the container
      */
-    public static ServiceFilter servicesByContainer(ContainerName containerName) {
-        String container = containerName.toString();
-        ServiceFilter filter = services(containerName.address().host());
-        filter.addRegFilter(r -> {
-            return ClaraUtil.getContainerCanonicalName(r.name()).equals(container);
-        });
-        filter.addJsonFilter(o -> {
-            return ClaraUtil.getContainerCanonicalName(o.getString("name")).equals(container);
-        });
+    public static ServiceFilter servicesByContainer(ContainerName container) {
+        var filter = services(container.address().host());
+        filter.addRegFilter(r -> sameContainer(name(r), container));
+        filter.addJsonFilter(o -> sameContainer(name(o), container));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the services of the given language.
@@ -277,11 +260,10 @@ public final class ClaraFilters {
      * @return a filter for all services of the given language
      */
     public static ServiceFilter servicesByLanguage(ClaraLang lang) {
-        ServiceFilter filter = services();
-        filter.addRegFilter(r -> ClaraUtil.getDpeLang(r.name()).equals(lang.toString()));
+        var filter = services();
+        filter.addRegFilter(r -> sameLang(r, lang));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the services of the given name.
@@ -294,12 +276,11 @@ public final class ClaraFilters {
      * @return a filter for all services of the given name
      */
     public static ServiceFilter servicesByName(String name) {
-        ServiceFilter filter = services();
-        filter.addRegFilter(r -> ClaraUtil.getEngineName(r.name()).equals(name));
-        filter.addJsonFilter(o -> ClaraUtil.getEngineName(o.getString("name")).equals(name));
+        var filter = services();
+        filter.addRegFilter(r -> ClaraUtil.getEngineName(name(r)).equals(name));
+        filter.addJsonFilter(o -> ClaraUtil.getEngineName(name(o)).equals(name));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the services of the given author.
@@ -312,11 +293,10 @@ public final class ClaraFilters {
      * @return a filter for all services by the given author
      */
     public static ServiceFilter servicesByAuthor(String authorName) {
-        ServiceFilter filter = services();
+        var filter = services();
         filter.addJsonFilter(o -> o.getString("author").equals(authorName));
         return filter;
     }
-
 
     /**
      * Returns a filter to select all the services of the given description.
@@ -329,23 +309,20 @@ public final class ClaraFilters {
      * @return a filter for all services by a matching description
      */
     public static ServiceFilter servicesByDescription(String regex) {
-        ServiceFilter filter = services();
+        var filter = services();
         filter.addJsonFilter(o -> o.getString("description").matches(regex));
         return filter;
     }
-
 
     private static DpeFilter dpes() {
         return new DpeFilter(RegQuery.subscribers().withDomain("dpe"));
     }
 
-
     private static DpeFilter dpes(String host) {
-        DpeFilter filter = new DpeFilter(RegQuery.subscribers().withHost(host));
+        var filter = new DpeFilter(RegQuery.subscribers().withHost(host));
         filter.addRegFilter(r -> r.topic().domain().equals("dpe"));
         return filter;
     }
-
 
     private static ContainerFilter containers() {
         return new ContainerFilter(RegQuery.subscribers().withDomain("container"));
@@ -353,28 +330,53 @@ public final class ClaraFilters {
 
 
     private static ContainerFilter containers(String host) {
-        ContainerFilter filter = new ContainerFilter(RegQuery.subscribers().withHost(host));
+        var filter = new ContainerFilter(RegQuery.subscribers().withHost(host));
         filter.addRegFilter(r -> r.topic().domain().equals("container"));
         return filter;
     }
 
-
     private static ServiceFilter services() {
-        ServiceFilter filter = new ServiceFilter(RegQuery.subscribers().all());
+        var filter = new ServiceFilter(RegQuery.subscribers().all());
         filter.addRegFilter(ClaraFilters::isService);
         return filter;
     }
-
 
     private static ServiceFilter services(String host) {
-        ServiceFilter filter = new ServiceFilter(RegQuery.subscribers().withHost(host));
+        var filter = new ServiceFilter(RegQuery.subscribers().withHost(host));
         filter.addRegFilter(ClaraFilters::isService);
         return filter;
     }
 
+    private static RegQuery withTopic(Topic topic) {
+        return RegQuery.subscribers().withSame(topic);
+    }
+
+    private static String name(RegRecord data) {
+        return data.name();
+    }
+
+    private static String name(JSONObject data) {
+        return data.getString("name");
+    }
 
     private static boolean isService(RegRecord record) {
         String domain = record.topic().domain();
         return !domain.equals("dpe") && !domain.equals("container");
+    }
+
+    private static boolean sameName(JSONObject data, ClaraName component) {
+        return name(data).equals(component.canonicalName());
+    }
+
+    private static boolean sameDpe(RegRecord data, DpeName dpe) {
+        return ClaraUtil.getDpeName(name(data)).equals(dpe.canonicalName());
+    }
+
+    private static boolean sameLang(RegRecord data, ClaraLang lang) {
+        return ClaraUtil.getDpeLang(name(data)).equals(lang.toString());
+    }
+
+    private static boolean sameContainer(String canonicalName, ContainerName container) {
+        return ClaraUtil.getContainerCanonicalName(canonicalName).equals(container.canonicalName());
     }
 }
