@@ -57,16 +57,24 @@ final class AppData {
 
     static final class AppBuilder {
 
-        private ApplicationInfo app
+        private List<ServiceInfo> services
+        private List<ServiceInfo> monitoring
+
         private Map<ClaraLang, DpeInfo> dpes
 
         private AppBuilder() {
-            app = defaultAppInfo()
+            services = [J1, J2, J3]
+            monitoring = []
             dpes = [(DPE1.name.language()): DPE1]
         }
 
         AppBuilder withServices(ServiceInfo... services) {
-            app = new ApplicationInfo(ioServices(), services as List, [])
+            this.services = services
+            this
+        }
+
+        AppBuilder withMonitoring(ServiceInfo... services) {
+            this.monitoring = services
             this
         }
 
@@ -78,16 +86,13 @@ final class AppData {
         }
 
         WorkerApplication build() {
+            var app = new ApplicationInfo(ioServices(), services, monitoring)
             new WorkerApplication(app, dpes)
         }
     }
 
     static AppBuilder builder() {
         new AppBuilder()
-    }
-
-    static ApplicationInfo defaultAppInfo() {
-        newAppInfo(J1, J2, J3)
     }
 
     static ApplicationInfo newAppInfo(ServiceInfo... services) {
