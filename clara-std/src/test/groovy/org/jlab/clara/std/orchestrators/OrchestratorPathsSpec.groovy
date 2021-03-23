@@ -17,6 +17,9 @@ import java.nio.file.Path
 @Rollup
 class OrchestratorPathsSpec extends Specification {
 
+    private static final INPUT_FILE = Path.of("input.ev")
+    private static final OUTPUT_FILE = Path.of("output.ev")
+
     private static final VALID_FILES = [
         [arg: "file.ev", expectedDir: ""],
         [arg: "./file.ev", expectedDir: ""],
@@ -45,7 +48,7 @@ class OrchestratorPathsSpec extends Specification {
     @Use(OrchestratorPathsExtensions)
     def "Single file mode requires a single input file path"() {
         when:
-        paths = new OrchestratorPaths.Builder(inputFile.toString(), "out.ev").build()
+        paths = new OrchestratorPaths.Builder(inputFile, OUTPUT_FILE).build()
 
         then:
         paths.inputNames == [inputFile.fileName.toString()]
@@ -57,7 +60,7 @@ class OrchestratorPathsSpec extends Specification {
 
     def "Single file mode sets an absolute normalized input dir based on input file path"() {
         when:
-        paths = new OrchestratorPaths.Builder(inputFile.toString(), "out.ev").build()
+        paths = new OrchestratorPaths.Builder(inputFile, OUTPUT_FILE).build()
 
         then:
         paths.inputDir.absolute
@@ -70,7 +73,7 @@ class OrchestratorPathsSpec extends Specification {
     @Use(OrchestratorPathsExtensions)
     def "Single file mode requires a single output file path"() {
         when:
-        paths = new OrchestratorPaths.Builder("input.ev", outputFile.toString()).build()
+        paths = new OrchestratorPaths.Builder(INPUT_FILE, outputFile).build()
 
         then:
         paths.outputNames == [outputFile.fileName.toString()]
@@ -81,7 +84,7 @@ class OrchestratorPathsSpec extends Specification {
 
     def "Single file mode sets an absolute normalized output dir based on output file path"() {
         when:
-        paths = new OrchestratorPaths.Builder("input.ev", outputFile.toString()).build()
+        paths = new OrchestratorPaths.Builder(INPUT_FILE, outputFile).build()
 
         then:
         paths.outputDir.absolute
@@ -150,7 +153,7 @@ class OrchestratorPathsSpec extends Specification {
     def "File list mode normalizes user-defined input dir to an absolute dir"() {
         when:
         paths = new OrchestratorPaths.Builder(["input.ev"])
-            .withInputDir(argDir.toString())
+            .withInputDir(argDir)
             .build()
 
         then:
@@ -164,7 +167,7 @@ class OrchestratorPathsSpec extends Specification {
     def "File list mode normalizes user-defined output dir to an absolute dir"() {
         when:
         paths = new OrchestratorPaths.Builder(["input.ev"])
-            .withOutputDir(argDir.toString())
+            .withOutputDir(argDir)
             .build()
 
         then:
@@ -178,7 +181,7 @@ class OrchestratorPathsSpec extends Specification {
     def "File list mode normalizes user-defined stage dir to an absolute dir"() {
         when:
         paths = new OrchestratorPaths.Builder(["input.ev"])
-            .withStageDir(argDir.toString())
+            .withStageDir(argDir)
             .build()
 
         then:

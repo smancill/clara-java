@@ -8,8 +8,13 @@ package org.jlab.clara.util;
 
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionSpec;
+import joptsimple.ValueConverter;
+
+import java.nio.file.Path;
 
 public final class OptUtils {
+
+    public static final ValueConverter<Path> PATH_CONVERTER = new PathConverter();
 
     private OptUtils() { }
 
@@ -43,5 +48,24 @@ public final class OptUtils {
     public static <V> String getDefault(OptionSpec<V> stageDir) {
         var spec = (ArgumentAcceptingOptionSpec<V>) stageDir;
         return "(default: " + spec.defaultValues().get(0) + ")";
+    }
+
+
+    private static class PathConverter implements ValueConverter<Path> {
+
+        @Override
+        public Path convert(String value) {
+            return Path.of(value);
+        }
+
+        @Override
+        public Class<? extends Path> valueType() {
+            return Path.class;
+        }
+
+        @Override
+        public String valuePattern() {
+            return null;
+        }
     }
 }

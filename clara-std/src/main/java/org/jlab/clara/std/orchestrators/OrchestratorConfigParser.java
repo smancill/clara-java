@@ -95,8 +95,8 @@ public class OrchestratorConfigParser {
      *
      * @param configFilePath the path to the configuration file
      */
-    public OrchestratorConfigParser(String configFilePath) {
-        try (InputStream input = new FileInputStream(configFilePath)) {
+    public OrchestratorConfigParser(Path configFilePath) {
+        try (InputStream input = new FileInputStream(configFilePath.toFile())) {
             var yaml = new Yaml();
             Map<String, Object> config = yaml.load(input);
             this.config = new JSONObject(config);
@@ -396,9 +396,9 @@ public class OrchestratorConfigParser {
     }
 
 
-    static List<String> readInputFiles(String inputFilesList) {
+    static List<String> readInputFiles(Path inputFilesList) {
         var pattern = Pattern.compile("^\\s*#.*$");
-        try (var lines = Files.lines(Path.of(inputFilesList))) {
+        try (var lines = Files.lines(inputFilesList)) {
             var files = lines.filter(line -> !line.isEmpty())
                              .filter(line -> !pattern.matcher(line).matches())
                              .toList();

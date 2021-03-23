@@ -12,13 +12,14 @@ import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 class OrchestratorPaths {
 
-    static final String INPUT_DIR = FileUtils.claraPath("data", "input").toString();
-    static final String OUTPUT_DIR = FileUtils.claraPath("data", "output").toString();
-    static final String STAGE_DIR = File.separator + "scratch";
+    static final Path INPUT_DIR = FileUtils.claraPath("data", "input");
+    static final Path OUTPUT_DIR = FileUtils.claraPath("data", "output");
+    static final Path STAGE_DIR = Path.of(File.separator + "scratch");
 
     final List<FileInfo> allFiles;
 
@@ -31,41 +32,48 @@ class OrchestratorPaths {
 
         private final List<FileInfo> allFiles;
 
-        private Path inputDir = Path.of(INPUT_DIR);
-        private Path outputDir = Path.of(OUTPUT_DIR);
-        private Path stageDir = Path.of(STAGE_DIR);
+        private Path inputDir = INPUT_DIR;
+        private Path outputDir = OUTPUT_DIR;
+        private Path stageDir = STAGE_DIR;
 
-        Builder(String inputFile, String outputFile) {
-            var inputPath = Path.of(inputFile);
-            var outputPath = Path.of(outputFile);
+        Builder(Path inputFile, Path outputFile) {
+            Objects.requireNonNull(inputFile, "inputFile parameter is null");
+            Objects.requireNonNull(outputFile, "outputFile parameter is null");
 
-            var inputName = FileUtils.getFileName(inputPath).toString();
-            var outputName = FileUtils.getFileName(outputPath).toString();
+            var inputName = FileUtils.getFileName(inputFile).toString();
+            var outputName = FileUtils.getFileName(outputFile).toString();
 
             this.allFiles = List.of(new FileInfo(inputName, outputName));
-            this.inputDir = FileUtils.getParent(inputPath).toAbsolutePath().normalize();
-            this.outputDir = FileUtils.getParent(outputPath).toAbsolutePath().normalize();
+            this.inputDir = toFullPath(FileUtils.getParent(inputFile));
+            this.outputDir = toFullPath(FileUtils.getParent(outputFile));
         }
 
         Builder(List<String> inputFiles) {
+            Objects.requireNonNull(inputFiles, "inputFiles parameter is null");
+            if (inputFiles.isEmpty()) {
+                throw new IllegalArgumentException("inputFiles list is empty");
+            }
             this.allFiles = inputFiles.stream()
                     .peek(f -> checkValidFileName(f))
                     .map(f -> new FileInfo(f, "out_" + f))
                     .collect(Collectors.toList());
         }
 
-        Builder withInputDir(String inputDir) {
-            this.inputDir = Path.of(inputDir).toAbsolutePath().normalize();
+        Builder withInputDir(Path inputDir) {
+            Objects.requireNonNull(inputDir, "inputDir parameter is null");
+            this.inputDir = toFullPath(inputDir);
             return this;
         }
 
-        Builder withOutputDir(String outputDir) {
-            this.outputDir = Path.of(outputDir).toAbsolutePath().normalize();
+        Builder withOutputDir(Path outputDir) {
+            Objects.requireNonNull(outputDir, "outputDir parameter is null");
+            this.outputDir = toFullPath(outputDir);
             return this;
         }
 
-        Builder withStageDir(String stageDir) {
-            this.stageDir = Path.of(stageDir).toAbsolutePath().normalize();
+        Builder withStageDir(Path stageDir) {
+            Objects.requireNonNull(stageDir, "stageDir parameter is null");
+            this.stageDir = toFullPath(stageDir);
             return this;
         }
 
@@ -81,6 +89,10 @@ class OrchestratorPaths {
             } catch (InvalidPathException e) {
                 throw new OrchestratorConfigException(e);
             }
+        }
+
+        private static Path toFullPath(Path arg) {
+            return arg.toAbsolutePath().normalize();
         }
     }
 

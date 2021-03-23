@@ -100,7 +100,7 @@ class RunCommand extends BaseCommand {
 
         private DpeName startLocalDpes() throws IOException {
             var configFile = config.getString(Config.SERVICES_FILE);
-            var configParser = new OrchestratorConfigParser(configFile);
+            var configParser = new OrchestratorConfigParser(Path.of(configFile));
             var languages = configParser.parseLanguages();
 
             if (checkDpes(languages)) {
