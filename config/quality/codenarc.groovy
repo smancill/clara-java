@@ -25,7 +25,7 @@ ruleset {
     ClosureStatementOnOpeningLineOfMultipleLineClosure
     FileEndsWithoutNewline
     // Indentation
-    LineLength { length = 100 }
+    LineLength { length = 108 }
     MissingBlankLineAfterImports
     MissingBlankLineAfterPackage
     SpaceAfterCatch
