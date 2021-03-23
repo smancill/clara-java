@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -400,7 +400,7 @@ public class OrchestratorConfigParser {
     static List<String> readInputFiles(String inputFilesList) {
         try {
             var pattern = Pattern.compile("^\\s*#.*$");
-            var files = Files.lines(Paths.get(inputFilesList))
+            var files = Files.lines(Path.of(inputFilesList))
                     .filter(line -> !line.isEmpty())
                     .filter(line -> !pattern.matcher(line).matches())
                     .collect(Collectors.toList());

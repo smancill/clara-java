@@ -18,7 +18,6 @@ import java.io.PrintWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -117,7 +116,7 @@ class SetCommand extends BaseCommand {
     private File getOutputFile() {
         var userDir = FarmCommands.hasPlugin()
                 ? FarmCommands.PLUGIN.resolve("config")
-                : Paths.get("");
+                : Path.of("");
         var runUtils = new RunUtils(config);
         var name = String.format("files_%s.txt", runUtils.getSession());
         return userDir.resolve(name).toFile();

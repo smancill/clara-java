@@ -16,7 +16,6 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -31,11 +30,11 @@ public final class FileUtils {
         } else if (path.startsWith("$HOME")) {
             path = path.replace("$HOME", home);
         }
-        return Paths.get(path);
+        return Path.of(path);
     }
 
     public static Path claraPath(String... args) {
-        return Paths.get(EnvUtils.claraHome(), args);
+        return Path.of(EnvUtils.claraHome(), args);
     }
 
     public static Path getFileName(Path path) {
@@ -49,7 +48,7 @@ public final class FileUtils {
     public static Path getParent(Path path) {
         var parent = path.getParent();
         if (parent == null) {
-            return Paths.get(".");
+            return Path.of(".");
         }
         return parent;
     }

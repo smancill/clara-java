@@ -13,12 +13,9 @@ import spock.lang.Subject
 import spock.util.mop.Use
 
 import java.nio.file.Path
-import java.nio.file.Paths
 
 @Rollup
 class OrchestratorPathsSpec extends Specification {
-
-    private static final WORKING_DIR = Paths.get("").toAbsolutePath()
 
     private static final VALID_FILES = [
         [arg: "file.ev", expectedDir: ""],
@@ -139,7 +136,7 @@ class OrchestratorPathsSpec extends Specification {
         with(paths) {
             inputDir == FileUtils.claraPath("data", "input")
             outputDir == FileUtils.claraPath("data", "output")
-            stageDir == Paths.get("/scratch")
+            stageDir == Path.of("/scratch")
         }
 
         and:
@@ -193,7 +190,7 @@ class OrchestratorPathsSpec extends Specification {
     }
 
     private static List<Path[]> toPaths(List<Map<String, String>> args) {
-        args.collect { [Paths.get(it.arg), WORKING_DIR.resolve(it.expectedDir)] }
+        args.collect { [Path.of(it.arg), Path.of(it.expectedDir).toAbsolutePath()] as Path[] }
     }
 
     static class OrchestratorPathsExtensions {

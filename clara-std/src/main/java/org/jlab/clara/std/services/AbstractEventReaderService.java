@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import java.nio.ByteOrder;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -96,7 +95,7 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
             fileName = config.getString(CONF_FILENAME);
             logger.info("request to open file {}", fileName);
             try {
-                reader = createReader(Paths.get(fileName), config);
+                reader = createReader(Path.of(fileName), config);
                 setLimits(config);
                 logger.info("opened file {}", fileName);
             } catch (EventReaderException e) {

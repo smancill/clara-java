@@ -19,7 +19,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -438,7 +437,7 @@ final class FarmCommands {
 
     private static Path getTemplatesDir() {
         return EnvUtils.get("CLARA_TEMPLATES_DIR")
-                .map(Paths::get)
+                .map(Path::of)
                 .orElse(FileUtils.claraPath("lib", "clara", "templates"));
     }
 

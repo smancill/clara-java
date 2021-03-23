@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +51,7 @@ class RunUtils {
     }
 
     Path getLogDir() {
-        return Paths.get(config.getString(Config.LOG_DIR));
+        return Path.of(config.getString(Config.LOG_DIR));
     }
 
     Path getLogFile(DpeName name) {
@@ -107,7 +106,7 @@ class RunUtils {
         }
         try {
             var args = Arrays.stream(paths).map(Path::toString).toArray(String[]::new);
-            Commands.less(terminal, System.in, System.out, System.err, Paths.get(""), args);
+            Commands.less(terminal, System.in, System.out, System.err, Path.of(""), args);
             return Command.EXIT_SUCCESS;
         } catch (IOException e) {
             terminal.writer().printf("error: could not open %s log: %s%n", description, e);

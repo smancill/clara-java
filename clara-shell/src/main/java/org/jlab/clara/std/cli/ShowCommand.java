@@ -12,7 +12,6 @@ import org.jlab.clara.util.VersionUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,7 +97,7 @@ class ShowCommand extends BaseCommand {
             writer.printf("Error: variable %s is not set%n", variable);
             return EXIT_ERROR;
         }
-        var path = Paths.get(config.getString(variable));
+        var path = Path.of(config.getString(variable));
         return RunUtils.printFile(terminal, path);
     }
 
@@ -107,7 +106,7 @@ class ShowCommand extends BaseCommand {
             writer.printf("Error: variable %s is not set%n", variable);
             return EXIT_ERROR;
         }
-        var dir = Paths.get(config.getString(variable));
+        var dir = Path.of(config.getString(variable));
         return RunUtils.listFiles(dir, options);
     }
 

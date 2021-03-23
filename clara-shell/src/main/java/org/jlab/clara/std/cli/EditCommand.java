@@ -7,7 +7,6 @@
 package org.jlab.clara.std.cli;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.Function;
 
 class EditCommand extends BaseCommand {
@@ -16,9 +15,9 @@ class EditCommand extends BaseCommand {
         super(context, "edit", "Edit data processing conditions");
 
         addArgument("services", "Edit services composition.",
-            c -> Paths.get(c.getString(Config.SERVICES_FILE)));
+            c -> Path.of(c.getString(Config.SERVICES_FILE)));
         addArgument("files", "Edit input file list.",
-            c -> Paths.get(c.getString(Config.FILES_LIST)));
+            c -> Path.of(c.getString(Config.FILES_LIST)));
     }
 
     void addArgument(String name, String description, Function<Config, Path> fileArg) {

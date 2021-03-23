@@ -13,7 +13,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Map;
 
 
@@ -139,7 +139,7 @@ public class EngineSpecification {
 
     private InputStream getSpecStream(String engine, String ext) {
         var cl = getClass().getClassLoader();
-        var path = Paths.get(engine.replaceAll("\\.", File.separator) + ext);
+        var path = Path.of(engine.replaceAll("\\.", File.separator) + ext);
         var name = FileUtils.getFileName(path);
         var resource = cl.getResourceAsStream(name.toString());
         if (resource == null) {

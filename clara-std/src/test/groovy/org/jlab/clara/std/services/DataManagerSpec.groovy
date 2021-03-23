@@ -18,7 +18,6 @@ import spock.lang.TempDir
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.function.Consumer
 
 class DataManagerSpec extends Specification {
@@ -535,7 +534,7 @@ class DataManagerSpec extends Specification {
     }
 
     private TestPaths configTestPaths(Consumer<TestPaths> preparePaths = { }) {
-        var paths = new TestPaths(Paths.get(testFile), tmpDir)
+        var paths = new TestPaths(Path.of(testFile), tmpDir)
 
         Files.createDirectory(paths.outputDir)
         Files.createDirectory(paths.stageDir)

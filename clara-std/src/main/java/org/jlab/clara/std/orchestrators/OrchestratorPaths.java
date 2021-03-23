@@ -11,7 +11,6 @@ import org.jlab.clara.util.FileUtils;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,13 +31,13 @@ class OrchestratorPaths {
 
         private final List<FileInfo> allFiles;
 
-        private Path inputDir = Paths.get(INPUT_DIR);
-        private Path outputDir = Paths.get(OUTPUT_DIR);
-        private Path stageDir = Paths.get(STAGE_DIR);
+        private Path inputDir = Path.of(INPUT_DIR);
+        private Path outputDir = Path.of(OUTPUT_DIR);
+        private Path stageDir = Path.of(STAGE_DIR);
 
         Builder(String inputFile, String outputFile) {
-            var inputPath = Paths.get(inputFile);
-            var outputPath = Paths.get(outputFile);
+            var inputPath = Path.of(inputFile);
+            var outputPath = Path.of(outputFile);
 
             var inputName = FileUtils.getFileName(inputPath).toString();
             var outputName = FileUtils.getFileName(outputPath).toString();
@@ -56,17 +55,17 @@ class OrchestratorPaths {
         }
 
         Builder withInputDir(String inputDir) {
-            this.inputDir = Paths.get(inputDir).toAbsolutePath().normalize();
+            this.inputDir = Path.of(inputDir).toAbsolutePath().normalize();
             return this;
         }
 
         Builder withOutputDir(String outputDir) {
-            this.outputDir = Paths.get(outputDir).toAbsolutePath().normalize();
+            this.outputDir = Path.of(outputDir).toAbsolutePath().normalize();
             return this;
         }
 
         Builder withStageDir(String stageDir) {
-            this.stageDir = Paths.get(stageDir).toAbsolutePath().normalize();
+            this.stageDir = Path.of(stageDir).toAbsolutePath().normalize();
             return this;
         }
 
@@ -76,7 +75,7 @@ class OrchestratorPaths {
 
         private static void checkValidFileName(String file) {
             try {
-                if (Paths.get(file).getParent() != null) {
+                if (Path.of(file).getParent() != null) {
                     throw new OrchestratorConfigException("Input file cannot be a path: " + file);
                 }
             } catch (InvalidPathException e) {

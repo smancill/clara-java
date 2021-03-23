@@ -15,7 +15,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 /**
@@ -100,7 +99,7 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
                 if (outputDir != null) {
                     FileUtils.createDirectories(outputDir.toPath());
                 }
-                writer = createWriter(Paths.get(fileName), config);
+                writer = createWriter(Path.of(fileName), config);
                 eventCounter = 0;
                 logger.info("opened file {}", fileName);
             } catch (IOException | EventWriterException e) {

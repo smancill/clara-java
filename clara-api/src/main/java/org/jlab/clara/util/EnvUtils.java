@@ -7,7 +7,7 @@
 package org.jlab.clara.util;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -112,6 +112,6 @@ public final class EnvUtils {
     }
 
     public static boolean inDockerContainer() {
-        return Files.exists(Paths.get("/.dockerenv"));
+        return Files.exists(Path.of("/.dockerenv"));
     }
 }
