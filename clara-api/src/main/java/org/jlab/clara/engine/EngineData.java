@@ -305,10 +305,14 @@ public class EngineData {
         return metadata.getExecutionTime();
     }
 
-
     @Override
     public String toString() {
-        return "EngineData: " + metadata.getDataType() + " " + data;
+        return "EngineData["
+                + "mime-type=" + getMimeType()
+                + " data=" + getMimeType()
+                + " status=" + getStatus()
+                + " description" + getDescription()
+                + ']';
     }
 
 
