@@ -664,7 +664,7 @@ project(':clara-msg') {
 configure(project(':clara-examples')) {
     eclipse {
         classpath {
-            plusConfigurations += [configurations.compileOnly]
+            plusConfigurations += [configurations.compileClasspath]
         }
     }
 }
