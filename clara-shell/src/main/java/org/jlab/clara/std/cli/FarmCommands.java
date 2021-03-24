@@ -19,6 +19,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -270,8 +271,7 @@ final class FarmCommands {
                 processTemplate("farm-script.ftl", model, printer);
                 model.put("farm", "script", wrapper);
             }
-            wrapper.toFile().setExecutable(true);
-
+            Files.setPosixFilePermissions(wrapper, PosixFilePermissions.fromString("rwxr-xr-x"));
             return wrapper;
         }
 

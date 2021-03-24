@@ -12,10 +12,9 @@ import org.jline.reader.Completer;
 import org.jline.reader.impl.completer.ArgumentCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.FileSystems;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -75,13 +74,13 @@ class SetCommand extends BaseCommand {
         try {
             var path = FileUtils.expandHome(args[0]);
             var output = getOutputFile();
-            try (var printer = FileUtils.openOutputTextFile(output.toPath(), false)) {
+            try (var printer = FileUtils.openOutputTextFile(output, false)) {
                 if (Files.isDirectory(path)) {
                     listCommand(printer, args[0]);
                     var numFiles = listDir(printer, path, f -> true);
                     if (numFiles > 0) {
                         config.setValue(Config.INPUT_DIR, path.toString());
-                        config.setValue(Config.FILES_LIST, output.getAbsolutePath());
+                        config.setValue(Config.FILES_LIST, output.toAbsolutePath().toString());
                     } else {
                         throw new IllegalArgumentException("empty input directory");
                     }
@@ -89,17 +88,16 @@ class SetCommand extends BaseCommand {
                     listCommand(printer, args[0]);
                     printer.println(path.getFileName());
                     config.setValue(Config.INPUT_DIR, FileUtils.getParent(path).toString());
-                    config.setValue(Config.FILES_LIST, output.getAbsolutePath());
+                    config.setValue(Config.FILES_LIST, output.toAbsolutePath().toString());
                 } else if (path.getFileName().toString().contains("*")
                         && Files.isDirectory(FileUtils.getParent(path))) {
                     listCommand(printer, args[0]);
                     var pattern = path.getFileName().toString();
-                    var glob = "glob:" + pattern;
-                    var matcher = FileSystems.getDefault().getPathMatcher(glob);
+                    var matcher = path.getFileSystem().getPathMatcher("glob:" + pattern);
                     var numFiles = listDir(printer, FileUtils.getParent(path), matcher::matches);
                     if (numFiles > 0) {
                         config.setValue(Config.INPUT_DIR, FileUtils.getParent(path).toString());
-                        config.setValue(Config.FILES_LIST, output.getAbsolutePath());
+                        config.setValue(Config.FILES_LIST, output.toAbsolutePath().toString());
                     } else {
                         printer.println("# no files matched");
                         throw new IllegalArgumentException("no files matched");
@@ -113,13 +111,13 @@ class SetCommand extends BaseCommand {
         }
     }
 
-    private File getOutputFile() {
+    private Path getOutputFile() {
         var userDir = FarmCommands.hasPlugin()
                 ? FarmCommands.PLUGIN.resolve("config")
                 : Path.of("");
         var runUtils = new RunUtils(config);
         var name = String.format("files_%s.txt", runUtils.getSession());
-        return userDir.resolve(name).toFile();
+        return userDir.resolve(name);
     }
 
     private void listCommand(PrintWriter printer, String arg) {
@@ -128,12 +126,16 @@ class SetCommand extends BaseCommand {
 
     private int listDir(PrintWriter printer, Path directory, Predicate<Path> filter)
             throws IOException {
-        return (int) Files.list(directory)
-                .filter(Files::isRegularFile)
-                .map(Path::getFileName)
-                .filter(filter)
-                .sorted()
-                .peek(printer::println)
-                .count();
+        try (var files = Files.list(directory)) {
+            return (int) files
+                    .filter(Files::isRegularFile)
+                    .map(Path::getFileName)
+                    .filter(filter)
+                    .sorted()
+                    .peek(printer::println)
+                    .count();
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 }

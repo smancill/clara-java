@@ -93,8 +93,8 @@ class SetCommandSpec extends Specification {
     }
 
     private static String createTempFile(String prefix) {
-        var tmpFile = File.createTempFile(prefix, "")
-        tmpFile.deleteOnExit()
+        Path tmpFile = Files.createTempFile(prefix, "")
+        tmpFile.toFile().deleteOnExit()
         return tmpFile.toString()
     }
 }

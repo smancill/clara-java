@@ -15,7 +15,6 @@ import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.ProxyAddress;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.NoSuchElementException;
@@ -34,7 +33,7 @@ public final class CommandDebugger extends ClaraBase {
 
     private void processFile(String file) {
         var path = Path.of(file);
-        try (var commands = Files.lines(path, Charset.defaultCharset())) {
+        try (var commands = Files.lines(path)) {
             commands.forEach(this::processCommand);
         } catch (IOException e) {
             e.printStackTrace();

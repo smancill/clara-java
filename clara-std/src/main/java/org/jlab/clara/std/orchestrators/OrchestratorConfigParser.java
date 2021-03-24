@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Helper class to read configuration for the standard orchestrators.
@@ -398,12 +397,11 @@ public class OrchestratorConfigParser {
 
 
     static List<String> readInputFiles(String inputFilesList) {
-        try {
-            var pattern = Pattern.compile("^\\s*#.*$");
-            var files = Files.lines(Path.of(inputFilesList))
-                    .filter(line -> !line.isEmpty())
-                    .filter(line -> !pattern.matcher(line).matches())
-                    .collect(Collectors.toList());
+        var pattern = Pattern.compile("^\\s*#.*$");
+        try (var lines = Files.lines(Path.of(inputFilesList))) {
+            var files = lines.filter(line -> !line.isEmpty())
+                             .filter(line -> !pattern.matcher(line).matches())
+                             .toList();
             if (files.isEmpty()) {
                 throw error("empty list of input files from " + inputFilesList);
             }

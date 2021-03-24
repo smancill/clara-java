@@ -16,14 +16,12 @@ import org.jline.builtins.Commands;
 import org.jline.terminal.Terminal;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 class RunUtils {
 
@@ -70,17 +68,27 @@ class RunUtils {
         return getLogDir().resolve(name.replaceAll("fe_dpe", dpeLang + "_dpe"));
     }
 
+    private static int compareModificationTime(Path a, Path b) {
+        try {
+            return Files.getLastModifiedTime(a).compareTo(Files.getLastModifiedTime(b));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     List<Path> getLogFiles(String component) throws IOException {
+        var dir = getLogDir();
         var glob = String.format("glob:*_%s_%s.log", getSession(), component);
-        var matcher = FileSystems.getDefault().getPathMatcher(glob);
+        var matcher = dir.getFileSystem().getPathMatcher(glob);
 
-        Function<Path, Long> modDate = path -> path.toFile().lastModified();
-
-        return Files.list(getLogDir())
-                    .filter(Files::isRegularFile)
-                    .filter(p -> matcher.matches(p.getFileName()))
-                    .sorted((a, b) -> Long.compare(modDate.apply(b), modDate.apply(a)))
-                    .collect(Collectors.toList());
+        try (var files = Files.list(dir)) {
+            return files.filter(Files::isRegularFile)
+                        .filter(p -> matcher.matches(p.getFileName()))
+                        .sorted(RunUtils::compareModificationTime)
+                        .toList();
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 
     static int printFile(Terminal terminal, Path path) {
@@ -88,11 +96,14 @@ class RunUtils {
             terminal.writer().printf("error: no file %s%n", path);
             return Command.EXIT_ERROR;
         }
-        try {
-            Files.lines(path).forEach(terminal.writer()::println);
+        try (var lines = Files.lines(path)) {
+            lines.forEach(terminal.writer()::println);
             return Command.EXIT_SUCCESS;
         } catch (IOException e) {
             terminal.writer().printf("error: could not open file: %s%n", e);
+            return Command.EXIT_ERROR;
+        } catch (UncheckedIOException e) {
+            terminal.writer().printf("error: could not read file: %s%n", e);
             return Command.EXIT_ERROR;
         }
     }
