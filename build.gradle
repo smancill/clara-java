@@ -83,13 +83,13 @@ configure(subprojectList) {
     }
 
     test {
-        testLogging {
-            exceptionFormat = 'full'
-        }
         useJUnitPlatform {
             excludeTags 'integration'
         }
         systemProperty 'spock.configuration', rootProject.file('config/test/SpockConfig.groovy')
+        testLogging {
+            exceptionFormat = 'full'
+        }
     }
 
     task integrationTest(type: Test) {
