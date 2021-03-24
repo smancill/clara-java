@@ -49,7 +49,7 @@ class RunUtils {
     }
 
     Path getLogDir() {
-        return Path.of(config.getString(Config.LOG_DIR));
+        return config.getPath(Config.LOG_DIR);
     }
 
     Path getLogFile(DpeName name) {

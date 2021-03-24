@@ -12,6 +12,7 @@ import org.jlab.clara.util.FileUtils;
 
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Parsers to set the value of configuration variables.
@@ -178,14 +179,14 @@ public final class ConfigParsers {
      * @param args the command arguments
      * @return the path string represented by the first argument
      */
-    public static String toFile(String... args) {
+    public static Path toFile(String... args) {
         var path = FileUtils.expandHome(requireArg(args));
         if (Files.exists(path)) {
             if (!Files.isRegularFile(path)) {
                 throw new IllegalArgumentException("argument is not a regular file");
             }
         }
-        return path.toString();
+        return path;
     }
 
     /**
@@ -195,14 +196,14 @@ public final class ConfigParsers {
      * @param args the command arguments
      * @return the path string represented by the first argument
      */
-    public static String toDirectory(String... args) {
+    public static Path toDirectory(String... args) {
         var path = FileUtils.expandHome(requireArg(args));
         if (Files.exists(path)) {
             if (!Files.isDirectory(path)) {
                 throw new IllegalArgumentException("argument is not a directory");
             }
         }
-        return path.toString();
+        return path;
     }
 
     /**
@@ -212,7 +213,7 @@ public final class ConfigParsers {
      * @param args the command arguments
      * @return the path string represented by the first argument
      */
-    public static String toExistingFile(String... args) {
+    public static Path toExistingFile(String... args) {
         var path = FileUtils.expandHome(requireArg(args));
         if (!Files.exists(path)) {
             throw new IllegalArgumentException("file does not exist");
@@ -220,7 +221,7 @@ public final class ConfigParsers {
         if (!Files.isRegularFile(path)) {
             throw new IllegalArgumentException("argument is not a regular file");
         }
-        return path.toString();
+        return path;
     }
 
     /**
@@ -230,7 +231,7 @@ public final class ConfigParsers {
      * @param args the command arguments
      * @return the path string represented by the first argument
      */
-    public static String toExistingDirectory(String... args) {
+    public static Path toExistingDirectory(String... args) {
         var path = FileUtils.expandHome(requireArg(args));
         if (!Files.exists(path)) {
             throw new IllegalArgumentException("directory does not exist");
@@ -238,7 +239,7 @@ public final class ConfigParsers {
         if (!Files.isDirectory(path)) {
             throw new IllegalArgumentException("argument is not a directory");
         }
-        return path.toString();
+        return path;
     }
 
     /**

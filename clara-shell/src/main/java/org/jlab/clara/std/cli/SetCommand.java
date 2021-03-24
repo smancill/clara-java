@@ -79,16 +79,16 @@ class SetCommand extends BaseCommand {
                     listCommand(printer, args[0]);
                     var numFiles = listDir(printer, path, f -> true);
                     if (numFiles > 0) {
-                        config.setValue(Config.INPUT_DIR, path.toString());
-                        config.setValue(Config.FILES_LIST, output.toAbsolutePath().toString());
+                        config.setValue(Config.INPUT_DIR, path);
+                        config.setValue(Config.FILES_LIST, output.toAbsolutePath());
                     } else {
                         throw new IllegalArgumentException("empty input directory");
                     }
                 } else if (Files.isRegularFile(path)) {
                     listCommand(printer, args[0]);
                     printer.println(path.getFileName());
-                    config.setValue(Config.INPUT_DIR, FileUtils.getParent(path).toString());
-                    config.setValue(Config.FILES_LIST, output.toAbsolutePath().toString());
+                    config.setValue(Config.INPUT_DIR, FileUtils.getParent(path));
+                    config.setValue(Config.FILES_LIST, output.toAbsolutePath());
                 } else if (path.getFileName().toString().contains("*")
                         && Files.isDirectory(FileUtils.getParent(path))) {
                     listCommand(printer, args[0]);
@@ -96,8 +96,8 @@ class SetCommand extends BaseCommand {
                     var matcher = path.getFileSystem().getPathMatcher("glob:" + pattern);
                     var numFiles = listDir(printer, FileUtils.getParent(path), matcher::matches);
                     if (numFiles > 0) {
-                        config.setValue(Config.INPUT_DIR, FileUtils.getParent(path).toString());
-                        config.setValue(Config.FILES_LIST, output.toAbsolutePath().toString());
+                        config.setValue(Config.INPUT_DIR, FileUtils.getParent(path));
+                        config.setValue(Config.FILES_LIST, output.toAbsolutePath());
                     } else {
                         printer.println("# no files matched");
                         throw new IllegalArgumentException("no files matched");

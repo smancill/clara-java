@@ -97,8 +97,7 @@ class ShowCommand extends BaseCommand {
             writer.printf("Error: variable %s is not set%n", variable);
             return EXIT_ERROR;
         }
-        var path = Path.of(config.getString(variable));
-        return RunUtils.printFile(terminal, path);
+        return RunUtils.printFile(terminal, config.getPath(variable));
     }
 
     private int listFiles(String variable, String options) {
@@ -106,8 +105,7 @@ class ShowCommand extends BaseCommand {
             writer.printf("Error: variable %s is not set%n", variable);
             return EXIT_ERROR;
         }
-        var dir = Path.of(config.getString(variable));
-        return RunUtils.listFiles(dir, options);
+        return RunUtils.listFiles(config.getPath(variable), options);
     }
 
     private int printLog(String component, String description) {

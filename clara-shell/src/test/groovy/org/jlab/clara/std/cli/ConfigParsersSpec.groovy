@@ -10,6 +10,7 @@ import org.jlab.clara.tests.Integration
 import spock.lang.Specification
 
 import java.nio.file.Files
+import java.nio.file.Path
 
 class ConfigParsersSpec extends Specification {
 
@@ -137,7 +138,7 @@ class ConfigParsersSpec extends Specification {
     @Integration
     def "Parser 'toFile' parses a file path"() {
         expect:
-        ConfigParsers.toFile(*args) == expected
+        ConfigParsers.toFile(*args) == Path.of(expected)
 
         where:
         args                    || expected
@@ -167,7 +168,7 @@ class ConfigParsersSpec extends Specification {
         var tmp = Files.createTempFile("tmp", ".txt")
 
         expect:
-        ConfigParsers.toExistingFile(tmp.toString()) == tmp.toString()
+        ConfigParsers.toExistingFile(tmp.toString()) == tmp
 
         cleanup:
         Files.delete(tmp)
@@ -192,7 +193,7 @@ class ConfigParsersSpec extends Specification {
     @Integration
     def "Parser 'toDirectory' parses a directory path"() {
         expect:
-        ConfigParsers.toDirectory(*args) == expected
+        ConfigParsers.toDirectory(*args) == Path.of(expected)
 
         where:
         args              || expected
@@ -218,7 +219,7 @@ class ConfigParsersSpec extends Specification {
     @Integration
     def "Parser 'toExistingDirectory' parses an existing directory path"() {
         expect:
-        ConfigParsers.toExistingDirectory("/tmp") == "/tmp"
+        ConfigParsers.toExistingDirectory("/tmp") == Path.of("/tmp")
     }
 
     @Integration
