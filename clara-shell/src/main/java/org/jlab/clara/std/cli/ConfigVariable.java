@@ -62,8 +62,8 @@ public final class ConfigVariable {
      */
     public static final class Builder {
 
-        private String name;
-        private String description;
+        private final String name;
+        private final String description;
 
         private Function<String[], Object> parser;
         private Completer completer;

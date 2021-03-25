@@ -334,10 +334,8 @@ final class FarmCommands {
             model.put("clas12", "dir", PLUGIN);
 
             // set monitor FE
-            String monitor = runUtils.getMonitorFrontEnd();
-            if (monitor != null) {
-                model.put("clara", "monitorFE", monitor);
-            }
+            runUtils.getMonitorFrontEnd()
+                .ifPresent(monFE -> model.put("clara", "monitorFE", monFE));
 
             // set shell variables
             config.getVariables().stream()
@@ -458,11 +456,9 @@ final class FarmCommands {
 
 
     private static Path getTemplatesDir() {
-        String devDir = System.getenv("CLARA_TEMPLATES_DIR");
-        if (devDir != null) {
-            return Paths.get(devDir);
-        }
-        return FileUtils.claraPath("lib", "clara", "templates");
+        return EnvUtils.get("CLARA_TEMPLATES_DIR")
+                .map(Paths::get)
+                .orElse(FileUtils.claraPath("lib", "clara", "templates"));
     }
 
 

@@ -23,10 +23,9 @@
 
 package org.jlab.clara.msg.sys;
 
-import static java.util.Arrays.asList;
-
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -84,7 +83,7 @@ public class Proxy {
                     .ofType(Integer.class)
                     .defaultsTo(ProxyAddress.DEFAULT_PORT);
             parser.accepts("verbose");
-            parser.acceptsAll(asList("h", "help")).forHelp();
+            parser.acceptsAll(List.of("h", "help")).forHelp();
             OptionSet options = parser.parse(args);
 
             if (options.has("help")) {
@@ -247,8 +246,7 @@ public class Proxy {
 
         @Override
         public void run() {
-            ZContext wrapper = wrapContext();
-            try {
+            try (ZContext wrapper = wrapContext()) {
                 LOGGER.info("running on host = " + addr.host() + "  port = " + addr.pubPort());
                 if (LOGGER.isLoggable(Level.FINE)) {
                     Socket listener = ZThread.fork(wrapper, new Listener());
@@ -258,8 +256,7 @@ public class Proxy {
                 }
             } catch (Exception e) {
                 LOGGER.severe(LogUtils.exceptionReporter(e));
-            }  finally {
-                wrapper.close();
+            } finally {
                 close();
             }
         }

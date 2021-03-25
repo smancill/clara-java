@@ -31,6 +31,7 @@ package org.jlab.clara.util.logging;
  *
  * @author Joern Huxhorn
  */
+@SuppressWarnings("ALL")
 public class FormattingTuple {
 
     static public FormattingTuple NULL = new FormattingTuple(null);

@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ContainerReport extends BaseReport {
 
-    private Map<String, ServiceReport> services = new ConcurrentHashMap<>();
+    private final Map<String, ServiceReport> services = new ConcurrentHashMap<>();
 
     public ContainerReport(ClaraBase base, String author) {
         super(base.getName(), author, base.getDescription());

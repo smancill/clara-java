@@ -135,6 +135,49 @@ class WorkerApplicationSpec extends Specification {
         info.languages == [ClaraLang.JAVA, ClaraLang.CPP, ClaraLang.PYTHON] as Set
     }
 
+    def "Create the composition for a data processing chain"() {
+        given:
+        WorkerApplication app = AppData.builder()
+                .withServices(AppData.J1, AppData.J2, AppData.J3)
+                .build()
+
+        when:
+        var composition = app.composition()
+
+        then:
+        var expected = "10.1.1.10_java:master:R1+" +
+                       "10.1.1.10_java:master:J1+" +
+                       "10.1.1.10_java:master:J2+" +
+                       "10.1.1.10_java:master:J3+" +
+                       "10.1.1.10_java:master:W1+" +
+                       "10.1.1.10_java:master:R1;"
+
+        composition.toString() == expected
+    }
+
+    def "Create the composition for data processing and monitoring chains"() {
+        given:
+        WorkerApplication app = AppData.builder()
+                .withServices(AppData.J1, AppData.J2)
+                .withMonitoring(AppData.K1, AppData.K2)
+                .build()
+
+        when:
+        var composition = app.composition()
+
+        then:
+        var expected = "10.1.1.10_java:master:R1+" +
+                       "10.1.1.10_java:master:J1+" +
+                       "10.1.1.10_java:master:J2+" +
+                       "10.1.1.10_java:master:W1+" +
+                       "10.1.1.10_java:master:R1;" +
+                       "10.1.1.10_java:master:J2+" +
+                       "10.1.1.10_java:slave:K1+" +
+                       "10.1.1.10_java:slave:K2;"
+
+        composition.toString() == expected
+    }
+
     private static ServiceName service(String name) {
         new ServiceName(name)
     }

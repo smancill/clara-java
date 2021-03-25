@@ -23,6 +23,8 @@
 
 package org.jlab.clara.std.orchestrators;
 
+import org.jlab.clara.util.EnvUtils;
+
 final class OrchestratorOptions {
 
     static final int DEFAULT_POOLSIZE = 32;
@@ -63,7 +65,7 @@ final class OrchestratorOptions {
         private int reportFreq = DEFAULT_REPORT_FREQ;
 
         Builder() {
-            if (System.getenv("CLARA_USE_DOCKER") != null) {
+            if (EnvUtils.get("CLARA_USE_DOCKER").isPresent()) {
                 orchMode = OrchestratorMode.DOCKER;
             }
         }

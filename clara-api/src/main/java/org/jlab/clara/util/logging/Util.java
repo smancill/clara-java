@@ -32,6 +32,7 @@ package org.jlab.clara.util.logging;
  * @author Alexander Dorokhine
  * @author Ceki G&uuml;lc&uuml;
  */
+@SuppressWarnings("ALL")
 public final class Util {
 
 

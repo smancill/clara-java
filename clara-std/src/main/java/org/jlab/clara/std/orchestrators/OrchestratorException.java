@@ -30,8 +30,6 @@ import org.jlab.clara.base.ClaraUtil;
  */
 public class OrchestratorException extends RuntimeException {
 
-    private static final long serialVersionUID = -5459481851420223735L;
-
     /**
      * Constructs a new exception.
      *

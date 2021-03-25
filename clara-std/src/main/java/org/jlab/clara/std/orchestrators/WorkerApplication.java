@@ -100,25 +100,26 @@ class WorkerApplication {
         List<ServiceName> dataServices = processingServices();
 
         // main chain
-        String composition = readerService().canonicalName();
+        StringBuilder composition = new StringBuilder();
+        composition.append(readerService());
         for (ServiceName service : dataServices) {
-            composition += "+" + service.canonicalName();
+            composition.append("+").append(service);
         }
-        composition += "+" + writerService().canonicalName();
-        composition += "+" + readerService().canonicalName();
-        composition += ";";
+        composition.append("+").append(writerService());
+        composition.append("+").append(readerService());
+        composition.append(";");
 
         List<ServiceName> monServices = monitoringServices();
         if (!monServices.isEmpty()) {
             // monitoring chain
-            composition += dataServices.get(dataServices.size() - 1).canonicalName();
+            composition.append(dataServices.get(dataServices.size() - 1));
             for (ServiceName service : monServices) {
-                composition += "+" + service.canonicalName();
+                composition.append("+").append(service);
             }
-            composition += ";";
+            composition.append(";");
         }
 
-        return new Composition(composition);
+        return new Composition(composition.toString());
     }
 
 

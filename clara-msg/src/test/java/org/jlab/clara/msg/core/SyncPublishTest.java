@@ -38,6 +38,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.LongStream;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -160,11 +161,7 @@ public final class SyncPublishTest {
         }
 
         private long getTotalSum(int numMessages) {
-            long sum = 0;
-            for (int i = 0; i < numMessages; i++) {
-                sum += i;
-            }
-            return sum;
+            return LongStream.range(0, numMessages).sum();
         }
 
         public void startClock() {

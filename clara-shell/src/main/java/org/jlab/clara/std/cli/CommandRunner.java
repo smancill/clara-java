@@ -64,9 +64,7 @@ class CommandRunner {
             return Command.EXIT_ERROR;
         }
         Thread execThread = Thread.currentThread();
-        SignalHandler prevIntHandler = terminal.handle(Signal.INT, s -> {
-            execThread.interrupt();
-        });
+        SignalHandler prevIntHandler = terminal.handle(Signal.INT, s -> execThread.interrupt());
         try {
             String[] cmdArgs = Arrays.copyOfRange(shellArgs, 1, shellArgs.length);
             return command.execute(cmdArgs);

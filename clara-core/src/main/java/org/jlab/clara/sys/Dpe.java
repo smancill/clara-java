@@ -51,6 +51,7 @@ import org.zeromq.ZMQ.Socket;
 import org.zeromq.ZMsg;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -740,9 +741,9 @@ public final class Dpe extends AbstractActor {
             Socket socket = socketFactory.createSocket(SocketType.PUB);
             socketFactory.connectSocket(socket, feAddr.host(), feAddr.pubPort());
 
-            DpeName monitorFE = FrontEnd.getMonitorFrontEnd();
-            if (monitorFE != null) {
-                ClaraAddress monAddr = monitorFE.address();
+            Optional<DpeName> monitorFE = FrontEnd.getMonitorFrontEnd();
+            if (monitorFE.isPresent()) {
+                ClaraAddress monAddr = monitorFE.get().address();
                 socketFactory.connectSocket(socket, monAddr.host(), monAddr.port());
                 Logging.info("Using monitoring front-end %s", monitorFE);
             }

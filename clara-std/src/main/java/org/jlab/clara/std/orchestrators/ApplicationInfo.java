@@ -26,7 +26,6 @@ package org.jlab.clara.std.orchestrators;
 import org.jlab.clara.base.ClaraLang;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +86,7 @@ class ApplicationInfo {
     }
 
     @SafeVarargs
-    private final Stream<ServiceInfo> stream(Collection<ServiceInfo>... values) {
+    private Stream<ServiceInfo> stream(Collection<ServiceInfo>... values) {
         return Stream.of(values).flatMap(Collection::stream);
     }
 
@@ -104,7 +103,7 @@ class ApplicationInfo {
     }
 
     List<ServiceInfo> getInputOutputServices() {
-        return Arrays.asList(getStageService(), getReaderService(), getWriterService());
+        return List.of(getStageService(), getReaderService(), getWriterService());
     }
 
     List<ServiceInfo> getDataProcessingServices() {

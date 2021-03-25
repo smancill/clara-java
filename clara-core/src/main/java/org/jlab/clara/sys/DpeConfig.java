@@ -54,9 +54,6 @@ class DpeConfig {
             return 2;
         }
         int poolSize = (halfCores % 2 == 0) ? halfCores : halfCores + 1;
-        if (poolSize > 16) {
-            return 16;
-        }
-        return poolSize;
+        return Math.min(poolSize, 16);
     }
 }

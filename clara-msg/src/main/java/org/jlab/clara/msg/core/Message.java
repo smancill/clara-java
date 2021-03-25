@@ -211,14 +211,10 @@ public class Message {
         if (!metaData.hasByteOrder()) {
             return ByteOrder.BIG_ENDIAN;
         }
-        switch (metaData.getByteOrder()) {
-            case Big:
-                return ByteOrder.BIG_ENDIAN;
-            case Little:
-                return ByteOrder.LITTLE_ENDIAN;
-            default:
-                throw new RuntimeException("invalid byte order: " + metaData.getByteOrder());
-        }
+        return switch (metaData.getByteOrder()) {
+            case Big -> ByteOrder.BIG_ENDIAN;
+            case Little -> ByteOrder.LITTLE_ENDIAN;
+        };
     }
 
     /**

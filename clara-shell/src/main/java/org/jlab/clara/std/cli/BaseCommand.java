@@ -47,7 +47,7 @@ public abstract class BaseCommand extends AbstractCommand {
     /**
      * The supported subcommands.
      */
-    protected Map<String, Command> subCommands;
+    protected final Map<String, Command> subCommands;
 
     /**
      * Creates a new base command to group subcommands.

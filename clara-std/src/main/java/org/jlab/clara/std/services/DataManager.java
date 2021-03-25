@@ -183,14 +183,9 @@ public class DataManager implements Engine {
                 JSONObject request = new JSONObject(source);
                 String type = request.getString(REQUEST_TYPE);
                 switch (type) {
-                    case REQUEST_EXEC:
-                        runAction(request, output);
-                        break;
-                    case REQUEST_QUERY:
-                        runQuery(request, output);
-                        break;
-                    default:
-                        ServiceUtils.setError(output, "invalid %s value: %s", REQUEST_TYPE, type);
+                    case REQUEST_EXEC -> runAction(request, output);
+                    case REQUEST_QUERY -> runQuery(request, output);
+                    default -> ServiceUtils.setError(output, "invalid %s value: %s", REQUEST_TYPE, type);
                 }
             } catch (IllegalArgumentException e) {
                 ServiceUtils.setError(output, e.getMessage());
@@ -209,20 +204,11 @@ public class DataManager implements Engine {
     private void runAction(JSONObject request, EngineData output) {
         String action = request.getString(REQUEST_ACTION);
         switch (action) {
-            case REQUEST_EXEC_STAGE:
-                stageInputFile(getFiles(request), output);
-                break;
-            case REQUEST_EXEC_REMOVE:
-                removeStagedInputFile(getFiles(request), output);
-                break;
-            case REQUEST_EXEC_SAVE:
-                saveOutputFile(getFiles(request), output);
-                break;
-            case REQUEST_EXEC_CLEAR:
-                clearStageDir(output);
-                break;
-            default:
-                ServiceUtils.setError(output, "invalid %s value: %s", REQUEST_ACTION, action);
+            case REQUEST_EXEC_STAGE -> stageInputFile(getFiles(request), output);
+            case REQUEST_EXEC_REMOVE -> removeStagedInputFile(getFiles(request), output);
+            case REQUEST_EXEC_SAVE -> saveOutputFile(getFiles(request), output);
+            case REQUEST_EXEC_CLEAR -> clearStageDir(output);
+            default -> ServiceUtils.setError(output, "invalid %s value: %s", REQUEST_ACTION, action);
         }
     }
 

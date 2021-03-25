@@ -26,8 +26,10 @@ package org.jlab.clara.util;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Optional;
 
 public final class EnvUtils {
 
@@ -38,6 +40,16 @@ public final class EnvUtils {
     private static final Pattern ENV_VAR_EXPR = Pattern.compile(ENV_VAR_PATTERN);
 
     private EnvUtils() { }
+
+    /**
+     * Gets the value of the given environment variable, if exists.
+     *
+     * @param variable the name of the environment variable
+     * @return an Optional that contains the value of the variable if exists
+     */
+    public static Optional<String> get(String variable) {
+        return Optional.ofNullable(System.getenv(variable));
+    }
 
     /**
      * Gets the value of the CLARA_HOME environment variable.
@@ -104,11 +116,7 @@ public final class EnvUtils {
                 String value = environment.get(variable);
                 if (value == null) {
                     String defaultValue = matcher.group(4);
-                    if (defaultValue != null) {
-                        value = defaultValue;
-                    } else {
-                        value = "";
-                    }
+                    value = Objects.requireNonNullElse(defaultValue, "");
                 }
                 matcher.appendReplacement(sb, value);
             } else if (matcher.group(1) != null) {

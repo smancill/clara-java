@@ -24,8 +24,10 @@
 package org.jlab.clara.std.cli;
 
 import org.jlab.clara.base.ClaraLang;
+import org.jlab.clara.base.DataRingAddress;
 import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraConstants;
+import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.FileUtils;
 import org.jline.builtins.Commands;
 import org.jline.terminal.Terminal;
@@ -38,6 +40,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,14 +52,15 @@ class RunUtils {
         this.config = config;
     }
 
-    String getMonitorFrontEnd() {
+    Optional<String> getMonitorFrontEnd() {
         if (config.hasValue(Config.MONITOR_HOST)) {
-            DpeName monDpe = new DpeName(config.getString(Config.MONITOR_HOST),
-                                         ClaraConstants.MONITOR_PORT,
-                                         ClaraLang.JAVA);
-            return monDpe.canonicalName();
+            var monAddr = new DataRingAddress(config.getString(Config.MONITOR_HOST));
+            var monDpe = new DpeName(monAddr.host(), monAddr.port(), ClaraLang.JAVA);
+            return Optional.of(monDpe.canonicalName());
         }
-        return System.getenv(ClaraConstants.ENV_MONITOR_FE);
+        return EnvUtils.get(ClaraConstants.ENV_MONITOR_FE)
+                       .map(DpeName::new)
+                       .map(DpeName::canonicalName);
     }
 
     String getSession() {
@@ -117,13 +121,11 @@ class RunUtils {
         for (Path path : paths) {
             if (!Files.exists(path)) {
                 terminal.writer().printf("error: no %s log: %s%n", description, path);
-                return 1;
+                return Command.EXIT_ERROR;
             }
         }
         try {
-            String[] args = Arrays.stream(paths)
-                                  .map(Path::toString)
-                                  .toArray(String[]::new);
+            String[] args = Arrays.stream(paths).map(Path::toString).toArray(String[]::new);
             Commands.less(terminal, System.in, System.out, System.err, Paths.get(""), args);
             return Command.EXIT_SUCCESS;
         } catch (IOException e) {

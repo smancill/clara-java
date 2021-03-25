@@ -143,17 +143,11 @@ public class EngineData {
      * @return the status of the data
      */
     public EngineStatus getStatus() {
-        MetaData.Status status = metadata.getStatus();
-        switch (status) {
-            case INFO:
-                return EngineStatus.INFO;
-            case WARNING:
-                return EngineStatus.WARNING;
-            case ERROR:
-                return EngineStatus.ERROR;
-            default:
-                throw new IllegalStateException("Unknown status " + status);
-        }
+        return switch (metadata.getStatus()) {
+            case INFO -> EngineStatus.INFO;
+            case WARNING -> EngineStatus.WARNING;
+            case ERROR -> EngineStatus.ERROR;
+        };
     }
 
     /**
@@ -193,17 +187,10 @@ public class EngineData {
             throw new IllegalArgumentException("severity must be positive: " + severity);
         }
         switch (status) {
-            case INFO:
-                metadata.setStatus(MetaData.Status.INFO);
-                break;
-            case WARNING:
-                metadata.setStatus(MetaData.Status.WARNING);
-                break;
-            case ERROR:
-                metadata.setStatus(MetaData.Status.ERROR);
-                break;
-            default:
-                throw new IllegalStateException("Unknown status " + status);
+            case INFO -> metadata.setStatus(MetaData.Status.INFO);
+            case WARNING -> metadata.setStatus(MetaData.Status.WARNING);
+            case ERROR -> metadata.setStatus(MetaData.Status.ERROR);
+            default -> throw new IllegalStateException("Unknown status " + status);
         }
         metadata.setSeverityId(severity);
     }
@@ -318,10 +305,14 @@ public class EngineData {
         return metadata.getExecutionTime();
     }
 
-
     @Override
     public String toString() {
-        return "EngineData: " + metadata.getDataType() + " " + data;
+        return "EngineData["
+                + "mime-type=" + getMimeType()
+                + " data=" + getMimeType()
+                + " status=" + getStatus()
+                + " description" + getDescription()
+                + ']';
     }
 
 

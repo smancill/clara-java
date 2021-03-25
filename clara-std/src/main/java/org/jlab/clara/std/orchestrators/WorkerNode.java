@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -63,18 +62,18 @@ class WorkerNode {
     private volatile String currentInputFile;
     private volatile String currentOutputFile;
 
-    AtomicInteger currentFileCounter = new AtomicInteger();
-    AtomicInteger totalFilesCounter = new AtomicInteger();
+    final AtomicInteger currentFileCounter = new AtomicInteger();
+    final AtomicInteger totalFilesCounter = new AtomicInteger();
 
-    AtomicInteger skipEvents = new AtomicInteger();
-    AtomicInteger maxEvents = new AtomicInteger();
+    final AtomicInteger skipEvents = new AtomicInteger();
+    final AtomicInteger maxEvents = new AtomicInteger();
 
-    AtomicInteger totalEvents = new AtomicInteger();
-    AtomicInteger eventNumber = new AtomicInteger();
-    AtomicInteger eofCounter = new AtomicInteger();
+    final AtomicInteger totalEvents = new AtomicInteger();
+    final AtomicInteger eventNumber = new AtomicInteger();
+    final AtomicInteger eofCounter = new AtomicInteger();
 
-    AtomicLong startTime = new AtomicLong();
-    AtomicLong lastReportTime = new AtomicLong();
+    final AtomicLong startTime = new AtomicLong();
+    final AtomicLong lastReportTime = new AtomicLong();
 
 
     static class Builder {
@@ -113,12 +112,7 @@ class WorkerNode {
         }
 
         private boolean checkReady() {
-            for (Entry<ClaraLang, DpeInfo> e : dpes.entrySet()) {
-                if (e.getValue() == null) {
-                    return false;
-                }
-            }
-            return true;
+            return dpes.entrySet().stream().noneMatch(e -> e.getValue() == null);
         }
     }
 
@@ -467,7 +461,7 @@ class WorkerNode {
 
     private int numCores(int maxCores) {
         int appCores = application.maxCores();
-        return appCores <= maxCores ? appCores : maxCores;
+        return Math.min(appCores, maxCores);
     }
 
 

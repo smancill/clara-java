@@ -33,8 +33,8 @@ import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingListener;
+import org.jlab.clara.util.EnvUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -120,11 +120,10 @@ public class MonitorOrchestrator implements AutoCloseable {
 
 
     private static DataRingAddress getDataRing() {
-        String monName = System.getenv(ClaraConstants.ENV_MONITOR_FE);
-        if (monName != null) {
-            return new DataRingAddress(new DpeName(monName));
-        }
-        return new DataRingAddress(ClaraUtil.localhost());
+        return EnvUtils.get(ClaraConstants.ENV_MONITOR_FE)
+                .map(DpeName::new)
+                .map(DataRingAddress::new)
+                .orElseGet(() -> new DataRingAddress(ClaraUtil.localhost()));
     }
 
 
@@ -291,14 +290,14 @@ public class MonitorOrchestrator implements AutoCloseable {
 
         private final OptionSpec<String> arguments;
 
-        private OptionParser parser;
+        private final OptionParser parser;
         private OptionSet options;
 
         CommandLineBuilder() {
             parser = new OptionParser();
             arguments = parser.nonOptions();
 
-            parser.acceptsAll(Arrays.asList("h", "help")).forHelp();
+            parser.acceptsAll(List.of("h", "help")).forHelp();
         }
 
         public void parse(String[] args) {

@@ -23,6 +23,7 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.FileUtils;
 
 import java.io.File;
@@ -32,16 +33,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 /**
  * Helpers to run CLI commands.
  */
 public final class CommandUtils {
+
+    private static final String PATH_SEP = Pattern.quote(File.pathSeparator);
 
     private CommandUtils() { }
 
@@ -53,7 +55,7 @@ public final class CommandUtils {
      * @return the default editor defined by the user
      */
     public static String getEditor() {
-        return Optional.ofNullable(System.getenv("EDITOR")).orElse("nano");
+        return EnvUtils.get("EDITOR").orElse("nano");
     }
 
     /**
@@ -73,8 +75,9 @@ public final class CommandUtils {
      * @return true if the program was found in {@code $PATH}
      */
     public static boolean checkProgram(String name) {
-        return Stream.of(System.getenv("PATH")
-                .split(Pattern.quote(File.pathSeparator)))
+        return EnvUtils.get("PATH")
+                .stream()
+                .flatMap(v -> Arrays.stream(v.split(PATH_SEP)))
                 .map(Paths::get)
                 .anyMatch(path -> Files.exists(path.resolve(name)));
     }
@@ -150,7 +153,7 @@ public final class CommandUtils {
     public static String[] uninterruptibleCommand(String... command) {
         List<String> wrapperCmd = new ArrayList<>();
         wrapperCmd.add(commandWrapper());
-        wrapperCmd.addAll(Arrays.asList(command));
+        Collections.addAll(wrapperCmd, command);
         return wrapperCmd.toArray(new String[0]);
     }
 
@@ -167,17 +170,17 @@ public final class CommandUtils {
     public static String[] uninterruptibleCommand(String[] command, Path logFile) {
         SystemCommandBuilder b = new SystemCommandBuilder(commandLogger());
         b.addArgument(logFile);
-        Arrays.asList(command).forEach(b::addArgument);
+        Arrays.stream(command).forEach(b::addArgument);
         return b.toArray();
     }
 
     private static String commandWrapper() {
-        return Optional.ofNullable(System.getenv("CLARA_COMMAND_WRAPPER"))
+        return EnvUtils.get("CLARA_COMMAND_WRAPPER")
                 .orElse(FileUtils.claraPath("lib", "clara", "cmd-wrapper").toString());
     }
 
     private static String commandLogger() {
-        return Optional.ofNullable(System.getenv("CLARA_COMMAND_LOGGER"))
+        return EnvUtils.get("CLARA_COMMAND_LOGGER")
                 .orElse(FileUtils.claraPath("lib", "clara", "cmd-logger").toString());
     }
 }

@@ -23,7 +23,6 @@
 
 package org.jlab.clara.sys;
 
-import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.DataUtil;
@@ -81,8 +80,9 @@ class ServiceEngine {
         this.sysReport = report;
         this.compiler = new CompositionCompiler(base.getName());
 
-        DpeName monFeDpe = FrontEnd.getMonitorFrontEnd();
-        this.monitorFe = monFeDpe != null ? ClaraComponent.dpe(monFeDpe.canonicalName()) : null;
+        this.monitorFe = FrontEnd.getMonitorFrontEnd()
+                                 .map(dpe -> ClaraComponent.dpe(dpe.canonicalName()))
+                                 .orElse(null);
     }
 
     void start() throws ClaraException {

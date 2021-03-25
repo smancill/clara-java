@@ -97,6 +97,7 @@ import java.util.Map;
  * @author Ceki G&uuml;lc&uuml;
  * @author Joern Huxhorn
  */
+@SuppressWarnings("ALL")
 final public class MessageFormatter {
     static final char DELIM_START = '{';
     static final char DELIM_STOP = '}';

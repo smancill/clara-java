@@ -37,6 +37,9 @@ import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
 import org.jlab.clara.msg.sys.Registrar;
 import org.jlab.clara.sys.RequestParser.RequestException;
+import org.jlab.clara.util.EnvUtils;
+
+import java.util.Optional;
 
 class FrontEnd {
 
@@ -224,15 +227,12 @@ class FrontEnd {
     }
 
 
-    static DpeName getMonitorFrontEnd() {
-        String monName = System.getenv(ClaraConstants.ENV_MONITOR_FE);
-        if (monName != null) {
-            try {
-                return new DpeName(monName);
-            } catch (IllegalArgumentException e) {
-                Logging.error("Cannot use $%s: %s", ClaraConstants.ENV_MONITOR_FE, e.getMessage());
-            }
+    static Optional<DpeName> getMonitorFrontEnd() {
+        try {
+            return EnvUtils.get(ClaraConstants.ENV_MONITOR_FE).map(DpeName::new);
+        } catch (IllegalArgumentException e) {
+            Logging.error("Cannot use $%s: %s", ClaraConstants.ENV_MONITOR_FE, e.getMessage());
+            return Optional.empty();
         }
-        return null;
     }
 }

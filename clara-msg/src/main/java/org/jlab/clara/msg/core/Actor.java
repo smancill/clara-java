@@ -37,7 +37,7 @@ import org.jlab.clara.msg.sys.regdis.RegDriver;
 import org.jlab.clara.msg.sys.regdis.RegFactory;
 import org.zeromq.ZMQException;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -517,7 +517,7 @@ public class Actor implements AutoCloseable {
     public Subscription subscribe(ProxyAddress address,
                                   Topic topic,
                                   Callback callback) throws ClaraMsgException {
-        return subscribe(address, new HashSet<>(Arrays.asList(topic)), callback);
+        return subscribe(address, new HashSet<>(Collections.singletonList(topic)), callback);
     }
 
     /**
@@ -561,26 +561,20 @@ public class Actor implements AutoCloseable {
                                             ProxyDriver connection,
                                             Set<Topic> topics,
                                             Callback callback) {
-        switch (callbackMode) {
-            case MULTI_THREAD:
-                return new Subscription(name, connection, topics) {
-                    @Override
-                    public void handle(Message inputMsg) throws ClaraMsgException {
-                        threadPool.submit(() -> callback.callback(inputMsg));
-                    }
-                };
-
-            case SINGLE_THREAD:
-                return new Subscription(name, connection, topics) {
-                    @Override
-                    public void handle(Message inputMsg) throws ClaraMsgException {
-                        callback.callback(inputMsg);
-                    }
-                };
-
-            default:
-                throw new IllegalArgumentException("invalid callback mode: " + callbackMode);
-        }
+        return switch (callbackMode) {
+            case MULTI_THREAD -> new Subscription(name, connection, topics) {
+                @Override
+                public void handle(Message inputMsg) throws ClaraMsgException {
+                    threadPool.submit(() -> callback.callback(inputMsg));
+                }
+            };
+            case SINGLE_THREAD -> new Subscription(name, connection, topics) {
+                @Override
+                public void handle(Message inputMsg) throws ClaraMsgException {
+                    callback.callback(inputMsg);
+                }
+            };
+        };
     }
 
     /**
@@ -806,24 +800,13 @@ public class Actor implements AutoCloseable {
             throws ClaraMsgException {
         RegDriver regDriver = connectionManager.getRegistrarConnection(address);
         try {
-            RegData.Builder reg = query.data();
-            Set<RegData> result;
-            switch (query.category()) {
-                case MATCHING:
-                    result = regDriver.findRegistration(myName, reg.build(), timeout);
-                    break;
-                case FILTER:
-                    result = regDriver.filterRegistration(myName, reg.build(), timeout);
-                    break;
-                case EXACT:
-                    result = regDriver.sameRegistration(myName, reg.build(), timeout);
-                    break;
-                case ALL:
-                    result = regDriver.allRegistration(myName, reg.build(), timeout);
-                    break;
-                default:
-                    throw new IllegalArgumentException("invalid query type: " + query.category());
-            }
+            RegData request = query.data().build();
+            Set<RegData> result = switch (query.category()) {
+                case MATCHING -> regDriver.findRegistration(myName, request, timeout);
+                case FILTER -> regDriver.filterRegistration(myName, request, timeout);
+                case EXACT -> regDriver.sameRegistration(myName, request, timeout);
+                case ALL -> regDriver.allRegistration(myName, request, timeout);
+            };
             connectionManager.releaseRegistrarConnection(regDriver);
 
             return result.stream().map(RegRecord::new).collect(Collectors.toSet());
@@ -875,8 +858,7 @@ public class Actor implements AutoCloseable {
     }
 
 
-    private final class RejectedCallbackHandler implements RejectedExecutionHandler {
-
+    private static final class RejectedCallbackHandler implements RejectedExecutionHandler {
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             System.err.println("Rejected callback execution for subscribed message.");

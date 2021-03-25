@@ -63,9 +63,7 @@ public abstract class ProxyListener implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        for (ProxyDriver connection : items.values()) {
-            connection.close();
-        }
+        items.values().forEach(ProxyDriver::close);
     }
 
     protected abstract void handle(ZMsg msg) throws ClaraMsgException;
