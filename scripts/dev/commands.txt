@@ -1,5 +1,9 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Example commands file used by j_command script
-# 
+#
 # send <component> <request>
 # sync_send <timeout> <component> <request>
 # sleep <timeout>

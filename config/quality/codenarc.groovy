@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: © The Clara Framework Authors
+ *
+ * SPDX-License-Identifier: MIT-0
+ */
+
 ruleset {
     // rulesets/braces.xml
     ElseBlockBraces

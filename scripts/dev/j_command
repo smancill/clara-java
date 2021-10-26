@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 exec ./scripts/exec-class \
     clara-client \
     org.jlab.clara.base.core.CommandDebugger "$@"
