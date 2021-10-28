@@ -20,7 +20,7 @@ import org.jline.builtins.Completers;
 import org.jline.reader.Completer;
 
 /**
- * Environment configuration for a CLARA shell session.
+ * Environment configuration for a Clara shell session.
  */
 public class Config {
 
@@ -45,7 +45,7 @@ public class Config {
     public static final String OUTPUT_DIR = "outputDir";
 
     /**
-     * The variable for the session of the CLARA DPE.
+     * The variable for the session of the Clara DPE.
      */
     public static final String SESSION = "session";
 

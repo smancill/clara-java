@@ -15,7 +15,7 @@ import org.jline.reader.impl.completer.NullCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
 
 /**
- * A configuration variable for a CLARA shell session.
+ * A configuration variable for a Clara shell session.
  */
 public final class ConfigVariable {
 

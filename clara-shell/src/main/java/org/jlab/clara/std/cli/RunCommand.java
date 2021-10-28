@@ -28,7 +28,7 @@ import org.jlab.clara.util.FileUtils;
 class RunCommand extends BaseCommand {
 
     RunCommand(Context context) {
-        super(context, "run", "Start CLARA data processing");
+        super(context, "run", "Start Clara data processing");
         addSubCommand(RunLocal::new);
     }
 
@@ -42,7 +42,7 @@ class RunCommand extends BaseCommand {
         private final RunUtils runUtils;
 
         RunLocal(Context context) {
-            super(context, "local", "Run CLARA data processing on the local node.");
+            super(context, "local", "Run Clara data processing on the local node.");
             this.backgroundDpes = new HashMap<>();
             this.runUtils = new RunUtils(config);
         }

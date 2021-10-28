@@ -26,7 +26,7 @@ class HelpCommand extends BaseCommand {
     private final Map<String, Command> commands;
 
     HelpCommand(Context context, Map<String, Command> commands) {
-        super(context, "help", "Display help information about CLARA shell");
+        super(context, "help", "Display help information about Clara shell");
         this.commands = commands;
         addCommands();
     }

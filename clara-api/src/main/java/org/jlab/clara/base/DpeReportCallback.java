@@ -7,12 +7,12 @@
 package org.jlab.clara.base;
 
 /**
- * An interface to handle the JSON reports published by CLARA.
+ * An interface to handle the JSON reports published by Clara.
  */
 public interface DpeReportCallback {
 
     /**
-     * Processes the parsed JSON report published by a CLARA DPE.
+     * Processes the parsed JSON report published by a Clara DPE.
      *
      * @param registrationData the DPE registration data
      * @param runtimeData the DPE runtime data

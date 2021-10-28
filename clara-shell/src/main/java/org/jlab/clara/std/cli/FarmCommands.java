@@ -75,7 +75,7 @@ final class FarmCommands {
             FTL_CONFIG.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
             FTL_CONFIG.setLogTemplateExceptions(false);
         } catch (IOException e) {
-            throw new IllegalStateException("Missing CLARA templates directory: " + tplDir);
+            throw new IllegalStateException("Missing Clara templates directory: " + tplDir);
         }
     }
 
@@ -182,7 +182,7 @@ final class FarmCommands {
     static class RunFarm extends FarmCommand {
 
         RunFarm(Context context) {
-            super(context, "farm", "Run CLARA data processing on the farm.");
+            super(context, "farm", "Run Clara data processing on the farm.");
         }
 
         @Override

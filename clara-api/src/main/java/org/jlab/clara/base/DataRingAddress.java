@@ -9,12 +9,12 @@ package org.jlab.clara.base;
 import org.jlab.clara.base.core.ClaraConstants;
 
 /**
- * The address of a CLARA data-ring.
+ * The address of a Clara data-ring.
  */
 public class DataRingAddress extends ClaraAddress {
 
     /**
-     * Identify a CLARA data-ring.
+     * Identify a Clara data-ring.
      *
      * @param host the host address of the data ring.
      */
@@ -23,7 +23,7 @@ public class DataRingAddress extends ClaraAddress {
     }
 
     /**
-     * Identify a CLARA data-ring.
+     * Identify a Clara data-ring.
      *
      * @param host the host address of the data ring.
      * @param port the port used by the data ring.
@@ -33,7 +33,7 @@ public class DataRingAddress extends ClaraAddress {
     }
 
     /**
-     * Identify a CLARA data-ring.
+     * Identify a Clara data-ring.
      *
      * @param dpe the DPE acting as a data ring.
      */

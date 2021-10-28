@@ -12,14 +12,14 @@ import org.jlab.clara.msg.data.RegRecord;
 import org.json.JSONObject;
 
 /**
- * The standard filters to select CLARA DPEs, containers or services.
+ * The standard filters to select Clara DPEs, containers or services.
  */
 public final class ClaraFilters {
 
     private ClaraFilters() { }
 
     /**
-     * Returns a filter to select all DPEs in the CLARA cloud.
+     * Returns a filter to select all DPEs in the Clara cloud.
      * The filter will select every running DPE, of any language.
      *
      * @return a filter for all DPEs
@@ -29,7 +29,7 @@ public final class ClaraFilters {
     }
 
     /**
-     * Returns a filter to select all containers in the CLARA cloud.
+     * Returns a filter to select all containers in the Clara cloud.
      * The filter will select every deployed container, in every DPE, of any language.
      *
      * @return a filter for all containers
@@ -39,7 +39,7 @@ public final class ClaraFilters {
     }
 
     /**
-     * Returns a filter to select all services in the CLARA cloud.
+     * Returns a filter to select all services in the Clara cloud.
      * The filter will select every deployed service, in every container of every DPE,
      * of any language.
      *

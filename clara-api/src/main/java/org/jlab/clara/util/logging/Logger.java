@@ -27,7 +27,7 @@
 package org.jlab.clara.util.logging;
 
 /**
- * A logger interface for CLARA components.
+ * A logger interface for Clara components.
  */
 public interface Logger {
 

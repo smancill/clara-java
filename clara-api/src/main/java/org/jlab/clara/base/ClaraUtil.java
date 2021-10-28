@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Extra helper methods for CLARA orchestrator and services.
+ * Extra helper methods for Clara orchestrator and services.
  *
  * @author gurjyan
  * @version 4.x
@@ -64,7 +64,7 @@ public final class ClaraUtil {
     }
 
     /**
-     * Checks if the given name is a proper CLARA canonical name.
+     * Checks if the given name is a proper Clara canonical name.
      * <p>
      * A canonical name should have any of the following structures:
      * <pre>
@@ -74,7 +74,7 @@ public final class ClaraUtil {
      * </pre>
      *
      * @param name the name to be checked
-     * @return true if the string is a CLARA canonical name, false if not
+     * @return true if the string is a Clara canonical name, false if not
      */
     public static boolean isCanonicalName(String name) {
         Matcher matcher = CANONICAL_NAME_PATTERN.matcher(name);
@@ -133,9 +133,9 @@ public final class ClaraUtil {
 
 
     /**
-     * Gets the DPE name from the given CLARA canonical name.
+     * Gets the DPE name from the given Clara canonical name.
      *
-     * @param canonicalName a CLARA canonical name
+     * @param canonicalName a Clara canonical name
      * @return the DPE name
      */
     public static String getDpeName(String canonicalName) {
@@ -147,11 +147,11 @@ public final class ClaraUtil {
     }
 
     /**
-     * Gets the container name from the given CLARA canonical name.
+     * Gets the container name from the given Clara canonical name.
      * This returns just the container name part, without the DPE name
      * (i.e. not a container canonical name).
      *
-     * @param canonicalName a CLARA canonical name with a container part
+     * @param canonicalName a Clara canonical name with a container part
      * @return the container name
      */
     public static String getContainerName(String canonicalName) {
@@ -163,10 +163,10 @@ public final class ClaraUtil {
     }
 
     /**
-     * Gets the container canonical name from the given CLARA canonical name.
+     * Gets the container canonical name from the given Clara canonical name.
      * This returns the full canonical name, including the DPE name.
      *
-     * @param canonicalName a CLARA canonical name with a container part
+     * @param canonicalName a Clara canonical name with a container part
      * @return the container canonical name
      */
     public static String getContainerCanonicalName(String canonicalName) {
@@ -185,7 +185,7 @@ public final class ClaraUtil {
     }
 
     /**
-     * Gets the service engine name from the given CLARA canonical name.
+     * Gets the service engine name from the given Clara canonical name.
      * This returns just the engine name part, without the container and DPE
      * names (i.e. not a service canonical name).
      *
@@ -201,9 +201,9 @@ public final class ClaraUtil {
     }
 
     /**
-     * Gets the DPE host address from the given CLARA canonical name.
+     * Gets the DPE host address from the given Clara canonical name.
      *
-     * @param canonicalName a CLARA canonical name
+     * @param canonicalName a Clara canonical name
      * @return the DPE host address
      */
     public static String getDpeHost(String canonicalName) {
@@ -220,9 +220,9 @@ public final class ClaraUtil {
     }
 
     /**
-     * Gets the DPE port from the given CLARA canonical name.
+     * Gets the DPE port from the given Clara canonical name.
      *
-     * @param canonicalName a CLARA canonical name
+     * @param canonicalName a Clara canonical name
      * @return the DPE port or the default port if not set in the name
      */
     public static int getDpePort(String canonicalName) {
@@ -240,9 +240,9 @@ public final class ClaraUtil {
     }
 
     /**
-     * Gets the DPE language from the given CLARA canonical name.
+     * Gets the DPE language from the given Clara canonical name.
      *
-     * @param canonicalName a CLARA canonical name
+     * @param canonicalName a Clara canonical name
      * @return the DPE language
      */
     public static String getDpeLang(String canonicalName) {
@@ -256,7 +256,7 @@ public final class ClaraUtil {
     /**
      * Gets the default DPE port for the given language.
      *
-     * @param lang the given CLARA language
+     * @param lang the given Clara language
      * @return the default port for a DPE of the language
      */
     public static int getDefaultPort(ClaraLang lang) {
@@ -266,7 +266,7 @@ public final class ClaraUtil {
     /**
      * Gets the default DPE port for the given language.
      *
-     * @param lang a supported CLARA language
+     * @param lang a supported Clara language
      * @return the default port for a DPE of the given language
      */
     public static int getDefaultPort(String lang) {

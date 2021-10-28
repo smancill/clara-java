@@ -15,7 +15,7 @@ import org.jlab.clara.msg.net.ProxyAddress;
 import java.text.MessageFormat;
 
 /**
- *  CLARA component. This is used to define
+ *  Clara component. This is used to define
  *  service, container, DPE and orchestrator components.
  *
  * @author gurjyan
@@ -109,7 +109,7 @@ public final class ClaraComponent {
 
 
     /**
-     * Creates and returns CLARA orchestrator.
+     * Creates and returns Clara orchestrator.
      *
      * @param name                 of the orchestrator
      * @param dpeHost              host of the PDE to communicate with
@@ -141,7 +141,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA orchestrator. Uses default DPE port.
+     * Creates and returns Clara orchestrator. Uses default DPE port.
      *
      * @param name                 of the orchestrator
      * @param dpeHost              host of the PDE to communicate with
@@ -159,7 +159,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA orchestrator. Default port of the DP and Java lang is used.
+     * Creates and returns Clara orchestrator. Default port of the DP and Java lang is used.
      *
      * @param name                 of the orchestrator
      * @param dpeHost              host of the PDE to communicate with
@@ -176,7 +176,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA orchestrator. DPE on the local host, with
+     * Creates and returns Clara orchestrator. DPE on the local host, with
      * the default port and Java lang is used.
      *
      * @param name of the orchestrator
@@ -195,7 +195,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA DPE component.
+     * Creates and returns Clara DPE component.
      *
      * @param dpeHost              host where the DPE will run
      * @param dpePort              port of the DPE will use
@@ -220,7 +220,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA DPE component. The default DPE port is used.
+     * Creates and returns Clara DPE component. The default DPE port is used.
      *
      * @param dpeHost host where the DPE will run
      * @param dpeLang language of the DPE
@@ -236,7 +236,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA DPE component. The default DPE port and Java lang is used.
+     * Creates and returns Clara DPE component. The default DPE port and Java lang is used.
      *
      * @param dpeHost host where the DPE will run
      * @param subscriptionPoolSize pool size for the
@@ -252,7 +252,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA DPE component.
+     * Creates and returns Clara DPE component.
      * The local host, default DPE port and Java lang is used.
      *
      * @param subscriptionPoolSize pool size for the
@@ -266,7 +266,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA DPE component.
+     * Creates and returns Clara DPE component.
      * DPE default settings are used
      *
      * @return the DPE component
@@ -277,7 +277,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA DPE component from the CLARA component
+     * Creates and returns Clara DPE component from the Clara component
      * canonical name.. DPE default pool-size = 1 is used.
      *
      * @param canonicalName The canonical name of a component
@@ -295,7 +295,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA DPE component from the CLARA component
+     * Creates and returns Clara DPE component from the Clara component
      * canonical name.. DPE default pool-size = 1 is used, leaving description
      * of the DPE undefined.
      *
@@ -307,7 +307,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Container component.
+     * Creates and returns Clara Container component.
      *
      * @param dpeHost              host of the DPE where container is/(will be) deployed
      * @param dpePort              port of the DPE where container is/(will be) deployed
@@ -334,7 +334,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Container component. The default DPE port is used.
+     * Creates and returns Clara Container component. The default DPE port is used.
      *
      * @param dpeHost host of the DPE where container is/(will be) deployed
      * @param dpeLang language of the DPE
@@ -352,7 +352,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Container component. The default DPE port and Java lang is used.
+     * Creates and returns Clara Container component. The default DPE port and Java lang is used.
      *
      * @param dpeHost host of the DPE where container is/(will be) deployed
      * @param container the name of the container
@@ -368,7 +368,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Container component. The DPE running on a local host,
+     * Creates and returns Clara Container component. The DPE running on a local host,
      * default DPE port and Java lang is used.
      *
      * @param container the name of the container
@@ -387,7 +387,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Container component, using the container canonical name.
+     * Creates and returns Clara Container component, using the container canonical name.
      * Default subscriptions pool-size = 1 is used.
      *
      * @param containerCanonicalName the canonical name of the container
@@ -407,7 +407,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Container component, using the container canonical name.
+     * Creates and returns Clara Container component, using the container canonical name.
      * Default subscriptions pool-size = 1 is used.
      *
      * @param containerCanonicalName the canonical name of the container
@@ -418,7 +418,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Service component.
+     * Creates and returns Clara Service component.
      *
      * @param dpeHost host of the DPE where service is/(will be) deployed
      * @param dpePort port of the DPE where service is/(will be) deployed
@@ -450,7 +450,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Service component. Default pool-size=1 is used.
+     * Creates and returns Clara Service component. Default pool-size=1 is used.
      * The description of the service is undefined.
      *
      * @param dpeHost host of the DPE where service is/(will be) deployed
@@ -469,7 +469,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Service component.
+     * Creates and returns Clara Service component.
      * DPE default port and default pool-size=1 is used.
      * The description of the service is undefined.
      *
@@ -488,7 +488,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Service component. DPE running on a local host with the
+     * Creates and returns Clara Service component. DPE running on a local host with the
      * default port and default pool-size=1 is used. The description of the service is undefined.
      *
      * @param container the name of the container of the service
@@ -503,7 +503,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Service component. DPE running on a local host with the
+     * Creates and returns Clara Service component. DPE running on a local host with the
      * default port used. The description of the service is undefined.
      *
      * @param container the name of the container of the service
@@ -519,7 +519,7 @@ public final class ClaraComponent {
     }
 
     /**
-     * Creates and returns CLARA Service component, using the service canonical name.
+     * Creates and returns Clara Service component, using the service canonical name.
      * Default subscriptions pool-size = 1 is used. The description of the service is undefined.
      *
      * @return the service component
@@ -539,8 +539,8 @@ public final class ClaraComponent {
     }
 
     /**
-     * Returns the topic of the CLARA component, i.e. the topic of the subscriber.
-     * Note that all CLARA components are registered as subscribers.
+     * Returns the topic of the Clara component, i.e. the topic of the subscriber.
+     * Note that all Clara components are registered as subscribers.
      *
      * @return {@link Topic} object
      */
@@ -598,7 +598,7 @@ public final class ClaraComponent {
      * Note. candidate to be deprecated. Do not use to define the
      * canonical names for DPE, container or service.
      *
-     * The canonical name of a CLARA component is defined internally,
+     * The canonical name of a Clara component is defined internally,
      * yet this method is used to set the name of an orchestrator, which
      * considers to be non critical.
      *

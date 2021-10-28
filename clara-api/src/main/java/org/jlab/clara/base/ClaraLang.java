@@ -7,7 +7,7 @@
 package org.jlab.clara.base;
 
 /**
- * The supported languages for CLARA components.
+ * The supported languages for Clara components.
  */
 public enum ClaraLang {
 

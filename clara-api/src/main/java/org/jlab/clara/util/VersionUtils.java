@@ -40,7 +40,7 @@ public final class VersionUtils {
         Properties properties = getInstance();
         String version = properties.getProperty("version");
         if (version == null) {
-            throw new RuntimeException("missing CLARA version property");
+            throw new RuntimeException("missing Clara version property");
         }
         // remove snapshot string for now
         if (version.endsWith("-SNAPSHOT")) {
@@ -53,10 +53,10 @@ public final class VersionUtils {
         Properties properties = getInstance();
         String version = properties.getProperty("version");
         if (version == null) {
-            throw new RuntimeException("missing CLARA version property");
+            throw new RuntimeException("missing Clara version property");
         }
         StringBuilder fullVersion = new StringBuilder();
-        fullVersion.append("CLARA version ").append(version);
+        fullVersion.append("Clara version ").append(version);
         if (version.endsWith("-SNAPSHOT")) {
             String describe = properties.getProperty("git.describe");
             if (describe != null) {

@@ -9,7 +9,7 @@ package org.jlab.clara.base;
 import org.jlab.clara.engine.EngineData;
 
 /**
- * An interface to handle the reports published by CLARA services.
+ * An interface to handle the reports published by Clara services.
  */
 public interface EngineCallback {
 

@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 /**
  * Defines it's own as well as all input service states that if exists in
- * run-time will make this CLARA composition condition a true condition.
+ * run-time will make this Clara composition condition a true condition.
  * <p>
  *
  * @author gurjyan

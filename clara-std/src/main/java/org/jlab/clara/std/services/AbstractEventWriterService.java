@@ -214,7 +214,7 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
     /**
      * Writes an event to the output file.
      * The event should be a Java object with the same type as the one defined
-     * by the CLARA engine data-type returned by {@link #getDataType()}.
+     * by the Clara engine data-type returned by {@link #getDataType()}.
      *
      * @param event the event to be written
      * @throws EventWriterException if the file could not be read
@@ -222,7 +222,7 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
     protected abstract void writeEvent(Object event) throws EventWriterException;
 
     /**
-     * Gets the CLARA engine data-type for the type of the events.
+     * Gets the Clara engine data-type for the type of the events.
      * The data-type will be used to deserialize the events when the engine data
      * is received from services across the network.
      *

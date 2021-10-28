@@ -119,7 +119,7 @@ public final class CommandDebugger extends ClaraBase {
                 } else if (ClaraUtil.isServiceName(component)) {
                     topic = Topic.wrap(component);
                 } else {
-                    throw new ClaraException("Not a CLARA component: " + component);
+                    throw new ClaraException("Not a Clara component: " + component);
                 }
                 request = tk.nextToken();
             } catch (NoSuchElementException | NumberFormatException e) {

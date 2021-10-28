@@ -27,14 +27,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Requests to running CLARA components.
+ * Requests to running Clara components.
  */
 public final class ClaraRequests {
 
     private ClaraRequests() { }
 
     /**
-     * A request to a CLARA component.
+     * A request to a Clara component.
      *
      * @param <D> The specific subclass
      * @param <T> The type returned when a result is expected
@@ -144,7 +144,7 @@ public final class ClaraRequests {
     }
 
     /**
-     * Base class to deploy a CLARA component.
+     * Base class to deploy a Clara component.
      * Each subclass presents the optional fields specific to each component.
      */
     abstract static class DeployRequest<D extends DeployRequest<D>>
@@ -245,7 +245,7 @@ public final class ClaraRequests {
     }
 
     /**
-     * A request to stop a running CLARA component.
+     * A request to stop a running Clara component.
      */
     public static class ExitRequest extends DataRequest<ExitRequest> {
 
@@ -495,7 +495,7 @@ public final class ClaraRequests {
 
         /**
          * Creates a request to start reporting result of executions of the
-         * specified service to the CLARA Data Ring.
+         * specified service to the Clara Data Ring.
          * If the service does not exist, the message is lost.
          *
          * @return a service configuration request to be run

@@ -26,12 +26,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Subscriptions for running CLARA components.
+ * Subscriptions for running Clara components.
  */
 public class ClaraSubscriptions {
 
     /**
-     * Starts and stops a CLARA subscription.
+     * Starts and stops a Clara subscription.
      *
      * @param <D> The specific subclass
      * @param <C> The user callback
@@ -240,7 +240,7 @@ public class ClaraSubscriptions {
 
 
     /**
-     * Builds a subscription to listen the different CLARA service reports.
+     * Builds a subscription to listen the different Clara service reports.
      */
     public static class ServiceSubscriptionBuilder {
         private final ClaraBase base;
@@ -310,7 +310,7 @@ public class ClaraSubscriptions {
 
 
     /**
-     * Builds a subscription to listen the different CLARA DPE reports.
+     * Builds a subscription to listen the different Clara DPE reports.
      */
     public static class GlobalSubscriptionBuilder {
         private final ClaraBase base;
@@ -383,7 +383,7 @@ public class ClaraSubscriptions {
         }
 
         /**
-         * A subscription for all events published to the CLARA data-ring.
+         * A subscription for all events published to the Clara data-ring.
          *
          * @return a subscription to listen all events in the data-ring
          */
@@ -393,7 +393,7 @@ public class ClaraSubscriptions {
         }
 
         /**
-         * A subscription for events published with the given topic to the CLARA
+         * A subscription for events published with the given topic to the Clara
          * data-ring.
          *
          * @param ringTopic the data-ring topic to filter events

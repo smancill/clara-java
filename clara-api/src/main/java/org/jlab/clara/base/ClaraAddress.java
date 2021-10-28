@@ -9,7 +9,7 @@ package org.jlab.clara.base;
 import org.jlab.clara.msg.net.ProxyAddress;
 
 /**
- * The address where a CLARA component is listening messages.
+ * The address where a Clara component is listening messages.
  */
 public class ClaraAddress {
 

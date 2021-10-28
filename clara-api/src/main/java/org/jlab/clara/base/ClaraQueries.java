@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Queries to the CLARA registration/runtime database.
+ * Queries to the Clara registration/runtime database.
  */
 public final class ClaraQueries {
 
@@ -47,7 +47,7 @@ public final class ClaraQueries {
 
 
     /**
-     * A query to CLARA registration.
+     * A query to Clara registration.
      *
      * @param <D> The specific subclass
      * @param <T> The type returned by the query
@@ -197,7 +197,7 @@ public final class ClaraQueries {
 
 
     /**
-     * A query to get the names of the registered CLARA components.
+     * A query to get the names of the registered Clara components.
      *
      * @param <T> The name class of the components
      */
@@ -232,7 +232,7 @@ public final class ClaraQueries {
 
 
     /**
-     * A query to check if a CLARA component is registered.
+     * A query to check if a Clara component is registered.
      *
      * @param <T> The name class of the component
      */
@@ -256,7 +256,7 @@ public final class ClaraQueries {
 
 
     /**
-     * A query to get the registration data of the registered CLARA components.
+     * A query to get the registration data of the registered Clara components.
      *
      * @param <T> The registration data class of the components
      */
@@ -278,7 +278,7 @@ public final class ClaraQueries {
 
 
     /**
-     * A query to get the registration data of a specific CLARA component.
+     * A query to get the registration data of a specific Clara component.
      *
      * @param <T> The registration data class of the component
      */
@@ -301,7 +301,7 @@ public final class ClaraQueries {
 
 
     /**
-     * A query to get the runtime data of the registered CLARA components.
+     * A query to get the runtime data of the registered Clara components.
      *
      * @param <T> The runtime data class of the components
      */
@@ -324,7 +324,7 @@ public final class ClaraQueries {
 
 
     /**
-     * A query to get the runtime data of a specific CLARA component.
+     * A query to get the runtime data of a specific Clara component.
      *
      * @param <T> The runtime data class of the component
      */
@@ -347,7 +347,7 @@ public final class ClaraQueries {
 
 
     /**
-     * Builds a request to query the CLARA registration and runtime database.
+     * Builds a request to query the Clara registration and runtime database.
      */
     public static class ClaraQueryBuilder {
 

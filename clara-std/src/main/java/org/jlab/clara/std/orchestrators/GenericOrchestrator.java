@@ -400,7 +400,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
      */
     protected void printStartup() {
         System.out.println("==========================================");
-        System.out.println("            CLARA Orchestrator            ");
+        System.out.println("            Clara Orchestrator            ");
         System.out.println("==========================================");
         System.out.println(" Front-end        = " + setup.frontEnd);
         System.out.println(" Start time       = " + ClaraUtil.getCurrentTime());
@@ -795,7 +795,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
                 + OptUtils.optionHelp("-L",
                         "Stage input files in the local file-system.")
                 + OptUtils.optionHelp(frontEnd, "frontEnd",
-                        "The name of the CLARA front-end DPE")
+                        "The name of the Clara front-end DPE")
                 + OptUtils.optionHelp(session, "session",
                         "The session name to filter worker DPEs")
                 + OptUtils.optionHelp(inputDir, "inputDir",

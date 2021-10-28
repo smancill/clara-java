@@ -313,7 +313,7 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
     /**
      * Reads an event from the input file.
      * The event should be a Java object with the same type as the one defined
-     * by the CLARA engine data-type returned by {@link #getDataType()}.
+     * by the Clara engine data-type returned by {@link #getDataType()}.
      *
      * @param eventNumber the index of the event in the file (starts from zero)
      * @return the read event as a Java object
@@ -322,7 +322,7 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
     protected abstract Object readEvent(int eventNumber) throws EventReaderException;
 
     /**
-     * Gets the CLARA engine data-type for the type of the events.
+     * Gets the Clara engine data-type for the type of the events.
      * The data-type will be used to serialize the events when the engine data
      * result needs to be sent to services over the network.
      *

@@ -11,7 +11,7 @@ import org.jline.reader.Completer;
 import java.io.PrintWriter;
 
 /**
- * A command that can be executed by the CLARA shell.
+ * A command that can be executed by the Clara shell.
  * <p>
  * The {@link CommandUtils} class provides helper methods to wrap existing CLI
  * programs as subprocesses that will be started when executing the command.

@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Correlates CLARA condition with the set of routing statements.
+ * Correlates Clara condition with the set of routing statements.
  *
  * @author gurjyan
  * @version 4.x

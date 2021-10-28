@@ -9,7 +9,7 @@ package org.jlab.clara.base;
 import static org.jlab.clara.msg.core.Topic.SEPARATOR;
 
 /**
- * Unique identifier of a CLARA service.
+ * Unique identifier of a Clara service.
  * <p>
  * The canonical name for a service has the following structure:
  * <pre>

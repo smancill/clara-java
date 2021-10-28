@@ -53,7 +53,7 @@ abstract class AbstractActor {
     }
 
     /**
-     * Initializes the CLARA actor.
+     * Initializes the Clara actor.
      */
     abstract void initialize() throws ClaraException;
 

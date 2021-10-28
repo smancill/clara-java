@@ -10,7 +10,7 @@ import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.util.ArgUtils;
 
 /**
- * The address of a CLARA data-ring.
+ * The address of a Clara data-ring.
  */
 public class DataRingTopic {
 

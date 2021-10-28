@@ -36,7 +36,7 @@ import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 
 /**
- * An interactive shell to run CLARA DPEs and orchestrators.
+ * An interactive shell to run Clara DPEs and orchestrators.
  */
 public final class ClaraShell implements AutoCloseable {
 
@@ -89,7 +89,7 @@ public final class ClaraShell implements AutoCloseable {
 
 
     /**
-     * Creates a new builder of a CLARA shell instance.
+     * Creates a new builder of a Clara shell instance.
      *
      * @return the builder
      */
@@ -172,7 +172,7 @@ public final class ClaraShell implements AutoCloseable {
         }
 
         /**
-         * Adds a new builtin command to the CLARA shell session.
+         * Adds a new builtin command to the Clara shell session.
          * This new command cannot have the same name as one of the default
          * builtin commands.
          *
@@ -192,7 +192,7 @@ public final class ClaraShell implements AutoCloseable {
         }
 
         /**
-         * Adds a new builtin command to the CLARA shell session.
+         * Adds a new builtin command to the Clara shell session.
          * This new command cannot have the same name as one of the default
          * builtin commands.
          *
@@ -211,7 +211,7 @@ public final class ClaraShell implements AutoCloseable {
         }
 
         /**
-         * Adds a new builtin command to the CLARA shell session.
+         * Adds a new builtin command to the Clara shell session.
          * This new command cannot have the same name as one of the default
          * builtin commands.
          *
@@ -238,7 +238,7 @@ public final class ClaraShell implements AutoCloseable {
         }
 
         /**
-         * Creates the user-interactive CLARA shell instance.
+         * Creates the user-interactive Clara shell instance.
          *
          * @return the created shell
          */

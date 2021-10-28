@@ -48,7 +48,7 @@ message MetaData {
     // Service engine execution time
     optional sfixed64 executionTime = 11;
 
-    // Reserved and used to define which of the CLARA interface
+    // Reserved and used to define which of the Clara interface
     // methods must be called on a service engine.
     optional ControlAction action = 12;
 

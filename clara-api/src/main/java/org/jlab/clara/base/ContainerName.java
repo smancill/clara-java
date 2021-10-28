@@ -9,7 +9,7 @@ package org.jlab.clara.base;
 import static org.jlab.clara.msg.core.Topic.SEPARATOR;
 
 /**
- * Unique identifier of a CLARA container.
+ * Unique identifier of a Clara container.
  * <p>
  * The canonical name for a container has the following structure:
  * <pre>

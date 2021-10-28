@@ -37,7 +37,7 @@ public final class EnvUtils {
     /**
      * Gets the value of the CLARA_HOME environment variable.
      *
-     * @return the CLARA home directory
+     * @return the Clara home directory
      */
     public static String claraHome() {
         String claraHome = System.getenv("CLARA_HOME");
@@ -50,7 +50,7 @@ public final class EnvUtils {
     /**
      * Gets the user account name.
      *
-     * @return the account name of the user running CLARA.
+     * @return the account name of the user running Clara.
      */
     public static String userName() {
         String userName = System.getProperty("user.name");
@@ -66,7 +66,7 @@ public final class EnvUtils {
     /**
      * Gets the user home directory.
      *
-     * @return the home directory of the user running CLARA.
+     * @return the home directory of the user running Clara.
      */
     public static String userHome() {
         String userHome = System.getProperty("user.home");

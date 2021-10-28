@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 
 
 /**
- * A CLARA composition of services.
+ * A Clara composition of services.
  * The orchestrator should send a request to the first service of the
  * composition, and the output of each service will be sent to the next service
  * in the composition, until all are executed.

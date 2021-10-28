@@ -36,7 +36,7 @@ class ShowCommand extends BaseCommand {
             addSubCommand(FarmCommands.ShowFarmStatus::new);
             addSubCommand(FarmCommands.ShowFarmSub::new);
         }
-        addSubCommand("version", args -> showVersion(), "Show CLARA version.");
+        addSubCommand("version", args -> showVersion(), "Show Clara version.");
     }
 
     private int showConfig() {

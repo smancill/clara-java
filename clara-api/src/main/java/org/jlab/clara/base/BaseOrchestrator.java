@@ -72,7 +72,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * Creates a new orchestrator.
      * Uses a random name and receives the location of the front-end.
      *
-     * @param frontEnd use this front-end for communication with the CLARA cloud
+     * @param frontEnd use this front-end for communication with the Clara cloud
      * @throws java.io.UncheckedIOException if localhost could not be obtained
      */
     public BaseOrchestrator(DpeName frontEnd) {
@@ -83,7 +83,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * Creates a new orchestrator.
      * Uses a random name and receives the location of the front-end.
      *
-     * @param frontEnd use this front-end for communication with the CLARA cloud
+     * @param frontEnd use this front-end for communication with the Clara cloud
      * @param subPoolSize set the size of the pool for processing subscriptions on background
      */
     public BaseOrchestrator(DpeName frontEnd, int subPoolSize) {
@@ -94,7 +94,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * Creates a new orchestrator.
      *
      * @param name the identification of this orchestrator
-     * @param frontEnd use this front-end for communication with the CLARA cloud
+     * @param frontEnd use this front-end for communication with the Clara cloud
      * @param subPoolSize set the size of the pool for processing subscriptions on background
      */
     public BaseOrchestrator(String name, DpeName frontEnd, int subPoolSize) {
@@ -217,7 +217,7 @@ public class BaseOrchestrator implements AutoCloseable {
     /**
      * Returns a request builder to configure the given service.
      *
-     * @param service the CLARA service to be configured
+     * @param service the Clara service to be configured
      * @return a builder to choose how to configure the service
      *         (with data, with report frequency, etc)
      */
@@ -231,7 +231,7 @@ public class BaseOrchestrator implements AutoCloseable {
     /**
      * Returns a request builder to execute the given service.
      *
-     * @param service the CLARA service to be executed
+     * @param service the Clara service to be executed
      * @return a builder to setup the execution request
      *         (with data, data types, etc)
      */
@@ -244,7 +244,7 @@ public class BaseOrchestrator implements AutoCloseable {
     /**
      * Returns a request builder to execute the given composition.
      *
-     * @param composition the CLARA composition to be executed
+     * @param composition the Clara composition to be executed
      * @return a builder to to configure the execute request
      *         (with data, data types, etc)
      */

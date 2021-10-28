@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 /**
- * CLARA dynamic class loader.
+ * Clara dynamic class loader.
  *
  * @author gurjyan
  * @version 4.x
@@ -37,7 +37,7 @@ class EngineLoader {
                 validateEngine(engine);
                 return engine;
             } else {
-                throw new ClaraException("not a CLARA engine: " + className);
+                throw new ClaraException("not a Clara engine: " + className);
             }
         } catch (ClassNotFoundException e) {
             throw new ClaraException("class not found: " + className);

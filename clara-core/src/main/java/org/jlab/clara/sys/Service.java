@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A CLARA service listening and executing requests.
+ * A Clara service listening and executing requests.
  * <p>
  * An internal object pool contains N number of {@link ServiceEngine} objects,
  * where N is user specified value (usually equals to the number of cores).
@@ -65,7 +65,7 @@ class Service extends AbstractActor {
         name = comp.getCanonicalName();
         sysConfig = new ServiceSysConfig(name, comp.getInitialState());
 
-        // Dynamic loading of the CLARA engine class
+        // Dynamic loading of the Clara engine class
         // Note: using system class loader
         EngineLoader cl = new EngineLoader(ClassLoader.getSystemClassLoader());
         userEngine = cl.load(comp.getEngineClass());
@@ -203,7 +203,7 @@ class Service extends AbstractActor {
 
     private void printUnhandledException(Exception e) {
         StringWriter errors = new StringWriter();
-        errors.write(name + ": CLARA error: ");
+        errors.write(name + ": Clara error: ");
         e.printStackTrace(new PrintWriter(errors));
         System.err.println(errors.toString());
     }

@@ -28,7 +28,7 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 /**
- * Listen to reports published to the CLARA data-ring.
+ * Listen to reports published to the Clara data-ring.
  */
 public class MonitorOrchestrator implements AutoCloseable {
 
@@ -85,7 +85,7 @@ public class MonitorOrchestrator implements AutoCloseable {
 
 
     /**
-     * Create a new monitor orchestrator to a default CLARA data-ring in the localhost.
+     * Create a new monitor orchestrator to a default Clara data-ring in the localhost.
      */
     public MonitorOrchestrator() {
         this(getDataRing());
@@ -93,9 +93,9 @@ public class MonitorOrchestrator implements AutoCloseable {
 
 
     /**
-     * Create a new monitor orchestrator to the given CLARA data-ring.
+     * Create a new monitor orchestrator to the given Clara data-ring.
      *
-     * @param address the address of the CLARA data-ring
+     * @param address the address of the Clara data-ring
      */
     public MonitorOrchestrator(DataRingAddress address) {
         orchestrator = new BaseOrchestrator(getRingAsDpe(address), getPoolSize());

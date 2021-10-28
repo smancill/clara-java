@@ -1,4 +1,4 @@
-# CLARA
+# Clara
 
 A micro-services framework to provide a heterogeneous computing environment for efficient
 Big Data processing.
@@ -6,7 +6,7 @@ Big Data processing.
 
 ## Build notes
 
-CLARA requires the Java 15 JDK.
+Clara requires the Java 15 JDK.
 Prefer [AdoptOpenJDK](https://adoptopenjdk.net/) for Java binaries,
 and a Java version manager to install and switch JDKs.
 
@@ -45,12 +45,12 @@ or [Homebrew](https://brew.sh/) with the [AdoptOpenJDK TAP] for macOS.
 
 ### Installation
 
-To build CLARA use the provided [Gradle](https://gradle.org/) wrapper.
-It will download the required Gradle version and all the CLARA dependencies.
+To build Clara use the provided [Gradle](https://gradle.org/) wrapper.
+It will download the required Gradle version and all the Clara dependencies.
 
     $ ./gradlew
 
-To install the CLARA artifact to the local Maven repository:
+To install the Clara artifact to the local Maven repository:
 
     $ ./gradlew install
 
@@ -61,7 +61,7 @@ To deploy the binary distribution to `$CLARA_HOME`:
 
 ### Importing the project into your IDE
 
-Gradle can generate the required configuration files to import the CLARA
+Gradle can generate the required configuration files to import the Clara
 project into [Eclipse](https://eclipse.org/ide/) and
 [IntelliJ IDEA](https://www.jetbrains.com/idea/):
 
@@ -82,7 +82,7 @@ and the [Intellij IDEA Gradle Help](https://www.jetbrains.com/help/idea/2016.2/g
 
 ## License
 
-CLARA is licensed under the [Apache License, Version 2.0](./LICENSES/Apache-2.0.txt).
+Clara is licensed under the [Apache License, Version 2.0](./LICENSES/Apache-2.0.txt).
 
 This project also includes code from the [SLF4J](http://www.slf4j.org/) authors,
 licensed under the [MIT License](./LICENSES/MIT.txt).

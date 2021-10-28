@@ -10,7 +10,7 @@ import org.jlab.clara.base.DpeRegistrationData;
 import org.jlab.clara.base.DpeRuntimeData;
 
 /**
- * Handles the reports published by CLARA DPEs.
+ * Handles the reports published by Clara DPEs.
  */
 public interface DpeReportHandler extends AutoCloseable {
 

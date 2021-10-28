@@ -12,7 +12,7 @@ import org.jlab.clara.engine.EngineDataType;
 import java.util.Set;
 
 /**
- * Handles the reports published by CLARA services.
+ * Handles the reports published by Clara services.
  */
 public interface EngineReportHandler extends AutoCloseable {
 

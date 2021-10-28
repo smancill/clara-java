@@ -44,12 +44,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
 /**
- * CLARA data processing environment. It can play the role of the Front-End
+ * Clara data processing environment. It can play the role of the Front-End
  * (FE), which is the static point of the entire cloud. It creates and manages
  * the registration database (local and case of being assigned as an FE: global
  * database). Note this is a copy of the subscribers database resident in the
  * registration database. This also creates a shared memory for
- * communicating CLARA transient data objects between services within the same
+ * communicating Clara transient data objects between services within the same
  * process (this avoids data serialization and de-serialization).
  *
  * @author gurjyan
@@ -145,8 +145,8 @@ public final class Dpe extends AbstractActor {
          * orchestrators to find running worker DPEs and engines.
          * <p>
          * A front-end DPE is also a worker DPE that can run user engines,
-         * so it is recommended to run a front-end when using CLARA on a local box.
-         * In multi-node CLARA distributions it is mostly used a discovery and
+         * so it is recommended to run a front-end when using Clara on a local box.
+         * In multi-node Clara distributions it is mostly used a discovery and
          * gateway for workers DPEs.
          */
         public Builder() {
@@ -160,7 +160,7 @@ public final class Dpe extends AbstractActor {
          * A worker DPE mainly runs user engines as part of a cloud of DPEs.
          * All worker DPEs must register with the main front-end DPE.
          * <p>
-         * When running CLARA on single node, a front-end DPE must be used
+         * When running Clara on single node, a front-end DPE must be used
          * instead of a worker DPE.
          *
          * @param frontEndHost the host address of the front-end
@@ -174,7 +174,7 @@ public final class Dpe extends AbstractActor {
          * A worker DPE mainly runs user engines as part of a cloud of DPEs.
          * All worker DPEs must register with the main front-end DPE.
          * <p>
-         * When running CLARA on single node, a front-end DPE must be used
+         * When running Clara on single node, a front-end DPE must be used
          * instead of a worker DPE.
          *
          * @param frontEndHost the host address of the front-end
@@ -496,9 +496,9 @@ public final class Dpe extends AbstractActor {
     private void printLogo() {
         System.out.println("==========================================");
         if (isFrontEnd.get()) {
-            System.out.println("               CLARA FE/DPE               ");
+            System.out.println("               Clara FE/DPE               ");
         } else {
-            System.out.println("                CLARA DPE                 ");
+            System.out.println("                Clara DPE                 ");
         }
         System.out.println("==========================================");
         System.out.println(" Name             = " + base.getName());

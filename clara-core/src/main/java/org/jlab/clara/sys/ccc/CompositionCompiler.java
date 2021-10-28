@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * CLARA compiler. Compiles the application logical description, i.e.
+ * Clara compiler. Compiles the application logical description, i.e.
  * simple/conditional routing schema in a sets of instructions for a specified
  * service. Below is an example of the application code, written in the
- * specific CLARA language:
+ * specific Clara language:
  * <pre>
  * S1 + S2;
  * if ( S1 == "abc" && S2 != "xyz") {
@@ -67,14 +67,14 @@ public class CompositionCompiler {
                                          + "(?:," + SERV_NAME + ")*)*)";
 
     /**
-     * CLARA simple Condition. Example:
+     * Clara simple Condition. Example:
      * <li>{@code Service == "state_name}"</li>
      * <li>{@code Service != "state_name"</li>
      */
     public static final String SIMP_COND = SERV_NAME + "(?:==|!=)\"" + WORD + "\"";
 
     /**
-     * CLARA complex Condition. Example:
+     * Clara complex Condition. Example:
      * <li>{@code (Service1 == "state_name1" && Service2 == "state_name2)}</li>
      * <li>{@code (Service1 == "state_name1" !!
      *             Service2 == "state_name2" !!
@@ -83,7 +83,7 @@ public class CompositionCompiler {
     public static final String COMP_COND = SIMP_COND + "(?:(?:&&|!!)" + SIMP_COND + ")*";
 
     /**
-     * CLARA conditional statement.
+     * Clara conditional statement.
      */
     public static final String COND = "(?:(?:\\}?if|\\}elseif)\\(" + COMP_COND + "\\)\\{"
                                     + STATEMENT + ")|(?:\\}else\\{" + STATEMENT + ")";
@@ -115,7 +115,7 @@ public class CompositionCompiler {
         String pCode = noBlanks(iCode);
 
         // split single string program using
-        // CLARA ; end of statement operator
+        // Clara ; end of statement operator
         // in case of the conditional statements the }
         // scope operator can be the first after tokenize with,
         // so preProcess will take of that too.
@@ -175,7 +175,7 @@ public class CompositionCompiler {
     }
 
     /**
-     * Tokenize code by CLARA end of statement operator ";".
+     * Tokenize code by Clara end of statement operator ";".
      *
      * @param pCode code string
      * @return set of tokens, including simple routing statements as well as conditionals
@@ -183,7 +183,7 @@ public class CompositionCompiler {
      */
     private Set<String> preProcess(String pCode) throws ClaraException {
         if (!pCode.contains(";") && !pCode.endsWith(";")) {
-            throw new ClaraException("Syntax error in the CLARA routing program. "
+            throw new ClaraException("Syntax error in the Clara routing program. "
                     + "Missing end of statement operator = \";\"");
         }
         Set<String> r = new LinkedHashSet<>();
@@ -231,7 +231,7 @@ public class CompositionCompiler {
                 instructions.add(ti);
                 b = true;
             } else {
-                throw new ClaraException("Syntax error in the CLARA routing program. "
+                throw new ClaraException("Syntax error in the Clara routing program. "
                         + "Malformed routing statement");
             }
         } catch (PatternSyntaxException e) {
@@ -264,7 +264,7 @@ public class CompositionCompiler {
             }
             b = true;
         } else {
-            throw new ClaraException("Syntax error in the CLARA routing program. "
+            throw new ClaraException("Syntax error in the Clara routing program. "
                     + "Malformed routing statement");
         }
 
@@ -306,11 +306,11 @@ public class CompositionCompiler {
                     ti.addElseCondStatement(ts);
                 }
             } catch (StringIndexOutOfBoundsException e) {
-                throw new ClaraException("Syntax error in the CLARA routing program. "
+                throw new ClaraException("Syntax error in the Clara routing program. "
                             + "Missing parenthesis");
             }
         } else {
-            throw new ClaraException("Syntax error in the CLARA routing program. "
+            throw new ClaraException("Syntax error in the Clara routing program. "
                     + "Malformed conditional statement");
         }
         return ti;

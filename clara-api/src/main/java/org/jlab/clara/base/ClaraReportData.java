@@ -9,7 +9,7 @@ package org.jlab.clara.base;
 interface ClaraReportData<T extends ClaraName> {
 
     /**
-     * Gets the CLARA canonical name.
+     * Gets the Clara canonical name.
      *
      * @return the canonical name
      */

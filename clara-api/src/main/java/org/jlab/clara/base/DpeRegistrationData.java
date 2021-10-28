@@ -69,7 +69,7 @@ public class DpeRegistrationData implements ClaraReportData<DpeName> {
      * Gets the local value of the <code>$CLARA_HOME</code> environment variable
      * used by the DPE.
      *
-     * @return the local path of the CLARA installation for the DPE
+     * @return the local path of the Clara installation for the DPE
      */
     public String claraHome() {
         return claraHome;
