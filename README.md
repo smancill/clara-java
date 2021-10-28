@@ -6,7 +6,7 @@ Big Data processing.
 
 ## Build notes
 
-CLARA requires the Java 14 JDK.
+CLARA requires the Java 15 JDK.
 Prefer [AdoptOpenJDK](https://adoptopenjdk.net/) for Java binaries,
 and a Java version manager to install and switch JDKs.
 
@@ -22,23 +22,23 @@ With [SDKMAN!]:
 
 ``` console
 $ sdk list java
-$ sdk install java 14.0.1.hs-adpt       # there may be a newer version listed above
-$ sdk use java 14.0.1.hs-adpt
+$ sdk install java 15.0.2.hs-adpt       # there may be a newer version listed above
+$ sdk use java 15.0.2.hs-adpt
 ```
 
 With [Jabba]:
 
 ``` console
 $ jabba ls-remote
-$ jabba install adopt@1.14.0-1          # there may be a newer version listed above
-$ jabba use adopt@1.14.0-1
+$ jabba install adopt@1.15.0-2          # there may be a newer version listed above
+$ jabba use adopt@1.15.0-2
 ```
 
-To install [AdoptOpenJDK 14] system wide,
+To install [AdoptOpenJDK 15] system wide,
 use the [AdoptOpenJDK DEB repo] for Ubuntu,
 or [Homebrew](https://brew.sh/) with the [AdoptOpenJDK TAP] for macOS.
 
-[AdoptOpenJDK 14]: https://adoptopenjdk.net/releases.html?variant=openjdk14&jvmVariant=hotspot
+[AdoptOpenJDK 15]: https://adoptopenjdk.net/releases.html?variant=openjdk15&jvmVariant=hotspot
 [AdoptOpenJDK DEB repo]: https://adoptopenjdk.net/installation.html#linux-pkg-deb
 [AdoptOpenJDK TAP]: https://github.com/AdoptOpenJDK/homebrew-openjdk
 
