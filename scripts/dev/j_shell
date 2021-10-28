@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 resources_dir=./clara-shell/src/main/resources
 
 export CLARA_COMMAND_WRAPPER=${resources_dir}/lib/cmd-wrapper

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: MIT-0
+
 FROM openjdk:8-jdk-slim AS build
 
 ARG DEBIAN_FRONTEND=noninteractive

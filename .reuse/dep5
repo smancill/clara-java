@@ -1,0 +1,49 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Clara Framework
+Upstream-Contact: Sebastián Mancilla <smancill@smancill.dev>
+Source: https://github.com/smancill/clara-java
+
+# shell templates
+Files: clara-shell/*/templates/*.ftl
+Copyright: © The Clara Framework Authors
+License: MIT-0
+
+# test resources
+Files: */test/resources/*
+Copyright: © The Clara Framework Authors
+License: MIT-0
+
+# misc
+Files: .dockerignore .gitignore .mailmap README.md */README
+Copyright: © The Clara Framework Authors
+License: MIT-0
+
+
+# sl4j-simple
+
+# Fix undetected license
+# Proper copyright is in the header of each file
+Files: clara-api/src/main/java/org/jlab/clara/util/logging/*.java
+Copyright:
+License: MIT
+
+# Fix missing copyright
+Files: clara-api/src/main/java/org/jlab/clara/util/logging/OutputChoice.java
+Copyright: Copyright (c) 2017 QOS.ch
+License: MIT
+
+# Do not overwrite license of file owned by us
+Files: clara-api/src/main/java/org/jlab/clara/util/logging/LoggerFactory.java
+Copyright:
+License: Apache-2.0
+
+
+# Gradle wrapper
+Files: gradlew gradlew.bat gradle/wrapper/gradle-wrapper.jar
+Copyright:
+License: Apache-2.0
+
+Files: gradle/wrapper/gradle-wrapper.jar
+       gradle/wrapper/gradle-wrapper.properties
+Copyright: Copyright (2015) the original author or authors.
+License: Apache-2.0

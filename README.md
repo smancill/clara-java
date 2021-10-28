@@ -78,3 +78,11 @@ and the [Intellij IDEA Gradle Help](https://www.jetbrains.com/help/idea/2016.2/g
 * Vardan Gyurjyan
 * Sebastián Mancilla
 * Ricardo Oyarzún
+
+
+## License
+
+CLARA is licensed under the [Apache License, Version 2.0](./LICENSES/Apache-2.0.txt).
+
+This project also includes code from the [SLF4J](http://www.slf4j.org/) authors,
+licensed under the [MIT License](./LICENSES/MIT.txt).

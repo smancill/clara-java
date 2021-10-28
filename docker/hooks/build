@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: © The Clara Framework Authors
+#
+# SPDX-License-Identifier: MIT-0
+
 set -e
 
 DEV_TAG=claradk-$CACHE_TAG
