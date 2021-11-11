@@ -207,6 +207,7 @@ project(':clara-msg') {
 
     sourcesJar {
         from generatedProtoDir
+        dependsOn jar
     }
 
     javadoc {
@@ -334,7 +335,7 @@ configure(subprojectList) {
         }
     }
 
-    jar.dependsOn generateVersionProperties
+    classes.dependsOn generateVersionProperties
 }
 
 //////////////////////////////////////////////////////////////////////////////
