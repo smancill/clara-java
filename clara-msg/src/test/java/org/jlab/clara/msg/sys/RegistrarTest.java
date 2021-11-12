@@ -37,6 +37,8 @@ public class RegistrarTest {
     private final Set<RegData> registration = new HashSet<>();
     private final String name = "registrar_test";
 
+    private final Random randomGen = new Random();
+
     @Test
     public void testRegistrationDataBase() throws Exception {
         RegistrarWrapper registrar = new RegistrarWrapper();
@@ -100,7 +102,7 @@ public class RegistrarTest {
     public void removeRandom(int size) throws ClaraMsgException {
         System.out.println("INFO: Removing " + size + " random actors...");
 
-        int first = new Random().nextInt(registration.size() - size);
+        int first = randomGen.nextInt(registration.size() - size);
         int end = first + size;
         int i = 0;
         Iterator<RegData> it = registration.iterator();
