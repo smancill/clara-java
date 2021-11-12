@@ -181,7 +181,7 @@ public class EngineData {
     /**
      * Gets the canonical name of the engine that returned this data, if any.
      * <p>
-     * This value will be set only when the data is the result of a engine
+     * This value will be set only when the data is the result of an engine
      * request, and it can be obtained by the next service in a composition or
      * by the monitoring orchestrators.
      *
@@ -195,7 +195,7 @@ public class EngineData {
     /**
      * Gets the version of the engine that returned this data, if any.
      * <p>
-     * This value will be set only when the data is the result of a engine
+     * This value will be set only when the data is the result of an engine
      * request, and it can be obtained by the next service in a composition or
      * by the monitoring orchestrators.
      *
@@ -248,7 +248,7 @@ public class EngineData {
     /**
      * Gets the state of the execution result set by the engine, if any.
      * <p>
-     * This value will be set only when the data is the result of a engine,
+     * This value will be set only when the data is the result of an engine,
      * and it is used in composition requests to route the data to the next
      * service in the composition.
      *
@@ -278,7 +278,7 @@ public class EngineData {
      * {@link Engine#configure configure} or {@link Engine#execute execute}
      * method of the engine that created this data.
      * <p>
-     * This value will be set only when the data is the result of a engine
+     * This value will be set only when the data is the result of an engine
      * request, and it can be obtained by the next service in a composition or
      * by the monitoring orchestrators.
      *

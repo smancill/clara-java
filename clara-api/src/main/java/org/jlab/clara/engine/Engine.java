@@ -75,7 +75,7 @@ public interface Engine {
      * to provide advanced routing of the execution outputs.
      *
      * @return a set with the possible states for the engine results,
-     *         it can be null or empty if the engine doesn't uses states
+     *         it can be null or empty if the engine doesn't use states
      */
     Set<String> getStates();
 
@@ -104,18 +104,18 @@ public interface Engine {
     String getVersion();
 
     /**
-     * Gets the author(s) of the engine. Authors are responsible of developing
+     * Gets the author(s) of the engine. Authors are responsible for developing
      * and maintaining a service engine.
      * <p>
      * This information should provide at least a name and a contact email.
      *
-     * @return an string listing the author(s) of the engine.
+     * @return a string listing the author(s) of the engine.
      */
     String getAuthor();
 
     /**
      * Resets this engine to its initial setup. It should at least revert
-     * any changes done by configuration requests and side-effects of execute
+     * any changes done by configuration requests and side effects of execute
      * requests.
      */
     void reset();

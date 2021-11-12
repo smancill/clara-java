@@ -95,7 +95,7 @@ public class Config {
     public static final String MAX_EVENTS = "maxEvents";
 
     /**
-     * The variable for the the JVM heap size used by the DPE.
+     * The variable for the JVM heap size used by the DPE.
      */
     public static final String JAVA_MEMORY = "javaMemory";
 

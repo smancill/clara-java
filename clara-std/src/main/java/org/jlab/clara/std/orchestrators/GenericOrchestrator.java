@@ -160,7 +160,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
         /**
          * Sets the session used by the DPEs of interest.
-         * The orchestrator will connect an use only the DPEs registered with
+         * The orchestrator will connect to and use only the DPEs registered with
          * the given session, ignoring all others.
          *
          * @param session the session of interest

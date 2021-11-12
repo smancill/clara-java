@@ -32,7 +32,7 @@ import java.util.StringTokenizer;
  * receive messages published to that topic. To filter topics, the three  parts
  * form a hierarchy, and all topics with the same prefix will be accepted.
  * <p>
- * In other words, a subscriber listening for an specific "domain" will receive
+ * In other words, a subscriber listening for a specific "domain" will receive
  * all messages whose topic starts with that domain, no matter the subject and
  * the type. For example, if the subscription topic is {@code "A"}, then all the
  * messages with the following topics will be received:
@@ -48,7 +48,7 @@ import java.util.StringTokenizer;
  * More specific subscriptions will not receive messages that match only the
  * parent parts of the topic.
  * Thus, subscription to {@code "A:B"} will accept {@code "A:B"}, {@code
- * "A:B:1"}, {@code "A:B:2"}, etc, but will reject {@code "A"} or {@code "A:C"}.
+ * "A:B:1"}, {@code "A:B:2"}, etc., but will reject {@code "A"} or {@code "A:C"}.
  * Similarly, a subscription to {@code "A:B:1"} will only accept that exact
  * topic, rejecting {@code "A:B:2"}, {@code "A:C"}, {@code "A"}, etc.
  */
@@ -151,7 +151,7 @@ public final class Topic {
     }
 
     /**
-     * Use the given data as an topic.
+     * Use the given data as a topic.
      * This factory method is provided as a shortcut to get the topic from a 0MQ
      * frame.
      *

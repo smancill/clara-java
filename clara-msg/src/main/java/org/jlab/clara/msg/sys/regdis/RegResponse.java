@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * A wrapper for a response to a registration or discovery request.
  * <p>
- * A response of the {@link RegService registration service} can be an
+ * A response of the {@link RegService registration service} can be a
  * string indicating that the request was successful, a set of registration data
  * in case a discovery request was received, or an error description indicating
  * that something wrong happened with the request.

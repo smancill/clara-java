@@ -278,7 +278,7 @@ public final class ClaraComponent {
 
     /**
      * Creates and returns Clara DPE component from the Clara component
-     * canonical name.. DPE default pool-size = 1 is used.
+     * canonical name. DPE default pool-size = 1 is used.
      *
      * @param canonicalName The canonical name of a component
      * @param description textual description of the DPE
@@ -296,7 +296,7 @@ public final class ClaraComponent {
 
     /**
      * Creates and returns Clara DPE component from the Clara component
-     * canonical name.. DPE default pool-size = 1 is used, leaving description
+     * canonical name. DPE default pool-size = 1 is used, leaving description
      * of the DPE undefined.
      *
      * @param canonicalName The canonical name of a component
@@ -595,12 +595,12 @@ public final class ClaraComponent {
     }
 
     /**
-     * Note. candidate to be deprecated. Do not use to define the
+     * Note: candidate to be deprecated. Do not use to define the
      * canonical names for DPE, container or service.
      *
      * The canonical name of a Clara component is defined internally,
      * yet this method is used to set the name of an orchestrator, which
-     * considers to be non critical.
+     * considers to be non-critical.
      *
      * @param canonicalName canonical name
      */

@@ -201,7 +201,7 @@ public class Proxy {
 
 
     /**
-     * The proxy forwards pub/sub communications.
+     * The proxy forwarding pub/sub communications.
      */
     private class ProxyImpl implements Runnable {
 
@@ -376,7 +376,7 @@ public class Proxy {
     private static class Listener implements IAttachedRunnable {
         @Override
         public void run(Object[] args, ZContext ctx, Socket pipe) {
-            //  Print everything that arrives on pipe
+            //  Print everything that arrives at the pipe
             while (true) {
                 try {
                     ZMsg msg = ZMsg.recvMsg(pipe);
