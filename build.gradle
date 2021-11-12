@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 plugins {
-    id 'com.google.protobuf' version '0.8.15' apply false
+    id 'com.google.protobuf' version '0.8.17' apply false
     id 'com.github.spotbugs' version '4.7.9' apply false
 }
 
