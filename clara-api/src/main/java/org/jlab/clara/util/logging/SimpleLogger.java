@@ -166,6 +166,7 @@ public class SimpleLogger implements Logger {
         }
     }
 
+    @SuppressWarnings("removal")
     private static void loadProperties() {
         // Add props from the resource simplelogger.properties
         InputStream in = AccessController.doPrivileged((PrivilegedAction<InputStream>) () -> {

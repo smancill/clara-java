@@ -67,6 +67,7 @@ public final class Util {
      * protected method, we add this wrapper which allows the method to be visible
      * inside this package.
      */
+    @SuppressWarnings("removal")
     private static final class ClassContextSecurityManager extends SecurityManager {
         @Override
         protected Class<?>[] getClassContext() {
