@@ -508,7 +508,7 @@ configure(subprojectList) {
     }
 
     codenarc {
-        toolVersion = '2.0.0'
+        toolVersion = '2.2.0'
         ignoreFailures = true
         configFile = rootProject.file('config/quality/codenarc.groovy')
         if (ciMode.toBoolean()) {
