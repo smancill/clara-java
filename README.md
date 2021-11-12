@@ -6,8 +6,8 @@ Big Data processing.
 
 ## Build notes
 
-Clara requires the Java 15 JDK.
-Prefer [AdoptOpenJDK](https://adoptopenjdk.net/) for Java binaries,
+Clara requires the [Java 17 JDK](https://whichjdk.com/).
+Prefer [Eclipse Temurin](https://adoptium.net/) for Java binaries,
 and a Java version manager to install and switch JDKs.
 
 [SDKMAN!], [Jabba] or [JEnv] can be used to manage multiple Java versions.
@@ -22,25 +22,25 @@ With [SDKMAN!]:
 
 ``` console
 $ sdk list java
-$ sdk install java 15.0.2.hs-adpt       # there may be a newer version listed above
-$ sdk use java 15.0.2.hs-adpt
+$ sdk install java 17.0.1-tem                   # there may be a newer version listed above
+$ sdk use java 17.0.1-tem
 ```
 
-With [Jabba]:
+With [Jabba] (no Temurin yet):
 
 ``` console
 $ jabba ls-remote
-$ jabba install adopt@1.15.0-2          # there may be a newer version listed above
-$ jabba use adopt@1.15.0-2
+$ jabba install amazon-corretto@1.17.0-0.35.1   # there may be a newer version listed above
+$ jabba use amazon-corretto@1.17.0-0.35.1
 ```
 
-To install [AdoptOpenJDK 15] system wide,
-use the [AdoptOpenJDK DEB repo] for Ubuntu,
-or [Homebrew](https://brew.sh/) with the [AdoptOpenJDK TAP] for macOS.
+To install Java 17 system wide,
+then use the OpenJDK 17 package from the Linux distribution if available,
+or the [Amazon Corretto DEB repo][] for Ubuntu/Debian,
+or [Homebrew](https://brew.sh/) with the [temurin cask] for macOS.
 
-[AdoptOpenJDK 15]: https://adoptopenjdk.net/releases.html?variant=openjdk15&jvmVariant=hotspot
-[AdoptOpenJDK DEB repo]: https://adoptopenjdk.net/installation.html#linux-pkg-deb
-[AdoptOpenJDK TAP]: https://github.com/AdoptOpenJDK/homebrew-openjdk
+[Amazon Corretto DEB repo]: https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/generic-linux-install.html
+[temurin cask]: https://formulae.brew.sh/cask/temurin
 
 
 ### Installation
