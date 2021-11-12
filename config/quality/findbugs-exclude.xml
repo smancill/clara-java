@@ -18,7 +18,8 @@ SPDX-License-Identifier: MIT-0
   <!-- Exclude malicious code category from tests -->
   <Match>
     <Or>
-      <Class name="~.*\.*Test" />
+      <Class name="~.*Test" />
+      <Class name="~.*Spec" />
     </Or>
     <Bug category="MALICIOUS_CODE" />
   </Match>
@@ -49,5 +50,11 @@ SPDX-License-Identifier: MIT-0
     <Source name="~.*\.groovy" />
     <Bug pattern="LI_LAZY_INIT_STATIC" />
     <Field name="$callSiteArray" />
+  </Match>
+
+  <!-- Fix false positive -->
+  <Match>
+    <Class name="~.*ActorUtils" />
+    <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
   </Match>
 </FindBugsFilter>
