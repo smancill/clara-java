@@ -82,15 +82,7 @@ class SystemCommandBuilder {
     }
 
 
-    private static final class Token {
-
-        private final String value;
-        private final boolean split;
-
-        private Token(String value, boolean split) {
-            this.value = value;
-            this.split = split;
-        }
+    private record Token(String value, boolean split) {
 
         @Override
         public String toString() {

@@ -22,7 +22,7 @@ class BenchmarkPrinter {
         Logging.info("Benchmark results:");
         printService(application.getReaderService(), "READER");
         for (ServiceInfo service : application.getDataProcessingServices()) {
-            printService(service, service.name);
+            printService(service, service.name());
         }
         printService(application.getWriterService(), "WRITER");
         printTotal();

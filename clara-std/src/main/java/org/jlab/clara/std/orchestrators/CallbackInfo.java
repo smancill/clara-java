@@ -66,69 +66,7 @@ final class CallbackInfo {
     }
 
 
-    static final class RingTopic {
-
-        final String state;
-        final String session;
-        final String engine;
-
-        RingTopic(String state, String session, String engine) {
-            this.state = state;
-            this.session = session;
-            this.engine = engine;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((engine == null) ? 0 : engine.hashCode());
-            result = prime * result + ((session == null) ? 0 : session.hashCode());
-            result = prime * result + ((state == null) ? 0 : state.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (!(obj instanceof RingTopic other)) {
-                return false;
-            }
-            if (engine == null) {
-                if (other.engine != null) {
-                    return false;
-                }
-            } else if (!engine.equals(other.engine)) {
-                return false;
-            }
-            if (session == null) {
-                if (other.session != null) {
-                    return false;
-                }
-            } else if (!session.equals(other.session)) {
-                return false;
-            }
-            if (state == null) {
-                if (other.state != null) {
-                    return false;
-                }
-            } else if (!state.equals(other.state)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "RingTopic [state=" + state + ", session=" + session + ", engine=" + engine
-                    + "]";
-        }
-    }
+    record RingTopic(String state, String session, String engine) { }
 
 
     interface RingListener {

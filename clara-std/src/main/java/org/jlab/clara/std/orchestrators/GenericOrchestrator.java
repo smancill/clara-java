@@ -507,7 +507,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
                 if (availableNodes.size() == options.maxNodes || ignoreDpe(dpe)) {
                     return;
                 }
-                String nodeName = getHost(dpe.name);
+                String nodeName = getHost(dpe.name());
                 WorkerNode.Builder nodeBuilder = waitingNodes.get(nodeName);
                 if (nodeBuilder == null) {
                     nodeBuilder = new WorkerNode.Builder(application);
@@ -544,7 +544,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         }
 
         private boolean ignoreDpe(DpeInfo dpe) {
-            String dpeNode = getHost(dpe.name);
+            String dpeNode = getHost(dpe.name());
             String feNode = getHost(frontEnd);
             if (options.orchMode == OrchestratorMode.LOCAL) {
                 return !dpeNode.equals(feNode);

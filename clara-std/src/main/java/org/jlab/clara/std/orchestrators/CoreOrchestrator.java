@@ -60,16 +60,16 @@ class CoreOrchestrator {
 
     void deployService(DeployInfo service) {
         try {
-            ContainerName containerName = service.name.container();
+            ContainerName containerName = service.name().container();
             if (!userContainers.contains(containerName)) {
                 deployContainer(containerName);
                 userContainers.add(containerName);
             }
-            base.deploy(service.name, service.classPath).withPoolsize(service.poolSize).run();
-            userServices.put(service.name, service);
+            base.deploy(service.name(), service.classPath()).withPoolsize(service.poolSize()).run();
+            userServices.put(service.name(), service);
         } catch (ClaraException e) {
             String errorMsg = String.format("failed request to deploy service = %s  class = %s",
-                                            service.name, service.classPath);
+                                            service.name(), service.classPath());
             throw new OrchestratorException(errorMsg, e);
         }
     }
@@ -339,13 +339,7 @@ class CoreOrchestrator {
     }
 
 
-    private static class DpeCallbackWrapper implements GenericCallback {
-
-        final DpeCallBack callback;
-
-        DpeCallbackWrapper(DpeCallBack callback) {
-            this.callback = callback;
-        }
+    private record DpeCallbackWrapper(DpeCallBack callback) implements GenericCallback {
 
         @Override
         public void callback(String data) {
