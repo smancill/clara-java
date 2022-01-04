@@ -1,5 +1,7 @@
 # Clara
 
+[![Build status](https://github.com/smancill/clara-java/actions/workflows/build.yaml/badge.svg)](https://github.com/smancill/clara-java/actions/workflows/build.yaml)
+
 A micro-services framework to provide a heterogeneous computing environment for efficient
 Big Data processing.
 
