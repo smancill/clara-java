@@ -495,10 +495,9 @@ class WorkerNode {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof WorkerNode)) {
+        if (!(obj instanceof WorkerNode other)) {
             return false;
         }
-        WorkerNode other = (WorkerNode) obj;
         if (!application.equals(other.application)) {
             return false;
         }

@@ -32,8 +32,7 @@ class EngineLoader {
         try {
             Class<?> aClass = classLoader.loadClass(className);
             Object aInstance = aClass.getDeclaredConstructor().newInstance();
-            if (aInstance instanceof Engine) {
-                Engine engine = (Engine) aInstance;
+            if (aInstance instanceof Engine engine) {
                 validateEngine(engine);
                 return engine;
             } else {

@@ -55,10 +55,9 @@ final class CallbackInfo {
             if (obj == null) {
                 return false;
             }
-            if (!(obj instanceof BaseCallbackInfo)) {
+            if (!(obj instanceof BaseCallbackInfo other)) {
                 return false;
             }
-            BaseCallbackInfo other = (BaseCallbackInfo) obj;
             if (!classPath.equals(other.classPath)) {
                 return false;
             }
@@ -97,10 +96,9 @@ final class CallbackInfo {
             if (obj == null) {
                 return false;
             }
-            if (!(obj instanceof RingTopic)) {
+            if (!(obj instanceof RingTopic other)) {
                 return false;
             }
-            RingTopic other = (RingTopic) obj;
             if (engine == null) {
                 if (other.engine != null) {
                     return false;
@@ -218,10 +216,9 @@ final class CallbackInfo {
             if (!super.equals(obj)) {
                 return false;
             }
-            if (!(obj instanceof RingCallbackInfo)) {
+            if (!(obj instanceof RingCallbackInfo other)) {
                 return false;
             }
-            RingCallbackInfo other = (RingCallbackInfo) obj;
             if (!topic.equals(other.topic)) {
                 return false;
             }
