@@ -61,7 +61,7 @@ class ApplicationInfo {
     }
 
     private Set<ClaraLang> parseLanguages() {
-        return allServices().map(s -> s.lang).collect(Collectors.toSet());
+        return allServices().map(ServiceInfo::lang).collect(Collectors.toSet());
     }
 
     private Stream<ServiceInfo> allServices() {

@@ -179,20 +179,19 @@ class Service extends AbstractActor {
         int value = setup.nextInteger();
         boolean publishReport = value > 0; // 0 is used to cancel reports
         switch (report) {
-            case ClaraConstants.SERVICE_REPORT_DONE:
+            case ClaraConstants.SERVICE_REPORT_DONE -> {
                 sysConfig.setDoneRequest(publishReport);
                 sysConfig.setDoneReportThreshold(value);
                 sysConfig.resetDoneRequestCount();
-                break;
-            case ClaraConstants.SERVICE_REPORT_DATA:
+            }
+            case ClaraConstants.SERVICE_REPORT_DATA -> {
                 sysConfig.setDataRequest(publishReport);
                 sysConfig.setDataReportThreshold(value);
                 sysConfig.resetDataRequestCount();
-                break;
-            case ClaraConstants.SERVICE_REPORT_RING:
+            }
+            case ClaraConstants.SERVICE_REPORT_RING ->
                 sysConfig.setRingRequest(publishReport);
-                break;
-            default:
+            default ->
                 throw new RequestException("Invalid report request: " + report);
         }
         if (msg.hasReplyTopic()) {

@@ -9,7 +9,6 @@ package org.jlab.clara.std.orchestrators;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +16,8 @@ import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.jlab.clara.base.BaseOrchestrator;
 import org.jlab.clara.base.ClaraFilters;
@@ -59,16 +60,16 @@ class CoreOrchestrator {
 
     void deployService(DeployInfo service) {
         try {
-            ContainerName containerName = service.name.container();
+            ContainerName containerName = service.name().container();
             if (!userContainers.contains(containerName)) {
                 deployContainer(containerName);
                 userContainers.add(containerName);
             }
-            base.deploy(service.name, service.classPath).withPoolsize(service.poolSize).run();
-            userServices.put(service.name, service);
+            base.deploy(service.name(), service.classPath()).withPoolsize(service.poolSize()).run();
+            userServices.put(service.name(), service);
         } catch (ClaraException e) {
             String errorMsg = String.format("failed request to deploy service = %s  class = %s",
-                                            service.name, service.classPath);
+                                            service.name(), service.classPath());
             throw new OrchestratorException(errorMsg, e);
         }
     }
@@ -122,13 +123,9 @@ class CoreOrchestrator {
 
     private Set<ServiceName> findMissingServices(Set<ServiceName> services,
                                                  Set<ServiceName> regServices) {
-        Set<ServiceName> missingServices = new HashSet<>();
-        for (ServiceName s : services) {
-            if (!regServices.contains(s)) {
-                missingServices.add(s);
-            }
-        }
-        return missingServices;
+        return services.stream()
+                .filter(Predicate.not(regServices::contains))
+                .collect(Collectors.toSet());
     }
 
 
@@ -159,17 +156,16 @@ class CoreOrchestrator {
 
 
     private void reDeploy(Set<ServiceName> regServices, Set<ServiceName> missingServices) {
+        var regContainers = regServices.stream()
+                .map(ServiceName::container)
+                .collect(Collectors.toSet());
+
         // Remove user containers that were not started
-        Set<ContainerName> regContainers = new HashSet<>();
-        for (ServiceName service : regServices) {
-            regContainers.add(service.container());
-        }
-        for (ServiceName missing : missingServices) {
-            ContainerName cont = missing.container();
-            if (!regContainers.contains(cont)) {
-                userContainers.remove(cont);
-            }
-        }
+        missingServices.stream()
+                .map(ServiceName::container)
+                .filter(Predicate.not(regContainers::contains))
+                .forEach(userContainers::remove);
+
         // Re-deploy missing services
         for (ServiceName missing : missingServices) {
             DeployInfo deployInfo = userServices.get(missing);
@@ -343,13 +339,7 @@ class CoreOrchestrator {
     }
 
 
-    private static class DpeCallbackWrapper implements GenericCallback {
-
-        final DpeCallBack callback;
-
-        DpeCallbackWrapper(DpeCallBack callback) {
-            this.callback = callback;
-        }
+    private record DpeCallbackWrapper(DpeCallBack callback) implements GenericCallback {
 
         @Override
         public void callback(String data) {

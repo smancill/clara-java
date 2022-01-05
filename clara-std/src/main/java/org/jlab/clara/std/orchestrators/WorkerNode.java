@@ -75,14 +75,14 @@ class WorkerNode {
         }
 
         public void addDpe(DpeInfo dpe) {
-            ClaraLang lang = dpe.name.language();
+            ClaraLang lang = dpe.name().language();
             if (!dpes.containsKey(lang)) {
-                Logging.info("Ignoring DPE %s (language not needed)", dpe.name);
+                Logging.info("Ignoring DPE %s (language not needed)", dpe.name());
                 return;
             }
-            DpeInfo prev = dpes.put(dpe.name.language(), dpe);
+            DpeInfo prev = dpes.put(dpe.name().language(), dpe);
             if (prev != null && !prev.equals(dpe)) {
-                Logging.info("Replacing existing DPE %s with %s", prev.name, dpe.name);
+                Logging.info("Replacing existing DPE %s with %s", prev.name(), dpe.name());
             }
             ready = checkReady();
         }
@@ -495,10 +495,9 @@ class WorkerNode {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof WorkerNode)) {
+        if (!(obj instanceof WorkerNode other)) {
             return false;
         }
-        WorkerNode other = (WorkerNode) obj;
         if (!application.equals(other.application)) {
             return false;
         }

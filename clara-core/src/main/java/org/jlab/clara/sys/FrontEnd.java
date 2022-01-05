@@ -166,40 +166,15 @@ class FrontEnd {
                 String cmd = parser.nextString();
 
                 switch (cmd) {
-                    case ClaraConstants.START_DPE:
-                        startDpe(parser, metadata);
-                        break;
-
-                    case ClaraConstants.STOP_REMOTE_DPE:
-                        stopDpe(parser, metadata);
-                        break;
-
-                    case ClaraConstants.SET_FRONT_END_REMOTE:
-                        setFrontEnd(parser, metadata);
-                        break;
-
-                    case ClaraConstants.PING_REMOTE_DPE:
-                        pingDpe(parser, metadata);
-                        break;
-
-                    case ClaraConstants.START_REMOTE_CONTAINER:
-                        startContainer(parser, metadata);
-                        break;
-
-                    case ClaraConstants.STOP_REMOTE_CONTAINER:
-                        stopContainer(parser, metadata);
-                        break;
-
-                    case ClaraConstants.START_REMOTE_SERVICE:
-                        startService(parser, metadata);
-                        break;
-
-                    case ClaraConstants.STOP_REMOTE_SERVICE:
-                        stopService(parser, metadata);
-                        break;
-
-                    default:
-                        break;
+                    case ClaraConstants.START_DPE -> startDpe(parser, metadata);
+                    case ClaraConstants.STOP_REMOTE_DPE -> stopDpe(parser, metadata);
+                    case ClaraConstants.SET_FRONT_END_REMOTE -> setFrontEnd(parser, metadata);
+                    case ClaraConstants.PING_REMOTE_DPE -> pingDpe(parser, metadata);
+                    case ClaraConstants.START_REMOTE_CONTAINER -> startContainer(parser, metadata);
+                    case ClaraConstants.STOP_REMOTE_CONTAINER -> stopContainer(parser, metadata);
+                    case ClaraConstants.START_REMOTE_SERVICE -> startService(parser, metadata);
+                    case ClaraConstants.STOP_REMOTE_SERVICE -> stopService(parser, metadata);
+                    default -> { }
                 }
             } catch (RequestException e) {
                 e.printStackTrace();

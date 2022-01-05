@@ -231,7 +231,7 @@ public class OrchestratorConfigParser {
             ServiceInfo service = parseService(array.getJSONObject(i));
             if (services.contains(service)) {
                 throw error(String.format("duplicated service  name = '%s' container = '%s'",
-                                          service.name, service.cont));
+                                          service.name(), service.cont()));
             }
             services.add(service);
         }

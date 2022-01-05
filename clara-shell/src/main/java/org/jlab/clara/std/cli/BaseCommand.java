@@ -118,8 +118,7 @@ public abstract class BaseCommand extends AbstractCommand {
         allCompleters.add(new StringsCompleter(name));
 
         Completer subCompleter = arg.getCompleter();
-        if (subCompleter instanceof ArgumentCompleter) {
-            ArgumentCompleter argCompleter = (ArgumentCompleter) subCompleter;
+        if (subCompleter instanceof ArgumentCompleter argCompleter) {
             allCompleters.addAll(argCompleter.getCompleters());
         } else {
             allCompleters.add(subCompleter);

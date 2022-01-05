@@ -846,54 +846,25 @@ public final class Dpe extends AbstractActor {
                 RequestParser parser = RequestParser.build(msg);
                 String cmd = parser.nextString();
                 String response = parser.request();
-
+                // checkstyle.off: InnerAssignment
                 switch (cmd) {
-
-                    case ClaraConstants.STOP_DPE:
-                        new Thread(() -> stop()).start();
-                        break;
-
-                    case ClaraConstants.SET_FRONT_END:
-                        setFrontEnd(parser);
-                        break;
-
-                    case ClaraConstants.SET_SESSION:
-                        setSession(parser);
-                        break;
-
-                    case ClaraConstants.PING_DPE:
-                        response = reportService.aliveReport();
-                        break;
-
-                    case ClaraConstants.START_CONTAINER:
-                        startContainer(parser);
-                        break;
-
-                    case ClaraConstants.STOP_CONTAINER:
-                        stopContainer(parser);
-                        break;
-
-                    case ClaraConstants.START_SERVICE:
-                        startService(parser);
-                        break;
-
-                    case ClaraConstants.STOP_SERVICE:
-                        stopService(parser);
-                        break;
-
-                    case ClaraConstants.REPORT_JSON:
-                    case ClaraConstants.REPORT_RUNTIME: // keep it to not break existing clients
-                        response = reportJson(parser);
-                        break;
-
-                    default:
-                        break;
+                    case ClaraConstants.STOP_DPE -> new Thread(() -> stop()).start();
+                    case ClaraConstants.SET_FRONT_END -> setFrontEnd(parser);
+                    case ClaraConstants.SET_SESSION -> setSession(parser);
+                    case ClaraConstants.PING_DPE -> response = reportService.aliveReport();
+                    case ClaraConstants.START_CONTAINER -> startContainer(parser);
+                    case ClaraConstants.STOP_CONTAINER -> stopContainer(parser);
+                    case ClaraConstants.START_SERVICE -> startService(parser);
+                    case ClaraConstants.STOP_SERVICE -> stopService(parser);
+                    case ClaraConstants.REPORT_JSON,
+                         ClaraConstants.REPORT_RUNTIME /* keep it to not break existing clients */
+                            -> response = reportJson(parser);
+                    default -> { }
                 }
-
+                // checkstyle.on: InnerAssignment
                 if (msg.hasReplyTopic()) {
                     sendResponse(msg, MetaData.Status.INFO, response);
                 }
-
             } catch (RequestException | DpeException e) {
                 Logging.error("%s", e.getMessage());
                 if (msg.hasReplyTopic()) {

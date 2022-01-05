@@ -28,7 +28,7 @@ class WorkerApplication {
     WorkerApplication(ApplicationInfo application, DpeInfo dpe) {
         this.application = application;
         this.dpes = new HashMap<>();
-        this.dpes.put(dpe.name.language(), dpe);
+        this.dpes.put(dpe.name().language(), dpe);
     }
 
 
@@ -107,18 +107,19 @@ class WorkerApplication {
 
 
     private ServiceName toName(ServiceInfo service) {
-        DpeInfo dpe = dpes.get(service.lang);
+        DpeInfo dpe = dpes.get(service.lang());
         if (dpe == null) {
-            String msg = String.format("Missing %s DPE for service %s", service.lang, service.name);
+            String msg = String.format("Missing %s DPE for service %s",
+                                       service.lang(), service.name());
             throw new IllegalStateException(msg);
         }
-        return new ServiceName(dpe.name, service.cont, service.name);
+        return new ServiceName(dpe.name(), service.cont(), service.name());
     }
 
 
     Stream<DeployInfo> getInputOutputServicesDeployInfo() {
         return application.getInputOutputServices().stream()
-                          .map(s -> new DeployInfo(toName(s), s.classpath, 1));
+                          .map(s -> new DeployInfo(toName(s), s.classpath(), 1));
     }
 
 
@@ -126,14 +127,14 @@ class WorkerApplication {
         int maxCores = maxCores();
         return application.getDataProcessingServices().stream()
                           .distinct()
-                          .map(s -> new DeployInfo(toName(s), s.classpath, maxCores));
+                          .map(s -> new DeployInfo(toName(s), s.classpath(), maxCores));
     }
 
 
     Stream<DeployInfo> getMonitoringServicesDeployInfo() {
         return application.getMonitoringServices().stream()
                           .distinct()
-                          .map(s -> new DeployInfo(toName(s), s.classpath, 1));
+                          .map(s -> new DeployInfo(toName(s), s.classpath(), 1));
     }
 
 
@@ -154,14 +155,14 @@ class WorkerApplication {
 
     Set<DpeName> dpes() {
         return dpes.values().stream()
-                   .map(dpe -> dpe.name)
+                   .map(DpeInfo::name)
                    .collect(Collectors.toSet());
     }
 
 
     public int maxCores() {
         return dpes.values().stream()
-                   .mapToInt(dpe -> dpe.cores)
+                   .mapToInt(DpeInfo::cores)
                    .min()
                    .orElseThrow(() -> new IllegalStateException("Empty list of DPEs"));
     }
@@ -169,7 +170,7 @@ class WorkerApplication {
 
     public String hostName() {
         DpeInfo firstDpe = dpes.values().iterator().next();
-        return firstDpe.name.address().host();
+        return firstDpe.name().address().host();
     }
 
 
@@ -204,7 +205,7 @@ class WorkerApplication {
     @Override
     public String toString() {
         String dpeNames = dpes.values().stream()
-                .map(dpe -> dpe.name.canonicalName())
+                .map(dpe -> dpe.name().canonicalName())
                 .collect(Collectors.joining(","));
         return "[" + dpeNames + "]";
     }

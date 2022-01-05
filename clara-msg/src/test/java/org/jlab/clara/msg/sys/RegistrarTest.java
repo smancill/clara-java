@@ -321,15 +321,7 @@ public class RegistrarTest {
     }
 
 
-    private static final class ResultAssert {
-
-        private final String valueName;
-        private final OwnerType regType;
-
-        private ResultAssert(String valueName, OwnerType regType) {
-            this.valueName = valueName;
-            this.regType = regType;
-        }
+    private record ResultAssert(String valueName, OwnerType regType) {
 
         private void assertThat(String data,
                                 Set<RegData> result,
