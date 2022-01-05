@@ -392,7 +392,7 @@ public class Proxy {
                         String topic = new String(data, 1, data.length - 1);
                         LOGGER.fine("unsubscribed topic = " + topic);
                     } else {
-                        LOGGER.fine("received topic = " + frame.toString());
+                        LOGGER.fine("received topic = " + frame);
                     }
                 } catch (ZMQException e) {
                     if (e.getErrorCode() == ZMQ.Error.ETERM.getCode()) {

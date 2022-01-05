@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.jlab.clara.util.FileUtils;
 import org.jline.builtins.Completers;
@@ -133,11 +132,11 @@ class SetCommand extends BaseCommand {
     private int listDir(PrintWriter printer, Path directory, Predicate<Path> filter)
             throws IOException {
         List<Path> files = Files.list(directory)
-                    .filter(Files::isRegularFile)
-                    .map(Path::getFileName)
-                    .filter(filter)
-                    .sorted()
-                    .collect(Collectors.toList());
+                .filter(Files::isRegularFile)
+                .map(Path::getFileName)
+                .filter(filter)
+                .sorted()
+                .toList();
         files.forEach(printer::println);
         return files.size();
     }

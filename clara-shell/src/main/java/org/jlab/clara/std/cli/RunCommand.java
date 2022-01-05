@@ -164,7 +164,7 @@ class RunCommand extends BaseCommand {
                     socket.setReuseAddress(true);
                     return port;
                 } catch (IOException e) {
-                    continue;
+                    // ignore
                 }
             }
             throw new IllegalStateException("Cannot find an available port");

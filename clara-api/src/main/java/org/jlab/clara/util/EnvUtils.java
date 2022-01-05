@@ -88,7 +88,7 @@ public final class EnvUtils {
      * @return the input string with all environment variables replaced by their values
      */
     public static String expandEnvironment(String input, Map<String, String> environment) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Matcher matcher = ENV_VAR_EXPR.matcher(input);
         while (matcher.find()) {
             String variable = matcher.group(2);

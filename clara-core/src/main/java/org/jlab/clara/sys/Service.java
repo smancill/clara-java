@@ -205,7 +205,7 @@ class Service extends AbstractActor {
         StringWriter errors = new StringWriter();
         errors.write(name + ": Clara error: ");
         e.printStackTrace(new PrintWriter(errors));
-        System.err.println(errors.toString());
+        System.err.println(errors);
     }
 
 

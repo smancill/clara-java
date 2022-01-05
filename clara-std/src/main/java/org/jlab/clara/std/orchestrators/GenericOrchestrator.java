@@ -572,7 +572,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
             double totalTime = (endTime - localNode.startTime.get());
             double sliceTime = (endTime - localNode.lastReportTime.getAndSet(endTime));
-            double timePerEvent = sliceTime /  options.reportFreq;
+            double timePerEvent = sliceTime / options.reportFreq;
 
             Logging.info("Processed %4d events in %6.2f s"
                          + "   average event time = "
