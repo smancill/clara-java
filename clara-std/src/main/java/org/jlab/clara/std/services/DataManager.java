@@ -197,12 +197,10 @@ public class DataManager implements Engine {
 
     private void runQuery(JSONObject request, EngineData output) {
         String action = request.getString(REQUEST_ACTION);
-        switch (action) {
-            case REQUEST_QUERY_CONFIG:
-                returnData(output, getConfiguration());
-                break;
-            default:
-                ServiceUtils.setError(output, "invalid %s value: %s", REQUEST_ACTION, action);
+        if (action.equals(REQUEST_QUERY_CONFIG)) {
+            returnData(output, getConfiguration());
+        } else {
+            ServiceUtils.setError(output, "invalid %s value: %s", REQUEST_ACTION, action);
         }
     }
 

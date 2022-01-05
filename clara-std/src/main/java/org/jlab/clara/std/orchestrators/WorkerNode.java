@@ -7,6 +7,7 @@
 package org.jlab.clara.std.orchestrators;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -135,7 +136,7 @@ class WorkerNode {
     void subscribeErrors(Function<WorkerNode, EngineCallback> callbackFn) {
         EngineCallback callback = callbackFn.apply(this);
         application.allContainers().values().stream()
-                   .flatMap(set -> set.stream())
+                   .flatMap(Collection::stream)
                    .forEach(cont -> orchestrator.subscribeErrors(cont, callback));
     }
 

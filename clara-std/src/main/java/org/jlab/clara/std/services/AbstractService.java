@@ -16,7 +16,7 @@ import org.jlab.clara.util.logging.Logger;
 import org.jlab.clara.util.logging.LoggerFactory;
 
 /**
- * An base class for service engines that obtains the service information from a
+ * A base class for service engines that obtains the service information from a
  * YAML file. This service specification file should be a resource named as the
  * concrete service class.
  */

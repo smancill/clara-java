@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
 /**
- * Clara data processing environment. It can play the role of the Front-End
+ * Clara data-processing environment. It can play the role of the Front-End
  * (FE), which is the static point of the entire cloud. It creates and manages
  * the registration database (local and case of being assigned as an FE: global
  * database). Note this is a copy of the subscribers database resident in the

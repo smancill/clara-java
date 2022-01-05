@@ -188,7 +188,7 @@ public class ClaraBase extends Actor {
      *
      * @param component the component that shall receive the message
      * @param requestText string of the message
-     * @param timeout in milli seconds
+     * @param timeout in milliseconds
      * @throws ClaraMsgException if the message could not be sent
      * @throws TimeoutException if a response was not received
      */

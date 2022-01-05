@@ -72,7 +72,7 @@ public abstract class BaseCommand extends AbstractCommand {
      * this command.
      *
      * @param name the name of the subcommand
-     * @param action the action to run when the the subcommand is executed
+     * @param action the action to run when the subcommand is executed
      * @param description the description of the subcommand
      * @throws IllegalArgumentException if a subcommand of the given name already exists
      */

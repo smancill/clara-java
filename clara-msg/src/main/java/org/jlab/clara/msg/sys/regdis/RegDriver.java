@@ -59,7 +59,7 @@ public class RegDriver {
      * Sends a request to the registrar server and waits the response.
      *
      * @param request the registration request
-     * @param timeout timeout in milli seconds
+     * @param timeout timeout in milliseconds
      *
      * @return the registrar response
      */

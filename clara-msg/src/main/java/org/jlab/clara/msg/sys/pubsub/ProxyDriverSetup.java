@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Setup of an connection to a proxy.
+ * Setup of a connection to a proxy.
  */
 public final class ProxyDriverSetup {
 

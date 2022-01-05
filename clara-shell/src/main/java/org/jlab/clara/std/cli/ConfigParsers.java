@@ -153,7 +153,7 @@ public final class ConfigParsers {
     }
 
     /**
-     * Parses the set command arguments into a non negative integer.
+     * Parses the set command arguments into a non-negative integer.
      *
      * @param args the command arguments
      * @return the integer value represented by the first argument

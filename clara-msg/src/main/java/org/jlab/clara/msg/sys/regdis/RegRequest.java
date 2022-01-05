@@ -15,7 +15,7 @@ import org.zeromq.ZMsg;
 import java.util.Arrays;
 
 /**
- * A wrapper for a a registration request.
+ * A wrapper for a registration request.
  */
 class RegRequest {
 

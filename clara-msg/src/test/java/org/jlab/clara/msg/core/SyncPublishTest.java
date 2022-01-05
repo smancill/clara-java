@@ -34,7 +34,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * <p>
  * The number of subscribers will be obtained from the registration database.
  * The publisher will use N threads in parallel, and each thread will be sending
- * a subset of M/N messages to each subscriber. A subscriber must received and
+ * a subset of M/N messages to each subscriber. A subscriber must receive and
  * respond all M messages.
  * <p>
  * The messages are a unique sequence of integers from 0 to M-1.
