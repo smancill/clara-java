@@ -9,7 +9,7 @@ io-services:
 services:
   - class: org.jlab.clas12.ec.services.ECReconstruction
     name: ECReconstruction
-  - class: org.clas12.services.tracking.SeedFinder
+  - class: org.jlab.clas12.tracking.services.SeedFinder
     name: SeedFinder
   - class: org.jlab.clas12.ftof.services.FTOFReconstruction
     name: FTOFReconstruction

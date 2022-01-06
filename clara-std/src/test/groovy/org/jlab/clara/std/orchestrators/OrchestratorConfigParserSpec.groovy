@@ -25,7 +25,7 @@ class OrchestratorConfigParserSpec extends Specification {
         CustomWriter: [c: "org.jlab.clas12.convertors.CustomWriter", l: ClaraLang.CPP],
         ECReconstruction: [c: "org.jlab.clas12.ec.services.ECReconstruction", l: ClaraLang.JAVA],
         FTOFReconstruction: [c: "org.jlab.clas12.ftof.services.FTOFReconstruction", l: ClaraLang.JAVA],
-        SeedFinder: [c: "org.clas12.services.tracking.SeedFinder", l: ClaraLang.JAVA],
+        SeedFinder: [c: "org.jlab.clas12.tracking.services.SeedFinder", l: ClaraLang.JAVA],
         HeaderFilter: [c: "org.jlab.clas12.convertors.HeaderFilter", l: ClaraLang.CPP],
         ECMonitor: [c: "org.jlab.clas12.services.ECMonitoring", l: ClaraLang.JAVA],
         DCMonitor: [c: "org.jlab.clas12.services.DCMonitoring", l: ClaraLang.JAVA],

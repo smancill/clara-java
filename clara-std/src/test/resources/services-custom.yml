@@ -11,14 +11,14 @@ io-services:
 services:
   data-processing:
     chain:
-      - class: org.jlab.clas12.services.ECReconstruction
+      - class: org.jlab.clas12.ec.services.ECReconstruction
         name: ECReconstruction
-      - class: org.jlab.clas12.services.SeedFinder
+      - class: org.jlab.clas12.tracking.services.SeedFinder
         name: SeedFinder
-      - class: org.jlab.clas12.services.HeaderFilter
+      - class: org.jlab.clas12.convertors.HeaderFilter
         name: HeaderFilter
         lang: cpp
-      - class: org.jlab.clas12.services.FTOFReconstruction
+      - class: org.jlab.clas12.ftof.services.FTOFReconstruction
         name: FTOFReconstruction
   monitoring:
     chain:
