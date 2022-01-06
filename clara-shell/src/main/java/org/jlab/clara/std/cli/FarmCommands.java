@@ -128,15 +128,15 @@ final class FarmCommands {
     }
 
     private static String defaultConfigFile() {
-        Path ymlPath = PLUGIN.resolve("config/services.yml");
-        if (Files.exists(ymlPath)) {
-            return ymlPath.toString();
+        Path yamlPath = PLUGIN.resolve("config/services.yaml");
+        if (Files.exists(yamlPath)) {
+            return yamlPath.toString();
         }
-        Path compatibilityPath = PLUGIN.resolve("config/services.yaml");
+        Path compatibilityPath = PLUGIN.resolve("config/services.yml");
         if (Files.exists(compatibilityPath)) {
             return compatibilityPath.toString();
         }
-        return ymlPath.toString();
+        return yamlPath.toString();
     }
 
     private static String defaultFileList() {

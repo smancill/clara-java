@@ -18,7 +18,7 @@ class SystemCommandBuilderSpec extends Specification {
         builder = new SystemCommandBuilder('${CLARA_HOME}/bin/clara-orchestrator').tap {
             addOption('-t', 10)
             addOption('-i', '$CLAS12DIR/exp/input')
-            addArgument('custom services.yml')
+            addArgument('custom services.yaml')
             addArgument('data/files.txt')
         }
     }
@@ -29,7 +29,7 @@ class SystemCommandBuilderSpec extends Specification {
             '${CLARA_HOME}/bin/clara-orchestrator',
             '-t', '10',
             '-i', '$CLAS12DIR/exp/input',
-            'custom services.yml', 'data/files.txt',
+            'custom services.yaml', 'data/files.txt',
         ]
     }
 
@@ -39,7 +39,7 @@ class SystemCommandBuilderSpec extends Specification {
             '"${CLARA_HOME}/bin/clara-orchestrator"' +
             ' -t 10' +
             ' -i "$CLAS12DIR/exp/input"' +
-            ' "custom services.yml" data/files.txt'
+            ' "custom services.yaml" data/files.txt'
     }
 
     def "Output string can quote everything"() {
@@ -51,7 +51,7 @@ class SystemCommandBuilderSpec extends Specification {
             '"${CLARA_HOME}/bin/clara-orchestrator"' +
             ' "-t" "10"' +
             ' "-i" "$CLAS12DIR/exp/input"' +
-            ' "custom services.yml" "data/files.txt"'
+            ' "custom services.yaml" "data/files.txt"'
     }
 
     def "Output string may be multi-line"() {
@@ -63,7 +63,7 @@ class SystemCommandBuilderSpec extends Specification {
                 "${CLARA_HOME}/bin/clara-orchestrator" \\
                         -t 10 \\
                         -i "$CLAS12DIR/exp/input" \\
-                        "custom services.yml" \\
+                        "custom services.yaml" \\
                         data/files.txt'''
                 .stripIndent()
     }

@@ -44,7 +44,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parsing valid services YAML file should not fail"() {
         when:
-        parser = makeParser("/services-ok.yml")
+        parser = makeParser("/services-ok.yaml")
 
         then:
         notThrown OrchestratorConfigException
@@ -52,7 +52,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parsing malformed services YAML file should fail"() {
         given:
-        parser = makeParser("/services-bad.yml")
+        parser = makeParser("/services-bad.yaml")
 
         when:
         parser.parseDataProcessingServices()
@@ -64,7 +64,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse IO services"() {
         given:
-        parser = makeParser("/services-custom.yml")
+        parser = makeParser("/services-custom.yaml")
 
         when:
         var ioServices = parser.parseInputOutputServices()
@@ -76,7 +76,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse data-processing services"() {
         given:
-        parser = makeParser("/services-custom.yml")
+        parser = makeParser("/services-custom.yaml")
 
         when:
         var dataProcessingChain = parser.parseDataProcessingServices()
@@ -88,7 +88,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse monitoring services"() {
         given:
-        parser = makeParser("/services-custom.yml")
+        parser = makeParser("/services-custom.yaml")
 
         when:
         var monitoringChain = parser.parseMonitoringServices()
@@ -99,7 +99,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse data ring callbacks"() {
         given:
-        parser = makeParser("/service-callbacks.yml")
+        parser = makeParser("/service-callbacks.yaml")
 
         when:
         var callbacks = parser.parseDataRingCallbacks()
@@ -119,7 +119,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse languages when only services of the same language are declared"() {
         given:
-        var parser = makeParser("/services-ok.yml")
+        var parser = makeParser("/services-ok.yaml")
 
         expect:
         parser.parseLanguages() == [ClaraLang.JAVA] as Set
@@ -127,7 +127,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse languages when services of more than one language are declared"() {
         given:
-        var parser = makeParser("/services-custom.yml")
+        var parser = makeParser("/services-custom.yaml")
 
         expect:
         parser.parseLanguages() == [ClaraLang.JAVA, ClaraLang.CPP] as Set
@@ -135,7 +135,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse mime-types when no mime-types are declared"() {
         given:
-        parser = makeParser("/services-ok.yml")
+        parser = makeParser("/services-ok.yaml")
 
         expect:
         parser.parseDataTypes().empty
@@ -143,7 +143,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse mime-types"() {
         given:
-        parser = makeParser("/services-custom.yml")
+        parser = makeParser("/services-custom.yaml")
 
         expect:
         parser.parseDataTypes() == ["binary/data-evio", "binary/data-hipo"] as Set
@@ -151,7 +151,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse services configuration when no configuration is declared"() {
         given:
-        parser = makeParser("/services-ok.yml")
+        parser = makeParser("/services-ok.yaml")
 
         when:
         JSONObject config = parser.parseConfiguration()
@@ -162,7 +162,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse services configuration"() {
         given:
-        parser = makeParser("/services-custom.yml")
+        parser = makeParser("/services-custom.yaml")
 
         when:
         JSONObject config = parser.parseConfiguration()

@@ -312,7 +312,7 @@ public class MonitorOrchestrator implements AutoCloseable {
 
         public String usage() {
             String wrapper = "clara-monitor";
-            return String.format("usage: %s [options] <setup.yml>", wrapper);
+            return String.format("usage: %s [options] <setup.yaml>", wrapper);
         }
     }
 }

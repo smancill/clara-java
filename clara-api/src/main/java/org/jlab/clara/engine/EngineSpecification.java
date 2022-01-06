@@ -98,7 +98,7 @@ public class EngineSpecification {
      *     new EngineSpecification("std.services.convertors.EvioToEvioReader")
      * </pre>
      * will search for the file
-     * <code>std/services/convertors/EvioToEvioReader.yml</code> in the CLASSPATH.
+     * <code>std/services/convertors/EvioToEvioReader.yaml</code> in the CLASSPATH.
      *
      * @param engine the engine classpath
      */
@@ -130,9 +130,9 @@ public class EngineSpecification {
 
 
     private InputStream getSpecStream(String engine) {
-        InputStream input = getSpecStream(engine, ".yml");
+        InputStream input = getSpecStream(engine, ".yaml");
         if (input == null) {
-            input = getSpecStream(engine, ".yaml");
+            input = getSpecStream(engine, ".yml");
         }
         return input;
     }
