@@ -317,9 +317,9 @@ public class Config {
      * @return the current string value of the variable, if set
      */
     public String getString(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof String) {
-            return (String) object;
+        Object obj = getValue(variable);
+        if (obj instanceof String s) {
+            return s;
         }
         throw new IllegalArgumentException("variable \"" + variable + "\" is not a string");
     }
@@ -331,13 +331,13 @@ public class Config {
      * @return the current integer value of the variable, if set
      */
     public int getInt(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof Number) {
-            return ((Number) object).intValue();
+        Object obj = getValue(variable);
+        if (obj instanceof Number n) {
+            return n.intValue();
         }
-        if (object instanceof String) {
+        if (obj instanceof String s) {
             try {
-                return Integer.parseInt((String) object);
+                return Integer.parseInt(s);
             } catch (NumberFormatException e) {
                 // ignore
             }
@@ -352,13 +352,13 @@ public class Config {
      * @return the current long value of the variable, if set
      */
     public long getLong(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof Number) {
-            return ((Number) object).longValue();
+        Object obj = getValue(variable);
+        if (obj instanceof Number n) {
+            return n.longValue();
         }
-        if (object instanceof String) {
+        if (obj instanceof String s) {
             try {
-                return Long.parseLong((String) object);
+                return Long.parseLong(s);
             } catch (NumberFormatException e) {
                 // ignore
             }
@@ -373,13 +373,13 @@ public class Config {
      * @return the current long value of the variable, if set
      */
     public double getDouble(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof Number) {
-            return ((Number) object).doubleValue();
+        Object obj = getValue(variable);
+        if (obj instanceof Number n) {
+            return n.doubleValue();
         }
-        if (object instanceof String) {
+        if (obj instanceof String s) {
             try {
-                return Double.parseDouble((String) object);
+                return Double.parseDouble(s);
             } catch (NumberFormatException e) {
                 // ignore
             }
@@ -394,12 +394,12 @@ public class Config {
      * @return the current boolean value of the variable, if set
      */
     public boolean getBoolean(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof Boolean) {
-            return (Boolean) object;
+        Object obj = getValue(variable);
+        if (obj instanceof Boolean b) {
+            return b;
         }
-        if (object instanceof String) {
-            return ((String) object).equalsIgnoreCase("true");
+        if (obj instanceof String s) {
+            return s.equalsIgnoreCase("true");
         }
         throw new IllegalArgumentException("variable \"" + variable + "\" is not a boolean");
     }

@@ -145,8 +145,8 @@ public final class ActorUtils {
      * @throws IOException if there was an error
      */
     public static ByteString serializeToByteString(Object object) throws IOException {
-        if (object instanceof byte[]) {
-            return ByteString.copyFrom((byte[]) object);
+        if (object instanceof byte[] bytes) {
+            return ByteString.copyFrom(bytes);
         } else {
             try (ByteString.Output bs = ByteString.newOutput();
                  ObjectOutputStream out = new ObjectOutputStream(bs)) {
@@ -166,8 +166,8 @@ public final class ActorUtils {
      */
     public static byte[] serializeToBytes(Object object)
             throws IOException {
-        if (object instanceof byte[]) {
-            return (byte[]) object;
+        if (object instanceof byte[] bytes) {
+            return bytes;
         }
         try (ByteArrayOutputStream bs = new ByteArrayOutputStream();
              ObjectOutputStream out = new ObjectOutputStream(bs)) {

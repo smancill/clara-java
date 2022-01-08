@@ -240,49 +240,49 @@ public class Message {
         final String mimeType;
         PlainData.Builder pd = PlainData.newBuilder();
 
-        if (data instanceof String) {
+        if (data instanceof String value) {
             mimeType = MimeType.STRING;
-            pd.setSTRING((String) data);
+            pd.setSTRING(value);
 
-        } else if (data instanceof Integer) {
+        } else if (data instanceof Integer value) {
             mimeType = MimeType.SFIXED32;
-            pd.setFLSINT32((Integer) data);
+            pd.setFLSINT32(value);
 
-        } else if (data instanceof Long) {
+        } else if (data instanceof Long value) {
             mimeType = MimeType.SFIXED64;
-            pd.setFLSINT64((Long) data);
+            pd.setFLSINT64(value);
 
-        } else if (data instanceof Float) {
+        } else if (data instanceof Float value) {
             mimeType = MimeType.FLOAT;
-            pd.setFLOAT((Float) data);
+            pd.setFLOAT(value);
 
-        } else if (data instanceof Double) {
+        } else if (data instanceof Double value) {
             mimeType = MimeType.DOUBLE;
-            pd.setDOUBLE((Double) data);
+            pd.setDOUBLE(value);
 
-        } else if (data instanceof String[]) {
+        } else if (data instanceof String[] array) {
             mimeType = MimeType.ARRAY_STRING;
-            pd.addAllSTRINGA(Arrays.asList((String[]) data));
+            pd.addAllSTRINGA(Arrays.asList(array));
 
-        } else if (data instanceof Integer[]) {
+        } else if (data instanceof Integer[] array) {
             mimeType = MimeType.ARRAY_SFIXED32;
-            pd.addAllFLSINT32A(Arrays.asList((Integer[]) data));
+            pd.addAllFLSINT32A(Arrays.asList(array));
 
-        } else if (data instanceof Long[]) {
+        } else if (data instanceof Long[] array) {
             mimeType = MimeType.ARRAY_SFIXED64;
-            pd.addAllFLSINT64A(Arrays.asList((Long[]) data));
+            pd.addAllFLSINT64A(Arrays.asList(array));
 
-        } else if (data instanceof Float[]) {
+        } else if (data instanceof Float[] array) {
             mimeType = MimeType.ARRAY_FLOAT;
-            pd.addAllFLOATA(Arrays.asList((Float[]) data));
+            pd.addAllFLOATA(Arrays.asList(array));
 
-        } else if (data instanceof Double[]) {
+        } else if (data instanceof Double[] array) {
             mimeType = MimeType.ARRAY_DOUBLE;
-            pd.addAllDOUBLEA(Arrays.asList((Double[]) data));
+            pd.addAllDOUBLEA(Arrays.asList(array));
 
-        } else if (data instanceof byte[]) {
+        } else if (data instanceof byte[] bytes) {
             mimeType = MimeType.BYTES;
-            ba = (byte[]) data;
+            ba = bytes;
 
         } else {
             mimeType = MimeType.JOBJECT;

@@ -68,9 +68,8 @@ public final class ThreadUtils {
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
             super.afterExecute(r, t);
-            if (t == null && r instanceof Future<?>) {
+            if (t == null && r instanceof Future<?> future) {
                 try {
-                    Future<?> future = (Future<?>) r;
                     if (future.isDone()) {
                         future.get();
                     }

@@ -166,8 +166,8 @@ public class EngineSpecification {
         if (value == null) {
             throw new ParseException("Missing key: " + key);
         }
-        if (value instanceof String) {
-            return (String) value;
+        if (value instanceof String str) {
+            return str;
         } else if (value instanceof Integer || value instanceof Double) {
             return value.toString();
         } else {
