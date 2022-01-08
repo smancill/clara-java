@@ -40,7 +40,7 @@ abstract class AbstractOrchestrator {
     private final BlockingQueue<WorkerNode> freeNodes;
     private final ExecutorService nodesExecutor;
 
-    private final BlockingQueue<WorkerFile> processingQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<FileInfo> processingQueue = new LinkedBlockingQueue<>();
 
     private final AtomicInteger startedFilesCounter = new AtomicInteger();
     private final AtomicInteger processedFilesCounter = new AtomicInteger();
@@ -292,7 +292,7 @@ abstract class AbstractOrchestrator {
             new Thread(new FileMonitoringWorker(), "file-monitoring-thread").start();
         } else {
             int count = 0;
-            for (WorkerFile file : paths.allFiles) {
+            for (FileInfo file : paths.allFiles) {
                 if (Files.exists(paths.inputFilePath(file))) {
                     processingQueue.add(file);
                     count++;
@@ -309,14 +309,14 @@ abstract class AbstractOrchestrator {
 
         @Override
         public void run() {
-            BlockingQueue<WorkerFile> requestedFiles = new LinkedBlockingDeque<>(paths.allFiles);
+            BlockingQueue<FileInfo> requestedFiles = new LinkedBlockingDeque<>(paths.allFiles);
             while (!requestedFiles.isEmpty()) {
-                WorkerFile recFile = requestedFiles.element();
-                Path filePath = paths.inputFilePath(recFile);
-                if (filePath.toFile().exists()) {
-                    processingQueue.add(recFile);
+                FileInfo file = requestedFiles.element();
+                Path path = paths.inputFilePath(file);
+                if (path.toFile().exists()) {
+                    processingQueue.add(file);
                     requestedFiles.remove();
-                    Logging.info("File %s is cached", filePath);
+                    Logging.info("File %s is cached", path);
                 } else {
                     orchestrator.sleep(100);
                 }
@@ -340,8 +340,8 @@ abstract class AbstractOrchestrator {
             }
         }
         while (processedFilesCounter.get() < paths.numFiles()) {
-            WorkerFile recFile = processingQueue.peek();
-            if (recFile == null) {
+            FileInfo file = processingQueue.peek();
+            if (file == null) {
                 orchestrator.sleep(100);
                 continue;
             }
@@ -349,7 +349,7 @@ abstract class AbstractOrchestrator {
             final WorkerNode node = freeNodes.poll(60, TimeUnit.SECONDS);
             if (node != null) {
                 try {
-                    nodesExecutor.execute(() -> processFile(node, recFile));
+                    nodesExecutor.execute(() -> processFile(node, file));
                     processingQueue.remove();
                 } catch (RejectedExecutionException e) {
                     freeNodes.add(node);
@@ -359,11 +359,11 @@ abstract class AbstractOrchestrator {
     }
 
 
-    void processFile(WorkerNode node, WorkerFile recFile) {
+    void processFile(WorkerNode node, FileInfo file) {
         try {
             stats.startClock();
             // TODO check DPE is alive
-            openFiles(node, recFile);
+            openFiles(node, file);
             startFile(node);
         } catch (OrchestratorException e) {
             Logging.error("Could not use %s for processing:%n%s",
@@ -372,11 +372,11 @@ abstract class AbstractOrchestrator {
     }
 
 
-    void openFiles(WorkerNode node, WorkerFile recFile) {
+    void openFiles(WorkerNode node, FileInfo file) {
         if (options.stageFiles) {
-            node.setFiles(recFile);
+            node.setFiles(file);
         } else {
-            node.setFiles(paths, recFile);
+            node.setFiles(paths, file);
         }
         node.openFiles();
     }

@@ -21,7 +21,7 @@ import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 
-class ServiceConfig {
+class ApplicationConfig {
 
     static final String READER = "reader";
     static final String WRITER = "writer";
@@ -42,11 +42,11 @@ class ServiceConfig {
         FTL_CONFIG.setLogTemplateExceptions(false);
     }
 
-    ServiceConfig(JSONObject configData) {
+    ApplicationConfig(JSONObject configData) {
         this(configData, new HashMap<>());
     }
 
-    ServiceConfig(JSONObject configData, Map<String, Object> model) {
+    ApplicationConfig(JSONObject configData, Map<String, Object> model) {
         this.configData = configData;
         this.model = model;
     }
@@ -64,7 +64,7 @@ class ServiceConfig {
         if (configData.has(IO_CONFIG)) {
             JSONObject ioConf = configData.getJSONObject(IO_CONFIG);
             if (ioConf.has(key)) {
-                addServiceConfig(conf, ioConf, key);
+                add(conf, ioConf, key);
             }
         }
         return conf;
@@ -73,18 +73,18 @@ class ServiceConfig {
     JSONObject get(ServiceName service) {
         JSONObject conf = new JSONObject();
         if (configData.has(GLOBAL_CONFIG)) {
-            addServiceConfig(conf, configData, GLOBAL_CONFIG);
+            add(conf, configData, GLOBAL_CONFIG);
         }
         if (configData.has(SERVICE_CONFIG)) {
             JSONObject services = configData.getJSONObject(SERVICE_CONFIG);
             if (services.has(service.name())) {
-                addServiceConfig(conf, services, service.name());
+                add(conf, services, service.name());
             }
         }
         return conf;
     }
 
-    private void addServiceConfig(JSONObject target, JSONObject parent, String serviceKey) {
+    private void add(JSONObject target, JSONObject parent, String serviceKey) {
         JSONObject config = parent.getJSONObject(serviceKey);
         for (String key : config.keySet()) {
             Object value = config.get(key);
