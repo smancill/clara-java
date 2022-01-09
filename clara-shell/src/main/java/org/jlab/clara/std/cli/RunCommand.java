@@ -50,8 +50,8 @@ class RunCommand extends BaseCommand {
         @Override
         public int execute(String[] args) {
             try {
-                DpeName feDpe = startLocalDpes();
-                int exitStatus = runOrchestrator(feDpe);
+                var feDpe = startLocalDpes();
+                var exitStatus = runOrchestrator(feDpe);
                 if (Thread.interrupted()) {
                     destroyDpes();
                     Thread.currentThread().interrupt();
@@ -67,14 +67,14 @@ class RunCommand extends BaseCommand {
         }
 
         private int runOrchestrator(DpeName feName) {
-            String[] cmd = orchestratorCmd(feName);
-            Path logFile = runUtils.getLogFile(getHost(feName), "orch");
+            var cmd = orchestratorCmd(feName);
+            var logFile = runUtils.getLogFile(getHost(feName), "orch");
             return CommandUtils.runProcess(buildProcess(cmd, logFile));
         }
 
         private String[] orchestratorCmd(DpeName feName) {
-            Path orchestrator = FileUtils.claraPath("bin", "clara-orchestrator");
-            SystemCommandBuilder cmd = new SystemCommandBuilder(orchestrator);
+            var orchestrator = FileUtils.claraPath("bin", "clara-orchestrator");
+            var cmd = new SystemCommandBuilder(orchestrator);
 
             cmd.addOption("-F");
             cmd.addOption("-f", feName);
@@ -99,26 +99,26 @@ class RunCommand extends BaseCommand {
         }
 
         private DpeName startLocalDpes() throws IOException {
-            String configFile = config.getString(Config.SERVICES_FILE);
-            OrchestratorConfigParser configParser = new OrchestratorConfigParser(configFile);
-            Set<ClaraLang> languages = configParser.parseLanguages();
+            var configFile = config.getString(Config.SERVICES_FILE);
+            var configParser = new OrchestratorConfigParser(configFile);
+            var languages = configParser.parseLanguages();
 
             if (checkDpes(languages)) {
                 return backgroundDpes.get(ClaraLang.JAVA).name;
             }
             destroyDpes();
 
-            DpeName feName = new DpeName(findHost(), findPort(), ClaraLang.JAVA);
-            String javaDpe = FileUtils.claraPath("bin", "j_dpe").toString();
+            var feName = new DpeName(findHost(), findPort(), ClaraLang.JAVA);
+            var javaDpe = FileUtils.claraPath("bin", "j_dpe").toString();
             addBackgroundDpeProcess(feName, javaDpe,
                     "--host", getHost(feName),
                     "--port", getPort(feName),
                     "--session", runUtils.getSession());
 
             if (languages.contains(ClaraLang.CPP)) {
-                int cppPort = feName.address().port() + 10;
-                DpeName cppName = new DpeName(feName.address().host(), cppPort, ClaraLang.CPP);
-                String cppDpe = FileUtils.claraPath("bin", "c_dpe").toString();
+                var cppPort = feName.address().port() + 10;
+                var cppName = new DpeName(feName.address().host(), cppPort, ClaraLang.CPP);
+                var cppDpe = FileUtils.claraPath("bin", "c_dpe").toString();
                 addBackgroundDpeProcess(cppName, cppDpe,
                         "--host", getHost(cppName),
                         "--port", getPort(cppName),
@@ -127,9 +127,9 @@ class RunCommand extends BaseCommand {
             }
 
             if (languages.contains(ClaraLang.PYTHON)) {
-                int pyPort = feName.address().port() + 5;
-                DpeName pyName = new DpeName(feName.address().host(), pyPort, ClaraLang.PYTHON);
-                String pyDpe = FileUtils.claraPath("bin", "p_dpe").toString();
+                var pyPort = feName.address().port() + 5;
+                var pyName = new DpeName(feName.address().host(), pyPort, ClaraLang.PYTHON);
+                var pyDpe = FileUtils.claraPath("bin", "p_dpe").toString();
                 addBackgroundDpeProcess(pyName, pyDpe,
                         "--host", getHost(pyName),
                         "--port", getPort(pyName),
@@ -152,15 +152,15 @@ class RunCommand extends BaseCommand {
                 return config.getInt(Config.FRONTEND_PORT);
             }
 
-            List<Integer> ports = IntStream.iterate(LOWER_PORT, n -> n + STEP_PORTS)
-                                           .limit((UPPER_PORT - LOWER_PORT) / STEP_PORTS)
-                                           .boxed()
-                                           .collect(Collectors.toList());
+            var ports = IntStream.iterate(LOWER_PORT, n -> n + STEP_PORTS)
+                                 .limit((UPPER_PORT - LOWER_PORT) / STEP_PORTS)
+                                 .boxed()
+                                 .collect(Collectors.toList());
             Collections.shuffle(ports);
 
-            for (int port : ports) {
-                int ctrlPort = port + 2;
-                try (ServerSocket socket = new ServerSocket(ctrlPort)) {
+            for (var port : ports) {
+                var ctrlPort = port + 2;
+                try (var socket = new ServerSocket(ctrlPort)) {
                     socket.setReuseAddress(true);
                     return port;
                 } catch (IOException e) {
@@ -176,17 +176,17 @@ class RunCommand extends BaseCommand {
         }
 
         private boolean isDpeAlive(ClaraLang lang) {
-            DpeProcess dpeProcess = backgroundDpes.get(lang);
+            var dpeProcess = backgroundDpes.get(lang);
             return dpeProcess != null && dpeProcess.process.isAlive();
         }
 
         private void addBackgroundDpeProcess(DpeName name, String... command)
                 throws IOException {
             if (!backgroundDpes.containsKey(name.language())) {
-                Path logFile = runUtils.getLogFile(name);
-                ProcessBuilder processBuilder = buildProcess(command, logFile);
+                var logFile = runUtils.getLogFile(name);
+                var processBuilder = buildProcess(command, logFile);
                 if (name.language() == ClaraLang.JAVA) {
-                    String javaOptions = getJVMOptions();
+                    var javaOptions = getJVMOptions();
                     if (javaOptions != null) {
                         processBuilder.environment().put("JAVA_OPTS", javaOptions);
                     }
@@ -194,15 +194,15 @@ class RunCommand extends BaseCommand {
                 runUtils.getMonitorFrontEnd().ifPresent(monFE ->
                     processBuilder.environment().put(ClaraConstants.ENV_MONITOR_FE, monFE)
                 );
-                DpeProcess dpeProcess = new DpeProcess(name, processBuilder);
+                var dpeProcess = new DpeProcess(name, processBuilder);
                 backgroundDpes.put(name.language(), dpeProcess);
             }
         }
 
         private void destroyDpes() {
             // kill the DPEs in reverse order (the front-end last)
-            for (ClaraLang lang : List.of(ClaraLang.PYTHON, ClaraLang.CPP, ClaraLang.JAVA)) {
-                DpeProcess dpeProcess = backgroundDpes.remove(lang);
+            for (var lang : List.of(ClaraLang.PYTHON, ClaraLang.CPP, ClaraLang.JAVA)) {
+                var dpeProcess = backgroundDpes.remove(lang);
                 if (dpeProcess == null) {
                     continue;
                 }
@@ -211,8 +211,8 @@ class RunCommand extends BaseCommand {
         }
 
         private ProcessBuilder buildProcess(String[] command, Path logFile) {
-            String[] wrapper = CommandUtils.uninterruptibleCommand(command, logFile);
-            ProcessBuilder builder = new ProcessBuilder(wrapper);
+            var wrapper = CommandUtils.uninterruptibleCommand(command, logFile);
+            var builder = new ProcessBuilder(wrapper);
             builder.environment().putAll(config.getenv());
             builder.inheritIO();
             return builder;
@@ -230,7 +230,7 @@ class RunCommand extends BaseCommand {
                 return config.getString(Config.JAVA_OPTIONS);
             }
             if (config.hasValue(Config.JAVA_MEMORY)) {
-                int memSize = config.getInt(Config.JAVA_MEMORY);
+                var memSize = config.getInt(Config.JAVA_MEMORY);
                 return String.format("-Xms%dg -Xmx%dg -XX:+UseNUMA -XX:+UseBiasedLocking",
                                      memSize, memSize);
             }

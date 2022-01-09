@@ -343,7 +343,7 @@ public final class ClaraFilters {
     }
 
     private static boolean isService(RegRecord record) {
-        String domain = record.topic().domain();
+        var domain = record.topic().domain();
         return !domain.equals("dpe") && !domain.equals("container");
     }
 

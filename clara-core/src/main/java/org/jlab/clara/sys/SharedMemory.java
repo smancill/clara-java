@@ -28,7 +28,7 @@ final class SharedMemory {
     static void putEngineData(String receiver, String sender, int id, EngineData data) {
         Map<String, EngineData> inputs = sharedData.get(receiver);
         if (inputs != null) {
-            String key = sender + ":" + id;
+            var key = sender + ":" + id;
             inputs.put(key, data);
         } else {
             throw new IllegalStateException("Receiver not registered: " + receiver);
@@ -40,7 +40,7 @@ final class SharedMemory {
         Map<String, EngineData> inputs = sharedData.get(receiver);
         EngineData data = null;
         if (inputs != null) {
-            String key = sender + ":" + id;
+            var key = sender + ":" + id;
             data = inputs.get(key);
             inputs.remove(key);
         }

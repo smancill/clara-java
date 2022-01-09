@@ -62,15 +62,15 @@ final class RegDataFactory {
     private RegDataFactory() { }
 
     public static String random(String[] array) {
-        int idx = rnd.nextInt(array.length);
+        var idx = rnd.nextInt(array.length);
         return array[idx];
     }
 
     public static RegData randomRegistration() {
-        String name = random(testNames);
-        String host = random(testHosts);
-        String topic = random(testTopics);
-        OwnerType type = rnd.nextBoolean() ? OwnerType.PUBLISHER : OwnerType.SUBSCRIBER;
+        var name = random(testNames);
+        var host = random(testHosts);
+        var topic = random(testTopics);
+        var type = rnd.nextBoolean() ? OwnerType.PUBLISHER : OwnerType.SUBSCRIBER;
         return RegFactory.newRegistration(name, host, type, Topic.wrap(topic));
     }
 }

@@ -127,7 +127,7 @@ public class ClaraSubscriptions {
          * @return this object, so methods can be chained
          */
         public ServiceSubscription withDataTypes(EngineDataType... dataTypes) {
-            Set<EngineDataType> newTypes = new HashSet<>();
+            var newTypes = new HashSet<EngineDataType>();
             Collections.addAll(newTypes, dataTypes);
             this.dataTypes = newTypes;
             return this;
@@ -164,7 +164,7 @@ public class ClaraSubscriptions {
         Callback wrap(final GenericCallback userCallback) {
             return msg -> {
                 try {
-                    String mimeType = msg.getMimeType();
+                    var mimeType = msg.getMimeType();
                     if (mimeType.equals(EngineDataType.JSON.mimeType())) {
                         userCallback.callback(new String(msg.getData()));
                     } else {
@@ -219,12 +219,12 @@ public class ClaraSubscriptions {
         Callback wrap(final DpeReportCallback userCallback) {
             return msg -> {
                 try {
-                    String mimeType = msg.getMimeType();
+                    var mimeType = msg.getMimeType();
                     if (mimeType.equals(EngineDataType.JSON.mimeType())) {
-                        String source = new String(msg.getData());
-                        JSONObject data = new JSONObject(source);
-                        JSONObject registration = data.getJSONObject(ClaraConstants.REGISTRATION_KEY);
-                        JSONObject runtime = data.getJSONObject(ClaraConstants.RUNTIME_KEY);
+                        var source = new String(msg.getData());
+                        var data = new JSONObject(source);
+                        var registration = data.getJSONObject(ClaraConstants.REGISTRATION_KEY);
+                        var runtime = data.getJSONObject(ClaraConstants.RUNTIME_KEY);
                         userCallback.callback(new DpeRegistrationData(registration),
                                               new DpeRuntimeData(runtime));
                     } else {
@@ -335,7 +335,7 @@ public class ClaraSubscriptions {
          * @return a subscription to listen DPE alive reports
          */
         public JsonReportSubscription aliveDpes() {
-            Topic topic = MessageUtil.buildTopic(ClaraConstants.DPE_ALIVE, "");
+            var topic = MessageUtil.buildTopic(ClaraConstants.DPE_ALIVE, "");
             return new JsonReportSubscription(base, subscriptions, frontEnd, topic);
         }
 
@@ -352,7 +352,7 @@ public class ClaraSubscriptions {
             if (session == null) {
                 throw new IllegalArgumentException("null session argument");
             }
-            Topic topic = buildMatchingTopic(ClaraConstants.DPE_ALIVE, session);
+            var topic = buildMatchingTopic(ClaraConstants.DPE_ALIVE, session);
             return new JsonReportSubscription(base, subscriptions, frontEnd, topic);
         }
 
@@ -363,7 +363,7 @@ public class ClaraSubscriptions {
          * @return a subscription to listen DPE reports
          */
         public BaseDpeReportSubscription dpeReport() {
-            Topic topic = MessageUtil.buildTopic(ClaraConstants.DPE_REPORT, "");
+            var topic = MessageUtil.buildTopic(ClaraConstants.DPE_REPORT, "");
             return new BaseDpeReportSubscription(base, subscriptions, frontEnd, topic);
         }
 
@@ -378,7 +378,7 @@ public class ClaraSubscriptions {
          */
         public BaseDpeReportSubscription dpeReport(String session) {
             ArgUtils.requireNonNull(session, "session");
-            Topic topic = buildMatchingTopic(ClaraConstants.DPE_REPORT, session);
+            var topic = buildMatchingTopic(ClaraConstants.DPE_REPORT, session);
             return new BaseDpeReportSubscription(base, subscriptions, frontEnd, topic);
         }
 
@@ -388,7 +388,7 @@ public class ClaraSubscriptions {
          * @return a subscription to listen all events in the data-ring
          */
         public ServiceSubscription dataRing() {
-            Topic topic = MessageUtil.buildTopic(ClaraConstants.MONITOR_REPORT, "");
+            var topic = MessageUtil.buildTopic(ClaraConstants.MONITOR_REPORT, "");
             return new ServiceSubscription(base, subscriptions, dataTypes, frontEnd, topic);
         }
 
@@ -401,7 +401,7 @@ public class ClaraSubscriptions {
          */
         public ServiceSubscription dataRing(DataRingTopic ringTopic) {
             ArgUtils.requireNonNull(ringTopic, "topic");
-            Topic topic = buildMatchingTopic(ClaraConstants.MONITOR_REPORT, ringTopic.topic());
+            var topic = buildMatchingTopic(ClaraConstants.MONITOR_REPORT, ringTopic.topic());
             return new ServiceSubscription(base, subscriptions, dataTypes, frontEnd, topic);
         }
     }

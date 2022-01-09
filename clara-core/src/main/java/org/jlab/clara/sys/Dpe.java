@@ -6,9 +6,7 @@
 
 package org.jlab.clara.sys;
 
-import org.jlab.clara.base.ClaraAddress;
 import org.jlab.clara.base.ClaraUtil;
-import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.core.MessageUtil;
@@ -34,7 +32,6 @@ import org.zeromq.ZMQ.Socket;
 import org.zeromq.ZMsg;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -86,7 +83,7 @@ public final class Dpe extends AbstractActor {
 
 
     public static void main(String[] args) {
-        DpeOptionsParser options = new DpeOptionsParser();
+        var options = new DpeOptionsParser();
         try {
             options.parse(args);
             if (options.hasVersion()) {
@@ -103,7 +100,7 @@ public final class Dpe extends AbstractActor {
             Context.getInstance().setMaxSockets(options.maxSockets());
 
             // start a dpe
-            Dpe dpe = new Dpe(options.isFrontEnd(), options.localAddress(), options.frontEnd(),
+            var dpe = new Dpe(options.isFrontEnd(), options.localAddress(), options.frontEnd(),
                               options.config(), options.session(), options.description());
 
             Runtime.getRuntime().addShutdownHook(new Thread(dpe::stop));
@@ -288,7 +285,7 @@ public final class Dpe extends AbstractActor {
          * @return a new DPE
          */
         public Dpe build() {
-            DpeConfig config = new DpeConfig(poolSize, maxCores, reportPeriod);
+            var config = new DpeConfig(poolSize, maxCores, reportPeriod);
             return new Dpe(isFrontEnd, localAddress, frontEndAddress,
                            config, session, description);
         }
@@ -444,9 +441,9 @@ public final class Dpe extends AbstractActor {
     }
 
     private void startSubscription() throws ClaraException {
-        Topic topic = Topic.build(ClaraConstants.DPE, base.getName());
-        Callback callback = new DpeCallBack();
-        String description = base.getDescription();
+        var topic = Topic.build(ClaraConstants.DPE, base.getName());
+        var callback = new DpeCallBack();
+        var description = base.getDescription();
         subscriptionHandler = startRegisteredSubscription(topic, callback, description);
     }
 
@@ -528,14 +525,14 @@ public final class Dpe extends AbstractActor {
     private void startContainer(RequestParser parser)
             throws RequestException, DpeException {
 
-        String containerName = parser.nextString();
-        int poolSize = parser.nextInteger();
-        String description = parser.nextString();
+        var containerName = parser.nextString();
+        var poolSize = parser.nextInteger();
+        var description = parser.nextString();
         if (poolSize <= 0) {
             poolSize = base.getPoolSize();
         }
 
-        ClaraComponent contComp = ClaraComponent.container(
+        var contComp = ClaraComponent.container(
                 base.getMe().getDpeHost(),
                 base.getMe().getDpePort(),
                 ClaraConstants.JAVA_LANG,
@@ -543,10 +540,10 @@ public final class Dpe extends AbstractActor {
                 poolSize,
                 description);
 
-        Container container = myContainers.get(containerName);
+        var container = myContainers.get(containerName);
         if (container == null) {
             container = new Container(contComp, base.getFrontEnd());
-            Container prev = myContainers.putIfAbsent(containerName, container);
+            var prev = myContainers.putIfAbsent(containerName, container);
             if (prev == null) {
                 try {
                     container.start();
@@ -565,30 +562,30 @@ public final class Dpe extends AbstractActor {
 
     private void startService(RequestParser parser)
             throws RequestException, DpeException {
-        String containerName = parser.nextString();
-        String engineName = parser.nextString();
-        String engineClass = parser.nextString();
-        int poolSize = parser.nextInteger();
-        String description = parser.nextString();
-        String initialState = parser.nextString();
+        var containerName = parser.nextString();
+        var engineName = parser.nextString();
+        var engineClass = parser.nextString();
+        var poolSize = parser.nextInteger();
+        var description = parser.nextString();
+        var initialState = parser.nextString();
         if (poolSize <= 0) {
             poolSize = 1;
         } else if (poolSize > maxCores) {
             poolSize = maxCores;
         }
-        ClaraComponent serComp = ClaraComponent.service(base.getMe().getDpeHost(),
-                                                        base.getMe().getDpePort(),
-                                                        ClaraConstants.JAVA_LANG,
-                                                        containerName,
-                                                        engineName,
-                                                        engineClass,
-                                                        poolSize,
-                                                        description,
-                                                        initialState);
+        var serComp = ClaraComponent.service(base.getMe().getDpeHost(),
+                                             base.getMe().getDpePort(),
+                                             ClaraConstants.JAVA_LANG,
+                                             containerName,
+                                             engineName,
+                                             engineClass,
+                                             poolSize,
+                                             description,
+                                             initialState);
 
-        Container container = myContainers.get(containerName);
+        var container = myContainers.get(containerName);
         if (container == null) {
-            String error = "could not start service = %s: missing container";
+            var error = "could not start service = %s: missing container";
             throw new RequestException(String.format(error, serComp));
         }
         try {
@@ -600,30 +597,30 @@ public final class Dpe extends AbstractActor {
 
     private void stopService(RequestParser parser)
             throws RequestException, DpeException {
-        String containerName = parser.nextString();
-        String engineName = parser.nextString();
-        String serviceName = MessageUtil.buildTopic(base.getName(), containerName, engineName)
-                                        .toString();
+        var containerName = parser.nextString();
+        var engineName = parser.nextString();
+        var serviceName = MessageUtil.buildTopic(base.getName(), containerName, engineName)
+                                     .toString();
 
-        Container container = myContainers.get(containerName);
+        var container = myContainers.get(containerName);
         if (container == null) {
-            String error = "could not stop service = %s: missing container";
+            var error = "could not stop service = %s: missing container";
             throw new RequestException(String.format(error, serviceName));
         }
-        boolean removed = container.removeService(serviceName);
+        var removed = container.removeService(serviceName);
         if (!removed) {
-            String error = "could not stop service = %s: service doesn't exist";
+            var error = "could not stop service = %s: service doesn't exist";
             throw new RequestException(String.format(error, serviceName));
         }
     }
 
     private void stopContainer(RequestParser parser)
             throws RequestException, DpeException {
-        String containerName = parser.nextString();
-        Container container = myContainers.remove(containerName);
+        var containerName = parser.nextString();
+        var container = myContainers.remove(containerName);
         if (container == null) {
-            String canonName = base.getName() + ":" + containerName;
-            String error = "could not stop container = %s: container doesn't exist";
+            var canonName = base.getName() + ":" + containerName;
+            var error = "could not stop container = %s: container doesn't exist";
             throw new RequestException(String.format(error, canonName));
         }
         container.stop();
@@ -637,16 +634,16 @@ public final class Dpe extends AbstractActor {
 
 
     private void setFrontEnd(RequestParser parser) throws RequestException {
-        String frontEndHost = parser.nextString();
-        int frontEndPort = parser.nextInteger();
-        String frontEndLang = parser.nextString();
+        var frontEndHost = parser.nextString();
+        var frontEndPort = parser.nextInteger();
+        var frontEndLang = parser.nextString();
 
-        ClaraComponent frontEnd = ClaraComponent.dpe(frontEndHost, frontEndPort, frontEndLang,
-                                                     1, ClaraConstants.UNDEFINED);
+        var frontEnd = ClaraComponent.dpe(frontEndHost, frontEndPort, frontEndLang,
+                                          1, ClaraConstants.UNDEFINED);
         base.setFrontEnd(frontEnd);
-        for (Container container : myContainers.values()) {
+        for (var container : myContainers.values()) {
             container.setFrontEnd(frontEnd);
-            for (Service service : container.geServices().values()) {
+            for (var service : container.geServices().values()) {
                 service.setFrontEnd(frontEnd);
             }
         }
@@ -721,12 +718,12 @@ public final class Dpe extends AbstractActor {
 
         // TODO: add support for multiple addresses per connection
         private Socket connect(ProxyAddress feAddr) throws ClaraMsgException {
-            Socket socket = socketFactory.createSocket(SocketType.PUB);
+            var socket = socketFactory.createSocket(SocketType.PUB);
             socketFactory.connectSocket(socket, feAddr.host(), feAddr.pubPort());
 
-            Optional<DpeName> monitorFE = FrontEnd.getMonitorFrontEnd();
+            var monitorFE = FrontEnd.getMonitorFrontEnd();
             if (monitorFE.isPresent()) {
-                ClaraAddress monAddr = monitorFE.get().address();
+                var monAddr = monitorFE.get().address();
                 socketFactory.connectSocket(socket, monAddr.host(), monAddr.port());
                 Logging.info("Using monitoring front-end %s", monitorFE);
             }
@@ -736,7 +733,7 @@ public final class Dpe extends AbstractActor {
 
         private void send(Socket con, Message msg) throws ClaraMsgException {
             msg.getMetaData().setSender(base.getName());
-            ZMsg zmsg = new ZMsg();
+            var zmsg = new ZMsg();
             zmsg.add(msg.getTopic().toString());
             zmsg.add(msg.getMetaData().build().toByteArray());
             zmsg.add(msg.getData());
@@ -752,14 +749,14 @@ public final class Dpe extends AbstractActor {
         }
 
         private Message serializeJson(String topicPrefix, String json) {
-            Topic topic = Topic.build(topicPrefix, session, base.getName());
+            var topic = Topic.build(topicPrefix, session, base.getName());
             return new Message(topic, EngineDataType.JSON.mimeType(), json.getBytes());
         }
 
         private void run() {
             try {
-                ProxyAddress feHost = base.getFrontEnd().getProxyAddress();
-                Socket socket = connect(feHost);
+                var feHost = base.getFrontEnd().getProxyAddress();
+                var socket = connect(feHost);
                 ActorUtils.sleep(100);
                 try {
                     while (isReporting.get()) {
@@ -794,9 +791,9 @@ public final class Dpe extends AbstractActor {
 
         @Override
         public String getMessage() {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.append(super.getMessage());
-            for (Throwable t : ClaraUtil.getThrowableList(getCause())) {
+            for (var t : ClaraUtil.getThrowableList(getCause())) {
                 sb.append(": ").append(t.getMessage());
             }
             return sb.toString();
@@ -843,7 +840,7 @@ public final class Dpe extends AbstractActor {
         @Override
         public void callback(Message msg) {
             try {
-                RequestParser parser = RequestParser.build(msg);
+                var parser = RequestParser.build(msg);
                 String cmd = parser.nextString();
                 String response = parser.request();
                 // checkstyle.off: InnerAssignment

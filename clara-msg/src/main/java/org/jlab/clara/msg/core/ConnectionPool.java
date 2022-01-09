@@ -10,7 +10,6 @@ import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
 import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.msg.sys.ConnectionFactory;
-import org.jlab.clara.msg.sys.pubsub.ProxyDriver;
 
 import java.io.Closeable;
 
@@ -49,8 +48,8 @@ public final class ConnectionPool implements Closeable {
          * @return a new connection pool
          */
         public ConnectionPool build() {
-            ConnectionSetup setup = new ConnectionSetup(proxyAddress, conSetup.build());
-            ConnectionFactory factory = new ConnectionFactory(Context.getInstance());
+            var setup = new ConnectionSetup(proxyAddress, conSetup.build());
+            var factory = new ConnectionFactory(Context.getInstance());
             return new ConnectionPool(setup, factory);
         }
     }
@@ -69,7 +68,7 @@ public final class ConnectionPool implements Closeable {
      * Closes all connections.
      */
     public void destroy() {
-        final int infiniteLinger = -1;
+        final var infiniteLinger = -1;
         destroy(infiniteLinger);
     }
 
@@ -143,7 +142,7 @@ public final class ConnectionPool implements Closeable {
      * @throws ClaraMsgException if the new connection could not be created
      */
     public void cacheConnection(ProxyAddress address) throws ClaraMsgException {
-        ProxyDriver connection = connectionManager.createProxyConnection(address);
+        var connection = connectionManager.createProxyConnection(address);
         connectionManager.releaseProxyConnection(connection);
     }
 

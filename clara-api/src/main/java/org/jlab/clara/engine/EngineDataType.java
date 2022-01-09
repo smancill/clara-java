@@ -224,7 +224,7 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            PlainData xData = (PlainData) data;
+            var xData = (PlainData) data;
             return ByteBuffer.wrap(xData.toByteArray());
         }
 
@@ -243,7 +243,7 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            PayloadData payload = (PayloadData) data;
+            var payload = (PayloadData) data;
             return ByteBuffer.wrap(payload.toByteArray());
         }
 
@@ -262,7 +262,7 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            String text = (String) data;
+            var text = (String) data;
             return ByteBuffer.wrap(text.getBytes(StandardCharsets.UTF_8));
         }
 
@@ -298,7 +298,7 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            PlainData.Builder proto = PlainData.newBuilder();
+            var proto = PlainData.newBuilder();
             switch (mimeType) {
                 case SINT32 -> proto.setVLSINT32((Integer) data);
                 case SINT64 -> proto.setVLSINT64((Long) data);
@@ -324,7 +324,7 @@ public class EngineDataType {
 
         @Override
         public Object read(ByteBuffer data) throws ClaraException {
-            PlainData proto = (PlainData) nativeSerializer.read(data);
+            var proto = (PlainData) nativeSerializer.read(data);
             return switch (mimeType) {
                 case SINT32 -> proto.getVLSINT32();
                 case SINT64 -> proto.getVLSINT64();

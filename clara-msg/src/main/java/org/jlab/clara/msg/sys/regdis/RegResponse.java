@@ -9,7 +9,6 @@ package org.jlab.clara.msg.sys.regdis;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.ClaraMsgException;
-import org.zeromq.ZFrame;
 import org.zeromq.ZMsg;
 
 import java.util.HashSet;
@@ -98,9 +97,9 @@ public class RegResponse {
             throw new ClaraMsgException("invalid registrar server response format");
         }
 
-        ZFrame topicFrame = msg.pop();
-        ZFrame senderFrame = msg.pop();
-        ZFrame statusFrame = msg.pop();
+        var topicFrame = msg.pop();
+        var senderFrame = msg.pop();
+        var statusFrame = msg.pop();
 
         topic = new String(topicFrame.getData());
         sender = new String(senderFrame.getData());
@@ -111,7 +110,7 @@ public class RegResponse {
 
         data = new HashSet<>();
         while (!msg.isEmpty()) {
-            ZFrame dataFrame = msg.pop();
+            var dataFrame = msg.pop();
             try {
                 data.add(RegData.parseFrom(dataFrame.getData()));
             } catch (InvalidProtocolBufferException e) {
@@ -127,11 +126,11 @@ public class RegResponse {
      * @return a message containing the response
      */
     public ZMsg msg() {
-        ZMsg msg = new ZMsg();
+        var msg = new ZMsg();
         msg.addString(topic);
         msg.addString(sender);
         msg.addString(status);
-        for (RegData reg : data) {
+        for (var reg : data) {
             msg.add(reg.toByteArray());
         }
         return msg;

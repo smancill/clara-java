@@ -106,9 +106,9 @@ public class BaseOrchestrator implements AutoCloseable {
      * It can be overridden to return a mock for testing purposes.
      */
     ClaraBase getClaraBase(String name, DpeName frontEnd, int poolSize) {
-        String localhost = ClaraUtil.localhost();
-        ClaraComponent o = ClaraComponent.orchestrator(name, localhost, poolSize, "");
-        ClaraComponent fe = ClaraComponent.dpe(frontEnd.canonicalName());
+        var localhost = ClaraUtil.localhost();
+        var o = ClaraComponent.orchestrator(name, localhost, poolSize, "");
+        var fe = ClaraComponent.dpe(frontEnd.canonicalName());
         return new ClaraBase(o, fe);
     }
 
@@ -158,8 +158,8 @@ public class BaseOrchestrator implements AutoCloseable {
      * @return the request to start the container
      */
     public DeployContainerRequest deploy(ContainerName container) {
-        String dpeName = ClaraUtil.getDpeName(container.canonicalName());
-        ClaraComponent targetDpe = ClaraComponent.dpe(dpeName);
+        var dpeName = ClaraUtil.getDpeName(container.canonicalName());
+        var targetDpe = ClaraComponent.dpe(dpeName);
         return new DeployContainerRequest(base, targetDpe, container);
     }
 
@@ -172,8 +172,8 @@ public class BaseOrchestrator implements AutoCloseable {
      * @return the request to start the service
      */
     public DeployServiceRequest deploy(ServiceName service, String classPath) {
-        String dpeName = ClaraUtil.getDpeName(service.canonicalName());
-        ClaraComponent targetDpe = ClaraComponent.dpe(dpeName);
+        var dpeName = ClaraUtil.getDpeName(service.canonicalName());
+        var targetDpe = ClaraComponent.dpe(dpeName);
         return new DeployServiceRequest(base, targetDpe, service, classPath);
     }
 
@@ -185,7 +185,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * @return the request to stop the DPE
      */
     public ExitRequest exit(DpeName dpe) {
-        ClaraComponent targetDpe = ClaraComponent.dpe(dpe.canonicalName());
+        var targetDpe = ClaraComponent.dpe(dpe.canonicalName());
         return new ExitRequest(base, targetDpe, dpe);
     }
 
@@ -196,8 +196,8 @@ public class BaseOrchestrator implements AutoCloseable {
      * @return the request to stop the container
      */
     public ExitRequest exit(ContainerName container) {
-        String dpeName = ClaraUtil.getDpeName(container.canonicalName());
-        ClaraComponent targetDpe = ClaraComponent.dpe(dpeName);
+        var dpeName = ClaraUtil.getDpeName(container.canonicalName());
+        var targetDpe = ClaraComponent.dpe(dpeName);
         return new ExitRequest(base, targetDpe, container);
     }
 
@@ -208,8 +208,8 @@ public class BaseOrchestrator implements AutoCloseable {
      * @return the request to stop the service
      */
     public ExitRequest exit(ServiceName service) {
-        String dpeName = ClaraUtil.getDpeName(service.canonicalName());
-        ClaraComponent targetDpe = ClaraComponent.dpe(dpeName);
+        var dpeName = ClaraUtil.getDpeName(service.canonicalName());
+        var targetDpe = ClaraComponent.dpe(dpeName);
         return new ExitRequest(base, targetDpe, service);
     }
 
@@ -222,8 +222,8 @@ public class BaseOrchestrator implements AutoCloseable {
      *         (with data, with report frequency, etc)
      */
     public ServiceConfigRequestBuilder configure(ServiceName service) {
-        String dpeName = ClaraUtil.getDpeName(service.canonicalName());
-        ClaraComponent targetDpe = ClaraComponent.dpe(dpeName);
+        var dpeName = ClaraUtil.getDpeName(service.canonicalName());
+        var targetDpe = ClaraComponent.dpe(dpeName);
         return new ServiceConfigRequestBuilder(base, targetDpe, service, dataTypes);
     }
 
@@ -236,8 +236,8 @@ public class BaseOrchestrator implements AutoCloseable {
      *         (with data, data types, etc)
      */
     public ServiceExecuteRequestBuilder execute(ServiceName service) {
-        String dpeName = ClaraUtil.getDpeName(service.canonicalName());
-        ClaraComponent targetDpe = ClaraComponent.dpe(dpeName);
+        var dpeName = ClaraUtil.getDpeName(service.canonicalName());
+        var targetDpe = ClaraComponent.dpe(dpeName);
         return new ServiceExecuteRequestBuilder(base, targetDpe, service, dataTypes);
     }
 
@@ -249,8 +249,8 @@ public class BaseOrchestrator implements AutoCloseable {
      *         (with data, data types, etc)
      */
     public ServiceExecuteRequestBuilder execute(Composition composition) {
-        String dpeName = ClaraUtil.getDpeName(composition.firstService());
-        ClaraComponent targetDpe = ClaraComponent.dpe(dpeName);
+        var dpeName = ClaraUtil.getDpeName(composition.firstService());
+        var targetDpe = ClaraComponent.dpe(dpeName);
         return new ServiceExecuteRequestBuilder(base, targetDpe, composition, dataTypes);
     }
 

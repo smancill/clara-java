@@ -39,7 +39,7 @@ public final class FileUtils {
     }
 
     public static Path getFileName(Path path) {
-        Path fileName = path.getFileName();
+        var fileName = path.getFileName();
         if (fileName == null) {
             throw new IllegalArgumentException("empty path");
         }
@@ -47,7 +47,7 @@ public final class FileUtils {
     }
 
     public static Path getParent(Path path) {
-        Path parent = path.getParent();
+        var parent = path.getParent();
         if (parent == null) {
             return Paths.get(".");
         }

@@ -63,13 +63,13 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
 
     @Override
     public EngineData configure(EngineData input) {
-        final long startTime = System.currentTimeMillis();
-        String mimeType = input.getMimeType();
+        final var startTime = System.currentTimeMillis();
+        var mimeType = input.getMimeType();
         if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
-            String data = (String) input.getData();
-            JSONObject config = new JSONObject(data);
+            var data = (String) input.getData();
+            var config = new JSONObject(data);
             if (config.has(CONF_ACTION) && config.has(CONF_FILENAME)) {
-                String action = config.getString(CONF_ACTION);
+                var action = config.getString(CONF_ACTION);
                 if (action.equals(CONF_ACTION_OPEN)) {
                     openFile(config);
                 } else if (action.equals(CONF_ACTION_CLOSE)) {
@@ -109,14 +109,14 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
 
     private void setLimits(JSONObject config) throws EventReaderException {
         eventCount = readEventCount();
-        int skipEvents = getValue(config, CONF_EVENTS_SKIP, 0, 0, eventCount);
+        var skipEvents = getValue(config, CONF_EVENTS_SKIP, 0, 0, eventCount);
         if (skipEvents != 0) {
             logger.info("config: skip first {} events", skipEvents);
         }
         currentEvent = skipEvents;
 
-        int remEvents = eventCount - skipEvents;
-        int maxEvents = getValue(config, CONF_EVENTS_MAX, remEvents, 0, remEvents);
+        var remEvents = eventCount - skipEvents;
+        var maxEvents = getValue(config, CONF_EVENTS_MAX, remEvents, 0, remEvents);
         if (maxEvents != remEvents) {
             logger.info("config: read {} events%n", maxEvents);
         }
@@ -130,7 +130,7 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
     private int getValue(JSONObject config, String key, int defaultVal, int minVal, int maxVal) {
         if (config.has(key)) {
             try {
-                int value = config.getInt(key);
+                var value = config.getInt(key);
                 if (value >= minVal && value <= maxVal) {
                     return value;
                 }
@@ -183,11 +183,11 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
 
     @Override
     public EngineData execute(EngineData input) {
-        EngineData output = new EngineData();
+        var output = new EngineData();
 
-        String mimeType = input.getMimeType();
+        var mimeType = input.getMimeType();
         if (mimeType.equalsIgnoreCase(EngineDataType.STRING.mimeType())) {
-            String request = (String) input.getData();
+            var request = (String) input.getData();
             if (request.equals(REQUEST_NEXT) || request.equals(REQUEST_NEXT_REC)) {
                 getNextEvent(input, output);
             } else if (request.equals(REQUEST_ORDER)) {
@@ -200,7 +200,7 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
                 ServiceUtils.setError(output, String.format("Wrong input data = '%s'", request));
             }
         } else {
-            String error = String.format("Wrong input type '%s'", mimeType);
+            var error = String.format("Wrong input type '%s'", mimeType);
             ServiceUtils.setError(output, error);
         }
 
@@ -209,14 +209,14 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
 
 
     private boolean isReconstructionRequest(EngineData input) {
-        String requestType = (String) input.getData();
+        var requestType = (String) input.getData();
         return requestType.equalsIgnoreCase(REQUEST_NEXT_REC);
     }
 
 
     private void getNextEvent(EngineData input, EngineData output) {
         synchronized (readerLock) {
-            boolean fromRec = isReconstructionRequest(input);
+            var fromRec = isReconstructionRequest(input);
             if (fromRec) {
                 processingEvents.remove(input.getCommunicationId());
             }
@@ -244,13 +244,13 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
 
     private void returnNextEvent(EngineData output) {
         try {
-            Object event = readEvent(currentEvent);
+            var event = readEvent(currentEvent);
             output.setData(getDataType().toString(), event);
             output.setDescription("data");
             processingEvents.add(currentEvent);
         } catch (EventReaderException e) {
-            String error = String.format("Error requesting event %d from file %s%n%n%s",
-                                         currentEvent, fileName, ClaraUtil.reportException(e));
+            var error = String.format("Error requesting event %d from file %s%n%n%s",
+                                      currentEvent, fileName, ClaraUtil.reportException(e));
             ServiceUtils.setError(output, error, 1);
         } finally {
             output.setCommunicationId(currentEvent);
@@ -268,8 +268,8 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
                     output.setData(EngineDataType.STRING.mimeType(), readByteOrder().toString());
                     output.setDescription("byte order");
                 } catch (EventReaderException e) {
-                    String error = String.format("Error requesting byte-order from file %s%n%n%s",
-                                                 fileName, ClaraUtil.reportException(e));
+                    var error = String.format("Error requesting byte-order from file %s%n%n%s",
+                                              fileName, ClaraUtil.reportException(e));
                     ServiceUtils.setError(output, error, 1);
                 }
             }

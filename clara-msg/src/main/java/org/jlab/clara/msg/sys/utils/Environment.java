@@ -12,12 +12,12 @@ public final class Environment {
 
 
     public static long getLong(String var, long def) {
-        String value = System.getenv(var);
+        var value = System.getenv(var);
         if (value == null) {
             value = String.valueOf(def);
         }
         try {
-            long timeout = Long.parseLong(value);
+            var timeout = Long.parseLong(value);
             if (timeout < 0) {
                 throw new IllegalArgumentException("invalid value " + var + "=" + value);
             }

@@ -128,7 +128,7 @@ public final class ActorUtils {
     }
 
     static String encodeIdentity(String address, String name) {
-        String id = address + "#" + name + "#" + randomGenerator.nextInt(100);
+        var id = address + "#" + name + "#" + randomGenerator.nextInt(100);
         int hash = id.hashCode() & Integer.MAX_VALUE;
         int min = 0x1000_0000;
         if (hash < min) {
@@ -148,8 +148,8 @@ public final class ActorUtils {
         if (object instanceof byte[] bytes) {
             return ByteString.copyFrom(bytes);
         } else {
-            try (ByteString.Output bs = ByteString.newOutput();
-                 ObjectOutputStream out = new ObjectOutputStream(bs)) {
+            try (var bs = ByteString.newOutput();
+                 var out = new ObjectOutputStream(bs)) {
                 out.writeObject(object);
                 out.flush();
                 return bs.toByteString();
@@ -169,8 +169,8 @@ public final class ActorUtils {
         if (object instanceof byte[] bytes) {
             return bytes;
         }
-        try (ByteArrayOutputStream bs = new ByteArrayOutputStream();
-             ObjectOutputStream out = new ObjectOutputStream(bs)) {
+        try (var bs = new ByteArrayOutputStream();
+             var out = new ObjectOutputStream(bs)) {
             out.writeObject(object);
             out.flush();
             return bs.toByteArray();
@@ -187,7 +187,7 @@ public final class ActorUtils {
      */
     public static Object deserialize(ByteString bytes)
             throws ClassNotFoundException, IOException {
-        byte[] bb = bytes.toByteArray();
+        var bb = bytes.toByteArray();
         return deserialize(bb);
     }
 
@@ -201,8 +201,8 @@ public final class ActorUtils {
      */
     public static Object deserialize(byte[] bytes)
             throws IOException, ClassNotFoundException {
-        try (ByteArrayInputStream bs = new ByteArrayInputStream(bytes);
-             ObjectInputStream in = new ObjectInputStream(bs)) {
+        try (var bs = new ByteArrayInputStream(bytes);
+             var in = new ObjectInputStream(bs)) {
             return in.readObject();
         }
     }

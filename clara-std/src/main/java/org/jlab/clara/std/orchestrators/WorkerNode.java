@@ -73,12 +73,12 @@ class WorkerNode {
         }
 
         public void addDpe(DpeInfo dpe) {
-            ClaraLang lang = dpe.name().language();
+            var lang = dpe.name().language();
             if (!app.getLanguages().contains(lang)) {
                 Logging.info("Ignoring DPE %s (language not needed)", dpe.name());
                 return;
             }
-            DpeInfo prev = dpes.put(dpe.name().language(), dpe);
+            var prev = dpes.put(lang, dpe);
             if (prev != null && !prev.equals(dpe)) {
                 Logging.info("Replacing existing DPE %s with %s", prev.name(), dpe.name());
             }
@@ -132,7 +132,7 @@ class WorkerNode {
 
 
     void subscribeErrors(Function<WorkerNode, EngineCallback> callbackFactory) {
-        EngineCallback callback = callbackFactory.apply(this);
+        var callback = callbackFactory.apply(this);
         application.allContainers().values().stream()
                    .flatMap(Collection::stream)
                    .forEach(cont -> orchestrator.subscribeErrors(cont, callback));
@@ -150,7 +150,7 @@ class WorkerNode {
 
 
     private ApplicationConfig createApplicationConfig(boolean fillDataModel) {
-        Map<String, Object> model = new HashMap<>();
+        var model = new HashMap<String, Object>();
         if (fillDataModel && currentInputFile != null) {
             model.put("input_file", currentInputFile);
             model.put("output_file", currentOutputFile);
@@ -162,7 +162,7 @@ class WorkerNode {
 
     void setPaths(Path inputPath, Path outputPath, Path stagePath) {
         try {
-            JSONObject data = new JSONObject();
+            var data = new JSONObject();
             data.put("input_path", inputPath);
             data.put("output_path", outputPath);
             data.put("stage_path", stagePath);
@@ -175,22 +175,22 @@ class WorkerNode {
 
     void setFiles(FileInfo currentFile) {
         try {
-            JSONObject request = new JSONObject();
+            var request = new JSONObject();
             request.put("type", "exec");
             request.put("action", "stage_input");
             request.put("file", currentFile.inputName);
 
             Logging.info("Staging file %s on %s", currentFile.inputName, name());
-            EngineData response = orchestrator.syncSend(stageName, request, 5, TimeUnit.MINUTES);
+            var response = orchestrator.syncSend(stageName, request, 5, TimeUnit.MINUTES);
 
             if (!response.getStatus().equals(EngineStatus.ERROR)) {
-                String content = (String) response.getData();
-                JSONObject data = new JSONObject(content);
+                var content = (String) response.getData();
+                var data = new JSONObject(content);
                 currentInputFile = data.getString("input_file");
                 currentOutputFile = data.getString("output_file");
                 currentInputFileName = currentFile.inputName;
             } else {
-                String error = "Could not stage input file: " + response.getDescription();
+                var error = "Could not stage input file: " + response.getDescription();
                 throw new OrchestratorException(error);
             }
         } catch (ClaraException | TimeoutException e) {
@@ -226,13 +226,13 @@ class WorkerNode {
 
     boolean saveOutputFile() {
         try {
-            JSONObject cleanRequest = new JSONObject();
+            var cleanRequest = new JSONObject();
             cleanRequest.put("type", "exec");
             cleanRequest.put("action", "remove_input");
             cleanRequest.put("file", currentInputFileName);
             EngineData cleanResponse = orchestrator.syncSend(stageName, cleanRequest, 5, TimeUnit.MINUTES);
 
-            JSONObject saveRequest = new JSONObject();
+            var saveRequest = new JSONObject();
             saveRequest.put("type", "exec");
             saveRequest.put("action", "save_output");
             saveRequest.put("file", currentInputFileName);
@@ -257,11 +257,11 @@ class WorkerNode {
 
     boolean removeStageDir() {
         try {
-            JSONObject request = new JSONObject();
+            var request = new JSONObject();
             request.put("type", "exec");
             request.put("action", "clear_stage");
 
-            EngineData response = orchestrator.syncSend(stageName, request, 5, TimeUnit.MINUTES);
+            var response = orchestrator.syncSend(stageName, request, 5, TimeUnit.MINUTES);
 
             if (response.getStatus().equals(EngineStatus.ERROR)) {
                 Logging.error("Failed to remove stage directory on %s: %s",
@@ -289,15 +289,15 @@ class WorkerNode {
         eventNumber.set(0);
         totalEvents.set(0);
 
-        ApplicationConfig configData = createApplicationConfig(false);
+        var configData = createApplicationConfig(false);
 
-        int skipEvents = this.skipEvents.get();
-        int maxEvents = this.maxEvents.get();
+        var skipEvents = this.skipEvents.get();
+        var maxEvents = this.maxEvents.get();
 
         // open input file
         try {
             Logging.info("Opening file %s on %s", currentInputFileName, name());
-            JSONObject config = configData.reader();
+            var config = configData.reader();
             config.put("action", "open");
             config.put("file", currentInputFile);
             if (skipEvents > 0) {
@@ -314,18 +314,18 @@ class WorkerNode {
         }
 
         // total number of events in the file
-        int totalEvents = requestNumberOfEvents() - skipEvents;
+        var totalEvents = requestNumberOfEvents() - skipEvents;
         if (maxEvents > 0 && maxEvents < totalEvents) {
             totalEvents = maxEvents;
         }
         this.totalEvents.set(totalEvents);
 
         // endiannes of the file
-        String fileOrder = requestFileOrder();
+        var fileOrder = requestFileOrder();
 
         // open output file
         try {
-            JSONObject config = configData.writer();
+            var config = configData.writer();
             config.put("action", "open");
             config.put("file", currentOutputFile);
             config.put("order", fileOrder);
@@ -354,7 +354,7 @@ class WorkerNode {
 
     void closeFiles() {
         try {
-            JSONObject config = new JSONObject();
+            var config = new JSONObject();
             config.put("action", "close");
             config.put("file", currentInputFile);
             orchestrator.syncConfig(readerName, config, 5, TimeUnit.MINUTES);
@@ -363,7 +363,7 @@ class WorkerNode {
         }
 
         try {
-            JSONObject config = new JSONObject();
+            var config = new JSONObject();
             config.put("action", "close");
             config.put("file", currentOutputFile);
             orchestrator.syncConfig(writerName, config, 5, TimeUnit.MINUTES);
@@ -375,7 +375,7 @@ class WorkerNode {
 
     private String requestFileOrder() {
         try {
-            EngineData response = orchestrator.syncSend(readerName, "order", 1, TimeUnit.MINUTES);
+            var response = orchestrator.syncSend(readerName, "order", 1, TimeUnit.MINUTES);
             return (String) response.getData();
         } catch (ClaraException | TimeoutException e) {
             throw new OrchestratorException("Could not get input file order", e);
@@ -385,7 +385,7 @@ class WorkerNode {
 
     private int requestNumberOfEvents() {
         try {
-            EngineData response = orchestrator.syncSend(readerName, "count", 1, TimeUnit.MINUTES);
+            var response = orchestrator.syncSend(readerName, "count", 1, TimeUnit.MINUTES);
             return (Integer) response.getData();
         } catch (ClaraException | TimeoutException e) {
             throw new OrchestratorException("Could not get number of input events", e);
@@ -394,9 +394,9 @@ class WorkerNode {
 
 
     void configureServices() {
-        ApplicationConfig configData = createApplicationConfig(true);
+        var configData = createApplicationConfig(true);
 
-        for (ServiceName service : application.services()) {
+        for (var service : application.services()) {
             try {
                 orchestrator.syncConfig(service, configData.get(service), 2, TimeUnit.MINUTES);
             } catch (OrchestratorConfigException e) {
@@ -406,7 +406,7 @@ class WorkerNode {
             }
         }
 
-        for (ServiceName service : application.monitoringServices()) {
+        for (var service : application.monitoringServices()) {
             try {
                 orchestrator.syncEnableRing(service, 1, TimeUnit.MINUTES);
             } catch (ClaraException | TimeoutException e) {
@@ -417,12 +417,12 @@ class WorkerNode {
 
 
     void sendEvents(int maxCores) {
-        long currentTime = System.currentTimeMillis();
+        var currentTime = System.currentTimeMillis();
         startTime.compareAndSet(0, currentTime);
         lastReportTime.compareAndSet(0, currentTime);
 
-        int requestCores = numCores(maxCores);
-        int requestId = 1;
+        var requestCores = numCores(maxCores);
+        var requestId = 1;
 
         Logging.info("Using %d cores on %s to process %d events of %s [%d/%d]",
                       requestCores, name(), totalEvents.get(), currentInputFileName,
@@ -436,7 +436,7 @@ class WorkerNode {
 
     void requestEvent(int requestId, String type) {
         try {
-            EngineData request = new EngineData();
+            var request = new EngineData();
             request.setData(EngineDataType.STRING.mimeType(), type);
             request.setCommunicationId(requestId);
             orchestrator.send(application.composition(), request);
@@ -466,7 +466,7 @@ class WorkerNode {
 
 
     boolean isFrontEnd() {
-        String frontEndHost = orchestrator.getFrontEnd().address().host();
+        var frontEndHost = orchestrator.getFrontEnd().address().host();
         return frontEndHost.equals(name());
     }
 

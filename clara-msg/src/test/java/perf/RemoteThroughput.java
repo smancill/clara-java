@@ -7,7 +7,6 @@
 package perf;
 
 import org.jlab.clara.msg.core.Actor;
-import org.jlab.clara.msg.core.Connection;
 import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.errors.ClaraMsgException;
@@ -24,19 +23,19 @@ public final class RemoteThroughput {
             System.exit(1);
         }
 
-        final String bindTo = argv[0];
-        final int messageSize = Integer.parseInt(argv[1]);
-        final long messageCount = Long.parseLong(argv[2]);
+        final var bindTo = argv[0];
+        final var messageSize = Integer.parseInt(argv[1]);
+        final var messageCount = Long.parseLong(argv[2]);
 
-        final ProxyAddress address = new ProxyAddress(bindTo);
+        final var address = new ProxyAddress(bindTo);
 
-        try (Actor publisher = new Actor("thr_publisher");
-             Connection con = publisher.getConnection(address)) {
+        try (var publisher = new Actor("thr_publisher");
+             var con = publisher.getConnection(address)) {
             System.out.println("Publishing messages...");
-            Topic topic = Topic.wrap("thr_topic");
-            byte[] data = new byte[messageSize];
+            var topic = Topic.wrap("thr_topic");
+            var data = new byte[messageSize];
             for (int i = 0; i < messageCount; i++) {
-                Message msg = new Message(topic, "data/binary", data);
+                var msg = new Message(topic, "data/binary", data);
                 publisher.publish(con, msg);
             }
         } catch (ClaraMsgException e) {

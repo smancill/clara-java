@@ -64,8 +64,8 @@ public class DpeName implements ClaraName {
         if (!ClaraUtil.isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Invalid canonical name: " + canonicalName);
         }
-        String host = ClaraUtil.getDpeHost(canonicalName);
-        int port = ClaraUtil.getDpePort(canonicalName);
+        var host = ClaraUtil.getDpeHost(canonicalName);
+        var port = ClaraUtil.getDpePort(canonicalName);
         this.address = new ClaraAddress(host, port);
         this.language = ClaraLang.fromString(ClaraUtil.getDpeLang(canonicalName));
         this.name = canonicalName;

@@ -52,13 +52,13 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
 
     @Override
     public EngineData configure(EngineData input) {
-        final long startTime = System.currentTimeMillis();
-        String mimeType = input.getMimeType();
+        final var startTime = System.currentTimeMillis();
+        var mimeType = input.getMimeType();
         if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
-            String data = (String) input.getData();
-            JSONObject config = new JSONObject(data);
+            var data = (String) input.getData();
+            var config = new JSONObject(data);
             if (config.has(CONF_ACTION)) {
-                String action = config.getString(CONF_ACTION);
+                var action = config.getString(CONF_ACTION);
                 if (action.equals(CONF_ACTION_OPEN)) {
                     if (config.has(CONF_FILENAME)) {
                         openFile(config);
@@ -95,8 +95,8 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
             fileName = config.getString(CONF_FILENAME);
             logger.info("request to open file {}", fileName);
             try {
-                File outputFile = new File(fileName);
-                File outputDir = outputFile.getParentFile();
+                var outputFile = new File(fileName);
+                var outputDir = outputFile.getParentFile();
                 if (outputDir != null) {
                     FileUtils.createDirectories(outputDir.toPath());
                 }
@@ -170,9 +170,9 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
 
     @Override
     public EngineData execute(EngineData input) {
-        EngineData output = new EngineData();
+        var output = new EngineData();
 
-        String mimeType = input.getMimeType();
+        var mimeType = input.getMimeType();
         if (!mimeType.equalsIgnoreCase(getDataType().mimeType())) {
             ServiceUtils.setError(output, String.format("Wrong input type '%s'", mimeType));
             return output;
@@ -195,8 +195,8 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
                     output.setDescription("event saved");
 
                 } catch (EventWriterException e) {
-                    String error = String.format("Error saving event to file %s%n%n%s",
-                                                 fileName, ClaraUtil.reportException(e));
+                    var error = String.format("Error saving event to file %s%n%n%s",
+                                              fileName, ClaraUtil.reportException(e));
                     ServiceUtils.setError(output, error);
                 }
             }

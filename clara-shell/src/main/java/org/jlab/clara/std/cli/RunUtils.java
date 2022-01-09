@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -47,8 +46,8 @@ class RunUtils {
     }
 
     String getSession() {
-        String sessionId = config.getString(Config.SESSION);
-        String sessionDesc = config.getString(Config.DESCRIPTION);
+        var sessionId = config.getString(Config.SESSION);
+        var sessionDesc = config.getString(Config.DESCRIPTION);
         return sessionId + "_" + sessionDesc;
     }
 
@@ -57,24 +56,24 @@ class RunUtils {
     }
 
     Path getLogFile(DpeName name) {
-        ClaraLang lang = name.language();
-        String component = (lang == ClaraLang.JAVA) ? "fe_dpe" : lang + "_dpe";
+        var lang = name.language();
+        var component = (lang == ClaraLang.JAVA) ? "fe_dpe" : lang + "_dpe";
         return getLogFile(name.address().host(), component);
     }
 
     Path getLogFile(String host, String component) {
-        String name = String.format("%s_%s_%s.log", host, getSession(), component);
+        var name = String.format("%s_%s_%s.log", host, getSession(), component);
         return getLogDir().resolve(name);
     }
 
     Path getLogFile(Path feLog, ClaraLang dpeLang) {
-        String name = FileUtils.getFileName(feLog).toString();
+        var name = FileUtils.getFileName(feLog).toString();
         return getLogDir().resolve(name.replaceAll("fe_dpe", dpeLang + "_dpe"));
     }
 
     List<Path> getLogFiles(String component) throws IOException {
-        String glob = String.format("glob:*_%s_%s.log", getSession(), component);
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher(glob);
+        var glob = String.format("glob:*_%s_%s.log", getSession(), component);
+        var matcher = FileSystems.getDefault().getPathMatcher(glob);
 
         Function<Path, Long> modDate = path -> path.toFile().lastModified();
 
@@ -100,14 +99,14 @@ class RunUtils {
     }
 
     static int paginateFile(Terminal terminal, String description, Path... paths) {
-        for (Path path : paths) {
+        for (var path : paths) {
             if (!Files.exists(path)) {
                 terminal.writer().printf("error: no %s log: %s%n", description, path);
                 return Command.EXIT_ERROR;
             }
         }
         try {
-            String[] args = Arrays.stream(paths).map(Path::toString).toArray(String[]::new);
+            var args = Arrays.stream(paths).map(Path::toString).toArray(String[]::new);
             Commands.less(terminal, System.in, System.out, System.err, Paths.get(""), args);
             return Command.EXIT_SUCCESS;
         } catch (IOException e) {

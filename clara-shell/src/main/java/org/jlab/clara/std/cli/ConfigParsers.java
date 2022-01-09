@@ -12,7 +12,6 @@ import org.jlab.clara.util.FileUtils;
 
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Parsers to set the value of configuration variables.
@@ -51,7 +50,7 @@ public final class ConfigParsers {
      * @return the first argument
      */
     public static String toAlphaNum(String... args) {
-        String word = requireArg(args);
+        var word = requireArg(args);
         if (!word.matches("[0-9A-Za-z]+")) {
             throw new IllegalArgumentException("argument is not an alphanumeric word");
         }
@@ -68,7 +67,7 @@ public final class ConfigParsers {
         if (args.length == 0) {
             return "";
         }
-        String word = args[0];
+        var word = args[0];
         if (word.isEmpty()) {
             return "";
         }
@@ -85,7 +84,7 @@ public final class ConfigParsers {
      * @return the first argument
      */
     public static String toNonWhitespace(String... args) {
-        String word = requireArg(args);
+        var word = requireArg(args);
         if (!word.matches("\\S+")) {
             throw new IllegalArgumentException("argument contains whitespace characters");
         }
@@ -180,7 +179,7 @@ public final class ConfigParsers {
      * @return the path string represented by the first argument
      */
     public static String toFile(String... args) {
-        Path path = FileUtils.expandHome(requireArg(args));
+        var path = FileUtils.expandHome(requireArg(args));
         if (Files.exists(path)) {
             if (!Files.isRegularFile(path)) {
                 throw new IllegalArgumentException("argument is not a regular file");
@@ -197,7 +196,7 @@ public final class ConfigParsers {
      * @return the path string represented by the first argument
      */
     public static String toDirectory(String... args) {
-        Path path = FileUtils.expandHome(requireArg(args));
+        var path = FileUtils.expandHome(requireArg(args));
         if (Files.exists(path)) {
             if (!Files.isDirectory(path)) {
                 throw new IllegalArgumentException("argument is not a directory");
@@ -214,7 +213,7 @@ public final class ConfigParsers {
      * @return the path string represented by the first argument
      */
     public static String toExistingFile(String... args) {
-        Path path = FileUtils.expandHome(requireArg(args));
+        var path = FileUtils.expandHome(requireArg(args));
         if (!Files.exists(path)) {
             throw new IllegalArgumentException("file does not exist");
         }
@@ -232,7 +231,7 @@ public final class ConfigParsers {
      * @return the path string represented by the first argument
      */
     public static String toExistingDirectory(String... args) {
-        Path path = FileUtils.expandHome(requireArg(args));
+        var path = FileUtils.expandHome(requireArg(args));
         if (!Files.exists(path)) {
             throw new IllegalArgumentException("directory does not exist");
         }
@@ -250,7 +249,7 @@ public final class ConfigParsers {
      * @return the IP address represented by the first argument
      */
     public static String toHostAddress(String... args) {
-        String arg = requireArg(args);
+        var arg = requireArg(args);
         try {
             return ClaraUtil.toHostAddress(arg);
         } catch (UncheckedIOException e) {

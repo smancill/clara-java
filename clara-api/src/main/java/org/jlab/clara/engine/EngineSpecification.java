@@ -13,7 +13,6 @@ import org.yaml.snakeyaml.error.YAMLException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -104,9 +103,9 @@ public class EngineSpecification {
      */
     @SuppressWarnings("unchecked")
     public EngineSpecification(String engine) {
-        InputStream spec = getSpecStream(engine);
+        var spec = getSpecStream(engine);
         if (spec != null) {
-            Yaml yaml = new Yaml();
+            var yaml = new Yaml();
             try {
                 Object content = yaml.load(spec);
                 if (content instanceof Map) {
@@ -130,7 +129,7 @@ public class EngineSpecification {
 
 
     private InputStream getSpecStream(String engine) {
-        InputStream spec = getSpecStream(engine, ".yaml");
+        var spec = getSpecStream(engine, ".yaml");
         if (spec == null) {
             spec = getSpecStream(engine, ".yml");
         }
@@ -139,10 +138,10 @@ public class EngineSpecification {
 
 
     private InputStream getSpecStream(String engine, String ext) {
-        ClassLoader cl = getClass().getClassLoader();
-        Path path = Paths.get(engine.replaceAll("\\.", File.separator) + ext);
-        Path name = FileUtils.getFileName(path);
-        InputStream resource = cl.getResourceAsStream(name.toString());
+        var cl = getClass().getClassLoader();
+        var path = Paths.get(engine.replaceAll("\\.", File.separator) + ext);
+        var name = FileUtils.getFileName(path);
+        var resource = cl.getResourceAsStream(name.toString());
         if (resource == null) {
             resource = cl.getResourceAsStream(path.toString());
         }

@@ -47,7 +47,7 @@ public class ConnectionFactory {
     public ProxyDriver createSubscriberConnection(ProxyAddress address,
                                                   ProxyDriverSetup setup)
             throws ClaraMsgException {
-        ProxyDriver connection = ProxyDriver.subscriber(address, factory);
+        var connection = ProxyDriver.subscriber(address, factory);
         prepareProxyConnection(connection, setup);
         return connection;
     }
@@ -64,7 +64,7 @@ public class ConnectionFactory {
     public ProxyDriver createPublisherConnection(ProxyAddress address,
                                                  ProxyDriverSetup setup)
             throws ClaraMsgException {
-        ProxyDriver connection = ProxyDriver.publisher(address, factory);
+        var connection = ProxyDriver.publisher(address, factory);
         prepareProxyConnection(connection, setup);
         return connection;
     }
@@ -94,7 +94,7 @@ public class ConnectionFactory {
      * @throws ClaraMsgException if the connection could not be created
      */
     public RegDriver createRegistrarConnection(RegAddress address) throws ClaraMsgException {
-        RegDriver connection = new RegDriver(address, factory);
+        var connection = new RegDriver(address, factory);
         try {
             connection.connect();
             return connection;

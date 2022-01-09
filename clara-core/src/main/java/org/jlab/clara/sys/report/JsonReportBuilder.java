@@ -19,28 +19,28 @@ public class JsonReportBuilder implements ExternalReport {
 
     @Override
     public String generateReport(DpeReport dpeReport) {
-        String snapshotTime = ClaraUtil.getCurrentTime();
+        var snapshotTime = ClaraUtil.getCurrentTime();
 
-        JSONObject dpeRuntime = new JSONObject();
+        var dpeRuntime = new JSONObject();
         dpeRuntime.put("name", dpeReport.getHost());
         dpeRuntime.put("snapshot_time", snapshotTime);
         dpeRuntime.put("cpu_usage", dpeReport.getCpuUsage());
         dpeRuntime.put("memory_usage", dpeReport.getMemoryUsage());
         dpeRuntime.put("load", dpeReport.getLoad());
 
-        JSONArray containersRuntimeArray = new JSONArray();
-        for (ContainerReport containerReport : dpeReport.getContainers()) {
-            JSONObject containerRuntime = new JSONObject();
+        var containersRuntimeArray = new JSONArray();
+        for (var containerReport : dpeReport.getContainers()) {
+            var containerRuntime = new JSONObject();
             containerRuntime.put("name", containerReport.getName());
             containerRuntime.put("snapshot_time", snapshotTime);
 
-            long containerRequests = 0L;
+            var containerRequests = 0L;
 
-            JSONArray servicesRuntimeArray = new JSONArray();
-            for (ServiceReport serviceReport : containerReport.getServices()) {
-                JSONObject serviceRuntime = new JSONObject();
+            var servicesRuntimeArray = new JSONArray();
+            for (var serviceReport : containerReport.getServices()) {
+                var serviceRuntime = new JSONObject();
 
-                long serviceRequests = serviceReport.getRequestCount();
+                var serviceRequests = serviceReport.getRequestCount();
                 containerRequests += serviceRequests;
 
                 serviceRuntime.put("name", serviceReport.getName());
@@ -63,7 +63,7 @@ public class JsonReportBuilder implements ExternalReport {
 
         dpeRuntime.put("containers", containersRuntimeArray);
 
-        JSONObject dpeRegistration = new JSONObject();
+        var dpeRegistration = new JSONObject();
         dpeRegistration.put("name", dpeReport.getHost());
         dpeRegistration.put("session", dpeReport.getSession());
         dpeRegistration.put("description", dpeReport.getDescription());
@@ -73,17 +73,17 @@ public class JsonReportBuilder implements ExternalReport {
         dpeRegistration.put("memory_size", dpeReport.getMemorySize());
         dpeRegistration.put("start_time", dpeReport.getStartTime());
 
-        JSONArray containersRegistrationArray = new JSONArray();
-        for (ContainerReport containerReport : dpeReport.getContainers()) {
-            JSONObject containerRegistration = new JSONObject();
+        var containersRegistrationArray = new JSONArray();
+        for (var containerReport : dpeReport.getContainers()) {
+            var containerRegistration = new JSONObject();
             containerRegistration.put("name", containerReport.getName());
             containerRegistration.put("language", containerReport.getLang());
             containerRegistration.put("author", containerReport.getAuthor());
             containerRegistration.put("start_time", containerReport.getStartTime());
 
-            JSONArray servicesRegistrationArray = new JSONArray();
-            for (ServiceReport serviceReport : containerReport.getServices()) {
-                JSONObject serviceRegistration = new JSONObject();
+            var servicesRegistrationArray = new JSONArray();
+            for (var serviceReport : containerReport.getServices()) {
+                var serviceRegistration = new JSONObject();
                 serviceRegistration.put("name", serviceReport.getName());
                 serviceRegistration.put("class_name", serviceReport.getClassName());
                 serviceRegistration.put("author", serviceReport.getAuthor());
@@ -103,7 +103,7 @@ public class JsonReportBuilder implements ExternalReport {
 
         dpeRegistration.put("containers", containersRegistrationArray);
 
-        JSONObject dpeJsonReport = new JSONObject();
+        var dpeJsonReport = new JSONObject();
         dpeJsonReport.put(ClaraConstants.RUNTIME_KEY, dpeRuntime);
         dpeJsonReport.put(ClaraConstants.REGISTRATION_KEY, dpeRegistration);
 

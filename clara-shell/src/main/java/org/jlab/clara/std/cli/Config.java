@@ -193,7 +193,7 @@ public class Config {
         Map<String, ConfigVariable.Builder> defaultVariables = new LinkedHashMap<>();
 
         BiFunction<String, String, ConfigVariable.Builder> addBuilder = (n, d) -> {
-            ConfigVariable.Builder b = ConfigVariable.newBuilder(n, d);
+            var b = ConfigVariable.newBuilder(n, d);
             defaultVariables.put(n, b);
             return b;
         };
@@ -405,15 +405,15 @@ public class Config {
     }
 
     void addVariable(ConfigVariable variable) {
-        ConfigVariable prev = variables.putIfAbsent(variable.getName(), variable);
+        var prev = variables.putIfAbsent(variable.getName(), variable);
         if (prev != null) {
-            String error = String.format("a variable named %s already exists", variable.getName());
+            var error = String.format("a variable named %s already exists", variable.getName());
             throw new IllegalArgumentException(error);
         }
     }
 
     ConfigVariable getVariable(String name) {
-        ConfigVariable v = variables.get(name);
+        var v = variables.get(name);
         if (v == null) {
             throw new IllegalArgumentException("no variable named " + name);
         }

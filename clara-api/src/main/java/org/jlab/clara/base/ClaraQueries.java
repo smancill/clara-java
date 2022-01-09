@@ -16,7 +16,6 @@ import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MimeType;
 import org.jlab.clara.msg.data.RegRecord;
 import org.jlab.clara.msg.errors.ClaraMsgException;
-import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.util.report.JsonUtils;
 import org.json.JSONObject;
 
@@ -78,10 +77,10 @@ public final class ClaraQueries {
                 if (wait <= 0) {
                     throw new IllegalArgumentException("Invalid timeout: " + wait);
                 }
-                long timeout = unit.toMillis(wait);
-                long start = System.currentTimeMillis();
-                Stream<RegRecord> registration = queryRegistrar(timeout);
-                long end = System.currentTimeMillis();
+                var timeout = unit.toMillis(wait);
+                var start = System.currentTimeMillis();
+                var registration = queryRegistrar(timeout);
+                var end = System.currentTimeMillis();
                 return collect(registration, timeout - (end - start));
             } catch (ClaraMsgException e) {
                 throw new ClaraException("Cannot send query", e);
@@ -152,12 +151,12 @@ public final class ClaraQueries {
 
         private Stream<JSONObject> queryDpe(DpeName dpe, long timeout) {
             try {
-                ProxyAddress address = dpe.address().proxyAddress();
-                Message query = msg(dpe);
-                Message response = base.syncPublish(address, query, timeout);
-                String mimeType = response.getMimeType();
+                var address = dpe.address().proxyAddress();
+                var query = msg(dpe);
+                var response = base.syncPublish(address, query, timeout);
+                var mimeType = response.getMimeType();
                 if (mimeType.equals(MimeType.STRING)) {
-                    String data = new String(response.getData());
+                    var data = new String(response.getData());
                     return filterQuery(new JSONObject(data));
                 }
                 return Stream.empty();
@@ -167,7 +166,7 @@ public final class ClaraQueries {
         }
 
         private Message msg(DpeName dpe) {
-            Topic topic = Topic.build("dpe", dpe.canonicalName());
+            var topic = Topic.build("dpe", dpe.canonicalName());
             return MessageUtil.buildRequest(topic, ClaraConstants.REPORT_JSON);
         }
 

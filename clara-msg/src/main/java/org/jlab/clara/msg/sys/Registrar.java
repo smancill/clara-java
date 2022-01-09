@@ -7,7 +7,6 @@
 package org.jlab.clara.msg.sys;
 
 import joptsimple.OptionParser;
-import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
@@ -40,14 +39,14 @@ public class Registrar {
 
     public static void main(String[] args) {
         try {
-            OptionParser parser = new OptionParser();
+            var parser = new OptionParser();
             OptionSpec<Integer> portSpec = parser.accepts("port")
                     .withRequiredArg()
                     .ofType(Integer.class)
                     .defaultsTo(RegAddress.DEFAULT_PORT);
             parser.accepts("verbose");
             parser.acceptsAll(List.of("h", "help")).forHelp();
-            OptionSet options = parser.parse(args);
+            var options = parser.parse(args);
 
             if (options.has("help")) {
                 usage(System.out);
@@ -56,10 +55,10 @@ public class Registrar {
 
             LOGGER.setLevel(Level.INFO);
 
-            int port = options.valueOf(portSpec);
-            RegAddress address = new RegAddress("localhost", port);
+            var port = options.valueOf(portSpec);
+            var address = new RegAddress("localhost", port);
 
-            Registrar registrar = new Registrar(Context.getInstance(), address);
+            var registrar = new Registrar(Context.getInstance(), address);
             if (options.has("verbose")) {
                 registrar.verbose();
             }

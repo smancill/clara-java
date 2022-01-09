@@ -10,7 +10,6 @@ import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.msg.net.SocketFactory;
 import org.zeromq.SocketType;
-import org.zeromq.ZFrame;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Poller;
 import org.zeromq.ZMQ.Socket;
@@ -50,16 +49,16 @@ public abstract class ProxyDriver {
     abstract int getPort();
 
     public boolean checkConnection(long timeout) throws ClaraMsgException {
-        String identity = IdentityGenerator.getCtrlId();
-        Socket ctrlSocket = createControlSocket(identity);
-        try (Poller poller = factory.context().poller(1)) {
+        var identity = IdentityGenerator.getCtrlId();
+        var ctrlSocket = createControlSocket(identity);
+        try (var poller = factory.context().poller(1)) {
             poller.register(ctrlSocket, Poller.POLLIN);
 
-            long pollTimeout = timeout < 100 ? timeout : 100L;
-            long totalTime = 0L;
+            var pollTimeout = timeout < 100 ? timeout : 100L;
+            var totalTime = 0L;
             while (totalTime < timeout) {
                 try {
-                    ZMsg ctrlMsg = new ZMsg();
+                    var ctrlMsg = new ZMsg();
                     ctrlMsg.add(CtrlConstants.CTRL_TOPIC + ":con");
                     ctrlMsg.add(CtrlConstants.CTRL_CONNECT);
                     ctrlMsg.add(identity);
@@ -67,10 +66,10 @@ public abstract class ProxyDriver {
 
                     poller.poll(pollTimeout);
                     if (poller.pollin(0)) {
-                        ZMsg replyMsg = ZMsg.recvMsg(ctrlSocket);
+                        var replyMsg = ZMsg.recvMsg(ctrlSocket);
                         if (replyMsg.size() == 1) {
-                            ZFrame typeFrame = replyMsg.pop();
-                            String type = new String(typeFrame.getData());
+                            var typeFrame = replyMsg.pop();
+                            var type = new String(typeFrame.getData());
                             if (type.equals(CtrlConstants.CTRL_CONNECT)) {
                                 return true;
                             }
@@ -92,15 +91,15 @@ public abstract class ProxyDriver {
     }
 
     public boolean checkSubscription(String topic, long timeout) throws ClaraMsgException {
-        Socket pubSocket = createPubSocket();
-        try (Poller poller = factory.context().poller(1)) {
+        var pubSocket = createPubSocket();
+        try (var poller = factory.context().poller(1)) {
             poller.register(getSocket(), Poller.POLLIN);
 
-            long pollTimeout = timeout < 100 ? timeout : 100L;
-            long totalTime = 0L;
+            var pollTimeout = timeout < 100 ? timeout : 100L;
+            var totalTime = 0L;
             while (totalTime < timeout) {
                 try {
-                    ZMsg ctrlMsg = new ZMsg();
+                    var ctrlMsg = new ZMsg();
                     ctrlMsg.add(CtrlConstants.CTRL_TOPIC + ":sub");
                     ctrlMsg.add(CtrlConstants.CTRL_SUBSCRIBE);
                     ctrlMsg.add(topic);
@@ -108,13 +107,13 @@ public abstract class ProxyDriver {
 
                     poller.poll(pollTimeout);
                     if (poller.pollin(0)) {
-                        ZMsg replyMsg = ZMsg.recvMsg(getSocket());
+                        var replyMsg = ZMsg.recvMsg(getSocket());
                         if (replyMsg.size() == 2) {
-                            ZFrame idFrame = replyMsg.pop();
-                            ZFrame typeFrame = replyMsg.pop();
+                            var idFrame = replyMsg.pop();
+                            var typeFrame = replyMsg.pop();
 
-                            String id = new String(idFrame.getData());
-                            String type = new String(typeFrame.getData());
+                            var id = new String(idFrame.getData());
+                            var type = new String(typeFrame.getData());
                             if (id.equals(topic) && type.equals(CtrlConstants.CTRL_SUBSCRIBE)) {
                                 return true;
                             }
@@ -202,7 +201,7 @@ public abstract class ProxyDriver {
 
 
     private Socket createControlSocket(String identity) throws ClaraMsgException {
-        Socket socket = factory.createSocket(SocketType.DEALER);
+        var socket = factory.createSocket(SocketType.DEALER);
         try {
             socket.setIdentity(identity.getBytes());
             factory.connectSocket(socket, address.host(), address.pubPort() + 2);
@@ -214,7 +213,7 @@ public abstract class ProxyDriver {
     }
 
     private Socket createPubSocket() throws ClaraMsgException {
-        Socket socket = factory.createSocket(SocketType.PUB);
+        var socket = factory.createSocket(SocketType.PUB);
         try {
             factory.connectSocket(socket, address.host(), address.pubPort());
             return socket;

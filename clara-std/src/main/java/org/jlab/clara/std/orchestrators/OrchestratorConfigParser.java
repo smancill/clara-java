@@ -98,7 +98,7 @@ public class OrchestratorConfigParser {
      */
     public OrchestratorConfigParser(String configFilePath) {
         try (InputStream input = new FileInputStream(configFilePath)) {
-            Yaml yaml = new Yaml();
+            var yaml = new Yaml();
             Map<String, Object> config = yaml.load(input);
             this.config = new JSONObject(config);
         } catch (FileNotFoundException e) {
@@ -122,7 +122,7 @@ public class OrchestratorConfigParser {
      * @return a set with the languages of the services
      */
     public Set<ClaraLang> parseLanguages() {
-        ApplicationInfo app = new ApplicationInfo(
+        var app = new ApplicationInfo(
                 parseInputOutputServices(),
                 parseDataProcessingServices(),
                 parseMonitoringServices());
@@ -141,8 +141,8 @@ public class OrchestratorConfigParser {
      * @return the mime-types of the data returned by the services
      */
     public Set<String> parseDataTypes() {
-        Set<String> types = new HashSet<>();
-        JSONArray mimeTypes = config.optJSONArray("mime-types");
+        var types = new HashSet<String>();
+        var mimeTypes = config.optJSONArray("mime-types");
         if (mimeTypes != null) {
             for (int i = 0; i < mimeTypes.length(); i++) {
                 try {
@@ -157,14 +157,14 @@ public class OrchestratorConfigParser {
 
 
     Map<String, ServiceInfo> parseInputOutputServices() {
-        Map<String, ServiceInfo> services = new HashMap<>();
-        JSONObject io = config.optJSONObject("io-services");
+        var services = new HashMap<String, ServiceInfo>();
+        var io = config.optJSONObject("io-services");
         if (io == null) {
             throw error("missing I/O services");
         }
 
         Consumer<String> getTypes = key -> {
-            JSONObject data = io.optJSONObject(key);
+            var data = io.optJSONObject(key);
             if (data == null) {
                 throw error("missing " + key + " I/O service");
             }
@@ -186,7 +186,7 @@ public class OrchestratorConfigParser {
 
 
     List<ServiceInfo> parseDataProcessingServices() {
-        JSONArray sl = config.optJSONArray(SERVICES_KEY);
+        var sl = config.optJSONArray(SERVICES_KEY);
         if (sl != null) {
             return parseServices(sl);
         }
@@ -203,7 +203,7 @@ public class OrchestratorConfigParser {
 
 
     private List<ServiceInfo> parseServices(String key, boolean required) {
-        JSONObject ss = config.optJSONObject(SERVICES_KEY);
+        var ss = config.optJSONObject(SERVICES_KEY);
         if (ss == null) {
             throw error("missing list of services");
         }
@@ -213,11 +213,11 @@ public class OrchestratorConfigParser {
             }
             return new ArrayList<>();
         }
-        JSONObject so = ss.optJSONObject(key);
+        var so = ss.optJSONObject(key);
         if (so == null) {
             throw error("invalid list of " + key + " services");
         }
-        JSONArray sl = so.optJSONArray("chain");
+        var sl = so.optJSONArray("chain");
         if (sl == null) {
             throw error("invalid list of " + key + " services");
         }
@@ -226,9 +226,9 @@ public class OrchestratorConfigParser {
 
 
     private List<ServiceInfo> parseServices(JSONArray array) {
-        List<ServiceInfo> services = new ArrayList<>();
+        var services = new ArrayList<ServiceInfo>();
         for (int i = 0; i < array.length(); i++) {
-            ServiceInfo service = parseService(array.getJSONObject(i));
+            var service = parseService(array.getJSONObject(i));
             if (services.contains(service)) {
                 throw error(String.format("duplicated service  name = '%s' container = '%s'",
                                           service.name(), service.cont()));
@@ -240,8 +240,8 @@ public class OrchestratorConfigParser {
 
 
     List<RingCallbackInfo> parseDataRingCallbacks() {
-        List<RingCallbackInfo> callbacks = new ArrayList<>();
-        JSONObject co = config.optJSONObject("callbacks");
+        var callbacks = new ArrayList<RingCallbackInfo>();
+        var co = config.optJSONObject("callbacks");
         if (co == null) {
             throw error("missing callbacks");
         }
@@ -257,16 +257,16 @@ public class OrchestratorConfigParser {
             JSONObject parent,
             String callbacksKey,
             Function<JSONObject, RingTopic> topicParser) {
-        List<RingCallbackInfo> callbacks = new ArrayList<>();
-        JSONArray cbArray = parent.optJSONArray(callbacksKey);
+        var callbacks = new ArrayList<RingCallbackInfo>();
+        var cbArray = parent.optJSONArray(callbacksKey);
         if (cbArray != null) {
             for (int i = 0; i < cbArray.length(); i++) {
-                JSONObject cbObj = cbArray.getJSONObject(i);
-                String classPath = cbObj.optString("class");
+                var cbObj = cbArray.getJSONObject(i);
+                var classPath = cbObj.optString("class");
                 if (classPath.isEmpty()) {
                     throw error("missing class of callback");
                 }
-                RingTopic topic = parseRingTopic(cbObj, topicParser);
+                var topic = parseRingTopic(cbObj, topicParser);
                 callbacks.add(new RingCallbackInfo(classPath, topic));
             }
         }
@@ -279,8 +279,8 @@ public class OrchestratorConfigParser {
         if (!data.has("topic")) {
             return new RingTopic(null, null, null);
         }
-        JSONObject topic = data.optJSONObject("topic");
-        String cb = data.optString("class");
+        var topic = data.optJSONObject("topic");
+        var cb = data.optString("class");
         if (topic == null) {
             throw error("invalid topic for callback: " + cb);
         }
@@ -293,9 +293,9 @@ public class OrchestratorConfigParser {
 
 
     private RingTopic engineRingTopic(JSONObject topic) {
-        String state = parseRingTopicPart(topic, "state");
-        String session = parseRingTopicPart(topic, "session");
-        String engine = parseRingTopicPart(topic, "engine");
+        var state = parseRingTopicPart(topic, "state");
+        var session = parseRingTopicPart(topic, "session");
+        var engine = parseRingTopicPart(topic, "engine");
         if (state == null || state.isEmpty()) {
             throw error("missing state");
         }
@@ -316,7 +316,7 @@ public class OrchestratorConfigParser {
         if (topic.has("engine")) {
             throw error("engine is not supported");
         }
-        String session = parseRingTopicPart(topic, "session");
+        var session = parseRingTopicPart(topic, "session");
         return new RingTopic(null, session, null);
     }
 
@@ -343,7 +343,7 @@ public class OrchestratorConfigParser {
 
     OrchestratorConfigMode parseConfigurationMode() {
         if (config.has("configuration_mode")) {
-            String mode = config.getString("configuration_mode");
+            var mode = config.getString("configuration_mode");
             try {
                 return OrchestratorConfigMode.fromString(mode);
             } catch (IllegalArgumentException e) {
@@ -365,10 +365,10 @@ public class OrchestratorConfigParser {
 
 
     private ServiceInfo parseService(JSONObject data) {
-        String name = data.optString("name");
-        String classPath = data.optString("class");
-        String container = data.optString("container", parseDefaultContainer());
-        ClaraLang lang = ClaraLang.fromString(data.optString("lang", parseDefaultLanguage()));
+        var name = data.optString("name");
+        var classPath = data.optString("class");
+        var container = data.optString("container", parseDefaultContainer());
+        var lang = ClaraLang.fromString(data.optString("lang", parseDefaultLanguage()));
         if (name.isEmpty() || classPath.isEmpty()) {
             throw error("missing name or class of service");
         }
@@ -377,8 +377,8 @@ public class OrchestratorConfigParser {
 
 
     static DpeInfo getDefaultDpeInfo(String hostName) {
-        String dpeIp = hostAddress(hostName);
-        DpeName dpeName = new DpeName(dpeIp, ClaraLang.JAVA);
+        var dpeIp = hostAddress(hostName);
+        var dpeName = new DpeName(dpeIp, ClaraLang.JAVA);
         return new DpeInfo(dpeName, 0, EnvUtils.claraHome());
     }
 
@@ -399,8 +399,8 @@ public class OrchestratorConfigParser {
 
     static List<String> readInputFiles(String inputFilesList) {
         try {
-            Pattern pattern = Pattern.compile("^\\s*#.*$");
-            List<String> files = Files.lines(Paths.get(inputFilesList))
+            var pattern = Pattern.compile("^\\s*#.*$");
+            var files = Files.lines(Paths.get(inputFilesList))
                     .filter(line -> !line.isEmpty())
                     .filter(line -> !pattern.matcher(line).matches())
                     .collect(Collectors.toList());

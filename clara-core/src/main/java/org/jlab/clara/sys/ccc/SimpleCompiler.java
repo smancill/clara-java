@@ -48,7 +48,7 @@ public class SimpleCompiler {
     }
 
     public Set<String> getOutputs() {
-        Set<String> outputs = new HashSet<>();
+        var outputs = new HashSet<String>();
         if (!next.isEmpty()) {
             outputs.add(next.get(0));
         }

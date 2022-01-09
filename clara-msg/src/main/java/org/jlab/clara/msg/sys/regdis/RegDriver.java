@@ -12,7 +12,6 @@ import org.jlab.clara.msg.net.RegAddress;
 import org.jlab.clara.msg.net.SocketFactory;
 import org.zeromq.SocketType;
 import org.zeromq.ZMQ;
-import org.zeromq.ZMQ.Poller;
 import org.zeromq.ZMQ.Socket;
 import org.zeromq.ZMQException;
 import org.zeromq.ZMsg;
@@ -65,19 +64,19 @@ public class RegDriver {
      */
     protected RegResponse request(RegRequest request, long timeout)
             throws ClaraMsgException {
-        ZMsg requestMsg = request.msg();
+        var requestMsg = request.msg();
         try {
             requestMsg.send(socket);
         } catch (ZMQException e) {
             throw new ClaraMsgException("could not send registration request", e);
         }
 
-        try (Poller poller = factory.context().poller(1)) {
+        try (var poller = factory.context().poller(1)) {
             poller.register(socket, ZMQ.Poller.POLLIN);
             poller.poll(timeout);
             if (poller.pollin(0)) {
-                RegResponse response = new RegResponse(ZMsg.recvMsg(socket));
-                String status = response.status();
+                var response = new RegResponse(ZMsg.recvMsg(socket));
+                var status = response.status();
                 if (!status.equals(RegConstants.SUCCESS)) {
                     throw new ClaraMsgException("registrar server could not process request: "
                                             + status);
@@ -111,11 +110,10 @@ public class RegDriver {
      */
     public void addRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        String topic = selectTopic(data.getOwnerType(),
-                                   RegConstants.REGISTER_PUBLISHER,
-                                   RegConstants.REGISTER_SUBSCRIBER);
-
-        RegRequest request = new RegRequest(topic, sender, data);
+        var topic = selectTopic(data.getOwnerType(),
+                                RegConstants.REGISTER_PUBLISHER,
+                                RegConstants.REGISTER_SUBSCRIBER);
+        var request = new RegRequest(topic, sender, data);
         request(request, timeout);
     }
 
@@ -141,11 +139,10 @@ public class RegDriver {
      */
     public void removeRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        String topic = selectTopic(data.getOwnerType(),
-                                   RegConstants.REMOVE_PUBLISHER,
-                                   RegConstants.REMOVE_SUBSCRIBER);
-
-        RegRequest request = new RegRequest(topic, sender, data);
+        var topic = selectTopic(data.getOwnerType(),
+                                RegConstants.REMOVE_PUBLISHER,
+                                RegConstants.REMOVE_SUBSCRIBER);
+        var request = new RegRequest(topic, sender, data);
         request(request, timeout);
     }
 
@@ -177,9 +174,8 @@ public class RegDriver {
      */
     public void removeAllRegistration(String sender, String host, long timeout)
             throws ClaraMsgException {
-        String topic = RegConstants.REMOVE_ALL_REGISTRATION;
-
-        RegRequest request = new RegRequest(topic, sender, host);
+        var topic = RegConstants.REMOVE_ALL_REGISTRATION;
+        var request = new RegRequest(topic, sender, host);
         request(request, timeout);
     }
 
@@ -211,12 +207,11 @@ public class RegDriver {
      */
     public Set<RegData> findRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        String topic = selectTopic(data.getOwnerType(),
-                                   RegConstants.FIND_PUBLISHER,
-                                   RegConstants.FIND_SUBSCRIBER);
-
-        RegRequest request = new RegRequest(topic, sender, data);
-        RegResponse response = request(request, timeout);
+        var topic = selectTopic(data.getOwnerType(),
+                                RegConstants.FIND_PUBLISHER,
+                                RegConstants.FIND_SUBSCRIBER);
+        var request = new RegRequest(topic, sender, data);
+        var response = request(request, timeout);
         return response.data();
     }
 
@@ -268,12 +263,11 @@ public class RegDriver {
      */
     public Set<RegData> filterRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        String topic = selectTopic(data.getOwnerType(),
-                                   RegConstants.FILTER_PUBLISHER,
-                                   RegConstants.FILTER_SUBSCRIBER);
-
-        RegRequest request = new RegRequest(topic, sender, data);
-        RegResponse response = request(request, timeout);
+        var topic = selectTopic(data.getOwnerType(),
+                                RegConstants.FILTER_PUBLISHER,
+                                RegConstants.FILTER_SUBSCRIBER);
+        var request = new RegRequest(topic, sender, data);
+        var response = request(request, timeout);
         return response.data();
     }
 
@@ -323,12 +317,11 @@ public class RegDriver {
      */
     public Set<RegData> sameRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        String topic = selectTopic(data.getOwnerType(),
-                                   RegConstants.EXACT_PUBLISHER,
-                                   RegConstants.EXACT_SUBSCRIBER);
-
-        RegRequest request = new RegRequest(topic, sender, data);
-        RegResponse response = request(request, timeout);
+        var topic = selectTopic(data.getOwnerType(),
+                                RegConstants.EXACT_PUBLISHER,
+                                RegConstants.EXACT_SUBSCRIBER);
+        var request = new RegRequest(topic, sender, data);
+        var response = request(request, timeout);
         return response.data();
     }
 
@@ -358,12 +351,11 @@ public class RegDriver {
      */
     public Set<RegData> allRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        String topic = selectTopic(data.getOwnerType(),
-                                   RegConstants.ALL_PUBLISHER,
-                                   RegConstants.ALL_SUBSCRIBER);
-
-        RegRequest request = new RegRequest(topic, sender, data);
-        RegResponse response = request(request, timeout);
+        var topic = selectTopic(data.getOwnerType(),
+                                RegConstants.ALL_PUBLISHER,
+                                RegConstants.ALL_SUBSCRIBER);
+        var request = new RegRequest(topic, sender, data);
+        var response = request(request, timeout);
         return response.data();
     }
 

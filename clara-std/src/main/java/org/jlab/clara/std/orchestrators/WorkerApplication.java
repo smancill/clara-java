@@ -80,23 +80,23 @@ class WorkerApplication {
 
 
     public Composition composition() {
-        List<ServiceName> dataServices = processingServices();
+        var dataServices = processingServices();
 
         // main chain
-        StringBuilder composition = new StringBuilder();
+        var composition = new StringBuilder();
         composition.append(readerService());
-        for (ServiceName service : dataServices) {
+        for (var service : dataServices) {
             composition.append("+").append(service);
         }
         composition.append("+").append(writerService());
         composition.append("+").append(readerService());
         composition.append(";");
 
-        List<ServiceName> monServices = monitoringServices();
+        var monServices = monitoringServices();
         if (!monServices.isEmpty()) {
             // monitoring chain
             composition.append(dataServices.get(dataServices.size() - 1));
-            for (ServiceName service : monServices) {
+            for (var service : monServices) {
                 composition.append("+").append(service);
             }
             composition.append(";");
@@ -107,10 +107,10 @@ class WorkerApplication {
 
 
     private ServiceName toName(ServiceInfo service) {
-        DpeInfo dpe = dpes.get(service.lang());
+        var dpe = dpes.get(service.lang());
         if (dpe == null) {
-            String error = String.format("Missing %s DPE for service %s",
-                                         service.lang(), service.name());
+            var error = String.format("Missing %s DPE for service %s",
+                                      service.lang(), service.name());
             throw new IllegalStateException(error);
         }
         return new ServiceName(dpe.name(), service.cont(), service.name());
@@ -124,7 +124,7 @@ class WorkerApplication {
 
 
     Stream<DeployInfo> getProcessingServicesDeployInfo() {
-        int maxCores = maxCores();
+        var maxCores = maxCores();
         return application.getDataProcessingServices().stream()
                           .distinct()
                           .map(s -> new DeployInfo(toName(s), s.classpath(), maxCores));
@@ -169,7 +169,7 @@ class WorkerApplication {
 
 
     public String hostName() {
-        DpeInfo firstDpe = dpes.values().iterator().next();
+        var firstDpe = dpes.values().iterator().next();
         return firstDpe.name().address().host();
     }
 

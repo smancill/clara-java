@@ -60,9 +60,9 @@ class ApplicationConfig {
     }
 
     private JSONObject getIO(String key) {
-        JSONObject config = new JSONObject();
+        var config = new JSONObject();
         if (configData.has(IO_CONFIG)) {
-            JSONObject ioConfig = configData.getJSONObject(IO_CONFIG);
+            var ioConfig = configData.getJSONObject(IO_CONFIG);
             if (ioConfig.has(key)) {
                 add(config, ioConfig, key);
             }
@@ -71,12 +71,12 @@ class ApplicationConfig {
     }
 
     JSONObject get(ServiceName service) {
-        JSONObject config = new JSONObject();
+        var config = new JSONObject();
         if (configData.has(GLOBAL_CONFIG)) {
             add(config, configData, GLOBAL_CONFIG);
         }
         if (configData.has(SERVICE_CONFIG)) {
-            JSONObject servicesConfig = configData.getJSONObject(SERVICE_CONFIG);
+            var servicesConfig = configData.getJSONObject(SERVICE_CONFIG);
             if (servicesConfig.has(service.name())) {
                 add(config, servicesConfig, service.name());
             }
@@ -85,8 +85,8 @@ class ApplicationConfig {
     }
 
     private void add(JSONObject target, JSONObject parent, String serviceKey) {
-        JSONObject config = parent.getJSONObject(serviceKey);
-        for (String key : config.keySet()) {
+        var config = parent.getJSONObject(serviceKey);
+        for (var key : config.keySet()) {
             Object value = config.get(key);
             if (value instanceof String) {
                 Object result = processTemplate(key, (String) value);
@@ -101,15 +101,15 @@ class ApplicationConfig {
 
     private String processTemplate(String key, String value) {
         try {
-            Template tpl = new Template(key, new StringReader(value), FTL_CONFIG);
-            StringWriter writer = new StringWriter();
+            var tpl = new Template(key, new StringReader(value), FTL_CONFIG);
+            var writer = new StringWriter();
             tpl.process(model, writer);
             return writer.toString();
         } catch (ParseException e) {
-            String error = String.format("\"%s\" template is not valid: %s", key, value);
+            var error = String.format("\"%s\" template is not valid: %s", key, value);
             throw new OrchestratorConfigException(error);
         } catch (TemplateException e) {
-            String error = String.format("\"%s\" template cannot not be evaluated: %s", key, value);
+            var error = String.format("\"%s\" template cannot not be evaluated: %s", key, value);
             throw new OrchestratorConfigException(error);
         } catch (IOException e) {
             throw new UncheckedIOException(e);

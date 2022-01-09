@@ -17,7 +17,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -74,7 +73,7 @@ public final class CommandUtils {
      * @return the exit value of the subprocess
      */
     public static int runProcess(String... command) {
-        ProcessBuilder builder = new ProcessBuilder(command);
+        var builder = new ProcessBuilder(command);
         builder.inheritIO();
         return runProcess(builder);
     }
@@ -89,7 +88,7 @@ public final class CommandUtils {
      */
     public static int runProcess(ProcessBuilder builder) {
         try {
-            Process process = builder.start();
+            var process = builder.start();
             try {
                 return process.waitFor();
             } catch (InterruptedException e) {
@@ -134,7 +133,7 @@ public final class CommandUtils {
      * @return the wrapper program that runs the given command
      */
     public static String[] uninterruptibleCommand(String... command) {
-        List<String> wrapperCmd = new ArrayList<>();
+        var wrapperCmd = new ArrayList<String>();
         wrapperCmd.add(commandWrapper());
         Collections.addAll(wrapperCmd, command);
         return wrapperCmd.toArray(new String[0]);
@@ -151,7 +150,7 @@ public final class CommandUtils {
      * @return the wrapper program that runs the given command
      */
     public static String[] uninterruptibleCommand(String[] command, Path logFile) {
-        SystemCommandBuilder builder = new SystemCommandBuilder(commandLogger());
+        var builder = new SystemCommandBuilder(commandLogger());
         builder.addArgument(logFile);
         Arrays.stream(command).forEach(builder::addArgument);
         return builder.toArray();

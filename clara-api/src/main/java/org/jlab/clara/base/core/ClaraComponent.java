@@ -126,7 +126,7 @@ public final class ClaraComponent {
                                               String dpeLang,
                                               int subscriptionPoolSize,
                                               String description) {
-        ClaraComponent cc = new ClaraComponent(dpeLang,
+        var cc = new ClaraComponent(dpeLang,
                                     dpeHost,
                                     dpePort,
                                     Topic.ANY,
@@ -207,7 +207,7 @@ public final class ClaraComponent {
      */
     public static ClaraComponent dpe(String dpeHost, int dpePort, String dpeLang,
                                      int subscriptionPoolSize, String description) {
-        ClaraComponent cc = new ClaraComponent(dpeLang,
+        var cc = new ClaraComponent(dpeLang,
                                     dpeHost,
                                     dpePort,
                                     Topic.ANY,
@@ -321,7 +321,7 @@ public final class ClaraComponent {
     public static ClaraComponent container(String dpeHost, int dpePort, String dpeLang,
                                            String container,
                                            int subscriptionPoolSize, String description) {
-        ClaraComponent cc = new ClaraComponent(dpeLang,
+        var cc = new ClaraComponent(dpeLang,
                                     dpeHost,
                                     dpePort,
                                     container,
@@ -436,7 +436,7 @@ public final class ClaraComponent {
                                          String container, String engine, String engineClass,
                                          int subscriptionPoolSize, String description,
                                          String initialState) {
-        ClaraComponent cc = new ClaraComponent(dpeLang,
+        var cc = new ClaraComponent(dpeLang,
                                     dpeHost,
                                     dpePort,
                                     container,

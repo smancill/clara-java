@@ -15,7 +15,7 @@ public final class MessageUtil {
     private MessageUtil() { }
 
     public static Topic buildTopic(Object... args) {
-        StringBuilder topic  = new StringBuilder();
+        var topic  = new StringBuilder();
         topic.append(args[0]);
         for (int i = 1; i < args.length; i++) {
             topic.append(Topic.SEPARATOR);
@@ -25,7 +25,7 @@ public final class MessageUtil {
     }
 
     public static String buildData(Object... args) {
-        StringBuilder topic  = new StringBuilder();
+        var topic  = new StringBuilder();
         topic.append(args[0]);
         for (int i = 1; i < args.length; i++) {
             topic.append(ClaraConstants.DATA_SEP);

@@ -7,9 +7,7 @@
 package org.jlab.clara.sys.report;
 
 import javax.management.Attribute;
-import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
-import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
@@ -21,16 +19,16 @@ public final class SystemStats {
 
     public static double getCpuUsage() {
         try {
-            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-            ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
-            AttributeList list = mbs.getAttributes(name, new String[]{"ProcessCpuLoad"});
+            var mbs = ManagementFactory.getPlatformMBeanServer();
+            var name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+            var list = mbs.getAttributes(name, new String[]{"ProcessCpuLoad"});
 
             if (list.isEmpty()) {
                 return Double.NaN;
             }
 
-            Attribute att = (Attribute) list.get(0);
-            Double value = (Double) att.getValue();
+            var att = (Attribute) list.get(0);
+            var value = (Double) att.getValue();
 
             if (value == -1.0) {
                 return Double.NaN;

@@ -65,7 +65,7 @@ class EngineLoader {
         if (dataTypes == null || dataTypes.isEmpty()) {
             throw new ClaraException("missing engine " + field);
         }
-        for (EngineDataType dataType : dataTypes) {
+        for (var dataType : dataTypes) {
             if (dataType == null) {
                 throw new ClaraException("null data type on engine " + field);
             }

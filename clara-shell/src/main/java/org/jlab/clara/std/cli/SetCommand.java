@@ -18,10 +18,8 @@ import java.io.PrintWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -33,7 +31,7 @@ class SetCommand extends BaseCommand {
     }
 
     private void setArguments() {
-        List<CommandFactory> commands = new LinkedList<>();
+        var commands = new LinkedList<CommandFactory>();
         config.getVariables().stream().map(this::subCmd).forEach(commands::add);
 
         commands.add(1, subCmd("files", this::setFiles, new Completers.FileNameCompleter(),
@@ -76,12 +74,12 @@ class SetCommand extends BaseCommand {
             throw new IllegalArgumentException("missing argument");
         }
         try {
-            Path path = FileUtils.expandHome(args[0]);
-            File output = getOutputFile();
-            try (PrintWriter printer = FileUtils.openOutputTextFile(output.toPath(), false)) {
+            var path = FileUtils.expandHome(args[0]);
+            var output = getOutputFile();
+            try (var printer = FileUtils.openOutputTextFile(output.toPath(), false)) {
                 if (Files.isDirectory(path)) {
                     listCommand(printer, args[0]);
-                    int numFiles = listDir(printer, path, f -> true);
+                    var numFiles = listDir(printer, path, f -> true);
                     if (numFiles > 0) {
                         config.setValue(Config.INPUT_DIR, path.toString());
                         config.setValue(Config.FILES_LIST, output.getAbsolutePath());
@@ -96,10 +94,10 @@ class SetCommand extends BaseCommand {
                 } else if (path.getFileName().toString().contains("*")
                         && Files.isDirectory(FileUtils.getParent(path))) {
                     listCommand(printer, args[0]);
-                    String pattern = path.getFileName().toString();
-                    String glob = "glob:" + pattern;
-                    PathMatcher matcher = FileSystems.getDefault().getPathMatcher(glob);
-                    int numFiles = listDir(printer, FileUtils.getParent(path), matcher::matches);
+                    var pattern = path.getFileName().toString();
+                    var glob = "glob:" + pattern;
+                    var matcher = FileSystems.getDefault().getPathMatcher(glob);
+                    var numFiles = listDir(printer, FileUtils.getParent(path), matcher::matches);
                     if (numFiles > 0) {
                         config.setValue(Config.INPUT_DIR, FileUtils.getParent(path).toString());
                         config.setValue(Config.FILES_LIST, output.getAbsolutePath());
@@ -117,11 +115,11 @@ class SetCommand extends BaseCommand {
     }
 
     private File getOutputFile() {
-        Path userDir = FarmCommands.hasPlugin()
+        var userDir = FarmCommands.hasPlugin()
                 ? FarmCommands.PLUGIN.resolve("config")
                 : Paths.get("");
-        RunUtils runUtils = new RunUtils(config);
-        String name = String.format("files_%s.txt", runUtils.getSession());
+        var runUtils = new RunUtils(config);
+        var name = String.format("files_%s.txt", runUtils.getSession());
         return userDir.resolve(name).toFile();
     }
 

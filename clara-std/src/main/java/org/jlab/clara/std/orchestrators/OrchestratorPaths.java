@@ -37,11 +37,11 @@ class OrchestratorPaths {
         private Path stageDir = Paths.get(STAGE_DIR);
 
         Builder(String inputFile, String outputFile) {
-            Path inputPath = Paths.get(inputFile);
-            Path outputPath = Paths.get(outputFile);
+            var inputPath = Paths.get(inputFile);
+            var outputPath = Paths.get(outputFile);
 
-            String inputName = FileUtils.getFileName(inputPath).toString();
-            String outputName = FileUtils.getFileName(outputPath).toString();
+            var inputName = FileUtils.getFileName(inputPath).toString();
+            var outputName = FileUtils.getFileName(outputPath).toString();
 
             this.allFiles = List.of(new FileInfo(inputName, outputName));
             this.inputDir = FileUtils.getParent(inputPath).toAbsolutePath().normalize();

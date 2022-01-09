@@ -61,11 +61,11 @@ class Container extends AbstractActor {
                            ClaraComponent frontEnd,
                            ConnectionPools connectionPools,
                            String session) throws ClaraException {
-        String serviceName = comp.getCanonicalName();
-        Service service = myServices.get(serviceName);
+        var serviceName = comp.getCanonicalName();
+        var service = myServices.get(serviceName);
         if (service == null) {
             service = new Service(comp, frontEnd, connectionPools, session);
-            Service prev = myServices.putIfAbsent(serviceName, service);
+            var prev = myServices.putIfAbsent(serviceName, service);
             if (prev == null) {
                 try {
                     service.start();
@@ -84,7 +84,7 @@ class Container extends AbstractActor {
     }
 
     public boolean removeService(String serviceName) {
-        Service service = myServices.remove(serviceName);
+        var service = myServices.remove(serviceName);
         if (service != null) {
             service.stop();
             myReport.removeService(service.getReport());
@@ -99,7 +99,7 @@ class Container extends AbstractActor {
     }
 
     private void register() throws ClaraException {
-        Topic topic = Topic.build(ClaraConstants.CONTAINER, base.getName());
+        var topic = Topic.build(ClaraConstants.CONTAINER, base.getName());
         base.register(topic, base.getDescription());
         isRegistered = true;
     }
@@ -120,7 +120,7 @@ class Container extends AbstractActor {
     private void reportDown() {
         try {
             // broadcast to the local proxy
-            String data = MessageUtil.buildData(ClaraConstants.CONTAINER_DOWN, base.getName());
+            var data = MessageUtil.buildData(ClaraConstants.CONTAINER_DOWN, base.getName());
             base.send(base.getFrontEnd(), data);
         } catch (ClaraMsgException e) {
             Logging.error("container = %s: could not send down report: %s",

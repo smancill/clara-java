@@ -54,7 +54,7 @@ class ConnectionManager {
     }
 
     ProxyDriver getProxyConnection(ProxyAddress address) throws ClaraMsgException {
-        ProxyDriver cachedConnection = proxyConnections.getConnection(address);
+        var cachedConnection = proxyConnections.getConnection(address);
         if (cachedConnection != null) {
             return cachedConnection;
         }
@@ -66,7 +66,7 @@ class ConnectionManager {
     }
 
     RegDriver getRegistrarConnection(RegAddress address) throws ClaraMsgException {
-        RegDriver cachedConnection = registrarConnections.getConnection(address);
+        var cachedConnection = registrarConnections.getConnection(address);
         if (cachedConnection != null) {
             return cachedConnection;
         }

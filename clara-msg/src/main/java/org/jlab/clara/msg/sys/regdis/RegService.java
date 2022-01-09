@@ -233,7 +233,7 @@ public class RegService implements Runnable {
 
     private void logFilter(String type, RegData data) {
         LOGGER.fine(() -> {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.append("search ").append(type);
             if (!data.getDomain().equals(ANY)) {
                 sb.append("  domain = ").append(data.getDomain());

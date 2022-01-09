@@ -16,7 +16,6 @@ import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.msg.net.RegAddress;
 import org.jlab.clara.msg.sys.ConnectionFactory;
 import org.jlab.clara.msg.sys.pubsub.ProxyDriver;
-import org.jlab.clara.msg.sys.regdis.RegDriver;
 import org.jlab.clara.msg.sys.regdis.RegFactory;
 import org.zeromq.ZMQException;
 
@@ -239,7 +238,7 @@ public class Actor implements AutoCloseable {
      * terminates all running callbacks and closes all connections.
      */
     public void destroy() {
-        final int infiniteLinger = -1;
+        final var infiniteLinger = -1;
         destroy(infiniteLinger);
     }
 
@@ -319,7 +318,7 @@ public class Actor implements AutoCloseable {
      * @throws ClaraMsgException if the new connection could not be created
      */
     public void cacheConnection(ProxyAddress address) throws ClaraMsgException {
-        ProxyDriver connection = connectionManager.createProxyConnection(address);
+        var connection = connectionManager.createProxyConnection(address);
         connectionManager.releaseProxyConnection(connection);
     }
 
@@ -339,7 +338,7 @@ public class Actor implements AutoCloseable {
      * @throws ClaraMsgException if the request failed
      */
     public void publish(Message msg) throws ClaraMsgException {
-        try (Connection connection = getConnection()) {
+        try (var connection = getConnection()) {
             publish(connection, msg);
         }
     }
@@ -352,7 +351,7 @@ public class Actor implements AutoCloseable {
      * @throws ClaraMsgException if the request failed
      */
     public void publish(ProxyAddress address, Message msg) throws ClaraMsgException {
-        try (Connection connection = getConnection(address)) {
+        try (var connection = getConnection(address)) {
             publish(connection, msg);
         }
     }
@@ -390,7 +389,7 @@ public class Actor implements AutoCloseable {
      */
     public Message syncPublish(Message msg, long timeout)
             throws ClaraMsgException, TimeoutException {
-        try (Connection connection = getConnection()) {
+        try (var connection = getConnection()) {
             return syncPublish(connection, msg, timeout);
         }
     }
@@ -414,7 +413,7 @@ public class Actor implements AutoCloseable {
      */
     public Message syncPublish(ProxyAddress address, Message msg, long timeout)
             throws ClaraMsgException, TimeoutException {
-        try (Connection connection = getConnection(address)) {
+        try (var connection = getConnection(address)) {
             return syncPublish(connection, msg, timeout);
         }
     }
@@ -439,7 +438,7 @@ public class Actor implements AutoCloseable {
     public Message syncPublish(Connection connection, Message msg, long timeout)
             throws ClaraMsgException, TimeoutException {
         // topic where the subscriber should publish the response
-        String replyTo = ActorUtils.getUniqueReplyTo(myId);
+        var replyTo = ActorUtils.getUniqueReplyTo(myId);
 
         // set the response topic
         msg.getMetaData().setReplyTo(replyTo);
@@ -516,17 +515,17 @@ public class Actor implements AutoCloseable {
                                   Set<Topic> topics,
                                   Callback callback) throws ClaraMsgException {
         // get a connection to the proxy
-        ProxyDriver connection = connectionManager.createProxySubscriber(address);
+        var connection = connectionManager.createProxySubscriber(address);
         try {
             // define a unique name for the subscription
-            String name = "sub-" + myName + "-" + connection.getAddress() + "-" + topics.hashCode();
+            var name = "sub-" + myName + "-" + connection.getAddress() + "-" + topics.hashCode();
 
             // start the subscription, if it does not exist yet
-            Subscription subscription = mySubscriptions.get(name);
+            var subscription = mySubscriptions.get(name);
             if (subscription == null) {
                 subscription = createSubscription(name, connection, topics, callback);
                 subscription.start(setup.connectionSetup());
-                Subscription prev = mySubscriptions.putIfAbsent(name, subscription);
+                var prev = mySubscriptions.putIfAbsent(name, subscription);
                 if (prev == null) {
                     return subscription;
                 }
@@ -660,9 +659,9 @@ public class Actor implements AutoCloseable {
      */
     public void register(RegInfo info, RegAddress address, long timeout)
             throws ClaraMsgException {
-        RegDriver connection = connectionManager.getRegistrarConnection(address);
+        var connection = connectionManager.getRegistrarConnection(address);
         try {
-            RegData data = createRegistration(info);
+            var data = createRegistration(info);
             connection.addRegistration(myName, data, timeout);
             connectionManager.releaseRegistrarConnection(connection);
         } catch (ZMQException | ClaraMsgException e) {
@@ -716,9 +715,9 @@ public class Actor implements AutoCloseable {
      */
     public void deregister(RegInfo info, RegAddress address, long timeout)
             throws ClaraMsgException {
-        RegDriver connection = connectionManager.getRegistrarConnection(address);
+        var connection = connectionManager.getRegistrarConnection(address);
         try {
-            RegData data = createRegistration(info);
+            var data = createRegistration(info);
             connection.removeRegistration(myName, data, timeout);
             connectionManager.releaseRegistrarConnection(connection);
         } catch (ZMQException | ClaraMsgException e) {
@@ -779,7 +778,7 @@ public class Actor implements AutoCloseable {
      */
     public Set<RegRecord> discover(RegQuery query, RegAddress address, long timeout)
             throws ClaraMsgException {
-        RegDriver connection = connectionManager.getRegistrarConnection(address);
+        var connection = connectionManager.getRegistrarConnection(address);
         try {
             RegData request = query.data();
             Set<RegData> registration = switch (query.category()) {

@@ -8,7 +8,6 @@ package org.jlab.clara.msg.sys;
 
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
-import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.AddressUtils;
@@ -21,7 +20,6 @@ import org.jlab.clara.msg.sys.utils.LogUtils;
 import org.jlab.clara.msg.sys.utils.ThreadUtils;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
-import org.zeromq.ZFrame;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 import org.zeromq.ZMQException;
@@ -56,7 +54,7 @@ public class Proxy {
 
     public static void main(String[] args) {
         try {
-            OptionParser parser = new OptionParser();
+            var parser = new OptionParser();
             OptionSpec<String> hostSpec = parser.accepts("host")
                     .withRequiredArg()
                     .defaultsTo(AddressUtils.localhost());
@@ -66,7 +64,7 @@ public class Proxy {
                     .defaultsTo(ProxyAddress.DEFAULT_PORT);
             parser.accepts("verbose");
             parser.acceptsAll(List.of("h", "help")).forHelp();
-            OptionSet options = parser.parse(args);
+            var options = parser.parse(args);
 
             if (options.has("help")) {
                 usage(System.out);
@@ -75,11 +73,11 @@ public class Proxy {
 
             LOGGER.setLevel(Level.INFO);
 
-            String host = options.valueOf(hostSpec);
-            int port = options.valueOf(portSpec);
-            ProxyAddress address = new ProxyAddress(host, port);
+            var host = options.valueOf(hostSpec);
+            var port = options.valueOf(portSpec);
+            var address = new ProxyAddress(host, port);
 
-            Proxy proxy = new Proxy(Context.getInstance(), address);
+            var proxy = new Proxy(Context.getInstance(), address);
             if (options.has("verbose")) {
                 proxy.verbose();
             }
@@ -306,7 +304,7 @@ public class Proxy {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
-                        ZMsg msg = ZMsg.recvMsg(control);
+                        var msg = ZMsg.recvMsg(control);
                         if (msg == null) {
                             break;
                         }
@@ -327,29 +325,29 @@ public class Proxy {
 
         private void processRequet(ZMsg msg) {
             /* ZFrame topicFrame = */ msg.pop();
-            ZFrame typeFrame = msg.pop();
-            ZFrame idFrame = msg.pop();
+            var typeFrame = msg.pop();
+            var idFrame = msg.pop();
 
-            String type = new String(typeFrame.getData());
-            String id = new String(idFrame.getData());
+            var type = new String(typeFrame.getData());
+            var id = new String(idFrame.getData());
 
             switch (type) {
                 case CtrlConstants.CTRL_CONNECT: {
-                    ZMsg ack = new ZMsg();
+                    var ack = new ZMsg();
                     ack.add(id);
                     ack.add(type);
                     ack.send(router);
                     break;
                 }
                 case CtrlConstants.CTRL_SUBSCRIBE: {
-                    ZMsg ack = new ZMsg();
+                    var ack = new ZMsg();
                     ack.add(id);
                     ack.add(type);
                     ack.send(publisher);
                     break;
                 }
                 case CtrlConstants.CTRL_REPLY: {
-                    ZMsg ack = new ZMsg();
+                    var ack = new ZMsg();
                     ack.add(id);
                     ack.add(type);
                     ack.send(router);
@@ -378,17 +376,17 @@ public class Proxy {
             //  Print everything that arrives at the pipe
             while (true) {
                 try {
-                    ZMsg msg = ZMsg.recvMsg(pipe);
+                    var msg = ZMsg.recvMsg(pipe);
                     if (msg == null) {
                         break;
                     }
-                    ZFrame frame = msg.pop();
-                    byte[] data = frame.getData();
+                    var frame = msg.pop();
+                    var data = frame.getData();
                     if (data[0] == 1) {
-                        String topic = new String(data, 1, data.length - 1);
+                        var topic = new String(data, 1, data.length - 1);
                         LOGGER.fine("subscribed topic = " + topic);
                     } else if (data[0] == 0) {
-                        String topic = new String(data, 1, data.length - 1);
+                        var topic = new String(data, 1, data.length - 1);
                         LOGGER.fine("unsubscribed topic = " + topic);
                     } else {
                         LOGGER.fine("received topic = " + frame);

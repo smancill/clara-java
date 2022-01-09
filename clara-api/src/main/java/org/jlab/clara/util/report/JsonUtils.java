@@ -7,12 +7,10 @@
 package org.jlab.clara.util.report;
 
 import org.jlab.clara.base.core.ClaraConstants;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
@@ -29,9 +27,9 @@ public final class JsonUtils {
     private JsonUtils() { }
 
     public static JSONObject readJson(String resource) {
-        InputStream stream = JsonUtils.class.getResourceAsStream(resource);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-            String content =  reader.lines().collect(Collectors.joining("\n"));
+        var stream = JsonUtils.class.getResourceAsStream(resource);
+        try (var reader = new BufferedReader(new InputStreamReader(stream))) {
+            var content =  reader.lines().collect(Collectors.joining("\n"));
             return new JSONObject(content);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -69,7 +67,7 @@ public final class JsonUtils {
     }
 
     public static Stream<JSONObject> arrayStream(JSONObject json, String key) {
-        JSONArray array = json.getJSONArray(key);
+        var array = json.getJSONArray(key);
         return IntStream.range(0, array.length())
                         .mapToObj(array::getJSONObject);
     }

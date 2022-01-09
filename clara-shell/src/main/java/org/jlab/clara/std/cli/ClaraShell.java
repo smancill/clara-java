@@ -60,7 +60,7 @@ public final class ClaraShell implements AutoCloseable {
 
 
     public static void main(String[] args) {
-        ClaraShell.Builder builder = ClaraShell.newBuilder();
+        var builder = ClaraShell.newBuilder();
         if (args.length == 1) {
             if (args[0].equals("--version")) {
                 System.out.println(VersionUtils.getClaraVersionFull());
@@ -80,7 +80,7 @@ public final class ClaraShell implements AutoCloseable {
             FarmCommands.register(builder);
         }
 
-        ClaraShell shell = builder.build();
+        var shell = builder.build();
 
         Runtime.getRuntime().addShutdownHook(new Thread(shell::close));
 
@@ -284,19 +284,19 @@ public final class ClaraShell implements AutoCloseable {
     private CommandFactory initCommand(CommandFactory baseCommand,
                                        List<CommandFactory> userSubCommands) {
         return session -> {
-            BaseCommand cmd = (BaseCommand) baseCommand.create(session);
+            var cmd = (BaseCommand) baseCommand.create(session);
             userSubCommands.forEach(cmd::addSubCommand);
             return cmd;
         };
     }
 
     private void addCommand(CommandFactory factory) {
-        Command command = factory.create(new Context(terminal, config));
+        var command = factory.create(new Context(terminal, config));
         commands.put(command.getName(), command);
     }
 
     private Completer initCompleter() {
-        List<Completer> completers = commands.values()
+        var completers = commands.values()
                 .stream()
                 .map(Command::getCompleter)
                 .collect(Collectors.toList());
@@ -304,7 +304,7 @@ public final class ClaraShell implements AutoCloseable {
     }
 
     private void loadHistory() {
-        Path histFile = FileUtils.claraPath(HISTORY_NAME);
+        var histFile = FileUtils.claraPath(HISTORY_NAME);
         reader.setVariable(LineReader.HISTORY_FILE, histFile);
         try {
             history.load();
@@ -323,7 +323,7 @@ public final class ClaraShell implements AutoCloseable {
             Thread.currentThread().interrupt();
         }
 
-        for (Command command : commands.values()) {
+        for (var command : commands.values()) {
             try {
                 command.close();
             } catch (Exception e) {
@@ -351,8 +351,8 @@ public final class ClaraShell implements AutoCloseable {
         }
         if (script !=  null) {
             try {
-                String[] args = new String[] {"-q", script.toString()};
-                Command sourceCmd = commands.get("source");
+                var args = new String[] {"-q", script.toString()};
+                var sourceCmd = commands.get("source");
                 sourceCmd.execute(args);
             } finally {
                 terminal.writer().flush();
@@ -368,7 +368,7 @@ public final class ClaraShell implements AutoCloseable {
         while (running) {
             try {
                 Thread.interrupted();
-                String line = readLine();
+                var line = readLine();
                 if (line == null) {
                     continue;
                 }
@@ -384,7 +384,7 @@ public final class ClaraShell implements AutoCloseable {
     }
 
     private void printWelcomeMessage(PrintWriter writer) {
-        String version = VersionUtils.getClaraVersion();
+        var version = VersionUtils.getClaraVersion();
 
         writer.println();
         writer.println("   ██████╗██╗      █████╗ ██████╗  █████╗ ");

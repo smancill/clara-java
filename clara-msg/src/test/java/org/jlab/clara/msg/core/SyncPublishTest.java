@@ -16,8 +16,6 @@ import org.jlab.clara.msg.sys.RegistrarWrapper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -50,9 +48,9 @@ public final class SyncPublishTest {
 
     private static Actor listener(int poolSize, String name, RegAddress regAddress)
             throws ClaraMsgException {
-        Actor actor = new Actor(name, regAddress, poolSize);
+        var actor = new Actor(name, regAddress, poolSize);
         try {
-            Topic topic = Topic.build(TOPIC, name);
+            var topic = Topic.build(TOPIC, name);
             actor.register(RegInfo.subscriber(topic, "test subscriber"));
             System.out.printf("Registered %s with %s%n", topic, regAddress);
             actor.subscribe(topic, msg -> {
@@ -72,17 +70,17 @@ public final class SyncPublishTest {
 
     private static Result publisher(int cores, int numMessages, RegAddress regAddress)
             throws Exception {
-        ThreadPoolExecutor threadPool = ActorUtils.newThreadPool(cores, "sync-pub-");
+        var threadPool = ActorUtils.newThreadPool(cores, "sync-pub-");
 
-        try (Actor actor = new Actor("sync_tester", regAddress)) {
-            RegQuery query = RegQuery.subscribers().withDomain(TOPIC);
-            Set<RegRecord> regListeners = actor.discover(query);
-            int numListeners = regListeners.size();
+        try (var actor = new Actor("sync_tester", regAddress)) {
+            var query = RegQuery.subscribers().withDomain(TOPIC);
+            var regListeners = actor.discover(query);
+            var numListeners = regListeners.size();
             if (numListeners == 0) {
                 throw new RuntimeException("no subscribers registered on" + regAddress);
             }
 
-            Result results = new Result(cores, numListeners, numMessages);
+            var results = new Result(cores, numListeners, numMessages);
 
             System.out.printf("Found %d subscribers registered on %s%n",
                               numListeners, regAddress);
@@ -97,9 +95,9 @@ public final class SyncPublishTest {
                     try {
                         for (int j = start; j < end; j++) {
                             for (RegRecord reg : regListeners) {
-                                try (Connection pubCon = actor.getConnection(reg.address())) {
-                                    Message msg = Message.createFrom(reg.topic(), j);
-                                    Message rMsg = actor.syncPublish(pubCon, msg, TIME_OUT);
+                                try (var pubCon = actor.getConnection(reg.address())) {
+                                    var msg = Message.createFrom(reg.topic(), j);
+                                    var rMsg = actor.syncPublish(pubCon, msg, TIME_OUT);
                                     int rData = Message.parseData(rMsg, Integer.class);
                                     results.add(rData);
                                 } catch (TimeoutException e) {
@@ -179,11 +177,11 @@ public final class SyncPublishTest {
     @Test
     @SuppressWarnings("unused")
     public void run() throws Exception {
-        RegAddress address = new RegAddress();
-        try (RegistrarWrapper registrar = new RegistrarWrapper();
-             ProxyWrapper proxy = new ProxyWrapper()) {
-            try (Actor actor1 = listener(1, "foo", address);
-                 Actor actor2 = listener(1, "bar", address)) {
+        var address = new RegAddress();
+        try (var registrar = new RegistrarWrapper();
+             var proxy = new ProxyWrapper()) {
+            try (var actor1 = listener(1, "foo", address);
+                 var actor2 = listener(1, "bar", address)) {
                 ActorUtils.sleep(100);
                 Result results = publisher(1, 1000, address);
                 assertThat(results.sum.get(), is(results.totalSum));
@@ -204,18 +202,18 @@ public final class SyncPublishTest {
         String command = args[2];
 
         try {
-            RegAddress address = new RegAddress(frontEnd);
+            var address = new RegAddress(frontEnd);
             if (command.equals("listener")) {
-                int poolSize = Integer.parseInt(cores);
-                Actor subscriber = SyncPublishTest.listener(poolSize, "local", address);
+                var poolSize = Integer.parseInt(cores);
+                var subscriber = SyncPublishTest.listener(poolSize, "local", address);
                 try (subscriber) {
                     ActorUtils.keepAlive();
                 }
             } else {
-                int pubThreads = Integer.parseInt(cores);
-                int totalMessages = Integer.parseInt(command);
-                boolean success = SyncPublishTest.publisher(pubThreads, totalMessages, address)
-                                                 .check();
+                var pubThreads = Integer.parseInt(cores);
+                var totalMessages = Integer.parseInt(command);
+                var success = SyncPublishTest.publisher(pubThreads, totalMessages, address)
+                                             .check();
                 if (!success) {
                     System.exit(1);
                 }

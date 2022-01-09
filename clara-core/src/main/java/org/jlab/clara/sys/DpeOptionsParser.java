@@ -82,8 +82,8 @@ class DpeOptionsParser {
             fe = !options.has(feHost) && !options.has(fePort);
 
             // Get local DPE address
-            String localHost = valueOf(dpeHost, Dpe.DEFAULT_PROXY_HOST);
-            int localPort = valueOf(dpePort, Dpe.DEFAULT_PROXY_PORT);
+            var localHost = valueOf(dpeHost, Dpe.DEFAULT_PROXY_HOST);
+            var localPort = valueOf(dpePort, Dpe.DEFAULT_PROXY_PORT);
             localAddress = new ProxyAddress(localHost, localPort);
 
             if (fe) {
@@ -94,8 +94,8 @@ class DpeOptionsParser {
                 if (!options.has(feHost)) {
                     error("The remote front-end host is required");
                 }
-                String host = options.valueOf(feHost);
-                int port = valueOf(fePort, Dpe.DEFAULT_PROXY_PORT);
+                var host = options.valueOf(feHost);
+                var port = valueOf(fePort, Dpe.DEFAULT_PROXY_PORT);
                 frontEndAddress = new ProxyAddress(host, port);
             }
 

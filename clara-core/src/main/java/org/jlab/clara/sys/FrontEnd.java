@@ -51,8 +51,8 @@ class FrontEnd {
         registrar.start();
 
         // subscribe to forwarding requests
-        Topic topic = Topic.build(ClaraConstants.DPE,
-                                          base.getFrontEnd().getCanonicalName());
+        var topic = Topic.build(ClaraConstants.DPE,
+                                base.getFrontEnd().getCanonicalName());
         base.listen(topic, new GatewayCallback());
         base.register(topic, base.getMe().getDescription());
 
@@ -160,10 +160,10 @@ class FrontEnd {
 
         @Override
         public void callback(Message msg) {
-            MetaData.Builder metadata = msg.getMetaData();
+            var metadata = msg.getMetaData();
             try {
-                RequestParser parser = RequestParser.build(msg);
-                String cmd = parser.nextString();
+                var parser = RequestParser.build(msg);
+                var cmd = parser.nextString();
 
                 switch (cmd) {
                     case ClaraConstants.START_DPE -> startDpe(parser, metadata);

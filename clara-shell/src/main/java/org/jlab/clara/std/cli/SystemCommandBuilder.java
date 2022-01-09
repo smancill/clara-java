@@ -9,7 +9,6 @@ package org.jlab.clara.std.cli;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -52,9 +51,9 @@ class SystemCommandBuilder {
     }
 
     private Token mayQuote(Token token) {
-        Matcher matcher = NEED_QUOTES.matcher(token.value);
+        var matcher = NEED_QUOTES.matcher(token.value);
         if (matcher.find() || quoteAll) {
-            String quoted = "\"" + token.value + "\"";
+            var quoted = "\"" + token.value + "\"";
             return new Token(quoted, token.split);
         }
         return token;

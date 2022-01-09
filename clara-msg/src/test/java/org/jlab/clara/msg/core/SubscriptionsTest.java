@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -55,8 +54,8 @@ public class SubscriptionsTest {
 
     @Test
     public void unsubscribeStopsThread() throws Exception {
-        try (Actor actor = new Actor("test")) {
-            Subscription subscription = actor.subscribe(Topic.wrap("topic"), null);
+        try (var actor = new Actor("test")) {
+            var subscription = actor.subscribe(Topic.wrap("topic"), null);
             ActorUtils.sleep(1000);
             actor.unsubscribe(subscription);
 
@@ -75,17 +74,17 @@ public class SubscriptionsTest {
             final AtomicLong sum = new AtomicLong();
         }
 
-        final Check check = new Check();
+        final var check = new Check();
 
-        Thread subThread = ActorUtils.newThread("sub-thread", () -> {
-            try (Actor actor = new Actor("test_subscriber")) {
-                Topic topic = Topic.wrap("test_topic");
-                Subscription sub = actor.subscribe(topic, msg -> {
+        var subThread = ActorUtils.newThread("sub-thread", () -> {
+            try (var actor = new Actor("test_subscriber")) {
+                var topic = Topic.wrap("test_topic");
+                var sub = actor.subscribe(topic, msg -> {
                     int i = Message.parseData(msg, Integer.class);
                     check.counter.incrementAndGet();
                     check.sum.addAndGet(i);
                 });
-                int shutdownCounter = 0;
+                var shutdownCounter = 0;
                 while (check.counter.get() < Check.N && shutdownCounter < 100) {
                     shutdownCounter++;
                     ActorUtils.sleep(100);
@@ -98,12 +97,12 @@ public class SubscriptionsTest {
         subThread.start();
         ActorUtils.sleep(100);
 
-        Thread pubThread = ActorUtils.newThread("pub-thread", () -> {
-            try (Actor actor = new Actor("test_publisher");
-                 Connection con = actor.getConnection()) {
-                Topic topic = Topic.wrap("test_topic");
+        var pubThread = ActorUtils.newThread("pub-thread", () -> {
+            try (var actor = new Actor("test_publisher");
+                 var con = actor.getConnection()) {
+                var topic = Topic.wrap("test_topic");
                 for (int i = 0; i < Check.N; i++) {
-                    Message msg = Message.createFrom(topic, i);
+                    var msg = Message.createFrom(topic, i);
                     actor.publish(con, msg);
                 }
             } catch (ClaraMsgException e) {
@@ -130,12 +129,12 @@ public class SubscriptionsTest {
             long sum = 0;
         }
 
-        final Check check = new Check();
+        final var check = new Check();
 
-        Thread pubThread = ActorUtils.newThread("sync-pub-thread", () -> {
-            try (Actor subActor = new Actor("test_subscriber");
-                 Actor pubActor = new Actor("test_publisher")) {
-                Topic subTopic = Topic.wrap("test_topic");
+        var pubThread = ActorUtils.newThread("sync-pub-thread", () -> {
+            try (var subActor = new Actor("test_subscriber");
+                 var pubActor = new Actor("test_publisher")) {
+                var subTopic = Topic.wrap("test_topic");
                 subActor.subscribe(subTopic, msg -> {
                     try {
                         subActor.publish(Message.createResponse(msg));
@@ -144,11 +143,11 @@ public class SubscriptionsTest {
                     }
                 });
                 ActorUtils.sleep(100);
-                try (Connection pubCon = subActor.getConnection()) {
-                    Topic pubTopic = Topic.wrap("test_topic");
+                try (var pubCon = subActor.getConnection()) {
+                    var pubTopic = Topic.wrap("test_topic");
                     for (int i = 0; i < Check.N; i++) {
-                        Message msg = Message.createFrom(pubTopic, i);
-                        Message rMsg = pubActor.syncPublish(pubCon, msg, 1000);
+                        var msg = Message.createFrom(pubTopic, i);
+                        var rMsg = pubActor.syncPublish(pubCon, msg, 1000);
                         int rData = Message.parseData(rMsg, Integer.class);
                         check.sum += rData;
                         check.counter++;
@@ -173,13 +172,13 @@ public class SubscriptionsTest {
             boolean timeout = false;
         }
 
-        final Check check = new Check();
+        final var check = new Check();
 
-        Thread pubThread = ActorUtils.newThread("sync-pub-thread", () -> {
-            try (Actor subActor = new Actor("test_subscriber");
-                 Actor pubActor = new Actor("test_publisher")) {
-                Topic subTopic = Topic.wrap("test_topic");
-                Subscription sub = subActor.subscribe(subTopic, msg -> {
+        var pubThread = ActorUtils.newThread("sync-pub-thread", () -> {
+            try (var subActor = new Actor("test_subscriber");
+                 var pubActor = new Actor("test_publisher")) {
+                var subTopic = Topic.wrap("test_topic");
+                var sub = subActor.subscribe(subTopic, msg -> {
                     try {
                         check.received = true;
                         ActorUtils.sleep(1500);
@@ -190,8 +189,8 @@ public class SubscriptionsTest {
                 });
                 ActorUtils.sleep(100);
                 try {
-                    Topic pubTopic = Topic.wrap("test_topic");
-                    Message msg = Message.createFrom(pubTopic, 1);
+                    var pubTopic = Topic.wrap("test_topic");
+                    var msg = Message.createFrom(pubTopic, 1);
                     pubActor.syncPublish(msg, 1000);
                 } catch (TimeoutException e) {
                     check.timeout = true;
@@ -218,19 +217,19 @@ public class SubscriptionsTest {
             final AtomicLong sum = new AtomicLong();
         }
 
-        final Check check = new Check();
+        final var check = new Check();
 
-        Thread subThread = ActorUtils.newThread("sub-thread", () -> {
-            try (Actor actor = new Actor("test_subscriber")) {
-                Set<Topic> topics = new HashSet<>();
+        var subThread = ActorUtils.newThread("sub-thread", () -> {
+            try (var actor = new Actor("test_subscriber")) {
+                var topics = new HashSet<Topic>();
                 topics.add(Topic.wrap("1_test_topic"));
                 topics.add(Topic.wrap("2_test_topic"));
-                Subscription sub = actor.subscribe(topics, msg -> {
+                var sub = actor.subscribe(topics, msg -> {
                     int i = Message.parseData(msg, Integer.class);
                     check.counter.incrementAndGet();
                     check.sum.addAndGet(i);
                 });
-                int shutdownCounter = 0;
+                var shutdownCounter = 0;
                 while (check.counter.get() < Check.N && shutdownCounter < 100) {
                     shutdownCounter++;
                     ActorUtils.sleep(100);
@@ -243,15 +242,15 @@ public class SubscriptionsTest {
         subThread.start();
         ActorUtils.sleep(100);
 
-        Thread pubThread = ActorUtils.newThread("pub-thread", () -> {
-            try (Actor actor = new Actor("test_publisher");
-                 Connection con = actor.getConnection()) {
-                Topic[] topics = new Topic[] {
+        var pubThread = ActorUtils.newThread("pub-thread", () -> {
+            try (var actor = new Actor("test_publisher");
+                 var con = actor.getConnection()) {
+                var topics = new Topic[] {
                     Topic.wrap("1_test_topic"),
                     Topic.wrap("2_test_topic")
                 };
                 for (int i = 0; i < Check.N; i++) {
-                    Message msg = Message.createFrom(topics[i % 2], i);
+                    var msg = Message.createFrom(topics[i % 2], i);
                     actor.publish(con, msg);
                 }
             } catch (ClaraMsgException e) {
