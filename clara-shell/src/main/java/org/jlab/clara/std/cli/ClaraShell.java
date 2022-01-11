@@ -182,13 +182,7 @@ public final class ClaraShell implements AutoCloseable {
          * @return this builder
          */
         public Builder withBuiltinCommand(String name, String description, List<String> command) {
-            ArgUtils.requireNonEmpty(name, "name");
-            ArgUtils.requireNonEmpty(description, "description");
-            ArgUtils.requireNonNull(description, "command");
-
-            String[] arrCommand = command.toArray(new String[0]);
-            userCommands.add(AbstractCommand.wrap(name, description, arrCommand));
-            return this;
+            return withBuiltinCommand(name, description, command.toArray(new String[0]));
         }
 
         /**

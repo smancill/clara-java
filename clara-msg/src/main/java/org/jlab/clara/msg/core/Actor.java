@@ -438,14 +438,14 @@ public class Actor implements AutoCloseable {
      */
     public Message syncPublish(Connection connection, Message msg, long timeout)
             throws ClaraMsgException, TimeoutException {
-        // address/topic where the subscriber should send the result
+        // topic where the subscriber should publish the response
         String returnAddress = ActorUtils.getUniqueReplyTo(myId);
 
-        // set the return address as replyTo in the Message
+        // set the response topic
         msg.getMetaData().setReplyTo(returnAddress);
 
         try {
-            // subscribe to the returnAddress
+            // subscribe to the response topic
             syncPubListener.register(connection.getAddress());
 
             // it must be the internal publish, to keep the replyTo field

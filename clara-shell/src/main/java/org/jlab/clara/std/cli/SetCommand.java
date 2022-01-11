@@ -131,13 +131,12 @@ class SetCommand extends BaseCommand {
 
     private int listDir(PrintWriter printer, Path directory, Predicate<Path> filter)
             throws IOException {
-        List<Path> files = Files.list(directory)
+        return (int) Files.list(directory)
                 .filter(Files::isRegularFile)
                 .map(Path::getFileName)
                 .filter(filter)
                 .sorted()
-                .toList();
-        files.forEach(printer::println);
-        return files.size();
+                .peek(printer::println)
+                .count();
     }
 }

@@ -78,7 +78,7 @@ public final class ClaraQueries {
                 if (wait <= 0) {
                     throw new IllegalArgumentException("Invalid timeout: " + wait);
                 }
-                long timeout = (int) unit.toMillis(wait);
+                long timeout = unit.toMillis(wait);
                 long start = System.currentTimeMillis();
                 Stream<RegRecord> regData = queryRegistrar(timeout);
                 long end = System.currentTimeMillis();
@@ -178,12 +178,12 @@ public final class ClaraQueries {
             }
 
             // Filters use registration data in order to select components
-            Stream<JSONObject> regData = parseReport
-                    .parseComponents(report, ClaraConstants.REGISTRATION_KEY)
+            String regKey = ClaraConstants.REGISTRATION_KEY;
+            Stream<JSONObject> regData = parseReport.parseComponents(report, regKey)
                     .filter(filter.jsonFilter());
 
             // If the query result requires registration data
-            if (reportKey.equals(ClaraConstants.REGISTRATION_KEY)) {
+            if (reportKey.equals(regKey)) {
                 return regData;
             }
 

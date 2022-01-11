@@ -79,7 +79,7 @@ public class RegistrarTest {
                 checkActorsByTopic();
 
                 long end = System.currentTimeMillis();
-                System.out.println("Total time: " + (end - start) / 1000.0);
+                System.out.printf("Total time: %.3f s%n", ((end - start) / 1000.0));
             } finally {
                 if (driver != null) {
                     driver.close();

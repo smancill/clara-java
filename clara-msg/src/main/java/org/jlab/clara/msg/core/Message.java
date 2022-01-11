@@ -105,8 +105,7 @@ public class Message {
 
         try {
             this.topic = Topic.wrap(topicFrame.getData());
-            MetaData metaDataObj = MetaData.parseFrom(metaDataFrame.getData());
-            this.metaData = metaDataObj.toBuilder();
+            this.metaData = MetaData.parseFrom(metaDataFrame.getData()).toBuilder();
             this.data = dataFrame.getData();
         } catch (InvalidProtocolBufferException e) {
             throw new ClaraMsgException("could not parse metadata", e);

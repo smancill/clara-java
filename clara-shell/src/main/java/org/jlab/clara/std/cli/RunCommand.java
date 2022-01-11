@@ -158,7 +158,7 @@ class RunCommand extends BaseCommand {
                                            .collect(Collectors.toList());
             Collections.shuffle(ports);
 
-            for (Integer port : ports) {
+            for (int port : ports) {
                 int ctrlPort = port + 2;
                 try (ServerSocket socket = new ServerSocket(ctrlPort)) {
                     socket.setReuseAddress(true);

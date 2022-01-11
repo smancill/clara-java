@@ -68,15 +68,13 @@ class WorkerNode {
         private boolean ready = false;
 
         Builder(ApplicationInfo application) {
-            this.app = application;
-            this.dpes = new HashMap<>();
-
-            this.app.getLanguages().forEach(lang -> this.dpes.put(lang, null));
+            app = application;
+            dpes = new HashMap<>();
         }
 
         public void addDpe(DpeInfo dpe) {
             ClaraLang lang = dpe.name().language();
-            if (!dpes.containsKey(lang)) {
+            if (!app.getLanguages().contains(lang)) {
                 Logging.info("Ignoring DPE %s (language not needed)", dpe.name());
                 return;
             }
@@ -96,7 +94,7 @@ class WorkerNode {
         }
 
         private boolean checkReady() {
-            return dpes.entrySet().stream().noneMatch(e -> e.getValue() == null);
+            return app.getLanguages().stream().allMatch(dpes::containsKey);
         }
     }
 

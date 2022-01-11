@@ -68,9 +68,8 @@ class RunUtils {
     }
 
     Path getLogFile(Path feLog, ClaraLang dpeLang) {
-        Path logDir = getLogDir();
         String name = FileUtils.getFileName(feLog).toString();
-        return logDir.resolve(name.replaceAll("fe_dpe", dpeLang + "_dpe"));
+        return getLogDir().resolve(name.replaceAll("fe_dpe", dpeLang + "_dpe"));
     }
 
     List<Path> getLogFiles(String component) throws IOException {

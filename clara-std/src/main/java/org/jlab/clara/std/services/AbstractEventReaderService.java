@@ -64,7 +64,8 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
     @Override
     public EngineData configure(EngineData input) {
         final long startTime = System.currentTimeMillis();
-        if (input.getMimeType().equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
+        String mimeType = input.getMimeType();
+        if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
             String source = (String) input.getData();
             JSONObject data = new JSONObject(source);
             if (data.has(CONF_ACTION) && data.has(CONF_FILENAME)) {
@@ -80,7 +81,7 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
                 logger.error("config: missing '{}' or '{}' parameters", CONF_ACTION, CONF_FILENAME);
             }
         } else {
-            logger.error("config: wrong mime-type {}", input.getMimeType());
+            logger.error("config: wrong mime-type {}", mimeType);
         }
         logger.info("config time: {} [ms]", System.currentTimeMillis() - startTime);
         return null;

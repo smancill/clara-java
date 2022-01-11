@@ -205,7 +205,8 @@ class WorkerApplication {
     @Override
     public String toString() {
         String dpeNames = dpes.values().stream()
-                .map(dpe -> dpe.name().canonicalName())
+                .map(DpeInfo::name)
+                .map(DpeName::canonicalName)
                 .collect(Collectors.joining(","));
         return "[" + dpeNames + "]";
     }

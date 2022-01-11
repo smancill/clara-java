@@ -81,9 +81,9 @@ class RegDatabase {
         for (ConcurrentMap<Topic, Set<RegData>> map : db.values()) {
             Iterator<Entry<Topic, Set<RegData>>> dbIt = map.entrySet().iterator();
             while (dbIt.hasNext()) {
-                Entry<Topic, Set<RegData>> dbEntry = dbIt.next();
-                dbEntry.getValue().removeIf(reg -> reg.getHost().equals(host));
-                if (dbEntry.getValue().isEmpty()) {
+                Set<RegData> regSet = dbIt.next().getValue();
+                regSet.removeIf(reg -> reg.getHost().equals(host));
+                if (regSet.isEmpty()) {
                     dbIt.remove();
                 }
             }

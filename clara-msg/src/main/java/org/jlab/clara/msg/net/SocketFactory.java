@@ -42,8 +42,7 @@ public class SocketFactory {
             socket.setSndHWM(0);
             return socket;
         } catch (IllegalStateException e) {
-            int maxSockets = Context.getInstance().getMaxSockets();
-            throw new ClaraMsgException("reached maximum number of sockets: " + maxSockets);
+            throw new ClaraMsgException("reached maximum number of sockets: " + ctx.getMaxSockets());
         }
     }
 

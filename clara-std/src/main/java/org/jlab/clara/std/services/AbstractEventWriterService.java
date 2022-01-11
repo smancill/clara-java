@@ -53,7 +53,8 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
     @Override
     public EngineData configure(EngineData input) {
         final long startTime = System.currentTimeMillis();
-        if (input.getMimeType().equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
+        String mimeType = input.getMimeType();
+        if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
             String source = (String) input.getData();
             JSONObject configData = new JSONObject(source);
             if (configData.has(CONF_ACTION)) {
@@ -79,7 +80,7 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
                 logger.error("config: missing '{}' parameter", CONF_ACTION);
             }
         } else {
-            logger.error("config: wrong mime-type '{}'", input.getMimeType());
+            logger.error("config: wrong mime-type '{}'", mimeType);
         }
         logger.info("config time: {} [ms]", System.currentTimeMillis() - startTime);
         return null;
