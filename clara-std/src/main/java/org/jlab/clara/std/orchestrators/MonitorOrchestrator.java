@@ -6,6 +6,10 @@
 
 package org.jlab.clara.std.orchestrators;
 
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 import org.jlab.clara.base.BaseOrchestrator;
 import org.jlab.clara.base.ClaraLang;
 import org.jlab.clara.base.ClaraUtil;
@@ -21,11 +25,6 @@ import org.jlab.clara.util.EnvUtils;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
 
 /**
  * Listen to reports published to the Clara data-ring.

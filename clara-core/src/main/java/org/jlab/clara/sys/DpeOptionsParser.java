@@ -10,7 +10,6 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
-
 import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.util.OptUtils;
 

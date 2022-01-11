@@ -6,10 +6,10 @@
 
 package org.jlab.clara.base;
 
-import org.jlab.clara.base.core.ClaraConstants;
-import org.jlab.clara.base.core.DataUtil;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
+import org.jlab.clara.base.core.ClaraConstants;
+import org.jlab.clara.base.core.DataUtil;
 import org.jlab.clara.base.core.MessageUtil;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.engine.EngineData;

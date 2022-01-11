@@ -7,7 +7,6 @@
 package org.jlab.clara.msg.core;
 
 import com.google.protobuf.ByteString;
-
 import org.jlab.clara.msg.net.AddressUtils;
 import org.jlab.clara.msg.sys.utils.ThreadUtils;
 

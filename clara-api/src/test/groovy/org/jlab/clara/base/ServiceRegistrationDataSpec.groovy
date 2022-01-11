@@ -7,9 +7,9 @@
 package org.jlab.clara.base
 
 import org.jlab.clara.tests.Integration
+import org.jlab.clara.util.report.JsonUtils
 import org.json.JSONObject
 import spock.lang.Specification
-import org.jlab.clara.util.report.JsonUtils
 
 @Integration
 class ServiceRegistrationDataSpec extends Specification {

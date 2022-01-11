@@ -6,10 +6,10 @@
 
 package org.jlab.clara.sys;
 
-import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
+import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Callback;
