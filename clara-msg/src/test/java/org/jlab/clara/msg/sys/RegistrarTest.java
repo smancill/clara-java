@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -167,10 +168,8 @@ public class RegistrarTest {
     private void checkMatchingTopic(OwnerType regType) throws ClaraMsgException {
         RegistrationHelper reg = new RegistrationHelper(regType, "topic");
         for (Topic topic : testTopics()) {
-            RegData data = queryFactory(regType).matching(topic).data();
-
-            Set<RegData> result = driver.findRegistration(name, data);
-            Set<RegData> expected = findLocal(regType, matchTopic(regType, topic));
+            Set<RegData> result = reg.request(RegDriver::findRegistration, r -> r.matching(topic));
+            Set<RegData> expected = reg.findLocal(matchTopic(regType, topic));
 
             reg.assertThat(topic, result, expected);
         }
@@ -197,10 +196,8 @@ public class RegistrarTest {
     private void checkFilterByDomain(OwnerType regType) throws ClaraMsgException {
         RegistrationHelper reg = new RegistrationHelper(regType, "domain");
         for (String domain : testDomains()) {
-            RegData data = queryFactory(regType).withDomain(domain).data();
-
-            Set<RegData> result = driver.filterRegistration(name, data);
-            Set<RegData> expected = findLocal(regType, e -> e.getDomain().equals(domain));
+            Set<RegData> result = reg.request(RegDriver::filterRegistration, r -> r.withDomain(domain));
+            Set<RegData> expected = reg.findLocal(r -> r.getDomain().equals(domain));
 
             reg.assertThat(domain, result, expected);
         }
@@ -210,10 +207,8 @@ public class RegistrarTest {
     private void checkFilterBySubject(OwnerType regType) throws ClaraMsgException {
         RegistrationHelper reg = new RegistrationHelper(regType, "subject");
         for (String subject : testSubjects()) {
-            RegData data = queryFactory(regType).withSubject(subject).data();
-
-            Set<RegData> result = driver.filterRegistration(name, data);
-            Set<RegData> expected = findLocal(regType, e -> e.getSubject().equals(subject));
+            Set<RegData> result = reg.request(RegDriver::filterRegistration, r -> r.withSubject(subject));
+            Set<RegData> expected = reg.findLocal(r -> r.getSubject().equals(subject));
 
             reg.assertThat(subject, result, expected);
         }
@@ -223,10 +218,8 @@ public class RegistrarTest {
     private void checkFilterByType(OwnerType regType) throws ClaraMsgException {
         RegistrationHelper reg = new RegistrationHelper(regType, "type");
         for (String type : testTypes()) {
-            RegData data = queryFactory(regType).withType(type).data();
-
-            Set<RegData> result = driver.filterRegistration(name, data);
-            Set<RegData> expected = findLocal(regType, e -> e.getType().equals(type));
+            Set<RegData> result = reg.request(RegDriver::filterRegistration, r -> r.withType(type));
+            Set<RegData> expected = reg.findLocal(r -> r.getType().equals(type));
 
             reg.assertThat(type, result, expected);
         }
@@ -236,10 +229,8 @@ public class RegistrarTest {
     private void checkFilterByHost(OwnerType regType) throws ClaraMsgException {
         RegistrationHelper reg = new RegistrationHelper(regType, "host");
         for (String host : RegDataFactory.testHosts) {
-            RegData data = queryFactory(regType).withHost(host).data();
-
-            Set<RegData> result = driver.filterRegistration(name, data);
-            Set<RegData> expected = findLocal(regType, e -> e.getHost().equals(host));
+            Set<RegData> result = reg.request(RegDriver::filterRegistration, r -> r.withHost(host));
+            Set<RegData> expected = reg.findLocal(r -> r.getHost().equals(host));
 
             reg.assertThat(host, result, expected);
         }
@@ -249,10 +240,8 @@ public class RegistrarTest {
     private void checkSameTopic(OwnerType regType) throws ClaraMsgException {
         RegistrationHelper reg = new RegistrationHelper(regType, "topic");
         for (Topic topic : testTopics()) {
-            RegData data = queryFactory(regType).withSame(topic).data();
-
-            Set<RegData> result = driver.sameRegistration(name, data);
-            Set<RegData> expected = findLocal(regType, r -> getTopic(r).equals(topic));
+            Set<RegData> result = reg.request(RegDriver::sameRegistration, r -> r.withSame(topic));
+            Set<RegData> expected = reg.findLocal(r -> getTopic(r).equals(topic));
 
             reg.assertThat(topic, result, expected);
         }
@@ -262,34 +251,15 @@ public class RegistrarTest {
     private void checkAll(OwnerType regType) throws ClaraMsgException {
         RegistrationHelper reg = new RegistrationHelper(regType, "all");
 
-        RegData data = queryFactory(regType).all().data();
-
-        Set<RegData> result = driver.filterRegistration(name, data);
-        Set<RegData> expected = findLocal(regType, e -> true);
+        Set<RegData> result = reg.request(RegDriver::allRegistration, RegQuery.Factory::all);
+        Set<RegData> expected = reg.findLocal(e -> true);
 
         reg.assertThat(result, expected);
     }
 
 
-    private Set<RegData> findLocal(OwnerType regType, Predicate<RegData> predicate) {
-        return registration.stream()
-                           .filter(r -> r.getOwnerType() == regType)
-                           .filter(predicate)
-                           .collect(Collectors.toSet());
-    }
-
-
     private static Topic getTopic(RegData reg) {
         return Topic.build(reg.getDomain(), reg.getSubject(), reg.getType());
-    }
-
-
-    private static RegQuery.Factory queryFactory(OwnerType regType) {
-        if (regType == OwnerType.PUBLISHER) {
-            return RegQuery.publishers();
-        } else {
-            return RegQuery.subscribers();
-        }
     }
 
 
@@ -330,6 +300,12 @@ public class RegistrarTest {
     }
 
 
+    @FunctionalInterface
+    interface QueryRegistrar {
+        Set<RegData> apply(RegDriver driver, String name, RegData data) throws ClaraMsgException;
+    }
+
+
     private class RegistrationHelper {
 
         private final OwnerType regType;
@@ -338,6 +314,20 @@ public class RegistrarTest {
         RegistrationHelper(OwnerType regType, String valueType) {
             this.regType = regType;
             this.valueType = valueType;
+        }
+
+        Set<RegData> request(QueryRegistrar registrarFn,
+                             Function<RegQuery.Factory, RegQuery> queryFn)
+                throws ClaraMsgException {
+            RegData data = queryFn.apply(queryFactory(regType)).data();
+            return registrarFn.apply(driver, name, data);
+        }
+
+        Set<RegData> findLocal(Predicate<RegData> predicate) {
+            return registration.stream()
+                    .filter(r -> r.getOwnerType() == regType)
+                    .filter(predicate)
+                    .collect(Collectors.toSet());
         }
 
         void assertThat(Object value, Set<RegData> result, Set<RegData> expected) {
@@ -362,6 +352,14 @@ public class RegistrarTest {
                 System.out.println("Result: " + result.size());
                 System.out.println("Expected: " + expected.size());
                 fail("Sets don't match!!!");
+            }
+        }
+
+        private static RegQuery.Factory queryFactory(OwnerType regType) {
+            if (regType == OwnerType.PUBLISHER) {
+                return RegQuery.publishers();
+            } else {
+                return RegQuery.subscribers();
             }
         }
 
