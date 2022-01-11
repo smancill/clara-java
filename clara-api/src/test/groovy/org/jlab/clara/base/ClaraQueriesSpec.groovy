@@ -209,8 +209,8 @@ abstract class ClaraQueriesSpec extends Specification {
         private def register(ClaraName name, String topicPrefix = "") {
             var addr = name.address().proxyAddress()
             var topic = Topic.wrap(topicPrefix + name.canonicalName())
-            var data = RegFactory.newRegistration(name.canonicalName(), addr, TYPE, topic)
-            driver.addRegistration("test", data.build())
+            var data = RegFactory.newRegistration(name.canonicalName(), "", addr, TYPE, topic)
+            driver.addRegistration("test", data)
         }
 
         def name(String key) {

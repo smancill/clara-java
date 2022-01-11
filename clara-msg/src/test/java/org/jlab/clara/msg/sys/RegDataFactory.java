@@ -7,7 +7,7 @@
 package org.jlab.clara.msg.sys;
 
 import org.jlab.clara.msg.core.Topic;
-import org.jlab.clara.msg.data.RegDataProto.RegData.Builder;
+import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType;
 import org.jlab.clara.msg.sys.regdis.RegFactory;
 
@@ -66,7 +66,7 @@ final class RegDataFactory {
         return array[idx];
     }
 
-    public static Builder randomRegistration() {
+    public static RegData randomRegistration() {
         String name = random(testNames);
         String host = random(testHosts);
         String topic = random(testTopics);

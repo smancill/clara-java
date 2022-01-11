@@ -9,7 +9,6 @@ package org.jlab.clara.msg.sys;
 import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegDataProto.RegData;
-import org.jlab.clara.msg.data.RegDataProto.RegData.Builder;
 import org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType;
 import org.jlab.clara.msg.data.RegQuery;
 import org.jlab.clara.msg.errors.ClaraMsgException;
@@ -91,8 +90,7 @@ public class RegistrarTest {
     public void addRandom(int size) throws ClaraMsgException {
         System.out.println("INFO: Registering " + size + " random actors...");
         for (int i = 0; i < size; i++) {
-            Builder rndReg = RegDataFactory.randomRegistration();
-            RegData data = rndReg.build();
+            RegData data = RegDataFactory.randomRegistration();
             driver.addRegistration(name, data);
             registration.add(data);
         }
@@ -168,10 +166,10 @@ public class RegistrarTest {
     private void checkActors(OwnerType regType) throws ClaraMsgException {
         ResultAssert checker = new ResultAssert("topic", regType);
         for (String topic : RegDataFactory.testTopics) {
-            Builder data = getQuery(regType).matching(Topic.wrap(topic)).data();
+            RegData data = getQuery(regType).matching(Topic.wrap(topic)).data();
             Predicate<RegData> predicate = discoveryPredicate(regType, topic);
 
-            Set<RegData> result = driver.findRegistration(name, data.build());
+            Set<RegData> result = driver.findRegistration(name, data);
             Set<RegData> expected = find(regType, predicate);
 
             checker.assertThat(topic, result, expected);
@@ -205,9 +203,9 @@ public class RegistrarTest {
 
         ResultAssert checker = new ResultAssert("domain", regType);
         for (String domain : domains) {
-            Builder data = getQuery(regType).withDomain(domain).data();
+            RegData data = getQuery(regType).withDomain(domain).data();
 
-            Set<RegData> result = driver.filterRegistration(name, data.build());
+            Set<RegData> result = driver.filterRegistration(name, data);
             Set<RegData> expected = find(regType, e -> e.getDomain().equals(domain));
 
             checker.assertThat(domain, result, expected);
@@ -224,9 +222,9 @@ public class RegistrarTest {
 
         ResultAssert checker = new ResultAssert("subject", regType);
         for (String subject : subjects) {
-            Builder data = getQuery(regType).withSubject(subject).data();
+            RegData data = getQuery(regType).withSubject(subject).data();
 
-            Set<RegData> result = driver.filterRegistration(name, data.build());
+            Set<RegData> result = driver.filterRegistration(name, data);
             Set<RegData> expected = find(regType, e -> e.getSubject().equals(subject));
 
             checker.assertThat(subject, result, expected);
@@ -243,9 +241,9 @@ public class RegistrarTest {
 
         ResultAssert checker = new ResultAssert("type", regType);
         for (String type : types) {
-            Builder data = getQuery(regType).withType(type).data();
+            RegData data = getQuery(regType).withType(type).data();
 
-            Set<RegData> result = driver.filterRegistration(name, data.build());
+            Set<RegData> result = driver.filterRegistration(name, data);
             Set<RegData> expected = find(regType, e -> e.getType().equals(type));
 
             checker.assertThat(type, result, expected);
@@ -256,9 +254,9 @@ public class RegistrarTest {
     private void filterByHost(OwnerType regType) throws ClaraMsgException {
         ResultAssert checker = new ResultAssert("host", regType);
         for (String host : RegDataFactory.testHosts) {
-            Builder data = getQuery(regType).withHost(host).data();
+            RegData data = getQuery(regType).withHost(host).data();
 
-            Set<RegData> result = driver.filterRegistration(name, data.build());
+            Set<RegData> result = driver.filterRegistration(name, data);
             Set<RegData> expected = find(regType, e -> e.getHost().equals(host));
 
             checker.assertThat(host, result, expected);
@@ -270,9 +268,9 @@ public class RegistrarTest {
         ResultAssert checker = new ResultAssert("topic", regType);
         for (String topic : RegDataFactory.testTopics) {
             Topic searchTopic = Topic.wrap(topic);
-            Builder data = getQuery(regType).withSame(searchTopic).data();
+            RegData data = getQuery(regType).withSame(searchTopic).data();
 
-            Set<RegData> result = driver.sameRegistration(name, data.build());
+            Set<RegData> result = driver.sameRegistration(name, data);
             Set<RegData> expected = find(regType, r -> getTopic(r).equals(searchTopic));
 
             checker.assertThat(topic, result, expected);
@@ -281,9 +279,9 @@ public class RegistrarTest {
 
 
     private void allActors(OwnerType regType) throws ClaraMsgException {
-        Builder data = getQuery(regType).all().data();
+        RegData data = getQuery(regType).all().data();
 
-        Set<RegData> result = driver.filterRegistration(name, data.build());
+        Set<RegData> result = driver.filterRegistration(name, data);
         Set<RegData> expected = find(regType, e -> true);
 
         String owner = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";

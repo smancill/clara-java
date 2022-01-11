@@ -26,11 +26,11 @@ public final class RegFactory {
      * @param topic the topic to be registered
      * @return the registration data
      */
-    public static RegData.Builder newRegistration(String name,
-                                                  String host,
-                                                  RegData.OwnerType type,
-                                                  Topic topic) {
-        return newRegistration(name, new ProxyAddress(host), type, topic);
+    public static RegData newRegistration(String name,
+                                          String host,
+                                          RegData.OwnerType type,
+                                          Topic topic) {
+        return newRegistration(name, "", new ProxyAddress(host), type, topic);
     }
 
     /**
@@ -42,19 +42,21 @@ public final class RegFactory {
      * @param topic the topic to be registered
      * @return the registration data
      */
-    public static RegData.Builder newRegistration(String name,
-                                                  ProxyAddress address,
-                                                  RegData.OwnerType type,
-                                                  Topic topic) {
+    public static RegData newRegistration(String name,
+                                          String description,
+                                          ProxyAddress address,
+                                          RegData.OwnerType type,
+                                          Topic topic) {
         RegData.Builder regb = RegData.newBuilder();
         regb.setName(name);
+        regb.setDescription(description);
         regb.setHost(address.host());
         regb.setPort(address.pubPort());
         regb.setDomain(topic.domain());
         regb.setSubject(topic.subject());
         regb.setType(topic.type());
         regb.setOwnerType(type);
-        return regb;
+        return regb.build();
     }
 
     /**
