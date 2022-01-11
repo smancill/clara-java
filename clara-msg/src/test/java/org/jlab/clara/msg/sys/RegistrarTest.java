@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -164,14 +165,14 @@ public class RegistrarTest {
 
 
     private void checkMatchingTopic(OwnerType regType) throws ClaraMsgException {
-        ResultAssert checker = new ResultAssert("topic", regType);
+        RegistrationHelper reg = new RegistrationHelper(regType, "topic");
         for (Topic topic : testTopics()) {
             RegData data = queryFactory(regType).matching(topic).data();
 
             Set<RegData> result = driver.findRegistration(name, data);
             Set<RegData> expected = findLocal(regType, matchTopic(regType, topic));
 
-            checker.assertThat(topic, result, expected);
+            reg.assertThat(topic, result, expected);
         }
     }
 
@@ -194,85 +195,79 @@ public class RegistrarTest {
 
 
     private void checkFilterByDomain(OwnerType regType) throws ClaraMsgException {
-        ResultAssert checker = new ResultAssert("domain", regType);
+        RegistrationHelper reg = new RegistrationHelper(regType, "domain");
         for (String domain : testDomains()) {
             RegData data = queryFactory(regType).withDomain(domain).data();
 
             Set<RegData> result = driver.filterRegistration(name, data);
             Set<RegData> expected = findLocal(regType, e -> e.getDomain().equals(domain));
 
-            checker.assertThat(domain, result, expected);
+            reg.assertThat(domain, result, expected);
         }
     }
 
 
     private void checkFilterBySubject(OwnerType regType) throws ClaraMsgException {
-        ResultAssert checker = new ResultAssert("subject", regType);
+        RegistrationHelper reg = new RegistrationHelper(regType, "subject");
         for (String subject : testSubjects()) {
             RegData data = queryFactory(regType).withSubject(subject).data();
 
             Set<RegData> result = driver.filterRegistration(name, data);
             Set<RegData> expected = findLocal(regType, e -> e.getSubject().equals(subject));
 
-            checker.assertThat(subject, result, expected);
+            reg.assertThat(subject, result, expected);
         }
     }
 
 
     private void checkFilterByType(OwnerType regType) throws ClaraMsgException {
-        ResultAssert checker = new ResultAssert("type", regType);
+        RegistrationHelper reg = new RegistrationHelper(regType, "type");
         for (String type : testTypes()) {
             RegData data = queryFactory(regType).withType(type).data();
 
             Set<RegData> result = driver.filterRegistration(name, data);
             Set<RegData> expected = findLocal(regType, e -> e.getType().equals(type));
 
-            checker.assertThat(type, result, expected);
+            reg.assertThat(type, result, expected);
         }
     }
 
 
     private void checkFilterByHost(OwnerType regType) throws ClaraMsgException {
-        ResultAssert checker = new ResultAssert("host", regType);
+        RegistrationHelper reg = new RegistrationHelper(regType, "host");
         for (String host : RegDataFactory.testHosts) {
             RegData data = queryFactory(regType).withHost(host).data();
 
             Set<RegData> result = driver.filterRegistration(name, data);
             Set<RegData> expected = findLocal(regType, e -> e.getHost().equals(host));
 
-            checker.assertThat(host, result, expected);
+            reg.assertThat(host, result, expected);
         }
     }
 
 
     private void checkSameTopic(OwnerType regType) throws ClaraMsgException {
-        ResultAssert checker = new ResultAssert("topic", regType);
+        RegistrationHelper reg = new RegistrationHelper(regType, "topic");
         for (Topic topic : testTopics()) {
             RegData data = queryFactory(regType).withSame(topic).data();
 
             Set<RegData> result = driver.sameRegistration(name, data);
             Set<RegData> expected = findLocal(regType, r -> getTopic(r).equals(topic));
 
-            checker.assertThat(topic, result, expected);
+            reg.assertThat(topic, result, expected);
         }
     }
 
 
     private void checkAll(OwnerType regType) throws ClaraMsgException {
+        RegistrationHelper reg = new RegistrationHelper(regType, "all");
+
         RegData data = queryFactory(regType).all().data();
 
         Set<RegData> result = driver.filterRegistration(name, data);
         Set<RegData> expected = findLocal(regType, e -> true);
 
-        String owner = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
-        if (result.equals(expected)) {
-            System.out.printf("Found %3d %s%n", result.size(), owner);
-        } else {
-            System.out.println("All: " + owner);
-            System.out.println("Result: " + result.size());
-            System.out.println("Expected: " + expected.size());
-            fail("Sets doesn't match!!!");
-        }
+        reg.assertThat(result, expected);
     }
 
 
@@ -335,20 +330,43 @@ public class RegistrarTest {
     }
 
 
-    private record ResultAssert(String valueType, OwnerType regType) {
+    private class RegistrationHelper {
+
+        private final OwnerType regType;
+        private final String valueType;
+
+        RegistrationHelper(OwnerType regType, String valueType) {
+            this.regType = regType;
+            this.valueType = valueType;
+        }
 
         void assertThat(Object value, Set<RegData> result, Set<RegData> expected) {
+            assertThat(result, expected,
+                       () -> String.format(" with %s %s", valueType, value),
+                       () -> String.format(" to %s %s", valueType, value));
+        }
+
+        void assertThat(Set<RegData> result, Set<RegData> expected) {
+            assertThat(result, expected, () -> "", () -> " " + valueType);
+        }
+
+        void assertThat(Set<RegData> result,
+                        Set<RegData> expected,
+                        Supplier<String> successSuffix,
+                        Supplier<String> errorSuffix) {
+            String type = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
             if (result.equals(expected)) {
-                String owner = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
-                System.out.printf("Found %3d %s with %s %s%n",
-                                  result.size(), owner, valueType, value);
+                System.out.printf("Found %3d %s%s%n", result.size(), type, successSuffix.get());
             } else {
-                String outName = valueType.substring(0, 1).toUpperCase() + valueType.substring(1);
-                System.out.println(outName + ": " + value);
+                System.out.printf("%s:%s%n", capitalize(type), errorSuffix.get());
                 System.out.println("Result: " + result.size());
                 System.out.println("Expected: " + expected.size());
                 fail("Sets don't match!!!");
             }
+        }
+
+        private static String capitalize(String arg) {
+            return arg.substring(0, 1).toUpperCase() + arg.substring(1);
         }
     }
 }
