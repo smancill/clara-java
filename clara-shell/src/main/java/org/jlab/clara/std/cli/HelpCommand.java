@@ -6,6 +6,10 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.base.ClaraUtil;
+import org.jline.builtins.Less;
+import org.jline.builtins.Source;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +20,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.jlab.clara.base.ClaraUtil;
-import org.jline.builtins.Less;
-import org.jline.builtins.Source;
 
 class HelpCommand extends BaseCommand {
 

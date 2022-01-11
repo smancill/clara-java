@@ -10,7 +10,6 @@ import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.zeromq.SocketType;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQException;
-
 import zmq.ZError;
 
 /**

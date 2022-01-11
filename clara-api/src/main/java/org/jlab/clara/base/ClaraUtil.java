@@ -12,6 +12,7 @@ import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Topic;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -25,8 +26,6 @@ import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Extra helper methods for Clara orchestrator and services.

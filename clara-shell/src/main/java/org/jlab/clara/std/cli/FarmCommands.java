@@ -6,6 +6,10 @@
 
 package org.jlab.clara.std.cli;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.FileUtils;
 
@@ -23,11 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
 
 final class FarmCommands {
 

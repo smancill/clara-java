@@ -6,6 +6,11 @@
 
 package org.jlab.clara.std.orchestrators;
 
+import freemarker.core.ParseException;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import org.jlab.clara.base.ServiceName;
 import org.json.JSONObject;
 
@@ -15,12 +20,6 @@ import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
 
 class ServiceConfig {
 

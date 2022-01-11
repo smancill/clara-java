@@ -6,6 +6,14 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.base.ClaraLang;
+import org.jlab.clara.base.ClaraUtil;
+import org.jlab.clara.base.DpeName;
+import org.jlab.clara.base.core.ClaraConstants;
+import org.jlab.clara.std.orchestrators.OrchestratorConfigException;
+import org.jlab.clara.std.orchestrators.OrchestratorConfigParser;
+import org.jlab.clara.util.FileUtils;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Path;
@@ -16,14 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.jlab.clara.base.ClaraLang;
-import org.jlab.clara.base.ClaraUtil;
-import org.jlab.clara.base.DpeName;
-import org.jlab.clara.base.core.ClaraConstants;
-import org.jlab.clara.std.orchestrators.OrchestratorConfigException;
-import org.jlab.clara.std.orchestrators.OrchestratorConfigParser;
-import org.jlab.clara.util.FileUtils;
 
 class RunCommand extends BaseCommand {
 

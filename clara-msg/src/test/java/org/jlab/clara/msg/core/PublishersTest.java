@@ -6,17 +6,17 @@
 
 package org.jlab.clara.msg.core;
 
+import org.jlab.clara.msg.errors.ClaraMsgException;
+import org.jlab.clara.msg.sys.ProxyWrapper;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.LongStream;
-
-import org.jlab.clara.msg.errors.ClaraMsgException;
-import org.jlab.clara.msg.sys.ProxyWrapper;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

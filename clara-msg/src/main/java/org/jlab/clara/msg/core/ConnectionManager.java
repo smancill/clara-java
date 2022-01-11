@@ -6,12 +6,6 @@
 
 package org.jlab.clara.msg.core;
 
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
-
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.msg.net.RegAddress;
@@ -19,6 +13,12 @@ import org.jlab.clara.msg.sys.ConnectionFactory;
 import org.jlab.clara.msg.sys.pubsub.ProxyDriver;
 import org.jlab.clara.msg.sys.pubsub.ProxyDriverSetup;
 import org.jlab.clara.msg.sys.regdis.RegDriver;
+
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
 class ConnectionManager {
 

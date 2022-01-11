@@ -6,13 +6,13 @@
 
 package org.jlab.clara.std.cli;
 
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import org.jline.reader.Completer;
 import org.jline.reader.impl.completer.NullCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
+
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * A configuration variable for a Clara shell session.

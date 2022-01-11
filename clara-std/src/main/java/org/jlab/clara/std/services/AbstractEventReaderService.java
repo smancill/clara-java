@@ -6,17 +6,17 @@
 
 package org.jlab.clara.std.services;
 
-import java.nio.ByteOrder;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.jlab.clara.base.ClaraUtil;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.nio.ByteOrder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An abstract reader service that reads events from the configured input file.

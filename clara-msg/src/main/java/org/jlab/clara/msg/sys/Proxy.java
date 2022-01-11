@@ -6,12 +6,10 @@
 
 package org.jlab.clara.msg.sys;
 
-import java.io.PrintStream;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.AddressUtils;
 import org.jlab.clara.msg.net.Context;
@@ -25,16 +23,17 @@ import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZFrame;
 import org.zeromq.ZMQ;
-import org.zeromq.ZMQException;
 import org.zeromq.ZMQ.Socket;
+import org.zeromq.ZMQException;
 import org.zeromq.ZMsg;
 import org.zeromq.ZThread;
 import org.zeromq.ZThread.IAttachedRunnable;
 
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main pub/sub proxy server.

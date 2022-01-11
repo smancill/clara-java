@@ -6,6 +6,20 @@
 
 package org.jlab.clara.std.orchestrators;
 
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import org.jlab.clara.base.ClaraLang;
+import org.jlab.clara.base.ClaraUtil;
+import org.jlab.clara.base.DpeName;
+import org.jlab.clara.base.EngineCallback;
+import org.jlab.clara.engine.EngineData;
+import org.jlab.clara.std.orchestrators.CoreOrchestrator.DpeCallBack;
+import org.jlab.clara.util.EnvUtils;
+import org.jlab.clara.util.OptUtils;
+import org.jlab.clara.util.VersionUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,22 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-
-
-import org.jlab.clara.base.ClaraLang;
-import org.jlab.clara.base.ClaraUtil;
-import org.jlab.clara.base.DpeName;
-import org.jlab.clara.base.EngineCallback;
-import org.jlab.clara.engine.EngineData;
-import org.jlab.clara.std.orchestrators.CoreOrchestrator.DpeCallBack;
-import org.jlab.clara.util.EnvUtils;
-import org.jlab.clara.util.OptUtils;
-import org.jlab.clara.util.VersionUtils;
 
 /**
  * A generic orchestrator that runs a simple application loop over a set of

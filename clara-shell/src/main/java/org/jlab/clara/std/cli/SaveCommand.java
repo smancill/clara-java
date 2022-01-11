@@ -6,12 +6,6 @@
 
 package org.jlab.clara.std.cli;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Scanner;
-
 import org.jlab.clara.base.ClaraUtil;
 import org.jlab.clara.util.FileUtils;
 import org.jline.builtins.Completers;
@@ -19,6 +13,12 @@ import org.jline.reader.Completer;
 import org.jline.reader.impl.completer.ArgumentCompleter;
 import org.jline.reader.impl.completer.NullCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Scanner;
 
 class SaveCommand extends AbstractCommand {
 

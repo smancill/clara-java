@@ -6,9 +6,9 @@
 
 package org.jlab.clara.std.orchestrators
 
-import spock.lang.Specification
 import org.jlab.clara.base.ServiceName
 import org.json.JSONObject
+import spock.lang.Specification
 
 class ServiceConfigSpec extends Specification {
 
