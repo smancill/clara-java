@@ -165,8 +165,8 @@ public class RegistrarTest {
 
     private void checkMatchingTopic(OwnerType regType) throws ClaraMsgException {
         ResultAssert checker = new ResultAssert("topic", regType);
-        for (String topic : RegDataFactory.testTopics) {
-            RegData data = queryFactory(regType).matching(Topic.wrap(topic)).data();
+        for (Topic topic : testTopics()) {
+            RegData data = queryFactory(regType).matching(topic).data();
 
             Set<RegData> result = driver.findRegistration(name, data);
             Set<RegData> expected = findLocal(regType, matchTopic(regType, topic));
@@ -176,12 +176,11 @@ public class RegistrarTest {
     }
 
 
-    private static Predicate<RegData> matchTopic(OwnerType regType, String topic) {
-        final Topic searchTopic = Topic.wrap(topic);
+    private static Predicate<RegData> matchTopic(OwnerType regType, Topic topic) {
         if (regType == OwnerType.PUBLISHER) {
-            return r -> searchTopic.isParent(getTopic(r));
+            return r -> topic.isParent(getTopic(r));
         } else {
-            return r -> getTopic(r).isParent(searchTopic);
+            return r -> getTopic(r).isParent(topic);
         }
     }
 
@@ -195,14 +194,8 @@ public class RegistrarTest {
 
 
     private void checkFilterByDomain(OwnerType regType) throws ClaraMsgException {
-        Set<String> domains = Stream.of(RegDataFactory.testTopics)
-                                    .map(Topic::wrap)
-                                    .map(Topic::domain)
-                                    .filter(t -> !t.equals(Topic.ANY))
-                                    .collect(Collectors.toSet());
-
         ResultAssert checker = new ResultAssert("domain", regType);
-        for (String domain : domains) {
+        for (String domain : testDomains()) {
             RegData data = queryFactory(regType).withDomain(domain).data();
 
             Set<RegData> result = driver.filterRegistration(name, data);
@@ -214,14 +207,8 @@ public class RegistrarTest {
 
 
     private void checkFilterBySubject(OwnerType regType) throws ClaraMsgException {
-        Set<String> subjects = Stream.of(RegDataFactory.testTopics)
-                                      .map(Topic::wrap)
-                                      .map(Topic::subject)
-                                      .filter(t -> !t.equals(Topic.ANY))
-                                      .collect(Collectors.toSet());
-
         ResultAssert checker = new ResultAssert("subject", regType);
-        for (String subject : subjects) {
+        for (String subject : testSubjects()) {
             RegData data = queryFactory(regType).withSubject(subject).data();
 
             Set<RegData> result = driver.filterRegistration(name, data);
@@ -233,14 +220,8 @@ public class RegistrarTest {
 
 
     private void checkFilterByType(OwnerType regType) throws ClaraMsgException {
-        Set<String> types = Stream.of(RegDataFactory.testTopics)
-                                  .map(Topic::wrap)
-                                  .map(Topic::type)
-                                  .filter(t -> !t.equals(Topic.ANY))
-                                  .collect(Collectors.toSet());
-
         ResultAssert checker = new ResultAssert("type", regType);
-        for (String type : types) {
+        for (String type : testTypes()) {
             RegData data = queryFactory(regType).withType(type).data();
 
             Set<RegData> result = driver.filterRegistration(name, data);
@@ -266,12 +247,11 @@ public class RegistrarTest {
 
     private void checkSameTopic(OwnerType regType) throws ClaraMsgException {
         ResultAssert checker = new ResultAssert("topic", regType);
-        for (String topic : RegDataFactory.testTopics) {
-            Topic searchTopic = Topic.wrap(topic);
-            RegData data = queryFactory(regType).withSame(searchTopic).data();
+        for (Topic topic : testTopics()) {
+            RegData data = queryFactory(regType).withSame(topic).data();
 
             Set<RegData> result = driver.sameRegistration(name, data);
-            Set<RegData> expected = findLocal(regType, r -> getTopic(r).equals(searchTopic));
+            Set<RegData> expected = findLocal(regType, r -> getTopic(r).equals(topic));
 
             checker.assertThat(topic, result, expected);
         }
@@ -318,9 +298,46 @@ public class RegistrarTest {
     }
 
 
+    private static Topic[] testTopics() {
+        return Stream.of(RegDataFactory.testTopics)
+                     .map(Topic::wrap)
+                     .toArray(Topic[]::new);
+    }
+
+
+    private static String[] testDomains() {
+        return Stream.of(RegDataFactory.testTopics)
+                     .map(Topic::wrap)
+                     .map(Topic::domain)
+                     .filter(t -> !t.equals(Topic.ANY))
+                     .distinct()
+                     .toArray(String[]::new);
+    }
+
+
+    private static String[] testSubjects() {
+        return Stream.of(RegDataFactory.testTopics)
+                     .map(Topic::wrap)
+                     .map(Topic::subject)
+                     .filter(t -> !t.equals(Topic.ANY))
+                     .distinct()
+                     .toArray(String[]::new);
+    }
+
+
+    private static String[] testTypes() {
+        return Stream.of(RegDataFactory.testTopics)
+                     .map(Topic::wrap)
+                     .map(Topic::type)
+                     .filter(t -> !t.equals(Topic.ANY))
+                     .distinct()
+                     .toArray(String[]::new);
+    }
+
+
     private record ResultAssert(String valueType, OwnerType regType) {
 
-        void assertThat(String value, Set<RegData> result, Set<RegData> expected) {
+        void assertThat(Object value, Set<RegData> result, Set<RegData> expected) {
             if (result.equals(expected)) {
                 String owner = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
                 System.out.printf("Found %3d %s with %s %s%n",
