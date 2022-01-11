@@ -108,7 +108,7 @@ public class DataManager implements Engine {
                 ServiceUtils.setError(output, msg);
             }
         } else {
-            String msg = "wrong mimetype: " + mt;
+            String msg = "wrong mime-type: " + mt;
             System.err.printf("%s config: %s%n", NAME, msg);
             ServiceUtils.setError(output, msg);
         }
@@ -175,8 +175,7 @@ public class DataManager implements Engine {
             } catch (JSONException e) {
                 ServiceUtils.setError(output, "invalid request: " + source);
             } catch (Exception e) {
-                ServiceUtils.setError(output, "unexpected problem:%n%s",
-                        ClaraUtil.reportException(e));
+                ServiceUtils.setError(output, "unexpected problem:%n%s", ClaraUtil.reportException(e));
             }
         } else {
             ServiceUtils.setError(output, "wrong mimetype: " + mt);

@@ -81,7 +81,7 @@ abstract class AbstractOrchestrator {
         }
 
         long totalEvents() {
-            long sum = 0;
+            long sum = 0L;
             for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
                 NodeStats stat = entry.getValue();
                 synchronized (stat) {
@@ -94,7 +94,7 @@ abstract class AbstractOrchestrator {
         }
 
         long totalTime() {
-            long sum = 0;
+            long sum = 0L;
             for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
                 NodeStats stat = entry.getValue();
                 synchronized (stat) {
@@ -111,7 +111,7 @@ abstract class AbstractOrchestrator {
         }
 
         double localAverage() {
-            double avgSum = 0;
+            double avgSum = 0.0;
             int avgCount = 0;
             for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
                 NodeStats stat = entry.getValue();

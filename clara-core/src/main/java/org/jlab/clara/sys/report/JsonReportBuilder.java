@@ -34,7 +34,7 @@ public class JsonReportBuilder implements ExternalReport {
             containerRuntime.put("name", cr.getName());
             containerRuntime.put("snapshot_time", snapshotTime);
 
-            long containerRequests = 0;
+            long containerRequests = 0L;
 
             JSONArray servicesRuntimeArray = new JSONArray();
             for (ServiceReport sr : cr.getServices()) {

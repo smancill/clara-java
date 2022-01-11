@@ -145,9 +145,11 @@ class WorkerNode {
         orchestrator.subscribeDone(writerName, callbackFn.apply(this));
     }
 
+
     void setConfiguration(JSONObject configData) {
         this.userConfig = configData;
     }
+
 
     private ServiceConfig createServiceConfig(boolean fillDataModel) {
         Map<String, Object> model = new HashMap<>();
@@ -158,6 +160,7 @@ class WorkerNode {
 
         return new ServiceConfig(userConfig, model);
     }
+
 
     void setPaths(Path inputPath, Path outputPath, Path stagePath) {
         try {

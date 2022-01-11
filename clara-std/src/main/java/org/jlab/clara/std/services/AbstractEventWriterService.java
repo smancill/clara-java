@@ -79,7 +79,7 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
                 logger.error("config: missing '{}' parameter", CONF_ACTION);
             }
         } else {
-            logger.error("config: wrong mimetype '{}'", input.getMimeType());
+            logger.error("config: wrong mime-type '{}'", input.getMimeType());
         }
         logger.info("config time: {} [ms]", System.currentTimeMillis() - startTime);
         return null;

@@ -188,10 +188,12 @@ public final class ClaraQueries {
             }
 
             // Else the query result requires runtime data
-            Set<String> names = regData.map(o -> o.getString("name"))
-                                       .collect(Collectors.toSet());
+            Set<String> names = regData
+                    .map(o -> o.getString("name"))
+                    .collect(Collectors.toSet());
+
             return parseReport.parseComponents(report, reportKey)
-                              .filter(o -> names.contains(o.getString("name")));
+                    .filter(o -> names.contains(o.getString("name")));
         }
     }
 

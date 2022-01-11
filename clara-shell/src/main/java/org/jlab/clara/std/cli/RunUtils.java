@@ -58,7 +58,7 @@ class RunUtils {
 
     Path getLogFile(DpeName name) {
         ClaraLang lang = name.language();
-        String component = lang == ClaraLang.JAVA ? "fe_dpe" : lang + "_dpe";
+        String component = (lang == ClaraLang.JAVA) ? "fe_dpe" : lang + "_dpe";
         return getLogFile(name.address().host(), component);
     }
 

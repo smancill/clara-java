@@ -14,7 +14,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
 
 public final class SystemStats {
 
@@ -51,7 +50,6 @@ public final class SystemStats {
     }
 
     public static double getSystemLoad() {
-        OperatingSystemMXBean os = ManagementFactory.getOperatingSystemMXBean();
-        return os.getSystemLoadAverage();
+        return ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage();
     }
 }

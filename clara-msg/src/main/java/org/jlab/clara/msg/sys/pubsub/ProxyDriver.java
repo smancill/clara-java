@@ -55,8 +55,8 @@ public abstract class ProxyDriver {
         try (Poller poller = factory.context().poller(1)) {
             poller.register(ctrlSocket, Poller.POLLIN);
 
-            long pollTimeout = timeout < 100 ? timeout : 100;
-            long totalTime = 0;
+            long pollTimeout = timeout < 100 ? timeout : 100L;
+            long totalTime = 0L;
             while (totalTime < timeout) {
                 try {
                     ZMsg ctrlMsg = new ZMsg();
@@ -96,8 +96,8 @@ public abstract class ProxyDriver {
         try (Poller poller = factory.context().poller(1)) {
             poller.register(getSocket(), Poller.POLLIN);
 
-            long pollTimeout = timeout < 100 ? timeout : 100;
-            long totalTime = 0;
+            long pollTimeout = timeout < 100 ? timeout : 100L;
+            long totalTime = 0L;
             while (totalTime < timeout) {
                 try {
                     ZMsg ctrlMsg = new ZMsg();

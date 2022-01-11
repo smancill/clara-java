@@ -32,8 +32,7 @@ final class CallbackInfo {
                 try {
                     ((AutoCloseable) object).close();
                 } catch (Exception e) {
-                    String msg = e.getMessage();
-                    Logging.error("could not close instance of: " + classPath + ": " + msg);
+                    Logging.error("could not close instance of: " + classPath + ": " + e.getMessage());
                 }
             }
         }

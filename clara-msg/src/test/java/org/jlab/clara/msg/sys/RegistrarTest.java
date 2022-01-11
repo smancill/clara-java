@@ -298,8 +298,7 @@ public class RegistrarTest {
     }
 
 
-    private Set<RegData> find(OwnerType regType,
-                                       Predicate<RegData> predicate) {
+    private Set<RegData> find(OwnerType regType, Predicate<RegData> predicate) {
         return registration.stream()
                            .filter(r -> r.getOwnerType() == regType)
                            .filter(predicate)
@@ -335,7 +334,7 @@ public class RegistrarTest {
                 System.out.println(outName + ": " + data);
                 System.out.println("Result: " + result.size());
                 System.out.println("Expected: " + expected.size());
-                fail("Sets doesn't match!!!");
+                fail("Sets don't match!!!");
             }
         }
     }

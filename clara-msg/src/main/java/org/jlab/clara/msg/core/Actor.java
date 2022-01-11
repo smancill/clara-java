@@ -294,8 +294,7 @@ public class Actor implements AutoCloseable {
      * @throws ClaraMsgException if a new connection could not be created
      */
     public Connection getConnection(ProxyAddress address) throws ClaraMsgException {
-        return new Connection(connectionManager,
-                                  connectionManager.getProxyConnection(address));
+        return new Connection(connectionManager, connectionManager.getProxyConnection(address));
     }
 
     /**

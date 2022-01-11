@@ -46,9 +46,8 @@ class SaveCommand extends AbstractCommand {
     private boolean scanAnswer() {
         Scanner scan = new Scanner(System.in);
         while (true) {
-            String answer;
             System.out.print("The file already exists. Do you want to overwrite it? (y/N): ");
-            answer = scan.nextLine();
+            String answer = scan.nextLine();
             switch (answer) {
                 case "y":
                 case "Y":

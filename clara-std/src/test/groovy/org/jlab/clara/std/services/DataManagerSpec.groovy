@@ -141,7 +141,7 @@ class DataManagerSpec extends Specification {
         EngineData result = dm.configure(config)
 
         then:
-        assertEngineError result, "wrong mimetype: text/string"
+        assertEngineError result, "wrong mime-type: text/string"
     }
 
     @Integration

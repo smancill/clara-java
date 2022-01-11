@@ -117,7 +117,7 @@ public final class ActorUtils {
     }
 
     static String getUniqueReplyTo(String subject) {
-        long next = replyToGenerator.getAndIncrement() & 0xffffffffL;
+        long next = replyToGenerator.getAndIncrement() & 0xffff_ffffL;
         int id = (int) (next % REPLY_TO_SEQUENCE_SIZE + REPLY_TO_SEQUENCE_SIZE);
         return "ret:" + subject + ":" + id;
     }
