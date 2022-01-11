@@ -6,19 +6,6 @@
 
 package org.jlab.clara.std.cli;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UncheckedIOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.jlab.clara.util.ArgUtils;
 import org.jlab.clara.util.FileUtils;
 import org.jlab.clara.util.VersionUtils;
@@ -34,6 +21,19 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * An interactive shell to run Clara DPEs and orchestrators.

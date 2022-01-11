@@ -6,14 +6,14 @@
 
 package org.jlab.clara.std.services;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.jlab.clara.engine.Engine;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineSpecification;
 import org.jlab.clara.util.logging.Logger;
 import org.jlab.clara.util.logging.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A base class for service engines that obtains the service information from a

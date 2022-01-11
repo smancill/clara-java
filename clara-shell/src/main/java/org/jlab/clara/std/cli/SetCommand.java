@@ -6,6 +6,12 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.util.FileUtils;
+import org.jline.builtins.Completers;
+import org.jline.reader.Completer;
+import org.jline.reader.impl.completer.ArgumentCompleter;
+import org.jline.reader.impl.completer.StringsCompleter;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,12 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
-import org.jlab.clara.util.FileUtils;
-import org.jline.builtins.Completers;
-import org.jline.reader.Completer;
-import org.jline.reader.impl.completer.ArgumentCompleter;
-import org.jline.reader.impl.completer.StringsCompleter;
 
 class SetCommand extends BaseCommand {
 

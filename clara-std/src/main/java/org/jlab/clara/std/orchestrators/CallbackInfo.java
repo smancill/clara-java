@@ -10,10 +10,9 @@ import org.jlab.clara.base.DataRingTopic;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.util.ArgUtils;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.lang.reflect.InvocationTargetException;
 
 final class CallbackInfo {
 

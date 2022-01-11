@@ -6,9 +6,6 @@
 
 package org.jlab.clara.std.cli;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import org.jlab.clara.util.EnvUtils;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.Parser;
@@ -16,6 +13,9 @@ import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.Terminal.Signal;
 import org.jline.terminal.Terminal.SignalHandler;
+
+import java.util.Arrays;
+import java.util.Map;
 
 class CommandRunner {
 

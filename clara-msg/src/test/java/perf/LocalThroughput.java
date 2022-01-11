@@ -6,13 +6,13 @@
 
 package perf;
 
-import java.util.concurrent.CountDownLatch;
-
 import org.jlab.clara.msg.core.Actor;
 import org.jlab.clara.msg.core.Subscription;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.ProxyAddress;
+
+import java.util.concurrent.CountDownLatch;
 
 public final class LocalThroughput {
 

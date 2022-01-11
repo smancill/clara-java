@@ -6,16 +6,16 @@
 
 package org.jlab.clara.engine;
 
+import org.jlab.clara.util.FileUtils;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-
-import org.jlab.clara.util.FileUtils;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
 
 
 /**

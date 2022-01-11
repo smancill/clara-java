@@ -6,18 +6,18 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.util.ArgUtils;
+import org.jlab.clara.util.EnvUtils;
+import org.jlab.clara.util.FileUtils;
+import org.jline.builtins.Completers;
+import org.jline.reader.Completer;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
-
-import org.jlab.clara.util.ArgUtils;
-import org.jlab.clara.util.EnvUtils;
-import org.jlab.clara.util.FileUtils;
-import org.jline.builtins.Completers;
-import org.jline.reader.Completer;
 
 /**
  * Environment configuration for a Clara shell session.

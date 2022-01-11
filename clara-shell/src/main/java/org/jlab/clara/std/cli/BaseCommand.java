@@ -6,6 +6,13 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.base.ClaraUtil;
+import org.jline.reader.Completer;
+import org.jline.reader.impl.completer.AggregateCompleter;
+import org.jline.reader.impl.completer.ArgumentCompleter;
+import org.jline.reader.impl.completer.NullCompleter;
+import org.jline.reader.impl.completer.StringsCompleter;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,13 +21,6 @@ import java.util.function.Function;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.jlab.clara.base.ClaraUtil;
-import org.jline.reader.Completer;
-import org.jline.reader.impl.completer.AggregateCompleter;
-import org.jline.reader.impl.completer.ArgumentCompleter;
-import org.jline.reader.impl.completer.NullCompleter;
-import org.jline.reader.impl.completer.StringsCompleter;
 
 /**
  * A command that groups a list of subcommands that can be executed separately.

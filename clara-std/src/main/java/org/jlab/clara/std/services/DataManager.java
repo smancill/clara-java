@@ -6,13 +6,6 @@
 
 package org.jlab.clara.std.services;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Set;
-
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -25,6 +18,13 @@ import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Set;
 
 /**
  * A service to copy files between a mounted shared file-system and the local

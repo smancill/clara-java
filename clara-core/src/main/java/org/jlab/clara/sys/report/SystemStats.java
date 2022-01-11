@@ -6,9 +6,6 @@
 
 package org.jlab.clara.sys.report;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
@@ -16,6 +13,8 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 
 public final class SystemStats {
 

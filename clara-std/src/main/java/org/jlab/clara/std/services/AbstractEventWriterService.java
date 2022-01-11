@@ -6,17 +6,17 @@
 
 package org.jlab.clara.std.services;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Set;
-
 import org.jlab.clara.base.ClaraUtil;
 import org.jlab.clara.engine.EngineData;
 import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.util.FileUtils;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Set;
 
 /**
  * An abstract writer service that writes all received events into the

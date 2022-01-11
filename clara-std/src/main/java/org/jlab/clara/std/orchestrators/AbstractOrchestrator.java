@@ -6,6 +6,9 @@
 
 package org.jlab.clara.std.orchestrators;
 
+import org.jlab.clara.base.EngineCallback;
+import org.jlab.clara.engine.EngineData;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -23,9 +26,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.jlab.clara.base.EngineCallback;
-import org.jlab.clara.engine.EngineData;
 
 
 abstract class AbstractOrchestrator {

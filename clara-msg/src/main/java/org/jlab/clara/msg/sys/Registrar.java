@@ -7,6 +7,7 @@
 package org.jlab.clara.msg.sys;
 
 import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;

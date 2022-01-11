@@ -6,6 +6,14 @@
 
 package org.jlab.clara.std.cli;
 
+import org.jlab.clara.base.ClaraUtil;
+import org.jlab.clara.util.FileUtils;
+import org.jline.builtins.Completers;
+import org.jline.reader.Completer;
+import org.jline.reader.impl.completer.ArgumentCompleter;
+import org.jline.reader.impl.completer.NullCompleter;
+import org.jline.reader.impl.completer.StringsCompleter;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
@@ -15,14 +23,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.jlab.clara.base.ClaraUtil;
-import org.jlab.clara.util.FileUtils;
-import org.jline.builtins.Completers;
-import org.jline.reader.Completer;
-import org.jline.reader.impl.completer.ArgumentCompleter;
-import org.jline.reader.impl.completer.NullCompleter;
-import org.jline.reader.impl.completer.StringsCompleter;
 
 class SourceCommand extends AbstractCommand {
 

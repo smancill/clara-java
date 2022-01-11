@@ -6,17 +6,6 @@
 
 package org.jlab.clara.std.orchestrators;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -30,6 +19,17 @@ import org.jlab.clara.std.orchestrators.CoreOrchestrator.DpeCallBack;
 import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.OptUtils;
 import org.jlab.clara.util.VersionUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A generic orchestrator that runs a simple application loop over a set of

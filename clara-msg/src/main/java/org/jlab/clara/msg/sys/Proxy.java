@@ -6,14 +6,9 @@
 
 package org.jlab.clara.msg.sys;
 
-import java.io.PrintStream;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.AddressUtils;
@@ -33,6 +28,12 @@ import org.zeromq.ZMQException;
 import org.zeromq.ZMsg;
 import org.zeromq.ZThread;
 import org.zeromq.ZThread.IAttachedRunnable;
+
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main pub/sub proxy server.
