@@ -95,8 +95,8 @@ public class RegService implements Runnable {
                     if (request == null) {
                         break;
                     }
-                    ZMsg reply = processRequest(request);
-                    reply.send(regSocket);
+                    ZMsg response = processRequest(request);
+                    response.send(regSocket);
                 } catch (ZMQException e) {
                     if (e.getErrorCode() == ZMQ.Error.ETERM.getCode()) {
                         break;

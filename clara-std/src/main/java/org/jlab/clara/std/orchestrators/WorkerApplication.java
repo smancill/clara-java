@@ -109,9 +109,9 @@ class WorkerApplication {
     private ServiceName toName(ServiceInfo service) {
         DpeInfo dpe = dpes.get(service.lang());
         if (dpe == null) {
-            String msg = String.format("Missing %s DPE for service %s",
-                                       service.lang(), service.name());
-            throw new IllegalStateException(msg);
+            String error = String.format("Missing %s DPE for service %s",
+                                         service.lang(), service.name());
+            throw new IllegalStateException(error);
         }
         return new ServiceName(dpe.name(), service.cont(), service.name());
     }

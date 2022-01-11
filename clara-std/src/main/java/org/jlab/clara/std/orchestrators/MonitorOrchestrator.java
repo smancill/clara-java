@@ -59,9 +59,9 @@ public class MonitorOrchestrator implements AutoCloseable {
                 closeHandlers(handlers);
             }));
 
-            RingListener listener = asListener(monitor);
+            RingListener ringListener = asListener(monitor);
             for (RingCallbackInfo callback : ringCallbacks) {
-                AutoCloseable handler = callback.loadCallback(listener);
+                AutoCloseable handler = callback.loadCallback(ringListener);
                 handlers.add(handler);
             }
             Logging.info("Waiting reports...");
@@ -305,8 +305,8 @@ public class MonitorOrchestrator implements AutoCloseable {
         }
 
         public String setupFile() {
-            List<String> args = arguments.values(options);
-            return args.get(0);
+            List<String> argsList = arguments.values(options);
+            return argsList.get(0);
         }
 
         public String usage() {

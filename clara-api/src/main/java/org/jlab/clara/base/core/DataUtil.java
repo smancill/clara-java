@@ -60,10 +60,10 @@ public final class DataUtil {
 
         MetaData.Builder metadata = DATA_ACCESSOR.getMetadata(data);
         String mimeType = metadata.getDataType();
-        for (EngineDataType dt : dataTypes) {
-            if (dt.mimeType().equals(mimeType)) {
+        for (EngineDataType dataType : dataTypes) {
+            if (dataType.mimeType().equals(mimeType)) {
                 try {
-                    ByteBuffer bb = dt.serializer().write(data.getData());
+                    ByteBuffer bb = dataType.serializer().write(data.getData());
                     if (bb.order() == ByteOrder.BIG_ENDIAN) {
                         metadata.setByteOrder(MetaData.Endian.Big);
                     } else {
@@ -99,15 +99,15 @@ public final class DataUtil {
             throws ClaraException {
         MetaData.Builder metadata = msg.getMetaData();
         String mimeType = metadata.getDataType();
-        for (EngineDataType dt : dataTypes) {
-            if (dt.mimeType().equals(mimeType)) {
+        for (EngineDataType dataType : dataTypes) {
+            if (dataType.mimeType().equals(mimeType)) {
                 try {
                     ByteBuffer bb = ByteBuffer.wrap(msg.getData());
                     if (metadata.getByteOrder() == MetaData.Endian.Little) {
                         bb.order(ByteOrder.LITTLE_ENDIAN);
                     }
-                    Object userData = dt.serializer().read(bb);
-                    return DATA_ACCESSOR.build(userData, metadata);
+                    Object data = dataType.serializer().read(bb);
+                    return DATA_ACCESSOR.build(data, metadata);
                 } catch (ClaraException e) {
                     throw new ClaraException("Clara-Error: Could not deserialize " + mimeType, e);
                 }

@@ -184,12 +184,12 @@ class ServiceEngine {
     }
 
     private Set<String> getLinks(EngineData inData, EngineData outData) {
-        ServiceState ownerSS = new ServiceState(outData.getEngineName(),
-                                                outData.getExecutionState());
-        ServiceState inputSS = new ServiceState(inData.getEngineName(),
-                                                inData.getExecutionState());
+        ServiceState ownerState = new ServiceState(outData.getEngineName(),
+                                                   outData.getExecutionState());
+        ServiceState inputState = new ServiceState(inData.getEngineName(),
+                                                   inData.getExecutionState());
 
-        return compiler.getLinks(ownerSS, inputSS);
+        return compiler.getLinks(ownerState, inputState);
     }
 
     private EngineData executeEngine(EngineData inData)
@@ -247,21 +247,21 @@ class ServiceEngine {
     }
 
     private void sendResult(EngineData outData, Set<String> outLinks) throws ClaraException {
-        for (String ss : outLinks) {
-            ClaraComponent comp = ClaraComponent.dpe(ss);
-            Message msg = putEngineData(outData, ss);
-            base.send(comp.getProxyAddress(), msg);
+        for (String service : outLinks) {
+            ClaraComponent dpe = ClaraComponent.dpe(service);
+            Message msg = putEngineData(outData, service);
+            base.send(dpe.getProxyAddress(), msg);
         }
     }
 
     private void reportDone(EngineData data) throws ClaraException {
         String mt = data.getMimeType();
-        Object ob = data.getData();
+        Object obj = data.getData();
         data.setData(EngineDataType.STRING.mimeType(), ClaraConstants.DONE);
 
         sendReport(ClaraConstants.DONE, data);
 
-        data.setData(mt, ob);
+        data.setData(mt, obj);
     }
 
     private void reportData(EngineData data) throws ClaraException {
@@ -280,8 +280,8 @@ class ServiceEngine {
 
     private void sendReport(String topicPrefix, EngineData data) throws ClaraException {
         Topic topic = Topic.wrap(topicPrefix + Topic.SEPARATOR + base.getName());
-        Message transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
-        base.send(base.getFrontEnd(), transit);
+        Message msg = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+        base.send(base.getFrontEnd(), msg);
     }
 
     private void sendMonitorData(String state, EngineData data) throws ClaraException {
@@ -290,8 +290,8 @@ class ServiceEngine {
                     + Topic.SEPARATOR + state
                     + Topic.SEPARATOR + sysReport.getSession()
                     + Topic.SEPARATOR + base.getEngine());
-            Message transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
-            base.sendUncheck(monitorFe.getProxyAddress(), transit);
+            Message msg = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+            base.sendUncheck(monitorFe.getProxyAddress(), msg);
         }
     }
 
@@ -327,9 +327,9 @@ class ServiceEngine {
 
             return new Message(topic, metadata, ClaraConstants.SHARED_MEMORY_KEY.getBytes());
         } else {
-            Message output = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
-            sysReport.addBytesSent(output.getDataSize());
-            return output;
+            Message msg = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+            sysReport.addBytesSent(msg.getDataSize());
+            return msg;
         }
     }
 

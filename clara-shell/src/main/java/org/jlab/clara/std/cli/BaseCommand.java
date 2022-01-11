@@ -50,15 +50,15 @@ public abstract class BaseCommand extends AbstractCommand {
             writer.println("Error: missing argument(s).");
             return EXIT_ERROR;
         }
-        String subCommandName = args[0];
-        Command subCommand = subCommands.get(subCommandName);
-        if (subCommand == null) {
-            writer.println("Error: unknown argument " + subCommandName);
+        String subName = args[0];
+        Command subCmd = subCommands.get(subName);
+        if (subCmd == null) {
+            writer.println("Error: unknown argument " + subName);
             return EXIT_ERROR;
         }
         try {
             String[] cmdArgs = Arrays.copyOfRange(args, 1, args.length);
-            return subCommand.execute(cmdArgs);
+            return subCmd.execute(cmdArgs);
         } catch (IllegalArgumentException e) {
             writer.println("Error: " + e.getMessage());
         } catch (Exception e) {
@@ -99,8 +99,8 @@ public abstract class BaseCommand extends AbstractCommand {
         String subName = subCmd.getName();
         Command prev = subCommands.putIfAbsent(subName, subCmd);
         if (prev != null) {
-            String msg = String.format("a subcommand '%s %s' already exists", name, subName);
-            throw new IllegalArgumentException(msg);
+            String error = String.format("a subcommand '%s %s' already exists", name, subName);
+            throw new IllegalArgumentException(error);
         }
     }
 
@@ -113,11 +113,11 @@ public abstract class BaseCommand extends AbstractCommand {
         return new AggregateCompleter(completers);
     }
 
-    private Completer getCompleter(Command arg) {
+    private Completer getCompleter(Command subCmd) {
         List<Completer> allCompleters = new ArrayList<>();
         allCompleters.add(new StringsCompleter(name));
 
-        Completer subCompleter = arg.getCompleter();
+        Completer subCompleter = subCmd.getCompleter();
         if (subCompleter instanceof ArgumentCompleter argCompleter) {
             allCompleters.addAll(argCompleter.getCompleters());
         } else {
@@ -130,17 +130,17 @@ public abstract class BaseCommand extends AbstractCommand {
 
     @Override
     public void printHelp(PrintWriter printer) {
-        for (Command cmd: subCommands.values()) {
-            printer.printf("%n  %s %s%n", name, cmd.getName());
-            printer.printf("%s%n", ClaraUtil.splitIntoLines(cmd.getDescription(), "    ", 72));
+        for (Command subCmd: subCommands.values()) {
+            printer.printf("%n  %s %s%n", name, subCmd.getName());
+            printer.printf("%s%n", ClaraUtil.splitIntoLines(subCmd.getDescription(), "    ", 72));
         }
     }
 
     @Override
     public void close() throws Exception {
-        for (Command subCommand : subCommands.values()) {
+        for (Command subCmd : subCommands.values()) {
             try {
-                subCommand.close();
+                subCmd.close();
             } catch (Exception e) {
                 writer.println(e.getMessage());
             }

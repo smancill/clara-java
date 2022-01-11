@@ -712,17 +712,17 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
         public GenericOrchestrator build() {
             try {
-                List<String> args = arguments.values(options);
-                String services = args.get(0);
-                List<String> files = args.subList(1, args.size());
+                List<String> argsList = arguments.values(options);
+                String servicesFile = argsList.get(0);
+                List<String> files = argsList.subList(1, argsList.size());
 
                 Builder builder;
                 if (files.size() == 1) {
-                    builder = new Builder(services, parseInputFiles(files.get(0)));
+                    builder = new Builder(servicesFile, parseInputFiles(files.get(0)));
                     builder.withInputDirectory(options.valueOf(inputDir));
                     builder.withOutputDirectory(options.valueOf(outputDir));
                 } else {
-                    builder = new Builder(services, files.get(0), files.get(1));
+                    builder = new Builder(servicesFile, files.get(0), files.get(1));
                 }
                 builder.withStageDirectory(options.valueOf(stageDir));
 

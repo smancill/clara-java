@@ -223,10 +223,10 @@ public class ClaraSubscriptions {
                     if (mimeType.equals(EngineDataType.JSON.mimeType())) {
                         String source = new String(msg.getData());
                         JSONObject data = new JSONObject(source);
-                        JSONObject regObj = data.getJSONObject(ClaraConstants.REGISTRATION_KEY);
-                        JSONObject runObj = data.getJSONObject(ClaraConstants.RUNTIME_KEY);
-                        userCallback.callback(new DpeRegistrationData(regObj),
-                                              new DpeRuntimeData(runObj));
+                        JSONObject registration = data.getJSONObject(ClaraConstants.REGISTRATION_KEY);
+                        JSONObject runtime = data.getJSONObject(ClaraConstants.RUNTIME_KEY);
+                        userCallback.callback(new DpeRegistrationData(registration),
+                                              new DpeRuntimeData(runtime));
                     } else {
                         throw new ClaraException("Unexpected mime-type: " + mimeType);
                     }

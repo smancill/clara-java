@@ -303,11 +303,11 @@ public final class ClaraUtil {
      * @return the text split into lines
      */
     public static String splitIntoLines(String input, String linePrefix, int maxLineLength) {
-        StringTokenizer tok = new StringTokenizer(input);
+        StringTokenizer tokenizer = new StringTokenizer(input);
         StringBuilder output = new StringBuilder();
         int lineLen = 0;
-        while (tok.hasMoreTokens()) {
-            String word = tok.nextToken();
+        while (tokenizer.hasMoreTokens()) {
+            String word = tokenizer.nextToken();
             if (lineLen > 0) {
                 lineLen++; // count the space before the word
             }
@@ -352,12 +352,12 @@ public final class ClaraUtil {
      * @return the list of throwables
      */
     public static List<Throwable> getThrowableList(Throwable throwable) {
-        List<Throwable> list = new ArrayList<>();
-        while (throwable != null && !list.contains(throwable)) {
-            list.add(throwable);
+        List<Throwable> throwables = new ArrayList<>();
+        while (throwable != null && !throwables.contains(throwable)) {
+            throwables.add(throwable);
             throwable = throwable.getCause();
         }
-        return list;
+        return throwables;
     }
 
     /**
@@ -368,8 +368,8 @@ public final class ClaraUtil {
      *         <code>null</code> if none found or null throwable input
      */
     public static Throwable getRootCause(Throwable throwable) {
-        List<Throwable> list = getThrowableList(throwable);
-        return list.size() < 2 ? null : list.get(list.size() - 1);
+        List<Throwable> throwables = getThrowableList(throwable);
+        return throwables.size() < 2 ? null : throwables.get(throwables.size() - 1);
     }
 
     /**
@@ -398,8 +398,8 @@ public final class ClaraUtil {
      */
     public static Boolean isRemoteService(String serviceName) {
         Topic topic = Topic.wrap(serviceName);
-        for (String s : ActorUtils.getLocalHostIps()) {
-            if (s.equals(topic.domain())) {
+        for (String ip : ActorUtils.getLocalHostIps()) {
+            if (ip.equals(topic.domain())) {
                 return false;
             }
         }

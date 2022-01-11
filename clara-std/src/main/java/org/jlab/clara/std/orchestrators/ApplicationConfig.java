@@ -60,28 +60,28 @@ class ApplicationConfig {
     }
 
     private JSONObject getIO(String key) {
-        JSONObject conf = new JSONObject();
+        JSONObject config = new JSONObject();
         if (configData.has(IO_CONFIG)) {
-            JSONObject ioConf = configData.getJSONObject(IO_CONFIG);
-            if (ioConf.has(key)) {
-                add(conf, ioConf, key);
+            JSONObject ioConfig = configData.getJSONObject(IO_CONFIG);
+            if (ioConfig.has(key)) {
+                add(config, ioConfig, key);
             }
         }
-        return conf;
+        return config;
     }
 
     JSONObject get(ServiceName service) {
-        JSONObject conf = new JSONObject();
+        JSONObject config = new JSONObject();
         if (configData.has(GLOBAL_CONFIG)) {
-            add(conf, configData, GLOBAL_CONFIG);
+            add(config, configData, GLOBAL_CONFIG);
         }
         if (configData.has(SERVICE_CONFIG)) {
-            JSONObject services = configData.getJSONObject(SERVICE_CONFIG);
-            if (services.has(service.name())) {
-                add(conf, services, service.name());
+            JSONObject servicesConfig = configData.getJSONObject(SERVICE_CONFIG);
+            if (servicesConfig.has(service.name())) {
+                add(config, servicesConfig, service.name());
             }
         }
-        return conf;
+        return config;
     }
 
     private void add(JSONObject target, JSONObject parent, String serviceKey) {
@@ -106,11 +106,11 @@ class ApplicationConfig {
             tpl.process(model, writer);
             return writer.toString();
         } catch (ParseException e) {
-            String msg = String.format("\"%s\" template is not valid: %s", key, value);
-            throw new OrchestratorConfigException(msg);
+            String error = String.format("\"%s\" template is not valid: %s", key, value);
+            throw new OrchestratorConfigException(error);
         } catch (TemplateException e) {
-            String msg = String.format("\"%s\" template cannot not be evaluated: %s", key, value);
-            throw new OrchestratorConfigException(msg);
+            String error = String.format("\"%s\" template cannot not be evaluated: %s", key, value);
+            throw new OrchestratorConfigException(error);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

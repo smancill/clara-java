@@ -546,8 +546,8 @@ public final class Dpe extends AbstractActor {
         Container container = myContainers.get(containerName);
         if (container == null) {
             container = new Container(contComp, base.getFrontEnd());
-            Container result = myContainers.putIfAbsent(containerName, container);
-            if (result == null) {
+            Container prev = myContainers.putIfAbsent(containerName, container);
+            if (prev == null) {
                 try {
                     container.start();
                     reportService.addContainer(container);
@@ -644,10 +644,10 @@ public final class Dpe extends AbstractActor {
         ClaraComponent frontEnd = ClaraComponent.dpe(frontEndHost, frontEndPort, frontEndLang,
                                                      1, ClaraConstants.UNDEFINED);
         base.setFrontEnd(frontEnd);
-        for (Container cont : myContainers.values()) {
-            cont.setFrontEnd(frontEnd);
-            for (Service ser : cont.geServices().values()) {
-                ser.setFrontEnd(frontEnd);
+        for (Container container : myContainers.values()) {
+            container.setFrontEnd(frontEnd);
+            for (Service service : container.geServices().values()) {
+                service.setFrontEnd(frontEnd);
             }
         }
     }
@@ -759,18 +759,18 @@ public final class Dpe extends AbstractActor {
         private void run() {
             try {
                 ProxyAddress feHost = base.getFrontEnd().getProxyAddress();
-                Socket con = connect(feHost);
+                Socket socket = connect(feHost);
                 ActorUtils.sleep(100);
                 try {
                     while (isReporting.get()) {
-                        send(con, aliveMessage());
-                        send(con, jsonMessage());
+                        send(socket, aliveMessage());
+                        send(socket, jsonMessage());
                         ActorUtils.sleep(reportPeriod);
                     }
                 } catch (ClaraMsgException e) {
                     System.err.println("Could not publish DPE report:" + e.getMessage());
                 } finally {
-                    socketFactory.closeQuietly(con);
+                    socketFactory.closeQuietly(socket);
                 }
             } catch (ClaraMsgException e) {
                 System.err.println("Could not start DPE reporting thread:");
@@ -796,8 +796,8 @@ public final class Dpe extends AbstractActor {
         public String getMessage() {
             StringBuilder sb = new StringBuilder();
             sb.append(super.getMessage());
-            for (Throwable e: ClaraUtil.getThrowableList(getCause())) {
-                sb.append(": ").append(e.getMessage());
+            for (Throwable t : ClaraUtil.getThrowableList(getCause())) {
+                sb.append(": ").append(t.getMessage());
             }
             return sb.toString();
         }

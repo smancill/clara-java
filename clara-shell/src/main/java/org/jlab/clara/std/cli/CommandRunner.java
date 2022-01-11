@@ -37,10 +37,10 @@ class CommandRunner {
         if (shellArgs.length == 0) {
             return Command.EXIT_SUCCESS;
         }
-        String commandName = shellArgs[0];
-        Command command = commands.get(commandName);
+        String name = shellArgs[0];
+        Command command = commands.get(name);
         if (command == null) {
-            if ("exit".equals(commandName)) {
+            if ("exit".equals(name)) {
                 throw new EndOfFileException();
             }
             terminal.writer().println("Invalid command");
@@ -49,8 +49,8 @@ class CommandRunner {
         Thread execThread = Thread.currentThread();
         SignalHandler prevIntHandler = terminal.handle(Signal.INT, s -> execThread.interrupt());
         try {
-            String[] cmdArgs = Arrays.copyOfRange(shellArgs, 1, shellArgs.length);
-            return command.execute(cmdArgs);
+            String[] args = Arrays.copyOfRange(shellArgs, 1, shellArgs.length);
+            return command.execute(args);
         } finally {
             terminal.handle(Signal.INT, prevIntHandler);
             terminal.writer().flush();
@@ -59,8 +59,8 @@ class CommandRunner {
 
     private String[] parseLine(String line) {
         try {
-            String cmd = EnvUtils.expandEnvironment(line, System.getenv()).trim();
-            return parser.parse(cmd, cmd.length() + 1)
+            String cmdLine = EnvUtils.expandEnvironment(line, System.getenv()).trim();
+            return parser.parse(cmdLine, cmdLine.length() + 1)
                          .words()
                          .toArray(new String[0]);
         } catch (IllegalArgumentException e) {

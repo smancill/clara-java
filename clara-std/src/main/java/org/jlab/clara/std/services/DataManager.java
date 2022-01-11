@@ -92,34 +92,34 @@ public class DataManager implements Engine {
     @Override
     public EngineData configure(EngineData input) {
         EngineData output = new EngineData();
-        String mt = input.getMimeType();
-        if (mt.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
-            String source = (String) input.getData();
+        String mimeType = input.getMimeType();
+        if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
+            String data = (String) input.getData();
             try {
-                JSONObject data = new JSONObject(source);
-                updateConfiguration(data);
+                JSONObject config = new JSONObject(data);
+                updateConfiguration(config);
                 returnData(output, getConfiguration());
             } catch (IllegalArgumentException e) {
                 System.err.printf("%s config: %s%n", NAME, e.getMessage());
                 ServiceUtils.setError(output, e.getMessage());
             } catch (JSONException e) {
-                String msg = "invalid request: " + source;
-                System.err.printf("%s config: %s%n", NAME, msg);
-                ServiceUtils.setError(output, msg);
+                String error = "invalid request: " + data;
+                System.err.printf("%s config: %s%n", NAME, error);
+                ServiceUtils.setError(output, error);
             }
         } else {
-            String msg = "wrong mime-type: " + mt;
-            System.err.printf("%s config: %s%n", NAME, msg);
-            ServiceUtils.setError(output, msg);
+            String error = "wrong mime-type: " + mimeType;
+            System.err.printf("%s config: %s%n", NAME, error);
+            ServiceUtils.setError(output, error);
         }
         return output;
     }
 
-    private void updateConfiguration(JSONObject data) {
-        DirectoryPaths paths = new DirectoryPaths(data);
+    private void updateConfiguration(JSONObject config) {
+        DirectoryPaths paths = new DirectoryPaths(config);
         System.out.printf("%s service: input path set to %s%n", NAME, paths.inputPath);
         System.out.printf("%s service: output path set to %s%n", NAME, paths.outputPath);
-        if (data.has(CONF_STAGE_PATH)) {
+        if (config.has(CONF_STAGE_PATH)) {
             System.out.printf("%s service: stage path set to %s%n", NAME, paths.stagePath);
         }
         directoryPaths = paths;
@@ -159,11 +159,11 @@ public class DataManager implements Engine {
     @Override
     public EngineData execute(EngineData input) {
         EngineData output = new EngineData();
-        String mt = input.getMimeType();
-        if (mt.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
-            String source = (String) input.getData();
+        String mimeType = input.getMimeType();
+        if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
+            String data = (String) input.getData();
             try {
-                JSONObject request = new JSONObject(source);
+                JSONObject request = new JSONObject(data);
                 String type = request.getString(REQUEST_TYPE);
                 switch (type) {
                     case REQUEST_EXEC -> runAction(request, output);
@@ -173,12 +173,12 @@ public class DataManager implements Engine {
             } catch (IllegalArgumentException e) {
                 ServiceUtils.setError(output, e.getMessage());
             } catch (JSONException e) {
-                ServiceUtils.setError(output, "invalid request: " + source);
+                ServiceUtils.setError(output, "invalid request: " + data);
             } catch (Exception e) {
                 ServiceUtils.setError(output, "unexpected problem:%n%s", ClaraUtil.reportException(e));
             }
         } else {
-            ServiceUtils.setError(output, "wrong mimetype: " + mt);
+            ServiceUtils.setError(output, "wrong mimetype: " + mimeType);
         }
         return output;
     }
@@ -371,12 +371,12 @@ public class DataManager implements Engine {
             throw new IllegalArgumentException("empty " + type + " path");
         }
         if (!path.isAbsolute()) {
-            String msg = String.format("%s path %s is not absolute", type, path);
-            throw new IllegalArgumentException(msg);
+            String error = String.format("%s path %s is not absolute", type, path);
+            throw new IllegalArgumentException(error);
         }
         if (Files.exists(path) && !Files.isDirectory(path)) {
-            String msg = String.format("%s path %s exists but not a directory", type, path);
-            throw new IllegalArgumentException(msg);
+            String error = String.format("%s path %s exists but not a directory", type, path);
+            throw new IllegalArgumentException(error);
         }
         return path;
     }

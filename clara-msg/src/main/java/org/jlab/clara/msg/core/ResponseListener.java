@@ -33,7 +33,7 @@ class ResponseListener extends ProxyListener {
     }
 
     public void register(ProxyAddress address) throws ClaraMsgException {
-        if (items.get(address) == null) {
+        if (connections.get(address) == null) {
             ProxyDriverSetup setup = ProxyDriverSetup.newBuilder().build();
             ProxyDriver connection = factory.createSubscriberConnection(address, setup);
             connection.subscribe(topic);
@@ -41,8 +41,8 @@ class ResponseListener extends ProxyListener {
                 connection.close();
                 throw new ClaraMsgException("could not subscribe to " + topic);
             }
-            ProxyDriver value = items.putIfAbsent(address, connection);
-            if (value != null) {
+            ProxyDriver prev = connections.putIfAbsent(address, connection);
+            if (prev != null) {
                 connection.unsubscribe(topic);
                 connection.close();
             }
@@ -52,9 +52,9 @@ class ResponseListener extends ProxyListener {
     public Message waitMessage(String topic, long timeout) throws TimeoutException {
         int t = 0;
         while (t < timeout) {
-            Message repMsg = responses.remove(topic);
-            if (repMsg != null) {
-                return repMsg;
+            Message response = responses.remove(topic);
+            if (response != null) {
+                return response;
             }
             ActorUtils.sleep(1);
             t += 1;

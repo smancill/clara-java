@@ -66,15 +66,15 @@ final class FarmCommands {
     private FarmCommands() { }
 
     private static void configTemplates() {
-        Path tplDir = getTemplatesDir();
+        Path templatesDir = getTemplatesDir();
         try {
-            FTL_CONFIG.setDirectoryForTemplateLoading(tplDir.toFile());
+            FTL_CONFIG.setDirectoryForTemplateLoading(templatesDir.toFile());
             FTL_CONFIG.setDefaultEncoding("UTF-8");
             FTL_CONFIG.setNumberFormat("computer");
             FTL_CONFIG.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
             FTL_CONFIG.setLogTemplateExceptions(false);
         } catch (IOException e) {
-            throw new IllegalStateException("Missing Clara templates directory: " + tplDir);
+            throw new IllegalStateException("Missing Clara templates directory: " + templatesDir);
         }
     }
 
@@ -86,11 +86,11 @@ final class FarmCommands {
     }
 
     private static void farmVariables(Config.Builder builder) {
-        List<ConfigVariable.Builder> vl = new ArrayList<>();
+        List<ConfigVariable.Builder> variables = new ArrayList<>();
 
         BiFunction<String, String, ConfigVariable.Builder> addBuilder = (n, d) -> {
             ConfigVariable.Builder b = ConfigVariable.newBuilder(n, d);
-            vl.add(b);
+            variables.add(b);
             return b;
         };
 
@@ -123,7 +123,7 @@ final class FarmCommands {
             .withExpectedValues(JLAB_SYSTEM, PBS_SYSTEM)
             .withInitialValue(JLAB_SYSTEM);
 
-        vl.forEach(builder::withConfigVariable);
+        variables.forEach(builder::withConfigVariable);
     }
 
     private static String defaultConfigFile() {

@@ -54,8 +54,8 @@ public class Subscriber extends Actor {
     }
 
     public static void main(String[] args) {
-        try (Subscriber sub = new Subscriber()) {
-            sub.start();
+        try (Subscriber subscriber = new Subscriber()) {
+            subscriber.start();
             ActorUtils.keepAlive();
         } catch (Exception e) {
             e.printStackTrace();

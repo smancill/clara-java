@@ -92,10 +92,10 @@ abstract class AbstractActor {
 
     void sendResponse(Message msg, MetaData.Status status, String data) {
         try {
-            Message repMsg = MessageUtil.buildRequest(msg.getReplyTopic(), data);
-            repMsg.getMetaData().setAuthor(base.getName());
-            repMsg.getMetaData().setStatus(status);
-            base.send(repMsg);
+            Message response = MessageUtil.buildRequest(msg.getReplyTopic(), data);
+            response.getMetaData().setAuthor(base.getName());
+            response.getMetaData().setStatus(status);
+            base.send(response);
         } catch (ClaraMsgException e) {
             e.printStackTrace();
         }

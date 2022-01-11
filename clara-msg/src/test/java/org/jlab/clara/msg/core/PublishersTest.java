@@ -108,7 +108,7 @@ public class PublishersTest {
             subReady.await();
 
             final int numMessages = check.n / numPublishers;
-            List<Thread> publishers = new ArrayList<>(numPublishers);
+            List<Thread> pubThreads = new ArrayList<>(numPublishers);
 
             for (int i = 0; i < numPublishers; i++) {
                 final int start = i * numMessages;
@@ -133,12 +133,12 @@ public class PublishersTest {
                         }
                     }
                 });
-                publishers.add(pubThread);
+                pubThreads.add(pubThread);
                 pubThread.start();
             }
 
             subThread.join();
-            for (Thread pubThread : publishers) {
+            for (Thread pubThread : pubThreads) {
                 pubThread.join();
             }
 
@@ -200,9 +200,9 @@ public class PublishersTest {
 
         @Override
         void publish(Actor actor, Message msg, Check check) throws Exception {
-            Message res = actor.syncPublish(msg, 1000);
-            Integer r = Message.parseData(res, Integer.class);
-            check.increment(r);
+            Message rMsg = actor.syncPublish(msg, 1000);
+            Integer rData = Message.parseData(rMsg, Integer.class);
+            check.increment(rData);
         }
     }
 

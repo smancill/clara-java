@@ -65,8 +65,8 @@ class Container extends AbstractActor {
         Service service = myServices.get(serviceName);
         if (service == null) {
             service = new Service(comp, frontEnd, connectionPools, session);
-            Service result = myServices.putIfAbsent(serviceName, service);
-            if (result == null) {
+            Service prev = myServices.putIfAbsent(serviceName, service);
+            if (prev == null) {
                 try {
                     service.start();
                     myReport.addService(service.getReport());

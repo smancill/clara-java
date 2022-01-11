@@ -117,12 +117,12 @@ class SetCommand extends BaseCommand {
     }
 
     private File getOutputFile() {
-        Path dir = FarmCommands.hasPlugin()
+        Path userDir = FarmCommands.hasPlugin()
                 ? FarmCommands.PLUGIN.resolve("config")
                 : Paths.get("");
         RunUtils runUtils = new RunUtils(config);
         String name = String.format("files_%s.txt", runUtils.getSession());
-        return dir.resolve(name).toFile();
+        return userDir.resolve(name).toFile();
     }
 
     private void listCommand(PrintWriter printer, String arg) {

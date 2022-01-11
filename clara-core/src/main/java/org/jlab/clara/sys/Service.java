@@ -174,9 +174,9 @@ class Service extends AbstractActor {
 
 
     private void setup(Message msg) throws RequestException {
-        RequestParser setup = RequestParser.build(msg);
-        String report = setup.nextString();
-        int value = setup.nextInteger();
+        RequestParser parser = RequestParser.build(msg);
+        String report = parser.nextString();
+        int value = parser.nextInteger();
         boolean publishReport = value > 0; // 0 is used to cancel reports
         switch (report) {
             case ClaraConstants.SERVICE_REPORT_DONE -> {
@@ -195,7 +195,7 @@ class Service extends AbstractActor {
                 throw new RequestException("Invalid report request: " + report);
         }
         if (msg.hasReplyTopic()) {
-            sendResponse(msg, MetaData.Status.INFO, setup.request());
+            sendResponse(msg, MetaData.Status.INFO, parser.request());
         }
     }
 

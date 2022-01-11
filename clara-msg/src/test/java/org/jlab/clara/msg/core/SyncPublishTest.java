@@ -72,12 +72,12 @@ public final class SyncPublishTest {
 
     private static Result publisher(int cores, int numMessages, RegAddress regAddress)
             throws Exception {
-        ThreadPoolExecutor pool = ActorUtils.newThreadPool(cores, "sync-pub-");
+        ThreadPoolExecutor threadPool = ActorUtils.newThreadPool(cores, "sync-pub-");
 
         try (Actor actor = new Actor("sync_tester", regAddress)) {
             RegQuery query = RegQuery.subscribers().withDomain(TOPIC);
-            Set<RegRecord> listeners = actor.discover(query);
-            int numListeners = listeners.size();
+            Set<RegRecord> regListeners = actor.discover(query);
+            int numListeners = regListeners.size();
             if (numListeners == 0) {
                 throw new RuntimeException("no subscribers registered on" + regAddress);
             }
@@ -93,15 +93,15 @@ public final class SyncPublishTest {
             for (int i = 0; i < cores; i++) {
                 final int start = i * results.chunkSize;
                 final int end = start + results.chunkSize;
-                pool.submit(() -> {
+                threadPool.submit(() -> {
                     try {
                         for (int j = start; j < end; j++) {
-                            for (RegRecord reg : listeners) {
+                            for (RegRecord reg : regListeners) {
                                 try (Connection pubCon = actor.getConnection(reg.address())) {
-                                    Message data = Message.createFrom(reg.topic(), j);
-                                    Message res = actor.syncPublish(pubCon, data, TIME_OUT);
-                                    int value = Message.parseData(res, Integer.class);
-                                    results.add(value);
+                                    Message msg = Message.createFrom(reg.topic(), j);
+                                    Message rMsg = actor.syncPublish(pubCon, msg, TIME_OUT);
+                                    int rData = Message.parseData(rMsg, Integer.class);
+                                    results.add(rData);
                                 } catch (TimeoutException e) {
                                     e.printStackTrace();
                                 }
@@ -113,8 +113,8 @@ public final class SyncPublishTest {
                 });
             }
 
-            pool.shutdown();
-            if (!pool.awaitTermination(5, TimeUnit.MINUTES)) {
+            threadPool.shutdown();
+            if (!threadPool.awaitTermination(5, TimeUnit.MINUTES)) {
                 throw new RuntimeException("execution pool did not terminate");
             } else {
                 results.stopClock();
@@ -182,8 +182,8 @@ public final class SyncPublishTest {
         RegAddress address = new RegAddress();
         try (RegistrarWrapper registrar = new RegistrarWrapper();
              ProxyWrapper proxy = new ProxyWrapper()) {
-            try (Actor list1 = listener(1, "foo", address);
-                 Actor list2 = listener(1, "bar", address)) {
+            try (Actor actor1 = listener(1, "foo", address);
+                 Actor actor2 = listener(1, "bar", address)) {
                 ActorUtils.sleep(100);
                 Result results = publisher(1, 1000, address);
                 assertThat(results.sum.get(), is(results.totalSum));
@@ -207,16 +207,16 @@ public final class SyncPublishTest {
             RegAddress address = new RegAddress(frontEnd);
             if (command.equals("listener")) {
                 int poolSize = Integer.parseInt(cores);
-                Actor sub = SyncPublishTest.listener(poolSize, "local", address);
-                try (sub) {
+                Actor subscriber = SyncPublishTest.listener(poolSize, "local", address);
+                try (subscriber) {
                     ActorUtils.keepAlive();
                 }
             } else {
                 int pubThreads = Integer.parseInt(cores);
                 int totalMessages = Integer.parseInt(command);
-                boolean stat = SyncPublishTest.publisher(pubThreads, totalMessages, address)
-                                              .check();
-                if (!stat) {
+                boolean success = SyncPublishTest.publisher(pubThreads, totalMessages, address)
+                                                 .check();
+                if (!success) {
                     System.exit(1);
                 }
             }

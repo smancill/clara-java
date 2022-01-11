@@ -46,8 +46,8 @@ public class OrchestratorException extends RuntimeException {
     public String getMessage() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.getMessage());
-        for (Throwable e: ClaraUtil.getThrowableList(getCause())) {
-            sb.append(": ").append(e.getMessage());
+        for (Throwable t : ClaraUtil.getThrowableList(getCause())) {
+            sb.append(": ").append(t.getMessage());
         }
         return sb.toString();
     }

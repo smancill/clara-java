@@ -100,8 +100,8 @@ class RunCommand extends BaseCommand {
 
         private DpeName startLocalDpes() throws IOException {
             String configFile = config.getString(Config.SERVICES_FILE);
-            OrchestratorConfigParser parser = new OrchestratorConfigParser(configFile);
-            Set<ClaraLang> languages = parser.parseLanguages();
+            OrchestratorConfigParser configParser = new OrchestratorConfigParser(configFile);
+            Set<ClaraLang> languages = configParser.parseLanguages();
 
             if (checkDpes(languages)) {
                 return backgroundDpes.get(ClaraLang.JAVA).name;
@@ -176,37 +176,37 @@ class RunCommand extends BaseCommand {
         }
 
         private boolean isDpeAlive(ClaraLang lang) {
-            DpeProcess dpe = backgroundDpes.get(lang);
-            return dpe != null && dpe.process.isAlive();
+            DpeProcess dpeProcess = backgroundDpes.get(lang);
+            return dpeProcess != null && dpeProcess.process.isAlive();
         }
 
         private void addBackgroundDpeProcess(DpeName name, String... command)
                 throws IOException {
             if (!backgroundDpes.containsKey(name.language())) {
                 Path logFile = runUtils.getLogFile(name);
-                ProcessBuilder builder = buildProcess(command, logFile);
+                ProcessBuilder processBuilder = buildProcess(command, logFile);
                 if (name.language() == ClaraLang.JAVA) {
                     String javaOptions = getJVMOptions();
                     if (javaOptions != null) {
-                        builder.environment().put("JAVA_OPTS", javaOptions);
+                        processBuilder.environment().put("JAVA_OPTS", javaOptions);
                     }
                 }
                 runUtils.getMonitorFrontEnd().ifPresent(monFE ->
-                    builder.environment().put(ClaraConstants.ENV_MONITOR_FE, monFE)
+                    processBuilder.environment().put(ClaraConstants.ENV_MONITOR_FE, monFE)
                 );
-                DpeProcess dpe = new DpeProcess(name, builder);
-                backgroundDpes.put(name.language(), dpe);
+                DpeProcess dpeProcess = new DpeProcess(name, processBuilder);
+                backgroundDpes.put(name.language(), dpeProcess);
             }
         }
 
         private void destroyDpes() {
             // kill the DPEs in reverse order (the front-end last)
             for (ClaraLang lang : List.of(ClaraLang.PYTHON, ClaraLang.CPP, ClaraLang.JAVA)) {
-                DpeProcess dpe = backgroundDpes.remove(lang);
-                if (dpe == null) {
+                DpeProcess dpeProcess = backgroundDpes.remove(lang);
+                if (dpeProcess == null) {
                     continue;
                 }
-                CommandUtils.destroyProcess(dpe.process);
+                CommandUtils.destroyProcess(dpeProcess.process);
             }
         }
 

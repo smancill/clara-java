@@ -184,9 +184,9 @@ public class Config {
     }
 
     static Map<String, ConfigVariable> initVariables() {
-        Map<String, ConfigVariable> m = new LinkedHashMap<>();
-        defaultVariables().forEach((n, b) -> m.put(n, b.build()));
-        return m;
+        Map<String, ConfigVariable> variables = new LinkedHashMap<>();
+        defaultVariables().forEach((n, b) -> variables.put(n, b.build()));
+        return variables;
     }
 
     static Map<String, ConfigVariable.Builder> defaultVariables() {
@@ -407,8 +407,8 @@ public class Config {
     void addVariable(ConfigVariable variable) {
         ConfigVariable prev = variables.putIfAbsent(variable.getName(), variable);
         if (prev != null) {
-            String msg = String.format("a variable named %s already exists", variable.getName());
-            throw new IllegalArgumentException(msg);
+            String error = String.format("a variable named %s already exists", variable.getName());
+            throw new IllegalArgumentException(error);
         }
     }
 

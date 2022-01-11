@@ -129,12 +129,12 @@ public final class ActorUtils {
 
     static String encodeIdentity(String address, String name) {
         String id = address + "#" + name + "#" + randomGenerator.nextInt(100);
-        int idHash = id.hashCode() & Integer.MAX_VALUE;
-        int minValue = 0x1000_0000;
-        if (idHash < minValue) {
-            idHash += minValue;
+        int hash = id.hashCode() & Integer.MAX_VALUE;
+        int min = 0x1000_0000;
+        if (hash < min) {
+            hash += min;
         }
-        return Integer.toHexString(idHash);
+        return Integer.toHexString(hash);
     }
 
     /**

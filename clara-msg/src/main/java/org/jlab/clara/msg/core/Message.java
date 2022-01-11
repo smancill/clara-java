@@ -506,10 +506,10 @@ public class Message {
      * @return a response message with the proper topic and the same received data
      */
     public static Message createResponse(Message msg) {
-        Topic resTopic = Topic.wrap(msg.metaData.getReplyTo());
-        MetaData.Builder resMeta = MetaData.newBuilder(msg.metaData.build());
-        resMeta.clearReplyTo();
-        return new Message(resTopic, resMeta, msg.data);
+        Topic topic = Topic.wrap(msg.metaData.getReplyTo());
+        MetaData.Builder meta = MetaData.newBuilder(msg.metaData.build());
+        meta.clearReplyTo();
+        return new Message(topic, meta, msg.data);
     }
 
     /**
@@ -521,7 +521,7 @@ public class Message {
      * @return a response message with the proper topic and the given data
      */
     public static Message createResponse(Message msg, Object data) {
-        Topic resTopic = Topic.wrap(msg.metaData.getReplyTo());
-        return createFrom(resTopic, data);
+        Topic topic = Topic.wrap(msg.metaData.getReplyTo());
+        return createFrom(topic, data);
     }
 }

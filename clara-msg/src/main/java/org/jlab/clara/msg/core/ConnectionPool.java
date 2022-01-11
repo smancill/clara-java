@@ -143,8 +143,8 @@ public final class ConnectionPool implements Closeable {
      * @throws ClaraMsgException if the new connection could not be created
      */
     public void cacheConnection(ProxyAddress address) throws ClaraMsgException {
-        ProxyDriver driver = connectionManager.createProxyConnection(address);
-        connectionManager.releaseProxyConnection(driver);
+        ProxyDriver connection = connectionManager.createProxyConnection(address);
+        connectionManager.releaseProxyConnection(connection);
     }
 
     /**

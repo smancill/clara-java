@@ -63,8 +63,8 @@ class RunUtils {
     }
 
     Path getLogFile(String host, String component) {
-        String logName = String.format("%s_%s_%s.log", host, getSession(), component);
-        return getLogDir().resolve(logName);
+        String name = String.format("%s_%s_%s.log", host, getSession(), component);
+        return getLogDir().resolve(name);
     }
 
     Path getLogFile(Path feLog, ClaraLang dpeLang) {

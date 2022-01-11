@@ -102,11 +102,11 @@ class HelpCommand extends BaseCommand {
     }
 
     private String getHelp(Command command) {
-        StringWriter helpWriter = new StringWriter();
-        PrintWriter printer = new PrintWriter(helpWriter);
+        StringWriter writer = new StringWriter();
+        PrintWriter printer = new PrintWriter(writer);
         command.printHelp(printer);
         printer.close();
-        return helpWriter.toString();
+        return writer.toString();
     }
 
     private int countLines(String str) {

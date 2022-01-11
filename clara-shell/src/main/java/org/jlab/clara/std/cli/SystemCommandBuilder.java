@@ -52,8 +52,8 @@ class SystemCommandBuilder {
     }
 
     private Token mayQuote(Token token) {
-        Matcher m = NEED_QUOTES.matcher(token.value);
-        if (m.find() || quoteAll) {
+        Matcher matcher = NEED_QUOTES.matcher(token.value);
+        if (matcher.find() || quoteAll) {
             String quoted = "\"" + token.value + "\"";
             return new Token(quoted, token.split);
         }

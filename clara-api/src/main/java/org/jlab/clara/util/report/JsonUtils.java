@@ -31,8 +31,8 @@ public final class JsonUtils {
     public static JSONObject readJson(String resource) {
         InputStream stream = JsonUtils.class.getResourceAsStream(resource);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-            String data =  reader.lines().collect(Collectors.joining("\n"));
-            return new JSONObject(data);
+            String content =  reader.lines().collect(Collectors.joining("\n"));
+            return new JSONObject(content);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

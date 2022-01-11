@@ -66,14 +66,14 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
         final long startTime = System.currentTimeMillis();
         String mimeType = input.getMimeType();
         if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
-            String source = (String) input.getData();
-            JSONObject data = new JSONObject(source);
-            if (data.has(CONF_ACTION) && data.has(CONF_FILENAME)) {
-                String action = data.getString(CONF_ACTION);
+            String data = (String) input.getData();
+            JSONObject config = new JSONObject(data);
+            if (config.has(CONF_ACTION) && config.has(CONF_FILENAME)) {
+                String action = config.getString(CONF_ACTION);
                 if (action.equals(CONF_ACTION_OPEN)) {
-                    openFile(data);
+                    openFile(config);
                 } else if (action.equals(CONF_ACTION_CLOSE)) {
-                    closeFile(data);
+                    closeFile(config);
                 } else {
                     logger.error("config: wrong '{}' parameter value = {}", CONF_ACTION, action);
                 }
@@ -88,16 +88,16 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
     }
 
 
-    private void openFile(JSONObject configData) {
+    private void openFile(JSONObject config) {
         synchronized (readerLock) {
             if (reader != null) {
                 closeFile();
             }
-            fileName = configData.getString(CONF_FILENAME);
+            fileName = config.getString(CONF_FILENAME);
             logger.info("request to open file {}", fileName);
             try {
-                reader = createReader(Paths.get(fileName), configData);
-                setLimits(configData);
+                reader = createReader(Paths.get(fileName), config);
+                setLimits(config);
                 logger.info("opened file {}", fileName);
             } catch (EventReaderException e) {
                 logger.error("could not open file {}", fileName, e);
@@ -107,16 +107,16 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
     }
 
 
-    private void setLimits(JSONObject configData) throws EventReaderException {
+    private void setLimits(JSONObject config) throws EventReaderException {
         eventCount = readEventCount();
-        int skipEvents = getValue(configData, CONF_EVENTS_SKIP, 0, 0, eventCount);
+        int skipEvents = getValue(config, CONF_EVENTS_SKIP, 0, 0, eventCount);
         if (skipEvents != 0) {
             logger.info("config: skip first {} events", skipEvents);
         }
         currentEvent = skipEvents;
 
         int remEvents = eventCount - skipEvents;
-        int maxEvents = getValue(configData, CONF_EVENTS_MAX, remEvents, 0, remEvents);
+        int maxEvents = getValue(config, CONF_EVENTS_MAX, remEvents, 0, remEvents);
         if (maxEvents != remEvents) {
             logger.info("config: read {} events%n", maxEvents);
         }
@@ -127,10 +127,10 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
     }
 
 
-    private int getValue(JSONObject configData, String key, int defVal, int minVal, int maxVal) {
-        if (configData.has(key)) {
+    private int getValue(JSONObject config, String key, int defaultVal, int minVal, int maxVal) {
+        if (config.has(key)) {
             try {
-                int value = configData.getInt(key);
+                int value = config.getInt(key);
                 if (value >= minVal && value <= maxVal) {
                     return value;
                 }
@@ -139,13 +139,13 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
                 logger.error("config: {}", e.getMessage());
             }
         }
-        return defVal;
+        return defaultVal;
     }
 
 
-    private void closeFile(JSONObject configData) {
+    private void closeFile(JSONObject config) {
         synchronized (readerLock) {
-            fileName = configData.getString(CONF_FILENAME);
+            fileName = config.getString(CONF_FILENAME);
             logger.info("request to close file {}", fileName);
             if (reader != null) {
                 closeFile();
@@ -185,8 +185,8 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
     public EngineData execute(EngineData input) {
         EngineData output = new EngineData();
 
-        String dt = input.getMimeType();
-        if (dt.equalsIgnoreCase(EngineDataType.STRING.mimeType())) {
+        String mimeType = input.getMimeType();
+        if (mimeType.equalsIgnoreCase(EngineDataType.STRING.mimeType())) {
             String request = (String) input.getData();
             if (request.equals(REQUEST_NEXT) || request.equals(REQUEST_NEXT_REC)) {
                 getNextEvent(input, output);
@@ -200,8 +200,8 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
                 ServiceUtils.setError(output, String.format("Wrong input data = '%s'", request));
             }
         } else {
-            String errorMsg = String.format("Wrong input type '%s'", dt);
-            ServiceUtils.setError(output, errorMsg);
+            String error = String.format("Wrong input type '%s'", mimeType);
+            ServiceUtils.setError(output, error);
         }
 
         return output;
@@ -249,9 +249,9 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
             output.setDescription("data");
             processingEvents.add(currentEvent);
         } catch (EventReaderException e) {
-            String msg = String.format("Error requesting event %d from file %s%n%n%s",
-                    currentEvent, fileName, ClaraUtil.reportException(e));
-            ServiceUtils.setError(output, msg, 1);
+            String error = String.format("Error requesting event %d from file %s%n%n%s",
+                                         currentEvent, fileName, ClaraUtil.reportException(e));
+            ServiceUtils.setError(output, error, 1);
         } finally {
             output.setCommunicationId(currentEvent);
             currentEvent++;
@@ -268,9 +268,9 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
                     output.setData(EngineDataType.STRING.mimeType(), readByteOrder().toString());
                     output.setDescription("byte order");
                 } catch (EventReaderException e) {
-                    String msg = String.format("Error requesting byte-order from file %s%n%n%s",
-                            fileName, ClaraUtil.reportException(e));
-                    ServiceUtils.setError(output, msg, 1);
+                    String error = String.format("Error requesting byte-order from file %s%n%n%s",
+                                                 fileName, ClaraUtil.reportException(e));
+                    ServiceUtils.setError(output, error, 1);
                 }
             }
         }

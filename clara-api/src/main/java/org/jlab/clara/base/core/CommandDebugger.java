@@ -38,8 +38,8 @@ public final class CommandDebugger extends ClaraBase {
 
     private void processFile(String file) {
         Path path = Paths.get(file);
-        try (Stream<String> stream = Files.lines(path, Charset.defaultCharset())) {
-            stream.forEach(this::processCommand);
+        try (Stream<String> commands = Files.lines(path, Charset.defaultCharset())) {
+            commands.forEach(this::processCommand);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,15 +101,15 @@ public final class CommandDebugger extends ClaraBase {
 
         Command(String cmd) throws ClaraException {
             try {
-                StringTokenizer tk = new StringTokenizer(cmd, " ");
-                action = tk.nextToken();
+                StringTokenizer tokenizer = new StringTokenizer(cmd, " ");
+                action = tokenizer.nextToken();
                 if (!action.equals("send") && !action.equals("sync_send")) {
                     throw new ClaraException("Invalid action: " + action);
                 }
                 if (action.equals("sync_send")) {
-                    timeout = Integer.parseInt(tk.nextToken());
+                    timeout = Integer.parseInt(tokenizer.nextToken());
                 }
-                String component = tk.nextToken().replace("localhost", ClaraUtil.localhost());
+                String component = tokenizer.nextToken().replace("localhost", ClaraUtil.localhost());
                 address = new ProxyAddress(ClaraUtil.getDpeHost(component),
                                            ClaraUtil.getDpePort(component));
                 if (ClaraUtil.isDpeName(component)) {
@@ -121,7 +121,7 @@ public final class CommandDebugger extends ClaraBase {
                 } else {
                     throw new ClaraException("Not a Clara component: " + component);
                 }
-                request = tk.nextToken();
+                request = tokenizer.nextToken();
             } catch (NoSuchElementException | NumberFormatException e) {
                 throw new RuntimeException("Invalid line: " + cmd, e);
             }

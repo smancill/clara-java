@@ -68,9 +68,9 @@ class CoreOrchestrator {
             base.deploy(service.name(), service.classPath()).withPoolsize(service.poolSize()).run();
             userServices.put(service.name(), service);
         } catch (ClaraException e) {
-            String errorMsg = String.format("failed request to deploy service = %s  class = %s",
-                                            service.name(), service.classPath());
-            throw new OrchestratorException(errorMsg, e);
+            String error = String.format("failed request to deploy service = %s  class = %s",
+                                         service.name(), service.classPath());
+            throw new OrchestratorException(error, e);
         }
     }
 
@@ -167,9 +167,9 @@ class CoreOrchestrator {
                 .forEach(userContainers::remove);
 
         // Re-deploy missing services
-        for (ServiceName missing : missingServices) {
-            DeployInfo deployInfo = userServices.get(missing);
-            Logging.info("Service " + missing + " was not found. Trying to redeploy...");
+        for (ServiceName service : missingServices) {
+            DeployInfo deployInfo = userServices.get(service);
+            Logging.info("Service " + service + " was not found. Trying to redeploy...");
             deployService(deployInfo);
         }
     }
@@ -214,12 +214,12 @@ class CoreOrchestrator {
 
     void syncEnableRing(ServiceName service, int wait, TimeUnit unit)
             throws ClaraException, TimeoutException {
-        ServiceConfigRequestBuilder builder = base.configure(service);
+        ServiceConfigRequestBuilder requestBuilder = base.configure(service);
         try {
-            Method m = builder.getClass().getDeclaredMethod("startDataRingReporting");
-            m.setAccessible(true);
-            ServiceReportRequest r = (ServiceReportRequest) m.invoke(builder);
-            r.syncRun(wait, unit);
+            Method method = requestBuilder.getClass().getDeclaredMethod("startDataRingReporting");
+            method.setAccessible(true);
+            ServiceReportRequest request = (ServiceReportRequest) method.invoke(requestBuilder);
+            request.syncRun(wait, unit);
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);

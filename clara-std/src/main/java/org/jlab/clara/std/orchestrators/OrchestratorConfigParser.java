@@ -258,15 +258,15 @@ public class OrchestratorConfigParser {
             String callbacksKey,
             Function<JSONObject, RingTopic> topicParser) {
         List<RingCallbackInfo> callbacks = new ArrayList<>();
-        JSONArray ca = parent.optJSONArray(callbacksKey);
-        if (ca != null) {
-            for (int i = 0; i < ca.length(); i++) {
-                JSONObject data = ca.getJSONObject(i);
-                String classPath = data.optString("class");
+        JSONArray cbArray = parent.optJSONArray(callbacksKey);
+        if (cbArray != null) {
+            for (int i = 0; i < cbArray.length(); i++) {
+                JSONObject cbObj = cbArray.getJSONObject(i);
+                String classPath = cbObj.optString("class");
                 if (classPath.isEmpty()) {
                     throw error("missing class of callback");
                 }
-                RingTopic topic = parseRingTopic(data, topicParser);
+                RingTopic topic = parseRingTopic(cbObj, topicParser);
                 callbacks.add(new RingCallbackInfo(classPath, topic));
             }
         }

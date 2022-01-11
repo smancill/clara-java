@@ -47,16 +47,16 @@ public final class RegFactory {
                                           ProxyAddress address,
                                           RegData.OwnerType type,
                                           Topic topic) {
-        RegData.Builder regb = RegData.newBuilder();
-        regb.setName(name);
-        regb.setDescription(description);
-        regb.setHost(address.host());
-        regb.setPort(address.pubPort());
-        regb.setDomain(topic.domain());
-        regb.setSubject(topic.subject());
-        regb.setType(topic.type());
-        regb.setOwnerType(type);
-        return regb.build();
+        var reg = RegData.newBuilder();
+        reg.setName(name);
+        reg.setDescription(description);
+        reg.setHost(address.host());
+        reg.setPort(address.pubPort());
+        reg.setDomain(topic.domain());
+        reg.setSubject(topic.subject());
+        reg.setType(topic.type());
+        reg.setOwnerType(type);
+        return reg.build();
     }
 
     /**
@@ -67,7 +67,7 @@ public final class RegFactory {
      * @return the registration data to filter actors
      */
     public static RegData.Builder newFilter(RegData.OwnerType type) {
-        RegData.Builder filter = RegData.newBuilder();
+        var filter = RegData.newBuilder();
         filter.setName(RegConstants.UNDEFINED);
         filter.setHost(RegConstants.UNDEFINED);
         filter.setPort(0);

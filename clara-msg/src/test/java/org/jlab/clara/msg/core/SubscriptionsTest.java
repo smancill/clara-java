@@ -148,9 +148,9 @@ public class SubscriptionsTest {
                     Topic pubTopic = Topic.wrap("test_topic");
                     for (int i = 0; i < Check.N; i++) {
                         Message msg = Message.createFrom(pubTopic, i);
-                        Message resMsg = pubActor.syncPublish(pubCon, msg, 1000);
-                        int data = Message.parseData(resMsg, Integer.class);
-                        check.sum += data;
+                        Message rMsg = pubActor.syncPublish(pubCon, msg, 1000);
+                        int rData = Message.parseData(rMsg, Integer.class);
+                        check.sum += rData;
                         check.counter++;
                     }
                 }

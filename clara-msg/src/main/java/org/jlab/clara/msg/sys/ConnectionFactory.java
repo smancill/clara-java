@@ -94,12 +94,12 @@ public class ConnectionFactory {
      * @throws ClaraMsgException if the connection could not be created
      */
     public RegDriver createRegistrarConnection(RegAddress address) throws ClaraMsgException {
-        RegDriver driver = new RegDriver(address, factory);
+        RegDriver connection = new RegDriver(address, factory);
         try {
-            driver.connect();
-            return driver;
+            connection.connect();
+            return connection;
         } catch (ZMQException | ClaraMsgException e) {
-            driver.close();
+            connection.close();
             throw e;
         }
     }

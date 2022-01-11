@@ -151,10 +151,10 @@ public final class CommandUtils {
      * @return the wrapper program that runs the given command
      */
     public static String[] uninterruptibleCommand(String[] command, Path logFile) {
-        SystemCommandBuilder b = new SystemCommandBuilder(commandLogger());
-        b.addArgument(logFile);
-        Arrays.stream(command).forEach(b::addArgument);
-        return b.toArray();
+        SystemCommandBuilder builder = new SystemCommandBuilder(commandLogger());
+        builder.addArgument(logFile);
+        Arrays.stream(command).forEach(builder::addArgument);
+        return builder.toArray();
     }
 
     private static String commandWrapper() {

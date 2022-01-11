@@ -131,8 +131,8 @@ public class RegResponse {
         msg.addString(topic);
         msg.addString(sender);
         msg.addString(status);
-        for (RegData d : data) {
-            msg.add(d.toByteArray());
+        for (RegData reg : data) {
+            msg.add(reg.toByteArray());
         }
         return msg;
     }

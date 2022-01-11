@@ -104,11 +104,11 @@ public class EngineSpecification {
      */
     @SuppressWarnings("unchecked")
     public EngineSpecification(String engine) {
-        InputStream input = getSpecStream(engine);
-        if (input != null) {
+        InputStream spec = getSpecStream(engine);
+        if (spec != null) {
             Yaml yaml = new Yaml();
             try {
-                Object content = yaml.load(input);
+                Object content = yaml.load(spec);
                 if (content instanceof Map) {
                     parseContent((Map<String, Object>) content);
                 } else {
@@ -118,7 +118,7 @@ public class EngineSpecification {
                 throw new ParseException(e);
             } finally {
                 try {
-                    input.close();
+                    spec.close();
                 } catch (IOException e) {
                     // ignore
                 }
@@ -130,21 +130,21 @@ public class EngineSpecification {
 
 
     private InputStream getSpecStream(String engine) {
-        InputStream input = getSpecStream(engine, ".yaml");
-        if (input == null) {
-            input = getSpecStream(engine, ".yml");
+        InputStream spec = getSpecStream(engine, ".yaml");
+        if (spec == null) {
+            spec = getSpecStream(engine, ".yml");
         }
-        return input;
+        return spec;
     }
 
 
     private InputStream getSpecStream(String engine, String ext) {
         ClassLoader cl = getClass().getClassLoader();
-        Path resourcePath = Paths.get(engine.replaceAll("\\.", File.separator) + ext);
-        Path resourceName = FileUtils.getFileName(resourcePath);
-        InputStream resource = cl.getResourceAsStream(resourceName.toString());
+        Path path = Paths.get(engine.replaceAll("\\.", File.separator) + ext);
+        Path name = FileUtils.getFileName(path);
+        InputStream resource = cl.getResourceAsStream(name.toString());
         if (resource == null) {
-            resource = cl.getResourceAsStream(resourcePath.toString());
+            resource = cl.getResourceAsStream(path.toString());
         }
         return resource;
     }
