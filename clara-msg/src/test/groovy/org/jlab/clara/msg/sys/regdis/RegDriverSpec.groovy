@@ -154,7 +154,7 @@ class RegDriverSpec extends Specification {
     }
 
     private static RegData regData(String name, RegData.OwnerType type, String topic) {
-        return RegFactory.newRegistration(name, "10.0.0.1", type, Topic.wrap(topic)).build()
+        return RegFactory.newRegistration(name, "10.0.0.1", type, Topic.wrap(topic))
     }
 
     private void verifyRequest(String topic, var data, int timeout) {

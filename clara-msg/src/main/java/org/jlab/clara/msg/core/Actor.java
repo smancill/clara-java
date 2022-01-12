@@ -662,9 +662,8 @@ public class Actor implements AutoCloseable {
             throws ClaraMsgException {
         RegDriver regDriver = connectionManager.getRegistrarConnection(address);
         try {
-            RegData.Builder reg = createRegistration(info);
-            reg.setDescription(info.description());
-            regDriver.addRegistration(myName, reg.build(), timeout);
+            RegData reg = createRegistration(info);
+            regDriver.addRegistration(myName, reg, timeout);
             connectionManager.releaseRegistrarConnection(regDriver);
         } catch (ZMQException | ClaraMsgException e) {
             regDriver.close();
@@ -719,8 +718,8 @@ public class Actor implements AutoCloseable {
             throws ClaraMsgException {
         RegDriver regDriver = connectionManager.getRegistrarConnection(address);
         try {
-            RegData.Builder reg = createRegistration(info);
-            regDriver.removeRegistration(myName, reg.build(), timeout);
+            RegData reg = createRegistration(info);
+            regDriver.removeRegistration(myName, reg, timeout);
             connectionManager.releaseRegistrarConnection(regDriver);
         } catch (ZMQException | ClaraMsgException e) {
             regDriver.close();
@@ -782,7 +781,7 @@ public class Actor implements AutoCloseable {
             throws ClaraMsgException {
         RegDriver regDriver = connectionManager.getRegistrarConnection(address);
         try {
-            RegData request = query.data().build();
+            RegData request = query.data();
             Set<RegData> result = switch (query.category()) {
                 case MATCHING -> regDriver.findRegistration(myName, request, timeout);
                 case FILTER -> regDriver.filterRegistration(myName, request, timeout);
@@ -834,9 +833,9 @@ public class Actor implements AutoCloseable {
         return threadPool.getMaximumPoolSize();
     }
 
-    private RegData.Builder createRegistration(RegInfo info) {
-        return RegFactory.newRegistration(myName, setup.proxyAddress(),
-                                          info.type(), info.topic());
+    private RegData createRegistration(RegInfo info) {
+        return RegFactory.newRegistration(myName, info.description(),
+                                          setup.proxyAddress(), info.type(), info.topic());
     }
 
 

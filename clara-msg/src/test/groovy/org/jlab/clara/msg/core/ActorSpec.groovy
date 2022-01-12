@@ -94,7 +94,7 @@ class ActorSpec extends Specification {
         actor.discover(query, regAddr, 2000)
 
         then:
-        1 * driver.findRegistration(name, query.data().build(), 2000) >> EMPTY_REG
+        1 * driver.findRegistration(name, query.data(), 2000) >> EMPTY_REG
 
         where:
         factory                 | type
@@ -110,7 +110,7 @@ class ActorSpec extends Specification {
         actor.discover(query, regAddr, 2000)
 
         then:
-        1 * driver.filterRegistration(name, query.data().build(), 2000) >> EMPTY_REG
+        1 * driver.filterRegistration(name, query.data(), 2000) >> EMPTY_REG
 
         where:
         factory                 | type
@@ -126,7 +126,7 @@ class ActorSpec extends Specification {
         actor.discover(query, regAddr, 2000)
 
         then:
-        1 * driver.allRegistration(name, query.data().build(), 2000) >> EMPTY_REG
+        1 * driver.allRegistration(name, query.data(), 2000) >> EMPTY_REG
 
         where:
         factory                 | type
@@ -134,11 +134,7 @@ class ActorSpec extends Specification {
         RegQuery::subscribers   | SUBSCRIBER
     }
 
-    private RegData regOf(RegData.OwnerType regType, Topic topic, String description = null) {
-        var builder = RegFactory.newRegistration(name, localAddr.host(), regType, topic)
-        if (description != null) {
-            builder.description = description
-        }
-        return builder.build()
+    private RegData regOf(RegData.OwnerType regType, Topic topic, String description = "") {
+        return RegFactory.newRegistration(name, description, localAddr, regType, topic)
     }
 }

@@ -338,7 +338,7 @@ class RegDatabaseSpec extends Specification {
     }
 
     private static RegData regData(String name, String host, String topic) {
-        RegFactory.newRegistration(name, host, TYPE, Topic.wrap(topic)).build()
+        RegFactory.newRegistration(name, host, TYPE, Topic.wrap(topic))
     }
 
     private static RegData regFilter(builder) {

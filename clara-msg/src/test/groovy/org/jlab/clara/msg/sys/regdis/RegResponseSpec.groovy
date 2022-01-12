@@ -23,8 +23,8 @@ class RegResponseSpec extends Specification {
 
     void setupSpec() {
         var topic = Topic.wrap("writer.scifi:books")
-        regData1 = newRegistration("asimov", "10.2.9.1", SUBSCRIBER, topic).build()
-        regData2 = newRegistration("bradbury", "10.2.9.1", SUBSCRIBER, topic).build()
+        regData1 = newRegistration("asimov", "10.2.9.1", SUBSCRIBER, topic)
+        regData2 = newRegistration("bradbury", "10.2.9.1", SUBSCRIBER, topic)
     }
 
     def "Send and parse a success response for a registration request"() {

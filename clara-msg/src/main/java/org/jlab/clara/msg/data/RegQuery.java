@@ -16,7 +16,7 @@ import org.jlab.clara.msg.sys.regdis.RegFactory;
  */
 public final class RegQuery {
 
-    private final RegData.Builder data;
+    private final RegData data;
     private final Category category;
 
     /**
@@ -173,7 +173,7 @@ public final class RegQuery {
 
 
     private RegQuery(RegData.Builder data, Category category) {
-        this.data = data;
+        this.data = data.build();
         this.category = category;
     }
 
@@ -182,7 +182,7 @@ public final class RegQuery {
      *
      * @return the query as a registration data object
      */
-    public RegData.Builder data() {
+    public RegData data() {
         return data;
     }
 

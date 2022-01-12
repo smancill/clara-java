@@ -23,7 +23,7 @@ class RegRequestSpec extends Specification {
 
     void setupSpec() {
         var topic = Topic.wrap("writer.scifi:books")
-        regData = newRegistration("asimov", "10.2.9.1", SUBSCRIBER, topic).build()
+        regData = newRegistration("asimov", "10.2.9.1", SUBSCRIBER, topic)
     }
 
     def "Send and parse a registration request with protobuf registration data"() {
