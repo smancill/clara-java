@@ -21,7 +21,7 @@ class OrchestratorPaths {
     static final String OUTPUT_DIR = FileUtils.claraPath("data", "output").toString();
     static final String STAGE_DIR = File.separator + "scratch";
 
-    final List<WorkerFile> allFiles;
+    final List<FileInfo> allFiles;
 
     final Path inputDir;
     final Path outputDir;
@@ -30,20 +30,20 @@ class OrchestratorPaths {
 
     static class Builder {
 
-        private final List<WorkerFile> allFiles;
+        private final List<FileInfo> allFiles;
 
         private Path inputDir = Paths.get(INPUT_DIR);
         private Path outputDir = Paths.get(OUTPUT_DIR);
         private Path stageDir = Paths.get(STAGE_DIR);
 
         Builder(String inputFile, String outputFile) {
-            Path inputPath = Paths.get(inputFile);
-            Path outputPath = Paths.get(outputFile);
+            var inputPath = Paths.get(inputFile);
+            var outputPath = Paths.get(outputFile);
 
-            String inputName = FileUtils.getFileName(inputPath).toString();
-            String outputName = FileUtils.getFileName(outputPath).toString();
+            var inputName = FileUtils.getFileName(inputPath).toString();
+            var outputName = FileUtils.getFileName(outputPath).toString();
 
-            this.allFiles = List.of(new WorkerFile(inputName, outputName));
+            this.allFiles = List.of(new FileInfo(inputName, outputName));
             this.inputDir = FileUtils.getParent(inputPath).toAbsolutePath().normalize();
             this.outputDir = FileUtils.getParent(outputPath).toAbsolutePath().normalize();
         }
@@ -51,7 +51,7 @@ class OrchestratorPaths {
         Builder(List<String> inputFiles) {
             this.allFiles = inputFiles.stream()
                     .peek(f -> checkValidFileName(f))
-                    .map(f -> new WorkerFile(f, "out_" + f))
+                    .map(f -> new FileInfo(f, "out_" + f))
                     .collect(Collectors.toList());
         }
 
@@ -93,20 +93,20 @@ class OrchestratorPaths {
         this.stageDir = builder.stageDir;
     }
 
-    Path inputFilePath(WorkerFile recFile) {
-        return inputDir.resolve(recFile.inputName);
+    Path inputFilePath(FileInfo file) {
+        return inputDir.resolve(file.inputName);
     }
 
-    Path outputFilePath(WorkerFile recFile) {
-        return outputDir.resolve(recFile.outputName);
+    Path outputFilePath(FileInfo file) {
+        return outputDir.resolve(file.outputName);
     }
 
-    Path stageInputFilePath(WorkerFile recFile) {
-        return stageDir.resolve(recFile.inputName);
+    Path stageInputFilePath(FileInfo file) {
+        return stageDir.resolve(file.inputName);
     }
 
-    Path stageOutputFilePath(WorkerFile recFile) {
-        return stageDir.resolve(recFile.outputName);
+    Path stageOutputFilePath(FileInfo file) {
+        return stageDir.resolve(file.outputName);
     }
 
     int numFiles() {

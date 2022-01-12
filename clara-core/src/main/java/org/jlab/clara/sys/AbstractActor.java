@@ -80,7 +80,7 @@ abstract class AbstractActor {
     Subscription startRegisteredSubscription(Topic topic,
                                              Callback callback,
                                              String description) throws ClaraException {
-        Subscription sub = base.listen(topic, callback);
+        var sub = base.listen(topic, callback);
         try {
             base.register(topic, description);
         } catch (Exception e) {
@@ -92,10 +92,10 @@ abstract class AbstractActor {
 
     void sendResponse(Message msg, MetaData.Status status, String data) {
         try {
-            Message repMsg = MessageUtil.buildRequest(msg.getReplyTopic(), data);
-            repMsg.getMetaData().setAuthor(base.getName());
-            repMsg.getMetaData().setStatus(status);
-            base.send(repMsg);
+            var response = MessageUtil.buildRequest(msg.getReplyTopic(), data);
+            response.getMetaData().setAuthor(base.getName());
+            response.getMetaData().setStatus(status);
+            base.send(response);
         } catch (ClaraMsgException e) {
             e.printStackTrace();
         }

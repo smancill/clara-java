@@ -32,9 +32,9 @@ class SaveCommand extends AbstractCommand {
             writer.println("Error: missing filename argument");
             return EXIT_ERROR;
         }
-        Path path = FileUtils.expandHome(args[0]);
+        var path = FileUtils.expandHome(args[0]);
         if (Files.exists(path)) {
-            boolean overwrite = scanAnswer();
+            var overwrite = scanAnswer();
             if (!overwrite) {
                 writer.println("The config was not saved");
                 return EXIT_SUCCESS;
@@ -44,10 +44,10 @@ class SaveCommand extends AbstractCommand {
     }
 
     private boolean scanAnswer() {
-        Scanner scan = new Scanner(System.in);
+        var scan = new Scanner(System.in);
         while (true) {
             System.out.print("The file already exists. Do you want to overwrite it? (y/N): ");
-            String answer = scan.nextLine();
+            var answer = scan.nextLine();
             switch (answer) {
                 case "y":
                 case "Y":
@@ -67,8 +67,8 @@ class SaveCommand extends AbstractCommand {
     }
 
     private int writeFile(Path path) {
-        try (PrintWriter printer = FileUtils.openOutputTextFile(path, false)) {
-            for (ConfigVariable variable : config.getVariables()) {
+        try (var printer = FileUtils.openOutputTextFile(path, false)) {
+            for (var variable : config.getVariables()) {
                 if (variable.hasValue()) {
                     printer.printf("set %s %s%n", variable.getName(), variable.getValue());
                 }

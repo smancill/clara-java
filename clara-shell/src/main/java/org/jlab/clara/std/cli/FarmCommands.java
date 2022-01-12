@@ -7,7 +7,6 @@
 package org.jlab.clara.std.cli;
 
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.jlab.clara.util.EnvUtils;
@@ -66,15 +65,15 @@ final class FarmCommands {
     private FarmCommands() { }
 
     private static void configTemplates() {
-        Path tplDir = getTemplatesDir();
+        var templatesDir = getTemplatesDir();
         try {
-            FTL_CONFIG.setDirectoryForTemplateLoading(tplDir.toFile());
+            FTL_CONFIG.setDirectoryForTemplateLoading(templatesDir.toFile());
             FTL_CONFIG.setDefaultEncoding("UTF-8");
             FTL_CONFIG.setNumberFormat("computer");
             FTL_CONFIG.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
             FTL_CONFIG.setLogTemplateExceptions(false);
         } catch (IOException e) {
-            throw new IllegalStateException("Missing Clara templates directory: " + tplDir);
+            throw new IllegalStateException("Missing Clara templates directory: " + templatesDir);
         }
     }
 
@@ -86,11 +85,11 @@ final class FarmCommands {
     }
 
     private static void farmVariables(Config.Builder builder) {
-        List<ConfigVariable.Builder> vl = new ArrayList<>();
+        List<ConfigVariable.Builder> variables = new ArrayList<>();
 
         BiFunction<String, String, ConfigVariable.Builder> addBuilder = (n, d) -> {
-            ConfigVariable.Builder b = ConfigVariable.newBuilder(n, d);
-            vl.add(b);
+            var b = ConfigVariable.newBuilder(n, d);
+            variables.add(b);
             return b;
         };
 
@@ -123,15 +122,15 @@ final class FarmCommands {
             .withExpectedValues(JLAB_SYSTEM, PBS_SYSTEM)
             .withInitialValue(JLAB_SYSTEM);
 
-        vl.forEach(builder::withConfigVariable);
+        variables.forEach(builder::withConfigVariable);
     }
 
     private static String defaultConfigFile() {
-        Path yamlPath = PLUGIN.resolve("config/services.yaml");
+        var yamlPath = PLUGIN.resolve("config/services.yaml");
         if (Files.exists(yamlPath)) {
             return yamlPath.toString();
         }
-        Path compatibilityPath = PLUGIN.resolve("config/services.yml");
+        var compatibilityPath = PLUGIN.resolve("config/services.yml");
         if (Files.exists(compatibilityPath)) {
             return compatibilityPath.toString();
         }
@@ -139,11 +138,11 @@ final class FarmCommands {
     }
 
     private static String defaultFileList() {
-        Path filesPath = PLUGIN.resolve("config/files.txt");
+        var filesPath = PLUGIN.resolve("config/files.txt");
         if (Files.exists(filesPath)) {
             return filesPath.toString();
         }
-        Path compatibilityPath = PLUGIN.resolve("config/files.list");
+        var compatibilityPath = PLUGIN.resolve("config/files.list");
         if (Files.exists(compatibilityPath)) {
             return compatibilityPath.toString();
         }
@@ -172,7 +171,7 @@ final class FarmCommands {
         }
 
         protected Path getJobScript(String ext) {
-            String name = String.format("farm_%s", runUtils.getSession());
+            var name = String.format("farm_%s", runUtils.getSession());
             return PLUGIN.resolve("config/" + name + ext);
         }
     }
@@ -186,17 +185,17 @@ final class FarmCommands {
 
         @Override
         public int execute(String[] args) {
-            String system = config.getString(FARM_SYSTEM);
+            var system = config.getString(FARM_SYSTEM);
             if (system.equals(JLAB_SYSTEM)) {
                 if (CommandUtils.checkProgram(JLAB_SUB_CMD)) {
                     try {
-                        Path jobFile = createJLabScript();
+                        var jobFile = createJLabScript();
                         return CommandUtils.runProcess(JLAB_SUB_CMD, jobFile.toString());
                     } catch (IOException e) {
                         writer.println("Error: could not set job:  " + e.getMessage());
                         return EXIT_ERROR;
                     } catch (TemplateException e) {
-                        String error = e.getMessageWithoutStackTop();
+                        var error = e.getMessageWithoutStackTop();
                         writer.println("Error: could not set job: " + error);
                         return EXIT_ERROR;
                     }
@@ -208,13 +207,13 @@ final class FarmCommands {
             if (system.equals(PBS_SYSTEM)) {
                 if (CommandUtils.checkProgram(PBS_SUB_CMD)) {
                     try {
-                        Path jobFile = createPbsScript();
+                        var jobFile = createPbsScript();
                         return CommandUtils.runProcess(PBS_SUB_CMD, jobFile.toString());
                     } catch (IOException e) {
                         writer.println("Error: could not set job:  " + e.getMessage());
                         return EXIT_ERROR;
                     } catch (TemplateException e) {
-                        String error = e.getMessageWithoutStackTop();
+                        var error = e.getMessageWithoutStackTop();
                         writer.println("Error: could not set job: " + error);
                         return EXIT_ERROR;
                     }
@@ -228,8 +227,8 @@ final class FarmCommands {
         }
 
         private String getClaraCommand() {
-            Path wrapper = FileUtils.claraPath("lib", "clara", "run-clara");
-            SystemCommandBuilder cmd = new SystemCommandBuilder(wrapper);
+            var wrapper = FileUtils.claraPath("lib", "clara", "run-clara");
+            var cmd = new SystemCommandBuilder(wrapper);
 
             cmd.addOption("-i", config.getString(Config.INPUT_DIR));
             cmd.addOption("-o", config.getString(Config.OUTPUT_DIR));
@@ -267,8 +266,8 @@ final class FarmCommands {
         }
 
         private Path createClaraScript(Model model) throws IOException, TemplateException {
-            Path wrapper = getJobScript(".sh");
-            try (PrintWriter printer = FileUtils.openOutputTextFile(wrapper, false)) {
+            var wrapper = getJobScript(".sh");
+            try (var printer = FileUtils.openOutputTextFile(wrapper, false)) {
                 processTemplate("farm-script.ftl", model, printer);
                 model.put("farm", "script", wrapper);
             }
@@ -278,29 +277,29 @@ final class FarmCommands {
         }
 
         private Path createJLabScript() throws IOException, TemplateException {
-            Model model = createDataModel();
+            var model = createDataModel();
             createClaraScript(model);
 
-            Path jobFile = getJobScript(JLAB_SUB_EXT);
-            try (PrintWriter printer = FileUtils.openOutputTextFile(jobFile, false)) {
+            var jobFile = getJobScript(JLAB_SUB_EXT);
+            try (var printer = FileUtils.openOutputTextFile(jobFile, false)) {
                 processTemplate("farm-jlab.ftl", model, printer);
             }
             return jobFile;
         }
 
         private Path createPbsScript() throws IOException, TemplateException {
-            Model model = createDataModel();
+            var model = createDataModel();
             createClaraScript(model);
 
-            int diskKb = config.getInt(FARM_DISK) * 1024 * 1024;
-            int time = config.getInt(FARM_TIME);
-            String walltime = String.format("%d:%02d:00", time / 60, time % 60);
+            var diskKb = config.getInt(FARM_DISK) * 1024 * 1024;
+            var time = config.getInt(FARM_TIME);
+            var walltime = String.format("%d:%02d:00", time / 60, time % 60);
 
             model.put("farm", "disk", diskKb);
             model.put("farm", "time", walltime);
 
-            Path jobFile = getJobScript(PBS_SUB_EXT);
-            try (PrintWriter printer = FileUtils.openOutputTextFile(jobFile, false)) {
+            var jobFile = getJobScript(PBS_SUB_EXT);
+            try (var printer = FileUtils.openOutputTextFile(jobFile, false)) {
                 processTemplate("farm-pbs.ftl", model, printer);
             }
 
@@ -308,7 +307,7 @@ final class FarmCommands {
         }
 
         private Model createDataModel() {
-            Model model = new Model();
+            var model = new Model();
 
             // set core variables
             model.put("user", EnvUtils.userName());
@@ -340,7 +339,7 @@ final class FarmCommands {
 
         private void processTemplate(String name, Model model, PrintWriter printer)
                 throws IOException, TemplateException {
-            Template template = FTL_CONFIG.getTemplate(name);
+            var template = FTL_CONFIG.getTemplate(name);
             template.process(model.getRoot(), printer);
         }
 
@@ -348,9 +347,9 @@ final class FarmCommands {
             if (config.hasValue(Config.JAVA_OPTIONS)) {
                 return config.getString(Config.JAVA_OPTIONS);
             }
-            String jvmOpts = "-XX:+UseNUMA -XX:+UseBiasedLocking";
+            var jvmOpts = "-XX:+UseNUMA -XX:+UseBiasedLocking";
             if (config.hasValue(Config.JAVA_MEMORY)) {
-                int memSize = config.getInt(Config.JAVA_MEMORY);
+                var memSize = config.getInt(Config.JAVA_MEMORY);
                 return String.format("-Xms%dg -Xmx%dg %s", memSize, memSize, jvmOpts);
             }
             return jvmOpts;
@@ -366,7 +365,7 @@ final class FarmCommands {
 
         @Override
         public int execute(String[] args) {
-            String system = config.getString(FARM_SYSTEM);
+            var system = config.getString(FARM_SYSTEM);
             if (system.equals(JLAB_SYSTEM)) {
                 if (CommandUtils.checkProgram(JLAB_STAT_CMD)) {
                     return CommandUtils.runProcess(JLAB_STAT_CMD, "-u", EnvUtils.userName());
@@ -395,7 +394,7 @@ final class FarmCommands {
 
         @Override
         public int execute(String[] args) {
-            String system = config.getString(FARM_SYSTEM);
+            var system = config.getString(FARM_SYSTEM);
             if (system.equals(JLAB_SYSTEM)) {
                 return showFile(getJobScript(JLAB_SUB_EXT));
             }

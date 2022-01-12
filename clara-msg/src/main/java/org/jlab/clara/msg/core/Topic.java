@@ -74,14 +74,14 @@ public final class Topic {
         if (domain == null || domain.equals(ANY)) {
             throw new IllegalArgumentException("domain is not defined");
         }
-        StringBuilder topic = new StringBuilder();
+        var topic = new StringBuilder();
         topic.append(domain);
         if (subject != null && !subject.equals(ANY)) {
             topic.append(SEPARATOR).append(subject);
             if (type != null && !type.equals(ANY)) {
-                StringTokenizer st = new StringTokenizer(type, SEPARATOR);
+                var st = new StringTokenizer(type, SEPARATOR);
                 while (st.hasMoreTokens()) {
-                    String tst = st.nextToken();
+                    var tst = st.nextToken();
                     if (!tst.contains(ANY)) {
                         topic.append(SEPARATOR).append(tst);
                     } else {
@@ -231,7 +231,7 @@ public final class Topic {
      * @return true if this topic is a parent of the other
      */
     public boolean isParent(Topic other) {
-        String topic = other.toString();
+        var topic = other.toString();
         return topic.startsWith(this.topic);
     }
 

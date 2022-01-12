@@ -20,7 +20,7 @@ public abstract class ProxyListener implements Runnable {
 
     private static final long TIMEOUT = 100;
 
-    protected final ConcurrentMap<ProxyAddress, ProxyDriver> items;
+    protected final ConcurrentMap<ProxyAddress, ProxyDriver> connections;
 
     private final Context context;
 
@@ -29,7 +29,7 @@ public abstract class ProxyListener implements Runnable {
 
 
     public ProxyListener(String name, Context context) {
-        this.items = new ConcurrentHashMap<>();
+        this.connections = new ConcurrentHashMap<>();
         this.context = context;
         this.pollingThread = ThreadUtils.newThread(name, this);
     }
@@ -46,20 +46,20 @@ public abstract class ProxyListener implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        items.values().forEach(ProxyDriver::close);
+        connections.values().forEach(ProxyDriver::close);
     }
 
     protected abstract void handle(ZMsg msg) throws ClaraMsgException;
 
     @Override
     public void run() {
-        try (Poller poller = context.getContext().poller(items.size())) {
+        try (var poller = context.getContext().poller(connections.size())) {
             while (isRunning) {
-                for (ProxyDriver connection : items.values()) {
+                for (var connection : connections.values()) {
                     poller.register(connection.getSocket(), Poller.POLLIN);
                 }
                 checkMessages(poller);
-                for (ProxyDriver connection : items.values()) {
+                for (var connection : connections.values()) {
                     poller.unregister(connection.getSocket());
                 }
             }
@@ -67,13 +67,13 @@ public abstract class ProxyListener implements Runnable {
     }
 
     private void checkMessages(Poller poller) {
-        int rc = poller.poll(TIMEOUT);
+        var rc = poller.poll(TIMEOUT);
         if (rc == 0) {
             return;
         }
         for (int i = 0; i < poller.getSize(); i++) {
             if (poller.pollin(i)) {
-                ZMsg rawMsg = ZMsg.recvMsg(poller.getSocket(i));
+                var rawMsg = ZMsg.recvMsg(poller.getSocket(i));
                 if (rawMsg == null) {
                     isRunning = false; // interrupted
                     return;

@@ -53,8 +53,8 @@ public final class ProxyDriverSetup {
         private boolean checkSubscription;
 
         private Builder() {
-            final long postConSleep = Environment.getLong("CLARA_POST_CONNECTION_SLEEP", 0);
-            final long postSubSleep = Environment.getLong("CLARA_POST_SUBSCRIPTION_SLEEP", 10);
+            final var postConSleep = Environment.getLong("CLARA_POST_CONNECTION_SLEEP", 0);
+            final var postSubSleep = Environment.getLong("CLARA_POST_SUBSCRIPTION_SLEEP", 10);
 
             preConnection = (s) -> { };
             postConnection = () -> ThreadUtils.sleep(postConSleep);

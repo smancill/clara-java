@@ -57,7 +57,7 @@ public class ClaraBase extends Actor {
     }
 
     private static ActorSetup setup(ClaraComponent me, ClaraComponent frontEnd) {
-        ActorSetup.Builder builder = ActorSetup.newBuilder()
+        var builder = ActorSetup.newBuilder()
                         .withProxy(me.getProxyAddress())
                         .withRegistrar(getRegAddress(frontEnd))
                         .withPoolSize(me.getSubscriptionPoolSize())
@@ -129,7 +129,7 @@ public class ClaraBase extends Actor {
      */
     public void send(ClaraComponent component, String requestText)
             throws ClaraMsgException {
-        Message msg = MessageUtil.buildRequest(component.getTopic(), requestText);
+        var msg = MessageUtil.buildRequest(component.getTopic(), requestText);
         send(component, msg);
     }
 
@@ -194,7 +194,7 @@ public class ClaraBase extends Actor {
      */
     public Message syncSend(ClaraComponent component, String requestText, long timeout)
             throws ClaraMsgException, TimeoutException {
-        Message msg = MessageUtil.buildRequest(component.getTopic(), requestText);
+        var msg = MessageUtil.buildRequest(component.getTopic(), requestText);
         return syncSend(component, msg, timeout);
     }
 
@@ -268,11 +268,11 @@ public class ClaraBase extends Actor {
      * @throws ClaraException if registration failed
      */
     public void register(Topic topic, String description) throws ClaraException {
-        RegAddress regAddress = getRegAddress(frontEnd);
+        var address = getRegAddress(frontEnd);
         try {
-            register(RegInfo.subscriber(topic, description), regAddress);
+            register(RegInfo.subscriber(topic, description), address);
         } catch (ClaraMsgException e) {
-            throw new ClaraException("could not register with front-end = " + regAddress, e);
+            throw new ClaraException("could not register with front-end = " + address, e);
         }
     }
 
@@ -284,44 +284,44 @@ public class ClaraBase extends Actor {
      * @throws ClaraException if removing the registration failed
      */
     public void removeRegistration(Topic topic) throws ClaraException {
-        RegAddress regAddress = getRegAddress(frontEnd);
+        var address = getRegAddress(frontEnd);
         try {
-            deregister(RegInfo.subscriber(topic), regAddress);
+            deregister(RegInfo.subscriber(topic), address);
         } catch (ClaraMsgException e) {
-            throw new ClaraException("could not deregister from front-end = " + regAddress, e);
+            throw new ClaraException("could not deregister from front-end = " + address, e);
         }
     }
 
     /**
      * Retrieves Clara actor registration information from the registrar service.
      *
-     * @param regHost registrar server host
-     * @param regPort registrar server port
+     * @param host registrar server host
+     * @param port registrar server port
      * @param topic   the canonical name of an actor: {@link Topic}
      * @return set of {@link org.jlab.clara.msg.data.RegDataProto.RegData} objects
      * @throws IOException
      * @throws ClaraMsgException
      */
-    public Set<RegRecord> discover(String regHost, int regPort, Topic topic)
+    public Set<RegRecord> discover(String host, int port, Topic topic)
             throws IOException, ClaraMsgException {
-        RegAddress regAddress = new RegAddress(regHost, regPort);
-        return discover(RegQuery.subscribers(topic), regAddress, 1000);
+        var address = new RegAddress(host, port);
+        return discover(RegQuery.subscribers(topic), address, 1000);
     }
 
     /**
      * Retrieves Clara actor registration information from the registrar service,
      * assuming registrar is running using the default port.
      *
-     * @param regHost registrar server host
+     * @param host registrar server host
      * @param topic   the canonical name of an actor: {@link Topic}
      * @return set of {@link org.jlab.clara.msg.data.RegDataProto.RegData} objects
      * @throws IOException
      * @throws ClaraMsgException
      */
-    public Set<RegRecord> discover(String regHost, Topic topic)
+    public Set<RegRecord> discover(String host, Topic topic)
             throws IOException, ClaraMsgException {
-        RegAddress regAddress = new RegAddress(regHost);
-        return discover(RegQuery.subscribers(topic), regAddress);
+        var address = new RegAddress(host);
+        return discover(RegQuery.subscribers(topic), address);
     }
 
     /**
@@ -357,9 +357,9 @@ public class ClaraBase extends Actor {
             throws IOException, ClaraMsgException, TimeoutException {
 
         if (component.isDpe()) {
-            String data = MessageUtil.buildData(ReportType.INFO.getValue());
-            Topic topic = component.getTopic();
-            Message msg = MessageUtil.buildRequest(topic, data);
+            var data = MessageUtil.buildData(ReportType.INFO.getValue());
+            var topic = component.getTopic();
+            var msg = MessageUtil.buildRequest(topic, data);
             return syncSend(component, msg, timeout);
         }
         return null;

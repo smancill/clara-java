@@ -46,7 +46,7 @@ public class DpeReport extends BaseReport {
     }
 
     private String aliveData() {
-        JSONObject data =  new JSONObject();
+        var data =  new JSONObject();
         data.put("name", name);
         data.put("n_cores", coreCount);
         data.put("clara_home", claraHome);

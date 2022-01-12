@@ -184,16 +184,16 @@ public class Config {
     }
 
     static Map<String, ConfigVariable> initVariables() {
-        Map<String, ConfigVariable> m = new LinkedHashMap<>();
-        defaultVariables().forEach((n, b) -> m.put(n, b.build()));
-        return m;
+        Map<String, ConfigVariable> variables = new LinkedHashMap<>();
+        defaultVariables().forEach((n, b) -> variables.put(n, b.build()));
+        return variables;
     }
 
     static Map<String, ConfigVariable.Builder> defaultVariables() {
         Map<String, ConfigVariable.Builder> defaultVariables = new LinkedHashMap<>();
 
         BiFunction<String, String, ConfigVariable.Builder> addBuilder = (n, d) -> {
-            ConfigVariable.Builder b = ConfigVariable.newBuilder(n, d);
+            var b = ConfigVariable.newBuilder(n, d);
             defaultVariables.put(n, b);
             return b;
         };
@@ -317,9 +317,9 @@ public class Config {
      * @return the current string value of the variable, if set
      */
     public String getString(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof String) {
-            return (String) object;
+        Object obj = getValue(variable);
+        if (obj instanceof String s) {
+            return s;
         }
         throw new IllegalArgumentException("variable \"" + variable + "\" is not a string");
     }
@@ -331,13 +331,13 @@ public class Config {
      * @return the current integer value of the variable, if set
      */
     public int getInt(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof Number) {
-            return ((Number) object).intValue();
+        Object obj = getValue(variable);
+        if (obj instanceof Number n) {
+            return n.intValue();
         }
-        if (object instanceof String) {
+        if (obj instanceof String s) {
             try {
-                return Integer.parseInt((String) object);
+                return Integer.parseInt(s);
             } catch (NumberFormatException e) {
                 // ignore
             }
@@ -352,13 +352,13 @@ public class Config {
      * @return the current long value of the variable, if set
      */
     public long getLong(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof Number) {
-            return ((Number) object).longValue();
+        Object obj = getValue(variable);
+        if (obj instanceof Number n) {
+            return n.longValue();
         }
-        if (object instanceof String) {
+        if (obj instanceof String s) {
             try {
-                return Long.parseLong((String) object);
+                return Long.parseLong(s);
             } catch (NumberFormatException e) {
                 // ignore
             }
@@ -373,13 +373,13 @@ public class Config {
      * @return the current long value of the variable, if set
      */
     public double getDouble(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof Number) {
-            return ((Number) object).doubleValue();
+        Object obj = getValue(variable);
+        if (obj instanceof Number n) {
+            return n.doubleValue();
         }
-        if (object instanceof String) {
+        if (obj instanceof String s) {
             try {
-                return Double.parseDouble((String) object);
+                return Double.parseDouble(s);
             } catch (NumberFormatException e) {
                 // ignore
             }
@@ -394,26 +394,26 @@ public class Config {
      * @return the current boolean value of the variable, if set
      */
     public boolean getBoolean(String variable) {
-        Object object = getValue(variable);
-        if (object instanceof Boolean) {
-            return (Boolean) object;
+        Object obj = getValue(variable);
+        if (obj instanceof Boolean b) {
+            return b;
         }
-        if (object instanceof String) {
-            return ((String) object).equalsIgnoreCase("true");
+        if (obj instanceof String s) {
+            return s.equalsIgnoreCase("true");
         }
         throw new IllegalArgumentException("variable \"" + variable + "\" is not a boolean");
     }
 
     void addVariable(ConfigVariable variable) {
-        ConfigVariable prev = variables.putIfAbsent(variable.getName(), variable);
+        var prev = variables.putIfAbsent(variable.getName(), variable);
         if (prev != null) {
-            String msg = String.format("a variable named %s already exists", variable.getName());
-            throw new IllegalArgumentException(msg);
+            var error = String.format("a variable named %s already exists", variable.getName());
+            throw new IllegalArgumentException(error);
         }
     }
 
     ConfigVariable getVariable(String name) {
-        ConfigVariable v = variables.get(name);
+        var v = variables.get(name);
         if (v == null) {
             throw new IllegalArgumentException("no variable named " + name);
         }

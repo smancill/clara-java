@@ -21,7 +21,7 @@ import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 
-class ServiceConfig {
+class ApplicationConfig {
 
     static final String READER = "reader";
     static final String WRITER = "writer";
@@ -42,11 +42,11 @@ class ServiceConfig {
         FTL_CONFIG.setLogTemplateExceptions(false);
     }
 
-    ServiceConfig(JSONObject configData) {
+    ApplicationConfig(JSONObject configData) {
         this(configData, new HashMap<>());
     }
 
-    ServiceConfig(JSONObject configData, Map<String, Object> model) {
+    ApplicationConfig(JSONObject configData, Map<String, Object> model) {
         this.configData = configData;
         this.model = model;
     }
@@ -60,33 +60,33 @@ class ServiceConfig {
     }
 
     private JSONObject getIO(String key) {
-        JSONObject conf = new JSONObject();
+        var config = new JSONObject();
         if (configData.has(IO_CONFIG)) {
-            JSONObject ioConf = configData.getJSONObject(IO_CONFIG);
-            if (ioConf.has(key)) {
-                addServiceConfig(conf, ioConf, key);
+            var ioConfig = configData.getJSONObject(IO_CONFIG);
+            if (ioConfig.has(key)) {
+                add(config, ioConfig, key);
             }
         }
-        return conf;
+        return config;
     }
 
     JSONObject get(ServiceName service) {
-        JSONObject conf = new JSONObject();
+        var config = new JSONObject();
         if (configData.has(GLOBAL_CONFIG)) {
-            addServiceConfig(conf, configData, GLOBAL_CONFIG);
+            add(config, configData, GLOBAL_CONFIG);
         }
         if (configData.has(SERVICE_CONFIG)) {
-            JSONObject services = configData.getJSONObject(SERVICE_CONFIG);
-            if (services.has(service.name())) {
-                addServiceConfig(conf, services, service.name());
+            var servicesConfig = configData.getJSONObject(SERVICE_CONFIG);
+            if (servicesConfig.has(service.name())) {
+                add(config, servicesConfig, service.name());
             }
         }
-        return conf;
+        return config;
     }
 
-    private void addServiceConfig(JSONObject target, JSONObject parent, String serviceKey) {
-        JSONObject config = parent.getJSONObject(serviceKey);
-        for (String key : config.keySet()) {
+    private void add(JSONObject target, JSONObject parent, String serviceKey) {
+        var config = parent.getJSONObject(serviceKey);
+        for (var key : config.keySet()) {
             Object value = config.get(key);
             if (value instanceof String) {
                 Object result = processTemplate(key, (String) value);
@@ -101,16 +101,16 @@ class ServiceConfig {
 
     private String processTemplate(String key, String value) {
         try {
-            Template tpl = new Template(key, new StringReader(value), FTL_CONFIG);
-            StringWriter writer = new StringWriter();
+            var tpl = new Template(key, new StringReader(value), FTL_CONFIG);
+            var writer = new StringWriter();
             tpl.process(model, writer);
             return writer.toString();
         } catch (ParseException e) {
-            String msg = String.format("\"%s\" template is not valid: %s", key, value);
-            throw new OrchestratorConfigException(msg);
+            var error = String.format("\"%s\" template is not valid: %s", key, value);
+            throw new OrchestratorConfigException(error);
         } catch (TemplateException e) {
-            String msg = String.format("\"%s\" template cannot not be evaluated: %s", key, value);
-            throw new OrchestratorConfigException(msg);
+            var error = String.format("\"%s\" template cannot not be evaluated: %s", key, value);
+            throw new OrchestratorConfigException(error);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

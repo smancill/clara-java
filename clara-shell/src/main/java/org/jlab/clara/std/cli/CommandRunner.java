@@ -12,7 +12,6 @@ import org.jline.reader.Parser;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.Terminal.Signal;
-import org.jline.terminal.Terminal.SignalHandler;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -37,20 +36,20 @@ class CommandRunner {
         if (shellArgs.length == 0) {
             return Command.EXIT_SUCCESS;
         }
-        String commandName = shellArgs[0];
-        Command command = commands.get(commandName);
+        var name = shellArgs[0];
+        var command = commands.get(name);
         if (command == null) {
-            if ("exit".equals(commandName)) {
+            if ("exit".equals(name)) {
                 throw new EndOfFileException();
             }
             terminal.writer().println("Invalid command");
             return Command.EXIT_ERROR;
         }
-        Thread execThread = Thread.currentThread();
-        SignalHandler prevIntHandler = terminal.handle(Signal.INT, s -> execThread.interrupt());
+        var execThread = Thread.currentThread();
+        var prevIntHandler = terminal.handle(Signal.INT, s -> execThread.interrupt());
         try {
-            String[] cmdArgs = Arrays.copyOfRange(shellArgs, 1, shellArgs.length);
-            return command.execute(cmdArgs);
+            var args = Arrays.copyOfRange(shellArgs, 1, shellArgs.length);
+            return command.execute(args);
         } finally {
             terminal.handle(Signal.INT, prevIntHandler);
             terminal.writer().flush();
@@ -59,8 +58,8 @@ class CommandRunner {
 
     private String[] parseLine(String line) {
         try {
-            String cmd = EnvUtils.expandEnvironment(line, System.getenv()).trim();
-            return parser.parse(cmd, cmd.length() + 1)
+            var cmdLine = EnvUtils.expandEnvironment(line, System.getenv()).trim();
+            return parser.parse(cmdLine, cmdLine.length() + 1)
                          .words()
                          .toArray(new String[0]);
         } catch (IllegalArgumentException e) {

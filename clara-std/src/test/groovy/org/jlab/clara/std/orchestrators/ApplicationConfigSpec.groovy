@@ -10,7 +10,7 @@ import org.jlab.clara.base.ServiceName
 import org.json.JSONObject
 import spock.lang.Specification
 
-class ServiceConfigSpec extends Specification {
+class ApplicationConfigSpec extends Specification {
 
     private static final GLOBAL = new JSONObject(
         limit: 9000,
@@ -32,7 +32,7 @@ class ServiceConfigSpec extends Specification {
         var data = new JSONObject()
 
         when:
-        var config = new ServiceConfig(data)
+        var config = new ApplicationConfig(data)
 
         then:
         config.reader().length() == 0
@@ -44,7 +44,7 @@ class ServiceConfigSpec extends Specification {
         var data = new JSONObject("io-services": [reader: R, writer: W])
 
         when:
-        var config = new ServiceConfig(data)
+        var config = new ApplicationConfig(data)
 
         then:
         config.reader().similar(R)
@@ -56,7 +56,7 @@ class ServiceConfigSpec extends Specification {
         var data = new JSONObject()
 
         when:
-        var config = new ServiceConfig(data)
+        var config = new ApplicationConfig(data)
 
         then:
         config.get(SN1).length() == 0
@@ -68,7 +68,7 @@ class ServiceConfigSpec extends Specification {
         var data = new JSONObject(services: [S1: S1])
 
         when:
-        var config = new ServiceConfig(data)
+        var config = new ApplicationConfig(data)
 
         then:
         config.get(SN2).length() == 0
@@ -79,7 +79,7 @@ class ServiceConfigSpec extends Specification {
         var data = new JSONObject(services: [S1: S1, S2: S2])
 
         when:
-        var config = new ServiceConfig(data)
+        var config = new ApplicationConfig(data)
 
         then:
         config.get(SN1).similar(S1)
@@ -91,7 +91,7 @@ class ServiceConfigSpec extends Specification {
         var data = new JSONObject(global: GLOBAL)
 
         when:
-        var config = new ServiceConfig(data)
+        var config = new ApplicationConfig(data)
 
         then:
         config.get(SN1).similar(GLOBAL)
@@ -103,7 +103,7 @@ class ServiceConfigSpec extends Specification {
         var data = new JSONObject(global: GLOBAL, services: [S1: S1, S2: S2])
 
         when:
-        var config = new ServiceConfig(data)
+        var config = new ApplicationConfig(data)
 
         then:
         var expected = new JSONObject(
@@ -122,7 +122,7 @@ class ServiceConfigSpec extends Specification {
         var data = new JSONObject(global: GLOBAL, services: [S1: S1, S2: S2])
 
         when:
-        var config = new ServiceConfig(data)
+        var config = new ApplicationConfig(data)
 
         then:
         config.get(SN1).getBoolean("log")
@@ -141,7 +141,7 @@ class ServiceConfigSpec extends Specification {
         var model = [input_file: "run10_20180101.dat"]
 
         when:
-        var config = new ServiceConfig(data, model)
+        var config = new ApplicationConfig(data, model)
 
         then:
         var serviceData = config.get(new ServiceName("10.1.1.1_java:master:Test"))

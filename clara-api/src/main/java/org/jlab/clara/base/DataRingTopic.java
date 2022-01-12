@@ -106,7 +106,7 @@ public class DataRingTopic {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append("DataRingTopic[");
         sb.append("state='").append(state).append('\'');
         if (!session.equals(Topic.ANY)) {
@@ -120,7 +120,7 @@ public class DataRingTopic {
     }
 
     String topic() {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append(state);
         if (!session.equals(Topic.ANY)) {
             sb.append(Topic.SEPARATOR).append(session);

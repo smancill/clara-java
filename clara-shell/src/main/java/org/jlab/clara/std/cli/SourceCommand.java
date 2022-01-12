@@ -53,9 +53,9 @@ class SourceCommand extends AbstractCommand {
             return EXIT_ERROR;
         }
 
-        Path path = FileUtils.expandHome(sourceFile);
+        var path = FileUtils.expandHome(sourceFile);
         try {
-            for (String line : readLines(path)) {
+            for (var line : readLines(path)) {
                 if (verbose) {
                     writer.println(line);
                 }
@@ -75,7 +75,7 @@ class SourceCommand extends AbstractCommand {
     }
 
     private static List<String> readLines(Path sourceFile) throws IOException {
-        Pattern pattern = Pattern.compile("^\\s*#.*$");
+        var pattern = Pattern.compile("^\\s*#.*$");
         return Files.lines(sourceFile)
                     .filter(line -> !line.isEmpty())
                     .filter(line -> !pattern.matcher(line).matches())

@@ -98,7 +98,7 @@ class ShowCommand extends BaseCommand {
             writer.printf("Error: variable %s is not set%n", variable);
             return EXIT_ERROR;
         }
-        Path path = Paths.get(config.getString(variable));
+        var path = Paths.get(config.getString(variable));
         return RunUtils.printFile(terminal, path);
     }
 
@@ -107,12 +107,12 @@ class ShowCommand extends BaseCommand {
             writer.printf("Error: variable %s is not set%n", variable);
             return EXIT_ERROR;
         }
-        Path dir = Paths.get(config.getString(variable));
+        var dir = Paths.get(config.getString(variable));
         return RunUtils.listFiles(dir, options);
     }
 
     private int printLog(String component, String description) {
-        RunUtils runUtils = new RunUtils(config);
+        var runUtils = new RunUtils(config);
         List<Path> logs;
         try {
             logs = runUtils.getLogFiles(component);
@@ -132,11 +132,11 @@ class ShowCommand extends BaseCommand {
     }
 
     private Path[] getDpeLogs(Path fe) {
-        List<Path> logs = new ArrayList<>();
+        var logs = new ArrayList<Path>();
         logs.add(fe);
-        RunUtils runUtils = new RunUtils(config);
-        for (ClaraLang lang : List.of(ClaraLang.CPP, ClaraLang.PYTHON)) {
-            Path path = runUtils.getLogFile(fe, lang);
+        var runUtils = new RunUtils(config);
+        for (var lang : List.of(ClaraLang.CPP, ClaraLang.PYTHON)) {
+            var path = runUtils.getLogFile(fe, lang);
             if (Files.exists(path)) {
                 logs.add(path);
             }

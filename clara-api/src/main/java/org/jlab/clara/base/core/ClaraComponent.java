@@ -126,18 +126,18 @@ public final class ClaraComponent {
                                               String dpeLang,
                                               int subscriptionPoolSize,
                                               String description) {
-        ClaraComponent a = new ClaraComponent(dpeLang,
-                dpeHost,
-                dpePort,
-                Topic.ANY,
-                Topic.ANY,
-                ClaraConstants.UNDEFINED,
-                subscriptionPoolSize,
-                description,
-                ClaraConstants.UNDEFINED);
-        a.setCanonicalName(name);
-        a.isOrchestrator = true;
-        return a;
+        var cc = new ClaraComponent(dpeLang,
+                                    dpeHost,
+                                    dpePort,
+                                    Topic.ANY,
+                                    Topic.ANY,
+                                    ClaraConstants.UNDEFINED,
+                                    subscriptionPoolSize,
+                                    description,
+                                    ClaraConstants.UNDEFINED);
+        cc.setCanonicalName(name);
+        cc.isOrchestrator = true;
+        return cc;
     }
 
     /**
@@ -207,16 +207,16 @@ public final class ClaraComponent {
      */
     public static ClaraComponent dpe(String dpeHost, int dpePort, String dpeLang,
                                      int subscriptionPoolSize, String description) {
-        ClaraComponent a = new ClaraComponent(dpeLang,
-                dpeHost,
-                dpePort,
-                Topic.ANY,
-                Topic.ANY,
-                ClaraConstants.UNDEFINED,
-                subscriptionPoolSize, description,
-                ClaraConstants.UNDEFINED);
-        a.isDpe = true;
-        return a;
+        var cc = new ClaraComponent(dpeLang,
+                                    dpeHost,
+                                    dpePort,
+                                    Topic.ANY,
+                                    Topic.ANY,
+                                    ClaraConstants.UNDEFINED,
+                                    subscriptionPoolSize, description,
+                                    ClaraConstants.UNDEFINED);
+        cc.isDpe = true;
+        return cc;
     }
 
     /**
@@ -321,16 +321,16 @@ public final class ClaraComponent {
     public static ClaraComponent container(String dpeHost, int dpePort, String dpeLang,
                                            String container,
                                            int subscriptionPoolSize, String description) {
-        ClaraComponent a = new ClaraComponent(dpeLang,
-                dpeHost,
-                dpePort,
-                container,
-                Topic.ANY,
-                ClaraConstants.UNDEFINED,
-                subscriptionPoolSize, description,
-                ClaraConstants.UNDEFINED);
-        a.isContainer = true;
-        return a;
+        var cc = new ClaraComponent(dpeLang,
+                                    dpeHost,
+                                    dpePort,
+                                    container,
+                                    Topic.ANY,
+                                    ClaraConstants.UNDEFINED,
+                                    subscriptionPoolSize, description,
+                                    ClaraConstants.UNDEFINED);
+        cc.isContainer = true;
+        return cc;
     }
 
     /**
@@ -436,17 +436,17 @@ public final class ClaraComponent {
                                          String container, String engine, String engineClass,
                                          int subscriptionPoolSize, String description,
                                          String initialState) {
-        ClaraComponent a = new ClaraComponent(dpeLang,
-                dpeHost,
-                dpePort,
-                container,
-                engine,
-                engineClass,
-                subscriptionPoolSize,
-                description,
-                initialState);
-        a.isService = true;
-        return a;
+        var cc = new ClaraComponent(dpeLang,
+                                    dpeHost,
+                                    dpePort,
+                                    container,
+                                    engine,
+                                    engineClass,
+                                    subscriptionPoolSize,
+                                    description,
+                                    initialState);
+        cc.isService = true;
+        return cc;
     }
 
     /**

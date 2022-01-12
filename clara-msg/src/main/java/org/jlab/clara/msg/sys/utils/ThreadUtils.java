@@ -39,7 +39,7 @@ public final class ThreadUtils {
     public static Thread newThread(String name, Runnable target) {
         Objects.requireNonNull(name, "name is null");
         Objects.requireNonNull(target, "target is null");
-        Thread thread = new Thread(target);
+        var thread = new Thread(target);
         thread.setName(name);
         thread.setUncaughtExceptionHandler((t, e) -> e.printStackTrace());
         return thread;
@@ -68,9 +68,8 @@ public final class ThreadUtils {
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
             super.afterExecute(r, t);
-            if (t == null && r instanceof Future<?>) {
+            if (t == null && r instanceof Future<?> future) {
                 try {
-                    Future<?> future = (Future<?>) r;
                     if (future.isDone()) {
                         future.get();
                     }
@@ -102,7 +101,7 @@ public final class ThreadUtils {
 
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(r, namePrefix + threadNumber.getAndIncrement());
+            var t = new Thread(r, namePrefix + threadNumber.getAndIncrement());
             if (t.isDaemon()) {
                 t.setDaemon(false);
             }

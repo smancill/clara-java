@@ -18,40 +18,40 @@ import org.json.JSONObject;
 public class JsonReportBuilder implements ExternalReport {
 
     @Override
-    public String generateReport(DpeReport dpeData) {
-        String snapshotTime = ClaraUtil.getCurrentTime();
+    public String generateReport(DpeReport dpeReport) {
+        var snapshotTime = ClaraUtil.getCurrentTime();
 
-        JSONObject dpeRuntime = new JSONObject();
-        dpeRuntime.put("name", dpeData.getHost());
+        var dpeRuntime = new JSONObject();
+        dpeRuntime.put("name", dpeReport.getHost());
         dpeRuntime.put("snapshot_time", snapshotTime);
-        dpeRuntime.put("cpu_usage", dpeData.getCpuUsage());
-        dpeRuntime.put("memory_usage", dpeData.getMemoryUsage());
-        dpeRuntime.put("load", dpeData.getLoad());
+        dpeRuntime.put("cpu_usage", dpeReport.getCpuUsage());
+        dpeRuntime.put("memory_usage", dpeReport.getMemoryUsage());
+        dpeRuntime.put("load", dpeReport.getLoad());
 
-        JSONArray containersRuntimeArray = new JSONArray();
-        for (ContainerReport cr : dpeData.getContainers()) {
-            JSONObject containerRuntime = new JSONObject();
-            containerRuntime.put("name", cr.getName());
+        var containersRuntimeArray = new JSONArray();
+        for (var containerReport : dpeReport.getContainers()) {
+            var containerRuntime = new JSONObject();
+            containerRuntime.put("name", containerReport.getName());
             containerRuntime.put("snapshot_time", snapshotTime);
 
-            long containerRequests = 0L;
+            var containerRequests = 0L;
 
-            JSONArray servicesRuntimeArray = new JSONArray();
-            for (ServiceReport sr : cr.getServices()) {
-                JSONObject serviceRuntime = new JSONObject();
+            var servicesRuntimeArray = new JSONArray();
+            for (var serviceReport : containerReport.getServices()) {
+                var serviceRuntime = new JSONObject();
 
-                long serviceRequests = sr.getRequestCount();
+                var serviceRequests = serviceReport.getRequestCount();
                 containerRequests += serviceRequests;
 
-                serviceRuntime.put("name", sr.getName());
+                serviceRuntime.put("name", serviceReport.getName());
                 serviceRuntime.put("snapshot_time", snapshotTime);
                 serviceRuntime.put("n_requests", serviceRequests);
-                serviceRuntime.put("n_failures", sr.getFailureCount());
-                serviceRuntime.put("shm_reads", sr.getShrmReads());
-                serviceRuntime.put("shm_writes", sr.getShrmWrites());
-                serviceRuntime.put("bytes_recv", sr.getBytesReceived());
-                serviceRuntime.put("bytes_sent", sr.getBytesSent());
-                serviceRuntime.put("exec_time", sr.getExecutionTime());
+                serviceRuntime.put("n_failures", serviceReport.getFailureCount());
+                serviceRuntime.put("shm_reads", serviceReport.getShrmReads());
+                serviceRuntime.put("shm_writes", serviceReport.getShrmWrites());
+                serviceRuntime.put("bytes_recv", serviceReport.getBytesReceived());
+                serviceRuntime.put("bytes_sent", serviceReport.getBytesSent());
+                serviceRuntime.put("exec_time", serviceReport.getExecutionTime());
 
                 servicesRuntimeArray.put(serviceRuntime);
             }
@@ -63,35 +63,35 @@ public class JsonReportBuilder implements ExternalReport {
 
         dpeRuntime.put("containers", containersRuntimeArray);
 
-        JSONObject dpeRegistration = new JSONObject();
-        dpeRegistration.put("name", dpeData.getHost());
-        dpeRegistration.put("session", dpeData.getSession());
-        dpeRegistration.put("description", dpeData.getDescription());
-        dpeRegistration.put("language", dpeData.getLang());
-        dpeRegistration.put("clara_home", dpeData.getClaraHome());
-        dpeRegistration.put("n_cores", dpeData.getCoreCount());
-        dpeRegistration.put("memory_size", dpeData.getMemorySize());
-        dpeRegistration.put("start_time", dpeData.getStartTime());
+        var dpeRegistration = new JSONObject();
+        dpeRegistration.put("name", dpeReport.getHost());
+        dpeRegistration.put("session", dpeReport.getSession());
+        dpeRegistration.put("description", dpeReport.getDescription());
+        dpeRegistration.put("language", dpeReport.getLang());
+        dpeRegistration.put("clara_home", dpeReport.getClaraHome());
+        dpeRegistration.put("n_cores", dpeReport.getCoreCount());
+        dpeRegistration.put("memory_size", dpeReport.getMemorySize());
+        dpeRegistration.put("start_time", dpeReport.getStartTime());
 
-        JSONArray containersRegistrationArray = new JSONArray();
-        for (ContainerReport cr : dpeData.getContainers()) {
-            JSONObject containerRegistration = new JSONObject();
-            containerRegistration.put("name", cr.getName());
-            containerRegistration.put("language", cr.getLang());
-            containerRegistration.put("author", cr.getAuthor());
-            containerRegistration.put("start_time", cr.getStartTime());
+        var containersRegistrationArray = new JSONArray();
+        for (var containerReport : dpeReport.getContainers()) {
+            var containerRegistration = new JSONObject();
+            containerRegistration.put("name", containerReport.getName());
+            containerRegistration.put("language", containerReport.getLang());
+            containerRegistration.put("author", containerReport.getAuthor());
+            containerRegistration.put("start_time", containerReport.getStartTime());
 
-            JSONArray servicesRegistrationArray = new JSONArray();
-            for (ServiceReport sr : cr.getServices()) {
-                JSONObject serviceRegistration = new JSONObject();
-                serviceRegistration.put("name", sr.getName());
-                serviceRegistration.put("class_name", sr.getClassName());
-                serviceRegistration.put("author", sr.getAuthor());
-                serviceRegistration.put("version", sr.getVersion());
-                serviceRegistration.put("description", sr.getDescription());
-                serviceRegistration.put("language", sr.getLang());
-                serviceRegistration.put("pool_size", sr.getPoolSize());
-                serviceRegistration.put("start_time", sr.getStartTime());
+            var servicesRegistrationArray = new JSONArray();
+            for (var serviceReport : containerReport.getServices()) {
+                var serviceRegistration = new JSONObject();
+                serviceRegistration.put("name", serviceReport.getName());
+                serviceRegistration.put("class_name", serviceReport.getClassName());
+                serviceRegistration.put("author", serviceReport.getAuthor());
+                serviceRegistration.put("version", serviceReport.getVersion());
+                serviceRegistration.put("description", serviceReport.getDescription());
+                serviceRegistration.put("language", serviceReport.getLang());
+                serviceRegistration.put("pool_size", serviceReport.getPoolSize());
+                serviceRegistration.put("start_time", serviceReport.getStartTime());
 
                 servicesRegistrationArray.put(serviceRegistration);
             }
@@ -103,10 +103,10 @@ public class JsonReportBuilder implements ExternalReport {
 
         dpeRegistration.put("containers", containersRegistrationArray);
 
-        JSONObject dpeJsonData = new JSONObject();
-        dpeJsonData.put(ClaraConstants.RUNTIME_KEY, dpeRuntime);
-        dpeJsonData.put(ClaraConstants.REGISTRATION_KEY, dpeRegistration);
+        var dpeJsonReport = new JSONObject();
+        dpeJsonReport.put(ClaraConstants.RUNTIME_KEY, dpeRuntime);
+        dpeJsonReport.put(ClaraConstants.REGISTRATION_KEY, dpeRegistration);
 
-        return dpeJsonData.toString();
+        return dpeJsonReport.toString();
     }
 }

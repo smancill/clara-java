@@ -13,7 +13,6 @@ import org.yaml.snakeyaml.error.YAMLException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -104,11 +103,11 @@ public class EngineSpecification {
      */
     @SuppressWarnings("unchecked")
     public EngineSpecification(String engine) {
-        InputStream input = getSpecStream(engine);
-        if (input != null) {
-            Yaml yaml = new Yaml();
+        var spec = getSpecStream(engine);
+        if (spec != null) {
+            var yaml = new Yaml();
             try {
-                Object content = yaml.load(input);
+                Object content = yaml.load(spec);
                 if (content instanceof Map) {
                     parseContent((Map<String, Object>) content);
                 } else {
@@ -118,7 +117,7 @@ public class EngineSpecification {
                 throw new ParseException(e);
             } finally {
                 try {
-                    input.close();
+                    spec.close();
                 } catch (IOException e) {
                     // ignore
                 }
@@ -130,21 +129,21 @@ public class EngineSpecification {
 
 
     private InputStream getSpecStream(String engine) {
-        InputStream input = getSpecStream(engine, ".yaml");
-        if (input == null) {
-            input = getSpecStream(engine, ".yml");
+        var spec = getSpecStream(engine, ".yaml");
+        if (spec == null) {
+            spec = getSpecStream(engine, ".yml");
         }
-        return input;
+        return spec;
     }
 
 
     private InputStream getSpecStream(String engine, String ext) {
-        ClassLoader cl = getClass().getClassLoader();
-        Path resourcePath = Paths.get(engine.replaceAll("\\.", File.separator) + ext);
-        Path resourceName = FileUtils.getFileName(resourcePath);
-        InputStream resource = cl.getResourceAsStream(resourceName.toString());
+        var cl = getClass().getClassLoader();
+        var path = Paths.get(engine.replaceAll("\\.", File.separator) + ext);
+        var name = FileUtils.getFileName(path);
+        var resource = cl.getResourceAsStream(name.toString());
         if (resource == null) {
-            resource = cl.getResourceAsStream(resourcePath.toString());
+            resource = cl.getResourceAsStream(path.toString());
         }
         return resource;
     }
@@ -166,8 +165,8 @@ public class EngineSpecification {
         if (value == null) {
             throw new ParseException("Missing key: " + key);
         }
-        if (value instanceof String) {
-            return (String) value;
+        if (value instanceof String str) {
+            return str;
         } else if (value instanceof Integer || value instanceof Double) {
             return value.toString();
         } else {

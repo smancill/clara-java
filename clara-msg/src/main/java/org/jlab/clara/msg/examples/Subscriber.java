@@ -12,7 +12,6 @@ import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Callback;
 import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.core.Topic;
-import org.jlab.clara.msg.data.MetaDataProto;
 import org.jlab.clara.msg.data.MimeType;
 import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 import org.jlab.clara.msg.data.RegInfo;
@@ -38,11 +37,11 @@ public class Subscriber extends Actor {
      */
     void start() throws ClaraMsgException {
         // build the subscribing topic (hard-coded)
-        String domain = "test_domain";
-        String subject = "test_subject";
-        String type = "test_type";
-        String description = "test_description";
-        Topic topic = Topic.build(domain, subject, type);
+        var domain = "test_domain";
+        var subject = "test_subject";
+        var type = "test_type";
+        var description = "test_description";
+        var topic = Topic.build(domain, subject, type);
 
         // subscribe to default local proxy
         subscribe(topic, new MyCallBack());
@@ -54,8 +53,8 @@ public class Subscriber extends Actor {
     }
 
     public static void main(String[] args) {
-        try (Subscriber sub = new Subscriber()) {
-            sub.start();
+        try (var subscriber = new Subscriber()) {
+            subscriber.start();
             ActorUtils.keepAlive();
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,9 +122,9 @@ public class Subscriber extends Actor {
          */
         private List<Integer> parseData(Message msg) {
             try {
-                MetaDataProto.MetaData.Builder metadata = msg.getMetaData();
+                var metadata = msg.getMetaData();
                 if (metadata.getDataType().equals(MimeType.ARRAY_SFIXED32)) {
-                    PlainData data = PlainData.parseFrom(msg.getData());
+                    var data = PlainData.parseFrom(msg.getData());
                     return data.getFLSINT32AList();
                 }
             } catch (InvalidProtocolBufferException e) {

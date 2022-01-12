@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class AddressUtils {
@@ -73,7 +71,7 @@ public final class AddressUtils {
      * @throws UncheckedIOException if an I/O error occurs.
      */
     public static void updateLocalHostIps() {
-        Set<String> ips = new LinkedHashSet<>();
+        var ips = new LinkedHashSet<String>();
 
         try {
             // prefer address returned by getLocalHost first, if any
@@ -86,8 +84,8 @@ public final class AddressUtils {
         }
 
         try {
-            Set<String> localIps = new LinkedHashSet<>();
-            Set<String> nonLocalIps = new LinkedHashSet<>();
+            var localIps = new LinkedHashSet<String>();
+            var nonLocalIps = new LinkedHashSet<String>();
 
             InetAddress loopback = null;
 
@@ -174,9 +172,9 @@ public final class AddressUtils {
      * @return true if host name has an IP form.
      */
     public static boolean isIP(String hostname) {
-        Pattern p = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}"
+        var p = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}"
             + "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
-        Matcher m = p.matcher(hostname);
+        var m = p.matcher(hostname);
         return m.find();
     }
 

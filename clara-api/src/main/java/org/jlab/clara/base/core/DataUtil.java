@@ -26,7 +26,7 @@ public final class DataUtil {
     private DataUtil() { }
 
     public static EngineData buildErrorData(String msg, int severity, Throwable exception) {
-        EngineData outData = new EngineData();
+        var outData = new EngineData();
         outData.setData(EngineDataType.STRING.mimeType(), msg);
         outData.setDescription(ClaraUtil.reportException(exception));
         outData.setStatus(EngineStatus.ERROR, severity);
@@ -58,12 +58,12 @@ public final class DataUtil {
                                     Set<EngineDataType> dataTypes)
             throws ClaraException {
 
-        MetaData.Builder metadata = DATA_ACCESSOR.getMetadata(data);
-        String mimeType = metadata.getDataType();
-        for (EngineDataType dt : dataTypes) {
-            if (dt.mimeType().equals(mimeType)) {
+        var metadata = DATA_ACCESSOR.getMetadata(data);
+        var mimeType = metadata.getDataType();
+        for (EngineDataType dataType : dataTypes) {
+            if (dataType.mimeType().equals(mimeType)) {
                 try {
-                    ByteBuffer bb = dt.serializer().write(data.getData());
+                    ByteBuffer bb = dataType.serializer().write(data.getData());
                     if (bb.order() == ByteOrder.BIG_ENDIAN) {
                         metadata.setByteOrder(MetaData.Endian.Big);
                     } else {
@@ -97,17 +97,17 @@ public final class DataUtil {
      */
     public static EngineData deserialize(Message msg, Set<EngineDataType> dataTypes)
             throws ClaraException {
-        MetaData.Builder metadata = msg.getMetaData();
-        String mimeType = metadata.getDataType();
-        for (EngineDataType dt : dataTypes) {
-            if (dt.mimeType().equals(mimeType)) {
+        var metadata = msg.getMetaData();
+        var mimeType = metadata.getDataType();
+        for (EngineDataType dataType : dataTypes) {
+            if (dataType.mimeType().equals(mimeType)) {
                 try {
-                    ByteBuffer bb = ByteBuffer.wrap(msg.getData());
+                    var bb = ByteBuffer.wrap(msg.getData());
                     if (metadata.getByteOrder() == MetaData.Endian.Little) {
                         bb.order(ByteOrder.LITTLE_ENDIAN);
                     }
-                    Object userData = dt.serializer().read(bb);
-                    return DATA_ACCESSOR.build(userData, metadata);
+                    Object data = dataType.serializer().read(bb);
+                    return DATA_ACCESSOR.build(data, metadata);
                 } catch (ClaraException e) {
                     throw new ClaraException("Clara-Error: Could not deserialize " + mimeType, e);
                 }

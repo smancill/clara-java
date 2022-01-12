@@ -52,22 +52,22 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
 
     @Override
     public EngineData configure(EngineData input) {
-        final long startTime = System.currentTimeMillis();
-        String mimeType = input.getMimeType();
+        final var startTime = System.currentTimeMillis();
+        var mimeType = input.getMimeType();
         if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
-            String source = (String) input.getData();
-            JSONObject configData = new JSONObject(source);
-            if (configData.has(CONF_ACTION)) {
-                String action = configData.getString(CONF_ACTION);
+            var data = (String) input.getData();
+            var config = new JSONObject(data);
+            if (config.has(CONF_ACTION)) {
+                var action = config.getString(CONF_ACTION);
                 if (action.equals(CONF_ACTION_OPEN)) {
-                    if (configData.has(CONF_FILENAME)) {
-                        openFile(configData);
+                    if (config.has(CONF_FILENAME)) {
+                        openFile(config);
                     } else {
                         logger.error("config: missing '{}' parameter", CONF_FILENAME);
                     }
                 } else if (action.equals(CONF_ACTION_CLOSE)) {
-                    if (configData.has(CONF_FILENAME)) {
-                        closeFile(configData);
+                    if (config.has(CONF_FILENAME)) {
+                        closeFile(config);
                     } else {
                         logger.error("config: missing '{}' parameter", CONF_FILENAME);
                     }
@@ -87,20 +87,20 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
     }
 
 
-    private void openFile(JSONObject configData) {
+    private void openFile(JSONObject config) {
         synchronized (writerLock) {
             if (writer != null) {
                 writeAndClose();
             }
-            fileName = configData.getString(CONF_FILENAME);
+            fileName = config.getString(CONF_FILENAME);
             logger.info("request to open file {}", fileName);
             try {
-                File file = new File(fileName);
-                File outputDir = file.getParentFile();
+                var outputFile = new File(fileName);
+                var outputDir = outputFile.getParentFile();
                 if (outputDir != null) {
                     FileUtils.createDirectories(outputDir.toPath());
                 }
-                writer = createWriter(Paths.get(fileName), configData);
+                writer = createWriter(Paths.get(fileName), config);
                 eventCounter = 0;
                 logger.info("opened file {}", fileName);
             } catch (IOException | EventWriterException e) {
@@ -114,9 +114,9 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
     }
 
 
-    private void closeFile(JSONObject data) {
+    private void closeFile(JSONObject config) {
         synchronized (writerLock) {
-            fileName = data.getString(CONF_FILENAME);
+            fileName = config.getString(CONF_FILENAME);
             logger.info("request to close file {}", fileName);
             if (writer != null) {
                 writeAndClose();
@@ -170,11 +170,11 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
 
     @Override
     public EngineData execute(EngineData input) {
-        EngineData output = new EngineData();
+        var output = new EngineData();
 
-        String dt = input.getMimeType();
-        if (!dt.equalsIgnoreCase(getDataType().mimeType())) {
-            ServiceUtils.setError(output, String.format("Wrong input type '%s'", dt));
+        var mimeType = input.getMimeType();
+        if (!mimeType.equalsIgnoreCase(getDataType().mimeType())) {
+            ServiceUtils.setError(output, String.format("Wrong input type '%s'", mimeType));
             return output;
         }
 
@@ -195,9 +195,9 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
                     output.setDescription("event saved");
 
                 } catch (EventWriterException e) {
-                    String msg = String.format("Error saving event to file %s%n%n%s",
-                            fileName, ClaraUtil.reportException(e));
-                    ServiceUtils.setError(output, msg);
+                    var error = String.format("Error saving event to file %s%n%n%s",
+                                              fileName, ClaraUtil.reportException(e));
+                    ServiceUtils.setError(output, error);
                 }
             }
         }

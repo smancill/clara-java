@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class EnvUtils {
@@ -40,7 +39,7 @@ public final class EnvUtils {
      * @return the Clara home directory
      */
     public static String claraHome() {
-        String claraHome = System.getenv("CLARA_HOME");
+        var claraHome = System.getenv("CLARA_HOME");
         if (claraHome == null) {
             throw new RuntimeException("Missing CLARA_HOME environment variable");
         }
@@ -53,7 +52,7 @@ public final class EnvUtils {
      * @return the account name of the user running Clara.
      */
     public static String userName() {
-        String userName = System.getProperty("user.name");
+        var userName = System.getProperty("user.name");
         if (userName == null || userName.equals("?")) {
             if (inDockerContainer()) {
                 return "docker";
@@ -69,7 +68,7 @@ public final class EnvUtils {
      * @return the home directory of the user running Clara.
      */
     public static String userHome() {
-        String userHome = System.getProperty("user.home");
+        var userHome = System.getProperty("user.home");
         if (userHome == null || userHome.equals("?")) {
             if (inDockerContainer()) {
                 return "/";
@@ -88,17 +87,17 @@ public final class EnvUtils {
      * @return the input string with all environment variables replaced by their values
      */
     public static String expandEnvironment(String input, Map<String, String> environment) {
-        StringBuilder sb = new StringBuilder();
-        Matcher matcher = ENV_VAR_EXPR.matcher(input);
+        var sb = new StringBuilder();
+        var matcher = ENV_VAR_EXPR.matcher(input);
         while (matcher.find()) {
-            String variable = matcher.group(2);
+            var variable = matcher.group(2);
             if (variable == null) {
                 variable = matcher.group(3);
             }
             if (variable != null) {
-                String value = environment.get(variable);
+                var value = environment.get(variable);
                 if (value == null) {
-                    String defaultValue = matcher.group(4);
+                    var defaultValue = matcher.group(4);
                     value = Objects.requireNonNullElse(defaultValue, "");
                 }
                 matcher.appendReplacement(sb, value);

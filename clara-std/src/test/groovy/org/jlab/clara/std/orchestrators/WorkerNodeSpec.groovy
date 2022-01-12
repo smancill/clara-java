@@ -119,7 +119,7 @@ class WorkerNodeSpec extends Specification {
         ])
 
         and: "file paths"
-        var file = new WorkerFile("in.dat", "out.dat")
+        var file = new FileInfo("in.dat", "out.dat")
         var paths = new OrchestratorPaths.Builder("/mnt/data/in.dat", "/mnt/data/out.dat").build()
 
         and: "mock reader service config responses"

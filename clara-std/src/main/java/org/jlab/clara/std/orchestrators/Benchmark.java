@@ -20,12 +20,12 @@ class Benchmark {
     final Map<ServiceInfo, Runtime> runtimeStats = new HashMap<>();
 
     Benchmark(ApplicationInfo application) {
-        List<ServiceInfo> services = allServices(application);
+        var services = allServices(application);
         services.forEach(s -> runtimeStats.put(s, new Runtime()));
     }
 
     private List<ServiceInfo> allServices(ApplicationInfo application) {
-        List<ServiceInfo> services = new ArrayList<>();
+        var services = new ArrayList<ServiceInfo>();
         services.add(application.getReaderService());
         services.addAll(application.getDataProcessingServices());
         services.add(application.getWriterService());

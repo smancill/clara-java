@@ -28,9 +28,9 @@ final class CallbackInfo {
         }
 
         void tryClose(Object object) {
-            if (object instanceof AutoCloseable) {
+            if (object instanceof AutoCloseable closeable) {
                 try {
-                    ((AutoCloseable) object).close();
+                    closeable.close();
                 } catch (Exception e) {
                     Logging.error("could not close instance of: " + classPath + ": " + e.getMessage());
                 }
@@ -97,12 +97,12 @@ final class CallbackInfo {
                 Class<?> klass = classLoader.loadClass(classPath);
                 Object object = klass.getDeclaredConstructor().newInstance();
                 try {
-                    if (object instanceof EngineReportHandler) {
-                        listener.listen(getEngineReportTopic(), (EngineReportHandler) object);
-                        return (AutoCloseable) object;
-                    } else if (object instanceof DpeReportHandler) {
-                        listener.listen(getDpeReportTopic(), (DpeReportHandler) object);
-                        return (AutoCloseable) object;
+                    if (object instanceof EngineReportHandler handler) {
+                        listener.listen(getEngineReportTopic(), handler);
+                        return handler;
+                    } else if (object instanceof DpeReportHandler handler) {
+                        listener.listen(getDpeReportTopic(), handler);
+                        return handler;
                     } else {
                         throw new ClaraException("invalid monitoring class: " + classPath);
                     }

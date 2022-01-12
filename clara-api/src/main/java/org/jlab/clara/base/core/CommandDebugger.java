@@ -8,7 +8,6 @@ package org.jlab.clara.base.core;
 
 import org.jlab.clara.base.ClaraUtil;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.core.Connection;
 import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MimeType;
@@ -18,14 +17,11 @@ import org.jlab.clara.msg.net.ProxyAddress;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public final class CommandDebugger extends ClaraBase {
 
@@ -37,9 +33,9 @@ public final class CommandDebugger extends ClaraBase {
     }
 
     private void processFile(String file) {
-        Path path = Paths.get(file);
-        try (Stream<String> stream = Files.lines(path, Charset.defaultCharset())) {
-            stream.forEach(this::processCommand);
+        var path = Paths.get(file);
+        try (var commands = Files.lines(path, Charset.defaultCharset())) {
+            commands.forEach(this::processCommand);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,19 +49,19 @@ public final class CommandDebugger extends ClaraBase {
         if (commentPattern.matcher(line).matches()) { // commented line
             return;
         }
-        Matcher sleep = sleepPattern.matcher(line);
+        var sleep = sleepPattern.matcher(line);
         if (sleep.matches()) { // sleep command
-            int time = Integer.parseInt(sleep.group(2));
+            var time = Integer.parseInt(sleep.group(2));
             System.out.printf("Sleeping %d ms%n", time);
             ClaraUtil.sleep(time);
             return;
         }
 
         try {
-            Command cmd = new Command(line);
+            var cmd = new Command(line);
             System.out.println("C: " + cmd);
-            try (Connection connection = getConnection(cmd.address)) {
-                Message message = MessageUtil.buildRequest(cmd.topic, cmd.request);
+            try (var connection = getConnection(cmd.address)) {
+                var message = MessageUtil.buildRequest(cmd.topic, cmd.request);
                 message.getMetaData().setAuthor(getName());
                 message.getMetaData().setSender(getName());
                 if (cmd.action.equals("send")) {
@@ -80,9 +76,9 @@ public final class CommandDebugger extends ClaraBase {
     }
 
     private void printResponse(Message res) {
-        String mimeType = res.getMimeType();
+        var mimeType = res.getMimeType();
         if (mimeType.equals(MimeType.STRING)) {
-            String data = new String(res.getData());
+            var data = new String(res.getData());
             System.out.printf("R: %s%n", data);
         } else {
             System.out.printf("R: mime-type = %s%n", mimeType);
@@ -101,15 +97,15 @@ public final class CommandDebugger extends ClaraBase {
 
         Command(String cmd) throws ClaraException {
             try {
-                StringTokenizer tk = new StringTokenizer(cmd, " ");
-                action = tk.nextToken();
+                var tokenizer = new StringTokenizer(cmd, " ");
+                action = tokenizer.nextToken();
                 if (!action.equals("send") && !action.equals("sync_send")) {
                     throw new ClaraException("Invalid action: " + action);
                 }
                 if (action.equals("sync_send")) {
-                    timeout = Integer.parseInt(tk.nextToken());
+                    timeout = Integer.parseInt(tokenizer.nextToken());
                 }
-                String component = tk.nextToken().replace("localhost", ClaraUtil.localhost());
+                var component = tokenizer.nextToken().replace("localhost", ClaraUtil.localhost());
                 address = new ProxyAddress(ClaraUtil.getDpeHost(component),
                                            ClaraUtil.getDpePort(component));
                 if (ClaraUtil.isDpeName(component)) {
@@ -121,7 +117,7 @@ public final class CommandDebugger extends ClaraBase {
                 } else {
                     throw new ClaraException("Not a Clara component: " + component);
                 }
-                request = tk.nextToken();
+                request = tokenizer.nextToken();
             } catch (NoSuchElementException | NumberFormatException e) {
                 throw new RuntimeException("Invalid line: " + cmd, e);
             }
@@ -129,7 +125,7 @@ public final class CommandDebugger extends ClaraBase {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.append("action = ").append(action).append(" ");
             if (timeout > 0)  {
                 sb.append(" timeout = ").append(timeout).append(" ");
@@ -143,7 +139,7 @@ public final class CommandDebugger extends ClaraBase {
 
 
     public static void main(String[] args) {
-        try (CommandDebugger broker = new CommandDebugger()) {
+        try (var broker = new CommandDebugger()) {
             broker.processFile(args[0]);
         }
     }

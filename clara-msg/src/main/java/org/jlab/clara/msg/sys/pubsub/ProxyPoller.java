@@ -24,7 +24,7 @@ public class ProxyPoller implements Closeable {
     }
 
     public boolean poll(long timeout) {
-        int rc = poller.poll(timeout);
+        var rc = poller.poll(timeout);
         if (rc < 0) {
             throw new ZMQException("error polling subscription", subSocket.base().errno());
         }

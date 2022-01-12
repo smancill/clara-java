@@ -84,13 +84,13 @@ public class PublishersTest {
 
         void run(int totalMessages, int numPublishers) throws Exception {
 
-            final Check check = new Check(totalMessages);
-            final CountDownLatch subReady = new CountDownLatch(1);
+            final var check = new Check(totalMessages);
+            final var subReady = new CountDownLatch(1);
 
-            Thread subThread = ActorUtils.newThread("sub-thread", () -> {
-                try (Actor actor = new Actor("test_subscriber")) {
-                    Topic topic = Topic.wrap(rawTopic);
-                    Subscription sub = actor.subscribe(topic, msg -> {
+            var subThread = ActorUtils.newThread("sub-thread", () -> {
+                try (var actor = new Actor("test_subscriber")) {
+                    var topic = Topic.wrap(rawTopic);
+                    var sub = actor.subscribe(topic, msg -> {
                         try {
                             receive(actor, msg, check);
                         } catch (Exception e) {
@@ -108,21 +108,21 @@ public class PublishersTest {
             subReady.await();
 
             final int numMessages = check.n / numPublishers;
-            List<Thread> publishers = new ArrayList<>(numPublishers);
+            List<Thread> pubThreads = new ArrayList<>(numPublishers);
 
             for (int i = 0; i < numPublishers; i++) {
                 final int start = i * numMessages;
                 final int end = start + numMessages;
 
-                Thread pubThread = ActorUtils.newThread("pub-" + start, () -> {
-                    Actor actor = pubActor;
+                var pubThread = ActorUtils.newThread("pub-" + start, () -> {
+                    var actor = pubActor;
                     try {
                         if (actor == null) {
                             actor = new Actor("test_publisher_" + start);
                         }
-                        Topic topic = Topic.build(rawTopic, Integer.toString(start));
+                        var topic = Topic.build(rawTopic, Integer.toString(start));
                         for (int j = start; j < end; j++) {
-                            Message msg = Message.createFrom(topic, j);
+                            var msg = Message.createFrom(topic, j);
                             publish(actor, msg, check);
                         }
                     } catch (Exception e) {
@@ -133,12 +133,12 @@ public class PublishersTest {
                         }
                     }
                 });
-                publishers.add(pubThread);
+                pubThreads.add(pubThread);
                 pubThread.start();
             }
 
             subThread.join();
-            for (Thread pubThread : publishers) {
+            for (var pubThread : pubThreads) {
                 pubThread.join();
             }
 
@@ -147,7 +147,7 @@ public class PublishersTest {
         }
 
         private void wait(Check check) {
-            int counter = 0;
+            var counter = 0;
             while (check.counter.get() < check.n && counter < 20_000) {
                 ActorUtils.sleep(100);
                 counter += 100;
@@ -200,9 +200,9 @@ public class PublishersTest {
 
         @Override
         void publish(Actor actor, Message msg, Check check) throws Exception {
-            Message res = actor.syncPublish(msg, 1000);
-            Integer r = Message.parseData(res, Integer.class);
-            check.increment(r);
+            var rMsg = actor.syncPublish(msg, 1000);
+            int rData = Message.parseData(rMsg, Integer.class);
+            check.increment(rData);
         }
     }
 

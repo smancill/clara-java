@@ -9,7 +9,6 @@ package org.jlab.clara.std.orchestrators;
 import org.jlab.clara.base.BaseOrchestrator;
 import org.jlab.clara.base.ClaraFilters;
 import org.jlab.clara.base.ClaraName;
-import org.jlab.clara.base.ClaraRequests.ServiceConfigRequestBuilder;
 import org.jlab.clara.base.ClaraRequests.ServiceReportRequest;
 import org.jlab.clara.base.Composition;
 import org.jlab.clara.base.ContainerName;
@@ -25,9 +24,7 @@ import org.jlab.clara.engine.EngineStatus;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -60,7 +57,7 @@ class CoreOrchestrator {
 
     void deployService(DeployInfo service) {
         try {
-            ContainerName containerName = service.name().container();
+            var containerName = service.name().container();
             if (!userContainers.contains(containerName)) {
                 deployContainer(containerName);
                 userContainers.add(containerName);
@@ -68,9 +65,9 @@ class CoreOrchestrator {
             base.deploy(service.name(), service.classPath()).withPoolsize(service.poolSize()).run();
             userServices.put(service.name(), service);
         } catch (ClaraException e) {
-            String errorMsg = String.format("failed request to deploy service = %s  class = %s",
-                                            service.name(), service.classPath());
-            throw new OrchestratorException(errorMsg, e);
+            var error = String.format("failed request to deploy service = %s  class = %s",
+                                      service.name(), service.classPath());
+            throw new OrchestratorException(error, e);
         }
     }
 
@@ -78,11 +75,11 @@ class CoreOrchestrator {
     private void deployContainer(ContainerName container) throws ClaraException {
         base.deploy(container).run();
 
-        final int maxAttempts = 10;
-        int counter = 0;
+        final var maxAttempts = 10;
+        var counter = 0;
         while (true) {
-            Set<ContainerName> regContainers = getRegisteredContainers(container.dpe());
-            for (ContainerName c : regContainers) {
+            var regContainers = getRegisteredContainers(container.dpe());
+            for (var c : regContainers) {
                 if (container.equals(c)) {
                     return;
                 }
@@ -167,22 +164,22 @@ class CoreOrchestrator {
                 .forEach(userContainers::remove);
 
         // Re-deploy missing services
-        for (ServiceName missing : missingServices) {
-            DeployInfo deployInfo = userServices.get(missing);
-            Logging.info("Service " + missing + " was not found. Trying to redeploy...");
+        for (var service : missingServices) {
+            var deployInfo = userServices.get(service);
+            Logging.info("Service " + service + " was not found. Trying to redeploy...");
             deployService(deployInfo);
         }
     }
 
 
     private String reportUndeployed(Set<ServiceName> missingServices) {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append("undeployed service");
         if (missingServices.size() > 1) {
             sb.append("s");
         }
         sb.append(" = '");
-        Iterator<ServiceName> iter = missingServices.iterator();
+        var iter = missingServices.iterator();
         sb.append(iter.next());
         while (iter.hasNext()) {
             sb.append(", ");
@@ -200,7 +197,7 @@ class CoreOrchestrator {
 
     void syncConfig(ServiceName service, JSONObject data, int wait, TimeUnit unit)
             throws ClaraException, TimeoutException {
-        EngineData input = new EngineData();
+        var input = new EngineData();
         input.setData(EngineDataType.JSON.mimeType(), data.toString());
         syncConfig(service, input, wait, unit);
     }
@@ -214,12 +211,12 @@ class CoreOrchestrator {
 
     void syncEnableRing(ServiceName service, int wait, TimeUnit unit)
             throws ClaraException, TimeoutException {
-        ServiceConfigRequestBuilder builder = base.configure(service);
+        var requestBuilder = base.configure(service);
         try {
-            Method m = builder.getClass().getDeclaredMethod("startDataRingReporting");
-            m.setAccessible(true);
-            ServiceReportRequest r = (ServiceReportRequest) m.invoke(builder);
-            r.syncRun(wait, unit);
+            var method = requestBuilder.getClass().getDeclaredMethod("startDataRingReporting");
+            method.setAccessible(true);
+            var request = (ServiceReportRequest) method.invoke(requestBuilder);
+            request.syncRun(wait, unit);
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -234,7 +231,7 @@ class CoreOrchestrator {
 
     EngineData syncSend(ServiceName service, String data, int wait, TimeUnit unit)
             throws ClaraException, TimeoutException {
-        EngineData input = new EngineData();
+        var input = new EngineData();
         input.setData(EngineDataType.STRING.mimeType(), data);
         return syncSend(service, input, wait, unit);
     }
@@ -242,7 +239,7 @@ class CoreOrchestrator {
 
     EngineData syncSend(ServiceName service, JSONObject data, int wait, TimeUnit unit)
             throws ClaraException, TimeoutException {
-        EngineData input = new EngineData();
+        var input = new EngineData();
         input.setData(EngineDataType.JSON.mimeType(), data.toString());
         return syncSend(service, input, wait, unit);
     }
@@ -250,7 +247,7 @@ class CoreOrchestrator {
 
     EngineData syncSend(ServiceName service, EngineData input, int wait, TimeUnit unit)
             throws ClaraException, TimeoutException {
-        EngineData output = base.execute(service).withData(input).syncRun(wait, unit);
+        var output = base.execute(service).withData(input).syncRun(wait, unit);
         if (output.getStatus() == EngineStatus.ERROR) {
             throw new ClaraException(output.getDescription());
         }
@@ -270,10 +267,10 @@ class CoreOrchestrator {
 
     void subscribeDpes(DpeCallBack callback, String session) {
         try {
-            DpeCallbackWrapper dpeCallback = new DpeCallbackWrapper(callback);
+            var dpeCallback = new DpeCallbackWrapper(callback);
             base.listen().aliveDpes(session).start(dpeCallback);
         } catch (ClaraException e) {
-            String msg = "Could not subscribe to front-end to get running DPEs";
+            var msg = "Could not subscribe to front-end to get running DPEs";
             throw new OrchestratorException(msg, e);
         }
     }
@@ -303,7 +300,7 @@ class CoreOrchestrator {
                        .canonicalNames(ClaraFilters.allDpes())
                        .syncRun(seconds, TimeUnit.SECONDS);
         } catch (TimeoutException | ClaraException e) {
-            String msg = "cannot connect with front-end: " + base.getFrontEnd();
+            var msg = "cannot connect with front-end: " + base.getFrontEnd();
             throw new OrchestratorException(msg, e);
         }
     }
@@ -344,7 +341,7 @@ class CoreOrchestrator {
         @Override
         public void callback(String data) {
             try {
-                DpeInfo dpe = data.startsWith("{") ? parseJson(data) : parseTokens(data);
+                var dpe = data.startsWith("{") ? parseJson(data) : parseTokens(data);
                 callback.callback(dpe);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -352,19 +349,19 @@ class CoreOrchestrator {
         }
 
         private DpeInfo parseJson(String data) {
-            JSONObject json = new JSONObject(data);
-            DpeName name = new DpeName(json.getString("name"));
-            int ncores = json.getInt("n_cores");
-            String claraHome = json.getString("clara_home");
+            var json = new JSONObject(data);
+            var name = new DpeName(json.getString("name"));
+            var ncores = json.getInt("n_cores");
+            var claraHome = json.getString("clara_home");
             return new DpeInfo(name, ncores, claraHome);
         }
 
         // keep support for old DPE versions
         private DpeInfo parseTokens(String data) {
-            StringTokenizer st = new StringTokenizer(data, "?");
-            DpeName name = new DpeName(st.nextToken());
-            int ncores = Integer.parseInt(st.nextToken());
-            String claraHome = st.nextToken();
+            var st = new StringTokenizer(data, "?");
+            var name = new DpeName(st.nextToken());
+            var ncores = Integer.parseInt(st.nextToken());
+            var claraHome = st.nextToken();
             return new DpeInfo(name, ncores, claraHome);
         }
     }

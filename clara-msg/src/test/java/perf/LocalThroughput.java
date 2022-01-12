@@ -7,7 +7,6 @@
 package perf;
 
 import org.jlab.clara.msg.core.Actor;
-import org.jlab.clara.msg.core.Subscription;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.ProxyAddress;
@@ -30,19 +29,19 @@ public final class LocalThroughput {
             System.exit(1);
         }
 
-        final String bindTo = argv[0];
-        final int messageSize = Integer.parseInt(argv[1]);
-        final long messageCount = Long.parseLong(argv[2]);
+        final var bindTo = argv[0];
+        final var messageSize = Integer.parseInt(argv[1]);
+        final var messageCount = Long.parseLong(argv[2]);
 
-        final CountDownLatch finished = new CountDownLatch(1);
-        final Timer timer = new Timer();
+        final var finished = new CountDownLatch(1);
+        final var timer = new Timer();
 
-        try (Actor subscriber = new Actor("throughput_subscriber", 1)) {
+        try (var subscriber = new Actor("throughput_subscriber", 1)) {
 
-            ProxyAddress address = new ProxyAddress(bindTo);
-            Topic topic = Topic.wrap("thr_topic");
+            var address = new ProxyAddress(bindTo);
+            var topic = Topic.wrap("thr_topic");
 
-            Subscription sub = subscriber.subscribe(address, topic, msg -> {
+            var sub = subscriber.subscribe(address, topic, msg -> {
                 int size = msg.getDataSize();
                 if (size != messageSize) {
                     printf("Message of incorrect size received " + size);

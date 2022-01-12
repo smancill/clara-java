@@ -16,7 +16,6 @@ import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MimeType;
 import org.jlab.clara.msg.data.RegRecord;
 import org.jlab.clara.msg.errors.ClaraMsgException;
-import org.jlab.clara.msg.net.ProxyAddress;
 import org.jlab.clara.util.report.JsonUtils;
 import org.json.JSONObject;
 
@@ -78,11 +77,11 @@ public final class ClaraQueries {
                 if (wait <= 0) {
                     throw new IllegalArgumentException("Invalid timeout: " + wait);
                 }
-                long timeout = unit.toMillis(wait);
-                long start = System.currentTimeMillis();
-                Stream<RegRecord> regData = queryRegistrar(timeout);
-                long end = System.currentTimeMillis();
-                return collect(regData, timeout - (end - start));
+                var timeout = unit.toMillis(wait);
+                var start = System.currentTimeMillis();
+                var registration = queryRegistrar(timeout);
+                var end = System.currentTimeMillis();
+                return collect(registration, timeout - (end - start));
             } catch (ClaraMsgException e) {
                 throw new ClaraException("Cannot send query", e);
             } catch (WrappedException e) {
@@ -96,7 +95,7 @@ public final class ClaraQueries {
                        .filter(filter.regFilter());
         }
 
-        protected abstract T collect(Stream<RegRecord> regData, long timeout);
+        protected abstract T collect(Stream<RegRecord> registration, long timeout);
 
         @SuppressWarnings("unchecked")
         protected D self() {
@@ -131,20 +130,20 @@ public final class ClaraQueries {
             this.reportKey = reportKey;
         }
 
-        protected R collect(Stream<RegRecord> regData, long timeout) {
-            return collect(queryDpes(regData, timeout));
+        protected R collect(Stream<RegRecord> registration, long timeout) {
+            return collect(queryDpes(registration, timeout));
         }
 
         protected abstract R collect(Stream<T> data);
 
-        protected Stream<T> queryDpes(Stream<RegRecord> regData, long timeout) {
-            return dpeNames(regData)
+        protected Stream<T> queryDpes(Stream<RegRecord> registration, long timeout) {
+            return dpeNames(registration)
                     .flatMap(d -> queryDpe(d, timeout))
                     .map(parseData);
         }
 
-        private Stream<DpeName> dpeNames(Stream<RegRecord> record) {
-            return record.map(RegRecord::name)
+        private Stream<DpeName> dpeNames(Stream<RegRecord> registration) {
+            return registration.map(RegRecord::name)
                          .map(ClaraUtil::getDpeName)
                          .distinct()
                          .map(DpeName::new);
@@ -152,12 +151,12 @@ public final class ClaraQueries {
 
         private Stream<JSONObject> queryDpe(DpeName dpe, long timeout) {
             try {
-                ProxyAddress address = dpe.address().proxyAddress();
-                Message query = msg(dpe);
-                Message response = base.syncPublish(address, query, timeout);
-                String mimeType = response.getMimeType();
+                var address = dpe.address().proxyAddress();
+                var query = msg(dpe);
+                var response = base.syncPublish(address, query, timeout);
+                var mimeType = response.getMimeType();
                 if (mimeType.equals(MimeType.STRING)) {
-                    String data = new String(response.getData());
+                    var data = new String(response.getData());
                     return filterQuery(new JSONObject(data));
                 }
                 return Stream.empty();
@@ -167,33 +166,33 @@ public final class ClaraQueries {
         }
 
         private Message msg(DpeName dpe) {
-            Topic topic = Topic.build("dpe", dpe.canonicalName());
+            var topic = Topic.build("dpe", dpe.canonicalName());
             return MessageUtil.buildRequest(topic, ClaraConstants.REPORT_JSON);
         }
 
-        private Stream<JSONObject> filterQuery(JSONObject report) {
+        private Stream<JSONObject> filterQuery(JSONObject dpeReport) {
             // Optimize in case there is no need to filter the reports
             if (!filter.hasJsonFilter()) {
-                return parseReport.parseComponents(report, reportKey);
+                return parseReport.parseComponents(dpeReport, reportKey);
             }
 
             // Filters use registration data in order to select components
-            String regKey = ClaraConstants.REGISTRATION_KEY;
-            Stream<JSONObject> regData = parseReport.parseComponents(report, regKey)
+            var registrationKey = ClaraConstants.REGISTRATION_KEY;
+            var filteredRegistration = parseReport.parseComponents(dpeReport, registrationKey)
                     .filter(filter.jsonFilter());
 
             // If the query result requires registration data
-            if (reportKey.equals(regKey)) {
-                return regData;
+            if (reportKey.equals(registrationKey)) {
+                return filteredRegistration;
             }
 
             // Else the query result requires runtime data
-            Set<String> names = regData
+            var filteredNames = filteredRegistration
                     .map(o -> o.getString("name"))
                     .collect(Collectors.toSet());
 
-            return parseReport.parseComponents(report, reportKey)
-                    .filter(o -> names.contains(o.getString("name")));
+            return parseReport.parseComponents(dpeReport, reportKey)
+                    .filter(o -> filteredNames.contains(o.getString("name")));
         }
     }
 
@@ -219,11 +218,11 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Set<T> collect(Stream<RegRecord> regData, long timeout) {
+        protected Set<T> collect(Stream<RegRecord> registration, long timeout) {
             if (filter.hasJsonFilter()) {
-                return collect(queryDpes(regData, timeout));
+                return collect(queryDpes(registration, timeout));
             }
-            return collect(regData.map(RegRecord::name).map(parseName));
+            return collect(registration.map(RegRecord::name).map(parseName));
         }
 
         @Override
@@ -251,8 +250,8 @@ public final class ClaraQueries {
         }
 
         @Override
-        protected Boolean collect(Stream<RegRecord> regData, long timeout) {
-            return regData.map(RegRecord::name).map(parseName).findFirst().isPresent();
+        protected Boolean collect(Stream<RegRecord> registration, long timeout) {
+            return registration.map(RegRecord::name).map(parseName).findFirst().isPresent();
         }
     }
 

@@ -45,7 +45,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
 
     public static void main(String[] args) {
-        CommandLineBuilder cl = new CommandLineBuilder();
+        var cl = new CommandLineBuilder();
         try {
             cl.parse(args);
             if (cl.hasVersion()) {
@@ -121,7 +121,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         }
 
         private OrchestratorSetup.Builder initialSetup(String servicesFile) {
-            OrchestratorConfigParser parser = new OrchestratorConfigParser(servicesFile);
+            var parser = new OrchestratorConfigParser(servicesFile);
             return new OrchestratorSetup
                     .Builder(parser.parseInputOutputServices(),
                              parser.parseDataProcessingServices(),
@@ -353,7 +353,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         waitFirstNode();
 
         if (options.orchMode != OrchestratorMode.CLOUD) {
-            WorkerNode localNode = dpeCallback.getLocalNode();
+            var localNode = dpeCallback.getLocalNode();
             benchmark.initialize(localNode.getRuntimeData());
         }
     }
@@ -373,9 +373,9 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         removeStageDirectories();
         if (options.orchMode != OrchestratorMode.CLOUD) {
             try {
-                WorkerNode localNode = dpeCallback.getLocalNode();
+                var localNode = dpeCallback.getLocalNode();
                 benchmark.update(localNode.getRuntimeData());
-                BenchmarkPrinter printer = new BenchmarkPrinter(benchmark, stats.totalEvents());
+                var printer = new BenchmarkPrinter(benchmark, stats.totalEvents());
                 printer.printBenchmark(setup.application);
             } catch (OrchestratorException e) {
                 Logging.error("Could not generate benchmark: %s", e.getMessage());
@@ -415,11 +415,11 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
 
     private void waitFrontEnd() {
-        final int maxAttempts = 5;
-        int count = 0;
+        final var maxAttempts = 5;
+        var count = 0;
         while (true) {
             try {
-                int timeout = count == 0 ? 2 : 4;
+                var timeout = count == 0 ? 2 : 4;
                 orchestrator.getRegisteredDpes(timeout);
                 break;
             } catch (OrchestratorException e) {
@@ -457,8 +457,8 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         if (options.orchMode == OrchestratorMode.DOCKER) {
             return true;
         }
-        String feHost = orchestrator.getFrontEnd().address().host();
-        String dpeHost = dpe.address().host();
+        var feHost = orchestrator.getFrontEnd().address().host();
+        var dpeHost = dpe.address().host();
         return dpeHost.equals(feHost);
     }
 
@@ -505,8 +505,8 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
                 if (availableNodes.size() == options.maxNodes || ignoreDpe(dpe)) {
                     return;
                 }
-                String nodeName = getHost(dpe.name());
-                WorkerNode.Builder nodeBuilder = waitingNodes.get(nodeName);
+                var nodeName = getHost(dpe.name());
+                var nodeBuilder = waitingNodes.get(nodeName);
                 if (nodeBuilder == null) {
                     nodeBuilder = new WorkerNode.Builder(application);
                     waitingNodes.put(nodeName, nodeBuilder);
@@ -515,7 +515,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
                 }
                 nodeBuilder.addDpe(dpe);
                 if (nodeBuilder.isReady()) {
-                    WorkerNode node = nodeBuilder.build(orchestrator);
+                    var node = nodeBuilder.build(orchestrator);
                     availableNodes.put(nodeName, node);
                     nodeConsumer.accept(node);
                     latch.countDown();
@@ -528,7 +528,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         }
 
         public WorkerNode getLocalNode() {
-            String nodeName = getHost(frontEnd);
+            var nodeName = getHost(frontEnd);
             synchronized (availableNodes) {
                 return availableNodes.get(nodeName);
             }
@@ -542,8 +542,8 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         }
 
         private boolean ignoreDpe(DpeInfo dpe) {
-            String dpeNode = getHost(dpe.name());
-            String feNode = getHost(frontEnd);
+            var dpeNode = getHost(dpe.name());
+            var feNode = getHost(frontEnd);
             if (options.orchMode == OrchestratorMode.LOCAL) {
                 return !dpeNode.equals(feNode);
             }
@@ -594,7 +594,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
         @Override
         public String getMessage() {
-            Throwable cause = getCause();
+            var cause = getCause();
             if (cause != null) {
                 return cause.getMessage();
             }
@@ -690,7 +690,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
                 if (hasVersion() || hasHelp()) {
                     return;
                 }
-                int numArgs = options.nonOptionArguments().size();
+                var numArgs = options.nonOptionArguments().size();
                 if (numArgs == 0) {
                     throw new CommandLineException("missing arguments");
                 }
@@ -712,17 +712,17 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
         public GenericOrchestrator build() {
             try {
-                List<String> args = arguments.values(options);
-                String services = args.get(0);
-                List<String> files = args.subList(1, args.size());
+                var argsList = arguments.values(options);
+                var servicesFile = argsList.get(0);
+                var files = argsList.subList(1, argsList.size());
 
                 Builder builder;
                 if (files.size() == 1) {
-                    builder = new Builder(services, parseInputFiles(files.get(0)));
+                    builder = new Builder(servicesFile, parseInputFiles(files.get(0)));
                     builder.withInputDirectory(options.valueOf(inputDir));
                     builder.withOutputDirectory(options.valueOf(outputDir));
                 } else {
-                    builder = new Builder(services, files.get(0), files.get(1));
+                    builder = new Builder(servicesFile, files.get(0), files.get(1));
                 }
                 builder.withStageDirectory(options.valueOf(stageDir));
 
@@ -765,8 +765,8 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         }
 
         private DpeName parseFrontEnd() {
-            String frontEnd = options.valueOf(this.frontEnd)
-                                     .replaceFirst("localhost", ClaraUtil.localhost());
+            var frontEnd = options.valueOf(this.frontEnd)
+                                  .replaceFirst("localhost", ClaraUtil.localhost());
             try {
                 return new DpeName(frontEnd);
             } catch (IllegalArgumentException e) {
@@ -775,7 +775,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         }
 
         private String parseSession() {
-            String session = options.valueOf(this.session);
+            var session = options.valueOf(this.session);
             if (session == null) {
                 return "";
             }
@@ -783,7 +783,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         }
 
         public String usage() {
-            String wrapper = "clara-orchestrator";
+            var wrapper = "clara-orchestrator";
             return String.format("usage: %s [options] <servicesFile> <datasetFile>", wrapper)
                 + String.format("%n%n  Options:%n")
                 + OptUtils.optionHelp("-C",

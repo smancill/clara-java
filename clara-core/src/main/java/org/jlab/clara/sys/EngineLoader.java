@@ -61,12 +61,12 @@ class EngineLoader {
         }
     }
 
-    private void validateDataTypes(Set<EngineDataType> types, String field) throws ClaraException {
-        if (types == null || types.isEmpty()) {
+    private void validateDataTypes(Set<EngineDataType> dataTypes, String field) throws ClaraException {
+        if (dataTypes == null || dataTypes.isEmpty()) {
             throw new ClaraException("missing engine " + field);
         }
-        for (EngineDataType dt : types) {
-            if (dt == null) {
+        for (var dataType : dataTypes) {
+            if (dataType == null) {
                 throw new ClaraException("null data type on engine " + field);
             }
         }

@@ -18,7 +18,6 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 class HelpCommand extends BaseCommand {
@@ -42,7 +41,7 @@ class HelpCommand extends BaseCommand {
             return EXIT_SUCCESS;
         }
 
-        Command command = commands.get(args[0]);
+        var command = commands.get(args[0]);
         if (command == null) {
             writer.println("Invalid command name.");
             return EXIT_ERROR;
@@ -51,7 +50,7 @@ class HelpCommand extends BaseCommand {
     }
 
     private void printCommand(String name) {
-        Command command = commands.get(name);
+        var command = commands.get(name);
         writer.printf("   %-14s", command.getName());
         writer.printf("%s%n", command.getDescription());
     }
@@ -64,12 +63,12 @@ class HelpCommand extends BaseCommand {
 
     private int showHelp(Command command) {
         try {
-            String help = getHelp(command);
+            var help = getHelp(command);
             if (terminal.getHeight() - 2 > countLines(help)) {
                 writer.print(help);
             } else {
-                Less less = new Less(terminal, Paths.get(""));
-                List<Source> sources = new ArrayList<>();
+                var less = new Less(terminal, Paths.get(""));
+                var sources = new ArrayList<Source>();
                 sources.add(new Source() {
                     @Override
                     public String getName() {
@@ -78,7 +77,7 @@ class HelpCommand extends BaseCommand {
 
                     @Override
                     public InputStream read() {
-                        String text = String.format("help %s%n%s%n", command.getName(), help);
+                        var text = String.format("help %s%n%s%n", command.getName(), help);
                         return new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
                     }
 
@@ -102,22 +101,22 @@ class HelpCommand extends BaseCommand {
     }
 
     private String getHelp(Command command) {
-        StringWriter helpWriter = new StringWriter();
-        PrintWriter printer = new PrintWriter(helpWriter);
+        var writer = new StringWriter();
+        var printer = new PrintWriter(writer);
         command.printHelp(printer);
         printer.close();
-        return helpWriter.toString();
+        return writer.toString();
     }
 
     private int countLines(String str) {
         // TODO it could be faster
-        String[] lines = str.split("\r\n|\r|\n");
+        var lines = str.split("\r\n|\r|\n");
         return lines.length;
     }
 
     @Override
     public void printHelp(PrintWriter printer) {
-        String help = "Show help for the command.";
+        var help = "Show help for the command.";
         printer.printf("%n  %s <command>%n", name);
         printer.printf("%s%n", ClaraUtil.splitIntoLines(help, "    ", 72));
     }

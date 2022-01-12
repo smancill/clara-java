@@ -106,9 +106,9 @@ class ServiceEngine {
 
 
     private EngineData configureEngine(EngineData inputData) {
-        long startTime = startClock();
+        var startTime = startClock();
 
-        EngineData outData = engine.configure(inputData);
+        var outData = engine.configure(inputData);
 
         stopClock(startTime);
 
@@ -176,7 +176,7 @@ class ServiceEngine {
     }
 
     private void parseComposition(EngineData inData) throws ClaraException {
-        String currentComposition = inData.getComposition();
+        var currentComposition = inData.getComposition();
         if (!currentComposition.equals(prevComposition)) {
             compiler.compile(currentComposition);
             prevComposition = currentComposition;
@@ -184,19 +184,19 @@ class ServiceEngine {
     }
 
     private Set<String> getLinks(EngineData inData, EngineData outData) {
-        ServiceState ownerSS = new ServiceState(outData.getEngineName(),
-                                                outData.getExecutionState());
-        ServiceState inputSS = new ServiceState(inData.getEngineName(),
-                                                inData.getExecutionState());
+        var ownerState = new ServiceState(outData.getEngineName(),
+                                          outData.getExecutionState());
+        var inputState = new ServiceState(inData.getEngineName(),
+                                          inData.getExecutionState());
 
-        return compiler.getLinks(ownerSS, inputSS);
+        return compiler.getLinks(ownerState, inputState);
     }
 
     private EngineData executeEngine(EngineData inData)
             throws ClaraException {
-        long startTime = startClock();
+        var startTime = startClock();
 
-        EngineData outData = engine.execute(inData);
+        var outData = engine.execute(inData);
 
         stopClock(startTime);
 
@@ -247,21 +247,21 @@ class ServiceEngine {
     }
 
     private void sendResult(EngineData outData, Set<String> outLinks) throws ClaraException {
-        for (String ss : outLinks) {
-            ClaraComponent comp = ClaraComponent.dpe(ss);
-            Message msg = putEngineData(outData, ss);
-            base.send(comp.getProxyAddress(), msg);
+        for (var service : outLinks) {
+            var dpe = ClaraComponent.dpe(service);
+            var msg = putEngineData(outData, service);
+            base.send(dpe.getProxyAddress(), msg);
         }
     }
 
     private void reportDone(EngineData data) throws ClaraException {
-        String mt = data.getMimeType();
-        Object ob = data.getData();
+        var mt = data.getMimeType();
+        var obj = data.getData();
         data.setData(EngineDataType.STRING.mimeType(), ClaraConstants.DONE);
 
         sendReport(ClaraConstants.DONE, data);
 
-        data.setData(mt, ob);
+        data.setData(mt, obj);
     }
 
     private void reportData(EngineData data) throws ClaraException {
@@ -269,7 +269,7 @@ class ServiceEngine {
     }
 
     private void reportProblem(EngineData data) throws ClaraException {
-        EngineStatus status = data.getStatus();
+        var status = data.getStatus();
         if (status.equals(EngineStatus.ERROR)) {
             sendReport(ClaraConstants.ERROR, data);
         } else if (status.equals(EngineStatus.WARNING)) {
@@ -279,30 +279,30 @@ class ServiceEngine {
 
 
     private void sendReport(String topicPrefix, EngineData data) throws ClaraException {
-        Topic topic = Topic.wrap(topicPrefix + Topic.SEPARATOR + base.getName());
-        Message transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
-        base.send(base.getFrontEnd(), transit);
+        var topic = Topic.wrap(topicPrefix + Topic.SEPARATOR + base.getName());
+        var msg = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+        base.send(base.getFrontEnd(), msg);
     }
 
     private void sendMonitorData(String state, EngineData data) throws ClaraException {
         if (monitorFe != null) {
-            Topic topic = Topic.wrap(ClaraConstants.MONITOR_REPORT
+            var topic = Topic.wrap(ClaraConstants.MONITOR_REPORT
                     + Topic.SEPARATOR + state
                     + Topic.SEPARATOR + sysReport.getSession()
                     + Topic.SEPARATOR + base.getEngine());
-            Message transit = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
-            base.sendUncheck(monitorFe.getProxyAddress(), transit);
+            var msg = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+            base.sendUncheck(monitorFe.getProxyAddress(), msg);
         }
     }
 
 
     private EngineData getEngineData(Message message) throws ClaraException {
-        MetaData.Builder metadata = message.getMetaData();
-        String mimeType = metadata.getDataType();
+        var metadata = message.getMetaData();
+        var mimeType = metadata.getDataType();
         if (mimeType.equals(ClaraConstants.SHARED_MEMORY_KEY)) {
             sysReport.incrementShrmReads();
-            String sender = metadata.getSender();
-            int id = metadata.getCommunicationId();
+            var sender = metadata.getSender();
+            var id = metadata.getCommunicationId();
             return SharedMemory.getEngineData(base.getName(), sender, id);
         } else {
             sysReport.addBytesReceived(message.getDataSize());
@@ -312,13 +312,13 @@ class ServiceEngine {
 
     private Message putEngineData(EngineData data, String receiver)
             throws ClaraException {
-        Topic topic = Topic.wrap(receiver);
+        var topic = Topic.wrap(receiver);
         if (SharedMemory.containsReceiver(receiver)) {
-            int id = data.getCommunicationId();
+            var id = data.getCommunicationId();
             SharedMemory.putEngineData(receiver, base.getName(), id, data);
             sysReport.incrementShrmWrites();
 
-            MetaData.Builder metadata = MetaData.newBuilder();
+            var metadata = MetaData.newBuilder();
             metadata.setAuthor(base.getName());
             metadata.setComposition(data.getComposition());
             metadata.setCommunicationId(id);
@@ -327,15 +327,15 @@ class ServiceEngine {
 
             return new Message(topic, metadata, ClaraConstants.SHARED_MEMORY_KEY.getBytes());
         } else {
-            Message output = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
-            sysReport.addBytesSent(output.getDataSize());
-            return output;
+            var msg = DataUtil.serialize(topic, data, engine.getOutputDataTypes());
+            sysReport.addBytesSent(msg.getDataSize());
+            return msg;
         }
     }
 
 
     private String getReplyTo(Message message) {
-        MetaData.Builder meta = message.getMetaData();
+        var meta = message.getMetaData();
         if (meta.hasReplyTo()) {
             return meta.getReplyTo();
         }

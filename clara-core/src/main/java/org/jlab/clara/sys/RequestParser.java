@@ -27,7 +27,7 @@ final class RequestParser {
     }
 
     static RequestParser build(Message msg) throws RequestException {
-        String mimeType = msg.getMimeType();
+        var mimeType = msg.getMimeType();
         if (mimeType.equals("text/string")) {
             return new RequestParser(msg.getMetaData(), new String(msg.getData()));
         }
@@ -59,7 +59,7 @@ final class RequestParser {
     }
 
     private String invalidRequestMsg() {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append("Invalid request");
         if (cmdMeta.hasAuthor()) {
             sb.append(" from author = ").append(cmdMeta.getAuthor());

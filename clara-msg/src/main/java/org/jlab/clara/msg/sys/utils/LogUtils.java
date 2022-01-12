@@ -23,9 +23,9 @@ public final class LogUtils {
     private LogUtils() { }
 
     public static Logger getConsoleLogger(String name) {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Logger logger = Logger.getLogger(name);
-        ConsoleHandler handler = new ConsoleHandler() {
+        var dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        var logger = Logger.getLogger(name);
+        var handler = new ConsoleHandler() {
             @Override
             protected void setOutputStream(OutputStream out) throws SecurityException {
                 super.setOutputStream(System.out);
@@ -51,8 +51,8 @@ public final class LogUtils {
     public static Supplier<String> exceptionReporter(Exception e) {
         return () -> {
             try {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
+                var sw = new StringWriter();
+                var pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
                 return sw.toString();
             } catch (Exception e2) {

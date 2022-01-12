@@ -10,7 +10,6 @@ import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegDataProto.RegData;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -79,12 +78,12 @@ class RegDatabase {
      */
     public void remove(String host) {
         for (ConcurrentMap<Topic, Set<RegData>> map : db.values()) {
-            Iterator<Entry<Topic, Set<RegData>>> dbIt = map.entrySet().iterator();
-            while (dbIt.hasNext()) {
-                Set<RegData> regSet = dbIt.next().getValue();
+            var it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                var regSet = it.next().getValue();
                 regSet.removeIf(reg -> reg.getHost().equals(host));
                 if (regSet.isEmpty()) {
-                    dbIt.remove();
+                    it.remove();
                 }
             }
         }
@@ -192,7 +191,7 @@ class RegDatabase {
      * @return the set of all actors that match the terms
      */
     public Set<RegData> filter(RegData data) {
-        Filter filter = new Filter(data);
+        var filter = new Filter(data);
         for (Entry<String, ConcurrentMap<Topic, Set<RegData>>> level : db.entrySet()) {
             if (!filter.matchDomain(level.getKey())) {
                 continue;

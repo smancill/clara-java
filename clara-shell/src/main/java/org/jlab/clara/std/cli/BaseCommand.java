@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.function.Function;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -50,15 +49,15 @@ public abstract class BaseCommand extends AbstractCommand {
             writer.println("Error: missing argument(s).");
             return EXIT_ERROR;
         }
-        String subCommandName = args[0];
-        Command subCommand = subCommands.get(subCommandName);
-        if (subCommand == null) {
-            writer.println("Error: unknown argument " + subCommandName);
+        var subName = args[0];
+        var subCmd = subCommands.get(subName);
+        if (subCmd == null) {
+            writer.println("Error: unknown argument " + subName);
             return EXIT_ERROR;
         }
         try {
-            String[] cmdArgs = Arrays.copyOfRange(args, 1, args.length);
-            return subCommand.execute(cmdArgs);
+            var cmdArgs = Arrays.copyOfRange(args, 1, args.length);
+            return subCmd.execute(cmdArgs);
         } catch (IllegalArgumentException e) {
             writer.println("Error: " + e.getMessage());
         } catch (Exception e) {
@@ -95,29 +94,29 @@ public abstract class BaseCommand extends AbstractCommand {
      * @throws IllegalArgumentException if a subcommand of the given name already exists
      */
     protected void addSubCommand(CommandFactory factory) {
-        Command subCmd = factory.create(new Context(terminal, config));
-        String subName = subCmd.getName();
-        Command prev = subCommands.putIfAbsent(subName, subCmd);
+        var subCmd = factory.create(new Context(terminal, config));
+        var subName = subCmd.getName();
+        var prev = subCommands.putIfAbsent(subName, subCmd);
         if (prev != null) {
-            String msg = String.format("a subcommand '%s %s' already exists", name, subName);
-            throw new IllegalArgumentException(msg);
+            var error = String.format("a subcommand '%s %s' already exists", name, subName);
+            throw new IllegalArgumentException(error);
         }
     }
 
     @Override
     public Completer getCompleter() {
-        List<Completer> completers = subCommands.values()
+        var completers = subCommands.values()
                 .stream()
                 .map(this::getCompleter)
                 .collect(Collectors.toList());
         return new AggregateCompleter(completers);
     }
 
-    private Completer getCompleter(Command arg) {
-        List<Completer> allCompleters = new ArrayList<>();
+    private Completer getCompleter(Command subCmd) {
+        var allCompleters = new ArrayList<Completer>();
         allCompleters.add(new StringsCompleter(name));
 
-        Completer subCompleter = arg.getCompleter();
+        var subCompleter = subCmd.getCompleter();
         if (subCompleter instanceof ArgumentCompleter argCompleter) {
             allCompleters.addAll(argCompleter.getCompleters());
         } else {
@@ -130,17 +129,17 @@ public abstract class BaseCommand extends AbstractCommand {
 
     @Override
     public void printHelp(PrintWriter printer) {
-        for (Command cmd: subCommands.values()) {
-            printer.printf("%n  %s %s%n", name, cmd.getName());
-            printer.printf("%s%n", ClaraUtil.splitIntoLines(cmd.getDescription(), "    ", 72));
+        for (var subCmd: subCommands.values()) {
+            printer.printf("%n  %s %s%n", name, subCmd.getName());
+            printer.printf("%s%n", ClaraUtil.splitIntoLines(subCmd.getDescription(), "    ", 72));
         }
     }
 
     @Override
     public void close() throws Exception {
-        for (Command subCommand : subCommands.values()) {
+        for (var subCmd : subCommands.values()) {
             try {
-                subCommand.close();
+                subCmd.close();
             } catch (Exception e) {
                 writer.println(e.getMessage());
             }

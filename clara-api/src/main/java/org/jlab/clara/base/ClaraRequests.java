@@ -81,8 +81,8 @@ public final class ClaraRequests {
                 if (wait <= 0) {
                     throw new IllegalArgumentException("Invalid timeout: " + wait);
                 }
-                long timeout = unit.toMillis(wait);
-                Message response = base.syncSend(frontEnd, msg(), timeout);
+                var timeout = unit.toMillis(wait);
+                var response = base.syncSend(frontEnd, msg(), timeout);
                 return parseData(response);
             } catch (ClaraMsgException e) {
                 throw new ClaraException("Cannot sync send message", e);
@@ -127,14 +127,14 @@ public final class ClaraRequests {
 
         @Override
         Message msg() throws ClaraException {
-            Message msg = MessageUtil.buildRequest(topic, getData());
+            var msg = MessageUtil.buildRequest(topic, getData());
             msg.getMetaData().setAuthor(base.getName());
             return msg;
         }
 
         @Override
         Boolean parseData(Message msg) throws ClaraException {
-            MetaData.Status status = msg.getMetaData().getStatus();
+            var status = msg.getMetaData().getStatus();
             if (status == MetaData.Status.ERROR) {
                 // TODO: use specific "request" exception
                 throw new ClaraException(new String(msg.getData()));
@@ -336,7 +336,7 @@ public final class ClaraRequests {
          * @return this object, so methods can be chained
          */
         public D withDataTypes(EngineDataType... dataTypes) {
-            Set<EngineDataType> newTypes = new HashSet<>();
+            var newTypes = new HashSet<EngineDataType>();
             Collections.addAll(newTypes, dataTypes);
             this.dataTypes = newTypes;
             return self();
@@ -344,8 +344,8 @@ public final class ClaraRequests {
 
         @Override
         Message msg() throws ClaraException {
-            Message msg = DataUtil.serialize(topic, userData, dataTypes);
-            MetaData.Builder meta = msg.getMetaData();
+            var msg = DataUtil.serialize(topic, userData, dataTypes);
+            var meta = msg.getMetaData();
             meta.setAuthor(base.getName());
             meta.setAction(action);
             meta.setComposition(composition.toString());

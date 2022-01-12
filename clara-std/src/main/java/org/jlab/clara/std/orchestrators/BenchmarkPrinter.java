@@ -21,7 +21,7 @@ class BenchmarkPrinter {
     void printBenchmark(ApplicationInfo application) {
         Logging.info("Benchmark results:");
         printService(application.getReaderService(), "READER");
-        for (ServiceInfo service : application.getDataProcessingServices()) {
+        for (var service : application.getDataProcessingServices()) {
             printService(service, service.name());
         }
         printService(application.getWriterService(), "WRITER");

@@ -91,35 +91,35 @@ public class DataManager implements Engine {
      */
     @Override
     public EngineData configure(EngineData input) {
-        EngineData output = new EngineData();
-        String mt = input.getMimeType();
-        if (mt.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
-            String source = (String) input.getData();
+        var output = new EngineData();
+        var mimeType = input.getMimeType();
+        if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
+            var data = (String) input.getData();
             try {
-                JSONObject data = new JSONObject(source);
-                updateConfiguration(data);
+                var config = new JSONObject(data);
+                updateConfiguration(config);
                 returnData(output, getConfiguration());
             } catch (IllegalArgumentException e) {
                 System.err.printf("%s config: %s%n", NAME, e.getMessage());
                 ServiceUtils.setError(output, e.getMessage());
             } catch (JSONException e) {
-                String msg = "invalid request: " + source;
-                System.err.printf("%s config: %s%n", NAME, msg);
-                ServiceUtils.setError(output, msg);
+                var error = "invalid request: " + data;
+                System.err.printf("%s config: %s%n", NAME, error);
+                ServiceUtils.setError(output, error);
             }
         } else {
-            String msg = "wrong mime-type: " + mt;
-            System.err.printf("%s config: %s%n", NAME, msg);
-            ServiceUtils.setError(output, msg);
+            var error = "wrong mime-type: " + mimeType;
+            System.err.printf("%s config: %s%n", NAME, error);
+            ServiceUtils.setError(output, error);
         }
         return output;
     }
 
-    private void updateConfiguration(JSONObject data) {
-        DirectoryPaths paths = new DirectoryPaths(data);
+    private void updateConfiguration(JSONObject config) {
+        var paths = new DirectoryPaths(config);
         System.out.printf("%s service: input path set to %s%n", NAME, paths.inputPath);
         System.out.printf("%s service: output path set to %s%n", NAME, paths.outputPath);
-        if (data.has(CONF_STAGE_PATH)) {
+        if (config.has(CONF_STAGE_PATH)) {
             System.out.printf("%s service: stage path set to %s%n", NAME, paths.stagePath);
         }
         directoryPaths = paths;
@@ -158,13 +158,13 @@ public class DataManager implements Engine {
      */
     @Override
     public EngineData execute(EngineData input) {
-        EngineData output = new EngineData();
-        String mt = input.getMimeType();
-        if (mt.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
-            String source = (String) input.getData();
+        var output = new EngineData();
+        var mimeType = input.getMimeType();
+        if (mimeType.equalsIgnoreCase(EngineDataType.JSON.mimeType())) {
+            var data = (String) input.getData();
             try {
-                JSONObject request = new JSONObject(source);
-                String type = request.getString(REQUEST_TYPE);
+                var request = new JSONObject(data);
+                var type = request.getString(REQUEST_TYPE);
                 switch (type) {
                     case REQUEST_EXEC -> runAction(request, output);
                     case REQUEST_QUERY -> runQuery(request, output);
@@ -173,18 +173,18 @@ public class DataManager implements Engine {
             } catch (IllegalArgumentException e) {
                 ServiceUtils.setError(output, e.getMessage());
             } catch (JSONException e) {
-                ServiceUtils.setError(output, "invalid request: " + source);
+                ServiceUtils.setError(output, "invalid request: " + data);
             } catch (Exception e) {
                 ServiceUtils.setError(output, "unexpected problem:%n%s", ClaraUtil.reportException(e));
             }
         } else {
-            ServiceUtils.setError(output, "wrong mimetype: " + mt);
+            ServiceUtils.setError(output, "wrong mimetype: " + mimeType);
         }
         return output;
     }
 
     private void runAction(JSONObject request, EngineData output) {
-        String action = request.getString(REQUEST_ACTION);
+        var action = request.getString(REQUEST_ACTION);
         switch (action) {
             case REQUEST_EXEC_STAGE -> stageInputFile(getFiles(request), output);
             case REQUEST_EXEC_REMOVE -> removeStagedInputFile(getFiles(request), output);
@@ -195,7 +195,7 @@ public class DataManager implements Engine {
     }
 
     private void runQuery(JSONObject request, EngineData output) {
-        String action = request.getString(REQUEST_ACTION);
+        var action = request.getString(REQUEST_ACTION);
         if (action.equals(REQUEST_QUERY_CONFIG)) {
             returnData(output, getConfiguration());
         } else {
@@ -204,17 +204,17 @@ public class DataManager implements Engine {
     }
 
     private void stageInputFile(FilePaths files, EngineData output) {
-        Path stagePath = FileUtils.getParent(files.stagedInputFile);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        var stagePath = FileUtils.getParent(files.stagedInputFile);
+        var outputStream = new ByteArrayOutputStream();
         try {
             FileUtils.createDirectories(stagePath);
 
-            CommandLine cmdLine = new CommandLine("cp");
+            var cmdLine = new CommandLine("cp");
             cmdLine.addArgument(files.inputFile.toString());
             cmdLine.addArgument(files.stagedInputFile.toString());
 
-            DefaultExecutor executor = new DefaultExecutor();
-            PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+            var executor = new DefaultExecutor();
+            var streamHandler = new PumpStreamHandler(outputStream);
             executor.setStreamHandler(streamHandler);
 
             executor.execute(cmdLine);
@@ -231,13 +231,13 @@ public class DataManager implements Engine {
     }
 
     private void removeStagedInputFile(FilePaths files, EngineData output) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        var outputStream = new ByteArrayOutputStream();
         try {
-            CommandLine cmdLine = new CommandLine("rm");
+            var cmdLine = new CommandLine("rm");
             cmdLine.addArgument(files.stagedInputFile.toString());
 
-            DefaultExecutor executor = new DefaultExecutor();
-            PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+            var executor = new DefaultExecutor();
+            var streamHandler = new PumpStreamHandler(outputStream);
             executor.setStreamHandler(streamHandler);
 
             executor.execute(cmdLine);
@@ -254,17 +254,17 @@ public class DataManager implements Engine {
     }
 
     private void saveOutputFile(FilePaths files, EngineData output) {
-        Path outputPath = FileUtils.getParent(files.outputFile);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        var outputPath = FileUtils.getParent(files.outputFile);
+        var outputStream = new ByteArrayOutputStream();
         try {
             FileUtils.createDirectories(outputPath);
 
-            CommandLine cmdLine = new CommandLine("mv");
+            var cmdLine = new CommandLine("mv");
             cmdLine.addArgument(files.stagedOutputFile.toString());
             cmdLine.addArgument(files.outputFile.toString());
 
-            DefaultExecutor executor = new DefaultExecutor();
-            PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+            var executor = new DefaultExecutor();
+            var streamHandler = new PumpStreamHandler(outputStream);
             executor.setStreamHandler(streamHandler);
 
             executor.execute(cmdLine);
@@ -281,7 +281,7 @@ public class DataManager implements Engine {
     }
 
     private void clearStageDir(EngineData output) {
-        Path stagePath = directoryPaths.stagePath;
+        var stagePath = directoryPaths.stagePath;
         try {
             FileUtils.deleteFileTree(stagePath);
             System.out.printf("%s service: removed stage directory '%s'%n", NAME, stagePath);
@@ -292,12 +292,12 @@ public class DataManager implements Engine {
     }
 
     private FilePaths getFiles(JSONObject request) {
-        String inputFileName = request.getString(REQUEST_FILENAME);
+        var inputFileName = request.getString(REQUEST_FILENAME);
         return new FilePaths(directoryPaths, outputPrefix, inputFileName);
     }
 
     private void returnFilePaths(EngineData output, FilePaths files) {
-        JSONObject fileNames = new JSONObject();
+        var fileNames = new JSONObject();
         fileNames.put(REQUEST_INPUT_FILE, files.stagedInputFile.toString());
         fileNames.put(REQUEST_OUTPUT_FILE, files.stagedOutputFile.toString());
         returnData(output, fileNames);
@@ -329,7 +329,7 @@ public class DataManager implements Engine {
         }
 
         JSONObject getConfiguration() {
-            JSONObject config = new JSONObject();
+            var config = new JSONObject();
             config.put(CONF_INPUT_PATH, inputPath.toString());
             config.put(CONF_OUTPUT_PATH, outputPath.toString());
             config.put(CONF_STAGE_PATH, stagePath.toString());
@@ -366,17 +366,17 @@ public class DataManager implements Engine {
 
 
     private static Path getPath(JSONObject data, String key, String type) {
-        Path path = Paths.get(data.getString(key));
+        var path = Paths.get(data.getString(key));
         if (path.toString().isEmpty()) {
             throw new IllegalArgumentException("empty " + type + " path");
         }
         if (!path.isAbsolute()) {
-            String msg = String.format("%s path %s is not absolute", type, path);
-            throw new IllegalArgumentException(msg);
+            var error = String.format("%s path %s is not absolute", type, path);
+            throw new IllegalArgumentException(error);
         }
         if (Files.exists(path) && !Files.isDirectory(path)) {
-            String msg = String.format("%s path %s exists but not a directory", type, path);
-            throw new IllegalArgumentException(msg);
+            var error = String.format("%s path %s exists but not a directory", type, path);
+            throw new IllegalArgumentException(error);
         }
         return path;
     }

@@ -9,7 +9,6 @@ package org.jlab.clara.sys;
 import org.jlab.clara.base.core.ClaraBase;
 import org.jlab.clara.base.core.ClaraComponent;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.core.Connection;
 import org.jlab.clara.msg.core.ConnectionPool;
 import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.errors.ClaraMsgException;
@@ -51,7 +50,7 @@ class ServiceActor {
 
     private void sendMsg(ConnectionPool pool, ProxyAddress address, Message msg)
             throws ClaraException {
-        try (Connection con = pool.getConnection(address)) {
+        try (var con = pool.getConnection(address)) {
             base.send(con, msg);
         } catch (ClaraMsgException e) {
             throw new ClaraException("Could not send message", e);

@@ -7,7 +7,6 @@
 package org.jlab.clara.util;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 public final class VersionUtils {
@@ -19,8 +18,8 @@ public final class VersionUtils {
         private static final Properties INSTANCE = loadProperties();
 
         private static Properties loadProperties() {
-            Properties properties = new Properties();
-            try (InputStream in = VersionUtils.class.getResourceAsStream(PROPERTIES_FILE)) {
+            var properties = new Properties();
+            try (var in = VersionUtils.class.getResourceAsStream(PROPERTIES_FILE)) {
                 properties.load(in);
                 return properties;
             } catch (IOException e) {
@@ -37,8 +36,8 @@ public final class VersionUtils {
     }
 
     public static String getClaraVersion() {
-        Properties properties = getInstance();
-        String version = properties.getProperty("version");
+        var properties = getInstance();
+        var version = properties.getProperty("version");
         if (version == null) {
             throw new RuntimeException("missing Clara version property");
         }
@@ -50,19 +49,19 @@ public final class VersionUtils {
     }
 
     public static String getClaraVersionFull() {
-        Properties properties = getInstance();
-        String version = properties.getProperty("version");
+        var properties = getInstance();
+        var version = properties.getProperty("version");
         if (version == null) {
             throw new RuntimeException("missing Clara version property");
         }
-        StringBuilder fullVersion = new StringBuilder();
+        var fullVersion = new StringBuilder();
         fullVersion.append("Clara version ").append(version);
         if (version.endsWith("-SNAPSHOT")) {
-            String describe = properties.getProperty("git.describe");
+            var describe = properties.getProperty("git.describe");
             if (describe != null) {
                 fullVersion.append(" (build ").append(describe).append(")");
             } else {
-                String revision = properties.getProperty("git.revision");
+                var revision = properties.getProperty("git.revision");
                 if (revision != null) {
                     fullVersion.append(" (revision ").append(revision).append(")");
                 }

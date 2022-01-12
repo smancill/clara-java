@@ -18,7 +18,6 @@ import org.jlab.clara.base.DataRingTopic;
 import org.jlab.clara.base.DpeName;
 import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingListener;
 import org.jlab.clara.util.EnvUtils;
 
@@ -37,31 +36,31 @@ public class MonitorOrchestrator implements AutoCloseable {
     private final BaseOrchestrator orchestrator;
 
     public static void main(String[] args) throws Exception {
-        CommandLineBuilder cl = new CommandLineBuilder();
+        var cl = new CommandLineBuilder();
         try {
             cl.parse(args);
             if (cl.hasHelp()) {
                 System.out.println(cl.usage());
                 System.exit(0);
             }
-            OrchestratorConfigParser parser = new OrchestratorConfigParser(cl.setupFile());
-            List<RingCallbackInfo> ringCallbacks = parser.parseDataRingCallbacks();
+            var parser = new OrchestratorConfigParser(cl.setupFile());
+            var ringCallbacks = parser.parseDataRingCallbacks();
             if (ringCallbacks.isEmpty()) {
                 System.err.println("Error: no callbacks found in " + cl.setupFile());
                 System.exit(1);
             }
 
-            MonitorOrchestrator monitor = new MonitorOrchestrator();
-            Queue<AutoCloseable> handlers = new ConcurrentLinkedQueue<>();
+            var monitor = new MonitorOrchestrator();
+            var handlers = new ConcurrentLinkedQueue<AutoCloseable>();
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 monitor.close();
                 closeHandlers(handlers);
             }));
 
-            RingListener listener = asListener(monitor);
-            for (RingCallbackInfo callback : ringCallbacks) {
-                AutoCloseable handler = callback.loadCallback(listener);
+            var ringListener = asListener(monitor);
+            for (var callback : ringCallbacks) {
+                var handler = callback.loadCallback(ringListener);
                 handlers.add(handler);
             }
             Logging.info("Waiting reports...");
@@ -110,7 +109,7 @@ public class MonitorOrchestrator implements AutoCloseable {
 
 
     private static int getPoolSize() {
-        int cores = Runtime.getRuntime().availableProcessors();
+        var cores = Runtime.getRuntime().availableProcessors();
         if (cores <= 8) {
             return 12;
         }
@@ -193,7 +192,7 @@ public class MonitorOrchestrator implements AutoCloseable {
 
 
     private String getTopicLog(DataRingTopic topic) {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append("state = ").append('"').append(topic.state()).append('"');
         if (!topic.session().equals(ANY)) {
             sb.append("  session = ").append('"').append(topic.session()).append('"');
@@ -237,7 +236,7 @@ public class MonitorOrchestrator implements AutoCloseable {
 
 
     private static void closeHandlers(Queue<AutoCloseable> handlers) {
-        for (AutoCloseable handler : handlers) {
+        for (var handler : handlers) {
             try {
                 handler.close();
             } catch (Exception e) {
@@ -288,7 +287,7 @@ public class MonitorOrchestrator implements AutoCloseable {
                 if (hasHelp()) {
                     return;
                 }
-                int numArgs = options.nonOptionArguments().size();
+                var numArgs = options.nonOptionArguments().size();
                 if (numArgs == 0) {
                     throw new CommandLineException("missing arguments");
                 }
@@ -305,12 +304,12 @@ public class MonitorOrchestrator implements AutoCloseable {
         }
 
         public String setupFile() {
-            List<String> args = arguments.values(options);
-            return args.get(0);
+            var argsList = arguments.values(options);
+            return argsList.get(0);
         }
 
         public String usage() {
-            String wrapper = "clara-monitor";
+            var wrapper = "clara-monitor";
             return String.format("usage: %s [options] <setup.yaml>", wrapper);
         }
     }

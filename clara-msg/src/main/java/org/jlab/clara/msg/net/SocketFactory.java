@@ -37,7 +37,7 @@ public class SocketFactory {
      */
     public ZMQ.Socket createSocket(SocketType type) throws ClaraMsgException {
         try {
-            ZMQ.Socket socket = ctx.socket(type);
+            var socket = ctx.socket(type);
             socket.setRcvHWM(0);
             socket.setSndHWM(0);
             return socket;

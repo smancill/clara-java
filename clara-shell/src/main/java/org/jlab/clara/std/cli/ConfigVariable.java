@@ -100,7 +100,7 @@ public final class ConfigVariable {
          * @return this builder
          */
         public Builder withExpectedValues(Object... values) {
-            String[] strings = Stream.of(values).map(Object::toString).toArray(String[]::new);
+            var strings = Stream.of(values).map(Object::toString).toArray(String[]::new);
             this.completer = new StringsCompleter(strings);
             return this;
         }

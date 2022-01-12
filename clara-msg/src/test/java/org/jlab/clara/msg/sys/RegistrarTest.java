@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
@@ -42,14 +41,14 @@ public class RegistrarTest {
 
     @Test
     public void testRegistrationDataBase() throws Exception {
-        RegistrarWrapper registrar = new RegistrarWrapper();
-        try (registrar; Context context = Context.newContext()) {
+        var registrar = new RegistrarWrapper();
+        try (registrar; var context = Context.newContext()) {
             try {
-                ConnectionFactory factory = new ConnectionFactory(context);
+                var factory = new ConnectionFactory(context);
                 driver = factory.createRegistrarConnection(new RegAddress());
                 ActorUtils.sleep(200);
 
-                long start = System.currentTimeMillis();
+                var start = System.currentTimeMillis();
 
                 addRandomActor(10000);
                 checkActorsByTopic();
@@ -78,7 +77,7 @@ public class RegistrarTest {
                 removeAll();
                 checkActorsByTopic();
 
-                long end = System.currentTimeMillis();
+                var end = System.currentTimeMillis();
                 System.out.printf("Total time: %.3f s%n", ((end - start) / 1000.0));
             } finally {
                 if (driver != null) {
@@ -92,7 +91,7 @@ public class RegistrarTest {
     public void addRandomActor(int size) throws ClaraMsgException {
         System.out.println("INFO: Registering " + size + " random actors...");
         for (int i = 0; i < size; i++) {
-            RegData data = RegDataFactory.randomRegistration();
+            var data = RegDataFactory.randomRegistration();
             driver.addRegistration(name, data);
             registration.add(data);
         }
@@ -102,15 +101,15 @@ public class RegistrarTest {
     public void removeRandomActor(int size) throws ClaraMsgException {
         System.out.println("INFO: Removing " + size + " random actors...");
 
-        int first = randomGen.nextInt(registration.size() - size);
-        int end = first + size;
-        int i = 0;
-        Iterator<RegData> it = registration.iterator();
+        var first = randomGen.nextInt(registration.size() - size);
+        var end = first + size;
+        var i = 0;
+        var it = registration.iterator();
         while (it.hasNext()) {
             if (i == end) {
                 break;
             }
-            RegData reg = it.next();
+            var reg = it.next();
             if (i >= first) {
                 it.remove();
                 driver.removeRegistration(name, reg);
@@ -121,7 +120,7 @@ public class RegistrarTest {
 
 
     public void removeRandomHost() throws ClaraMsgException {
-        String host = RegDataFactory.random(RegDataFactory.testHosts);
+        var host = RegDataFactory.random(RegDataFactory.testHosts);
         removeHost(host);
     }
 
@@ -134,7 +133,7 @@ public class RegistrarTest {
 
 
     public void removeAll() throws ClaraMsgException {
-        for (String host : RegDataFactory.testHosts) {
+        for (var host : RegDataFactory.testHosts) {
             driver.removeAllRegistration("test", host);
         }
         registration.clear();
@@ -166,10 +165,10 @@ public class RegistrarTest {
 
 
     private void checkMatchingTopic(OwnerType regType) throws ClaraMsgException {
-        RegistrationHelper reg = new RegistrationHelper(regType, "topic");
-        for (Topic topic : testTopics()) {
-            Set<RegData> result = reg.request(RegDriver::findRegistration, r -> r.matching(topic));
-            Set<RegData> expected = reg.findLocal(matchTopic(regType, topic));
+        var reg = new RegistrationHelper(regType, "topic");
+        for (var topic : testTopics()) {
+            var result = reg.request(RegDriver::findRegistration, r -> r.matching(topic));
+            var expected = reg.findLocal(matchTopic(regType, topic));
 
             reg.assertThat(topic, result, expected);
         }
@@ -194,10 +193,10 @@ public class RegistrarTest {
 
 
     private void checkFilterByDomain(OwnerType regType) throws ClaraMsgException {
-        RegistrationHelper reg = new RegistrationHelper(regType, "domain");
-        for (String domain : testDomains()) {
-            Set<RegData> result = reg.request(RegDriver::filterRegistration, r -> r.withDomain(domain));
-            Set<RegData> expected = reg.findLocal(r -> r.getDomain().equals(domain));
+        var reg = new RegistrationHelper(regType, "domain");
+        for (var domain : testDomains()) {
+            var result = reg.request(RegDriver::filterRegistration, r -> r.withDomain(domain));
+            var expected = reg.findLocal(r -> r.getDomain().equals(domain));
 
             reg.assertThat(domain, result, expected);
         }
@@ -205,10 +204,10 @@ public class RegistrarTest {
 
 
     private void checkFilterBySubject(OwnerType regType) throws ClaraMsgException {
-        RegistrationHelper reg = new RegistrationHelper(regType, "subject");
-        for (String subject : testSubjects()) {
-            Set<RegData> result = reg.request(RegDriver::filterRegistration, r -> r.withSubject(subject));
-            Set<RegData> expected = reg.findLocal(r -> r.getSubject().equals(subject));
+        var reg = new RegistrationHelper(regType, "subject");
+        for (var subject : testSubjects()) {
+            var result = reg.request(RegDriver::filterRegistration, r -> r.withSubject(subject));
+            var expected = reg.findLocal(r -> r.getSubject().equals(subject));
 
             reg.assertThat(subject, result, expected);
         }
@@ -216,10 +215,10 @@ public class RegistrarTest {
 
 
     private void checkFilterByType(OwnerType regType) throws ClaraMsgException {
-        RegistrationHelper reg = new RegistrationHelper(regType, "type");
-        for (String type : testTypes()) {
-            Set<RegData> result = reg.request(RegDriver::filterRegistration, r -> r.withType(type));
-            Set<RegData> expected = reg.findLocal(r -> r.getType().equals(type));
+        var reg = new RegistrationHelper(regType, "type");
+        for (var type : testTypes()) {
+            var result = reg.request(RegDriver::filterRegistration, r -> r.withType(type));
+            var expected = reg.findLocal(r -> r.getType().equals(type));
 
             reg.assertThat(type, result, expected);
         }
@@ -227,10 +226,10 @@ public class RegistrarTest {
 
 
     private void checkFilterByHost(OwnerType regType) throws ClaraMsgException {
-        RegistrationHelper reg = new RegistrationHelper(regType, "host");
-        for (String host : RegDataFactory.testHosts) {
-            Set<RegData> result = reg.request(RegDriver::filterRegistration, r -> r.withHost(host));
-            Set<RegData> expected = reg.findLocal(r -> r.getHost().equals(host));
+        var reg = new RegistrationHelper(regType, "host");
+        for (var host : RegDataFactory.testHosts) {
+            var result = reg.request(RegDriver::filterRegistration, r -> r.withHost(host));
+            var expected = reg.findLocal(r -> r.getHost().equals(host));
 
             reg.assertThat(host, result, expected);
         }
@@ -238,10 +237,10 @@ public class RegistrarTest {
 
 
     private void checkSameTopic(OwnerType regType) throws ClaraMsgException {
-        RegistrationHelper reg = new RegistrationHelper(regType, "topic");
-        for (Topic topic : testTopics()) {
-            Set<RegData> result = reg.request(RegDriver::sameRegistration, r -> r.withSame(topic));
-            Set<RegData> expected = reg.findLocal(r -> getTopic(r).equals(topic));
+        var reg = new RegistrationHelper(regType, "topic");
+        for (var topic : testTopics()) {
+            var result = reg.request(RegDriver::sameRegistration, r -> r.withSame(topic));
+            var expected = reg.findLocal(r -> getTopic(r).equals(topic));
 
             reg.assertThat(topic, result, expected);
         }
@@ -249,10 +248,10 @@ public class RegistrarTest {
 
 
     private void checkAll(OwnerType regType) throws ClaraMsgException {
-        RegistrationHelper reg = new RegistrationHelper(regType, "all");
+        var reg = new RegistrationHelper(regType, "all");
 
-        Set<RegData> result = reg.request(RegDriver::allRegistration, RegQuery.Factory::all);
-        Set<RegData> expected = reg.findLocal(e -> true);
+        var result = reg.request(RegDriver::allRegistration, RegQuery.Factory::all);
+        var expected = reg.findLocal(e -> true);
 
         reg.assertThat(result, expected);
     }
@@ -319,7 +318,7 @@ public class RegistrarTest {
         Set<RegData> request(QueryRegistrar registrarFn,
                              Function<RegQuery.Factory, RegQuery> queryFn)
                 throws ClaraMsgException {
-            RegData data = queryFn.apply(queryFactory(regType)).data();
+            var data = queryFn.apply(queryFactory(regType)).data();
             return registrarFn.apply(driver, name, data);
         }
 
@@ -344,7 +343,7 @@ public class RegistrarTest {
                         Set<RegData> expected,
                         Supplier<String> successSuffix,
                         Supplier<String> errorSuffix) {
-            String type = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
+            var type = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
             if (result.equals(expected)) {
                 System.out.printf("Found %3d %s%s%n", result.size(), type, successSuffix.get());
             } else {

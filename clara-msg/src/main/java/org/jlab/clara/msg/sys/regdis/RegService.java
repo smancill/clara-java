@@ -95,8 +95,8 @@ public class RegService implements Runnable {
                     if (request == null) {
                         break;
                     }
-                    ZMsg reply = processRequest(request);
-                    reply.send(regSocket);
+                    ZMsg response = processRequest(request);
+                    response.send(regSocket);
                 } catch (ZMQException e) {
                     if (e.getErrorCode() == ZMQ.Error.ETERM.getCode()) {
                         break;
@@ -233,7 +233,7 @@ public class RegService implements Runnable {
 
     private void logFilter(String type, RegData data) {
         LOGGER.fine(() -> {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.append("search ").append(type);
             if (!data.getDomain().equals(ANY)) {
                 sb.append("  domain = ").append(data.getDomain());

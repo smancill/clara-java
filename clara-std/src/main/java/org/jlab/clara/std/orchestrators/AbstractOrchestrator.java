@@ -10,7 +10,6 @@ import org.jlab.clara.base.EngineCallback;
 import org.jlab.clara.engine.EngineData;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
@@ -40,7 +39,7 @@ abstract class AbstractOrchestrator {
     private final BlockingQueue<WorkerNode> freeNodes;
     private final ExecutorService nodesExecutor;
 
-    private final BlockingQueue<WorkerFile> processingQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<FileInfo> processingQueue = new LinkedBlockingQueue<>();
 
     private final AtomicInteger startedFilesCounter = new AtomicInteger();
     private final AtomicInteger processedFilesCounter = new AtomicInteger();
@@ -81,7 +80,7 @@ abstract class AbstractOrchestrator {
         }
 
         long totalEvents() {
-            long sum = 0L;
+            var sum = 0L;
             for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
                 NodeStats stat = entry.getValue();
                 synchronized (stat) {
@@ -94,7 +93,7 @@ abstract class AbstractOrchestrator {
         }
 
         long totalTime() {
-            long sum = 0L;
+            var sum = 0L;
             for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
                 NodeStats stat = entry.getValue();
                 synchronized (stat) {
@@ -111,8 +110,8 @@ abstract class AbstractOrchestrator {
         }
 
         double localAverage() {
-            double avgSum = 0.0;
-            int avgCount = 0;
+            var avgSum = 0.0;
+            var avgCount = 0;
             for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
                 NodeStats stat = entry.getValue();
                 synchronized (stat) {
@@ -292,7 +291,7 @@ abstract class AbstractOrchestrator {
             new Thread(new FileMonitoringWorker(), "file-monitoring-thread").start();
         } else {
             int count = 0;
-            for (WorkerFile file : paths.allFiles) {
+            for (FileInfo file : paths.allFiles) {
                 if (Files.exists(paths.inputFilePath(file))) {
                     processingQueue.add(file);
                     count++;
@@ -309,14 +308,14 @@ abstract class AbstractOrchestrator {
 
         @Override
         public void run() {
-            BlockingQueue<WorkerFile> requestedFiles = new LinkedBlockingDeque<>(paths.allFiles);
+            var requestedFiles = new LinkedBlockingDeque<>(paths.allFiles);
             while (!requestedFiles.isEmpty()) {
-                WorkerFile recFile = requestedFiles.element();
-                Path filePath = paths.inputFilePath(recFile);
-                if (filePath.toFile().exists()) {
-                    processingQueue.add(recFile);
+                var file = requestedFiles.element();
+                var path = paths.inputFilePath(file);
+                if (path.toFile().exists()) {
+                    processingQueue.add(file);
                     requestedFiles.remove();
-                    Logging.info("File %s is cached", filePath);
+                    Logging.info("File %s is cached", path);
                 } else {
                     orchestrator.sleep(100);
                 }
@@ -340,16 +339,16 @@ abstract class AbstractOrchestrator {
             }
         }
         while (processedFilesCounter.get() < paths.numFiles()) {
-            WorkerFile recFile = processingQueue.peek();
-            if (recFile == null) {
+            var file = processingQueue.peek();
+            if (file == null) {
                 orchestrator.sleep(100);
                 continue;
             }
             // TODO check if file exists
-            final WorkerNode node = freeNodes.poll(60, TimeUnit.SECONDS);
+            final var node = freeNodes.poll(60, TimeUnit.SECONDS);
             if (node != null) {
                 try {
-                    nodesExecutor.execute(() -> processFile(node, recFile));
+                    nodesExecutor.execute(() -> processFile(node, file));
                     processingQueue.remove();
                 } catch (RejectedExecutionException e) {
                     freeNodes.add(node);
@@ -359,11 +358,11 @@ abstract class AbstractOrchestrator {
     }
 
 
-    void processFile(WorkerNode node, WorkerFile recFile) {
+    void processFile(WorkerNode node, FileInfo file) {
         try {
             stats.startClock();
             // TODO check DPE is alive
-            openFiles(node, recFile);
+            openFiles(node, file);
             startFile(node);
         } catch (OrchestratorException e) {
             Logging.error("Could not use %s for processing:%n%s",
@@ -372,11 +371,11 @@ abstract class AbstractOrchestrator {
     }
 
 
-    void openFiles(WorkerNode node, WorkerFile recFile) {
+    void openFiles(WorkerNode node, FileInfo file) {
         if (options.stageFiles) {
-            node.setFiles(recFile);
+            node.setFiles(file);
         } else {
-            node.setFiles(paths, recFile);
+            node.setFiles(paths, file);
         }
         node.openFiles();
     }
@@ -389,8 +388,8 @@ abstract class AbstractOrchestrator {
         }
         node.setReportFrequency(options.reportFreq);
 
-        int fileCounter = startedFilesCounter.incrementAndGet();
-        int totalFiles = paths.numFiles();
+        var fileCounter = startedFilesCounter.incrementAndGet();
+        var totalFiles = paths.numFiles();
         node.setFileCounter(fileCounter, totalFiles);
 
         node.sendEvents(options.maxThreads);
@@ -424,8 +423,8 @@ abstract class AbstractOrchestrator {
     }
 
     private boolean incrementFinishedFile() {
-        int counter = processedFilesCounter.incrementAndGet();
-        boolean finished = counter == paths.numFiles();
+        var counter = processedFilesCounter.incrementAndGet();
+        var finished = counter == paths.numFiles();
         if (finished) {
             stats.stopClock();
             exitRec(true, "Processing is complete.");
@@ -454,7 +453,7 @@ abstract class AbstractOrchestrator {
         @Override
         public void callback(EngineData data) {
             int severity = data.getStatusSeverity();
-            String description = data.getDescription();
+            var description = data.getDescription();
             if (description.equalsIgnoreCase("End of File")) {
                 int eof = node.eofCounter.incrementAndGet();
                 if (eof == 1) {

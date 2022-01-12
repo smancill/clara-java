@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -76,7 +75,7 @@ public final class ClaraUtil {
      * @return true if the string is a Clara canonical name, false if not
      */
     public static boolean isCanonicalName(String name) {
-        Matcher matcher = CANONICAL_NAME_PATTERN.matcher(name);
+        var matcher = CANONICAL_NAME_PATTERN.matcher(name);
         return matcher.matches();
     }
 
@@ -92,7 +91,7 @@ public final class ClaraUtil {
      * @return true if the string is a DPE canonical name, false if not
      */
     public static boolean isDpeName(String name) {
-        Matcher matcher = CANONICAL_NAME_PATTERN.matcher(name);
+        var matcher = CANONICAL_NAME_PATTERN.matcher(name);
         return matcher.matches() && matcher.group(CONTAINER_GROUP) == null;
     }
 
@@ -108,7 +107,7 @@ public final class ClaraUtil {
      * @return true if the string is a container canonical name, false if not
      */
     public static boolean isContainerName(String name) {
-        Matcher matcher = CANONICAL_NAME_PATTERN.matcher(name);
+        var matcher = CANONICAL_NAME_PATTERN.matcher(name);
         return matcher.matches()
                 && matcher.group(CONTAINER_GROUP) != null
                 && matcher.group(SERVICE_GROUP) == null;
@@ -126,7 +125,7 @@ public final class ClaraUtil {
      * @return true if the string is a service canonical name, false if not
      */
     public static boolean isServiceName(String name) {
-        Matcher matcher = CANONICAL_NAME_PATTERN.matcher(name);
+        var matcher = CANONICAL_NAME_PATTERN.matcher(name);
         return matcher.matches() && matcher.group(SERVICE_GROUP) != null;
     }
 
@@ -141,7 +140,7 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        Topic topic = Topic.wrap(canonicalName);
+        var topic = Topic.wrap(canonicalName);
         return topic.domain();
     }
 
@@ -157,7 +156,7 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        Topic topic = Topic.wrap(canonicalName);
+        var topic = Topic.wrap(canonicalName);
         return topic.subject();
     }
 
@@ -195,7 +194,7 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        Topic topic = Topic.wrap(canonicalName);
+        var topic = Topic.wrap(canonicalName);
         return topic.type();
     }
 
@@ -231,7 +230,7 @@ public final class ClaraUtil {
         int portSep = canonicalName.indexOf(ClaraConstants.PORT_SEP);
         int langSep = canonicalName.indexOf(ClaraConstants.LANG_SEP);
         if (portSep > 0) {
-            String port = canonicalName.substring(portSep + 1, langSep);
+            var port = canonicalName.substring(portSep + 1, langSep);
             return Integer.parseInt(port);
         } else {
             return getPort(canonicalName, langSep + 1);
@@ -248,7 +247,7 @@ public final class ClaraUtil {
         if (!isCanonicalName(canonicalName)) {
             throw new IllegalArgumentException("Not a canonical name: " + canonicalName);
         }
-        String dpeName = getDpeName(canonicalName);
+        var dpeName = getDpeName(canonicalName);
         return dpeName.substring(dpeName.indexOf(ClaraConstants.LANG_SEP) + 1);
     }
 
@@ -288,7 +287,7 @@ public final class ClaraUtil {
      * @return a set with the data types
      */
     public static Set<EngineDataType> buildDataTypes(EngineDataType... dataTypes) {
-        Set<EngineDataType> set = new HashSet<>();
+        var set = new HashSet<EngineDataType>();
         Collections.addAll(set, dataTypes);
         return set;
     }
@@ -303,11 +302,11 @@ public final class ClaraUtil {
      * @return the text split into lines
      */
     public static String splitIntoLines(String input, String linePrefix, int maxLineLength) {
-        StringTokenizer tok = new StringTokenizer(input);
-        StringBuilder output = new StringBuilder();
-        int lineLen = 0;
-        while (tok.hasMoreTokens()) {
-            String word = tok.nextToken();
+        var tokenizer = new StringTokenizer(input);
+        var output = new StringBuilder();
+        var lineLen = 0;
+        while (tokenizer.hasMoreTokens()) {
+            var word = tokenizer.nextToken();
             if (lineLen > 0) {
                 lineLen++; // count the space before the word
             }
@@ -332,8 +331,8 @@ public final class ClaraUtil {
      * @return a string with the stack trace of the exception
      */
     public static String reportException(Throwable e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
+        var sw = new StringWriter();
+        var pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         return sw.toString();
     }
@@ -352,12 +351,12 @@ public final class ClaraUtil {
      * @return the list of throwables
      */
     public static List<Throwable> getThrowableList(Throwable throwable) {
-        List<Throwable> list = new ArrayList<>();
-        while (throwable != null && !list.contains(throwable)) {
-            list.add(throwable);
+        var throwables = new ArrayList<Throwable>();
+        while (throwable != null && !throwables.contains(throwable)) {
+            throwables.add(throwable);
             throwable = throwable.getCause();
         }
-        return list;
+        return throwables;
     }
 
     /**
@@ -368,8 +367,8 @@ public final class ClaraUtil {
      *         <code>null</code> if none found or null throwable input
      */
     public static Throwable getRootCause(Throwable throwable) {
-        List<Throwable> list = getThrowableList(throwable);
-        return list.size() < 2 ? null : list.get(list.size() - 1);
+        var throwables = getThrowableList(throwable);
+        return throwables.size() < 2 ? null : throwables.get(throwables.size() - 1);
     }
 
     /**
@@ -380,8 +379,8 @@ public final class ClaraUtil {
      */
     public static String stack2str(Exception e) {
         try {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
+            var sw = new StringWriter();
+            var pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             return sw.toString();
         } catch (Exception e2) {
@@ -397,9 +396,9 @@ public final class ClaraUtil {
      * @return true/false
      */
     public static Boolean isRemoteService(String serviceName) {
-        Topic topic = Topic.wrap(serviceName);
-        for (String s : ActorUtils.getLocalHostIps()) {
-            if (s.equals(topic.domain())) {
+        var topic = Topic.wrap(serviceName);
+        for (var ip : ActorUtils.getLocalHostIps()) {
+            if (ip.equals(topic.domain())) {
                 return false;
             }
         }

@@ -8,7 +8,6 @@ package org.jlab.clara.msg.examples;
 
 import org.jlab.clara.msg.core.Actor;
 import org.jlab.clara.msg.core.ActorUtils;
-import org.jlab.clara.msg.core.Connection;
 import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegInfo;
@@ -29,23 +28,23 @@ public class SyncPublisher extends Actor {
     }
 
     public static void main(String[] args) {
-        try (SyncPublisher publisher = new SyncPublisher()) {
+        try (var publisher = new SyncPublisher()) {
 
             // build the publishing topic (hard-coded)
-            final String domain = "test_domain";
-            final String subject = "test_subject";
-            final String type = "test_type";
-            final String description = "test_description";
-            Topic topic = Topic.build(domain, subject, type);
+            final var domain = "test_domain";
+            final var subject = "test_subject";
+            final var type = "test_type";
+            final var description = "test_description";
+            var topic = Topic.build(domain, subject, type);
 
             // register this publisher
             publisher.register(RegInfo.publisher(topic, description));
 
             // create a simple message
-            Message msg = Message.createFrom(topic, 111);
+            var msg = Message.createFrom(topic, 111);
 
             // connect to the local proxy
-            try (Connection con = publisher.getConnection()) {
+            try (var con = publisher.getConnection()) {
                 int counter = 1;
                 while (true) {
                     System.out.println("Publishing " + counter);

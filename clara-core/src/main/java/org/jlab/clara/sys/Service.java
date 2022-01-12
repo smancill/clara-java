@@ -14,7 +14,6 @@ import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Callback;
 import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.core.Subscription;
-import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.sys.RequestParser.RequestException;
 import org.jlab.clara.sys.report.ServiceReport;
@@ -67,7 +66,7 @@ class Service extends AbstractActor {
 
         // Dynamic loading of the Clara engine class
         // Note: using system class loader
-        EngineLoader cl = new EngineLoader(ClassLoader.getSystemClassLoader());
+        var cl = new EngineLoader(ClassLoader.getSystemClassLoader());
         userEngine = cl.load(comp.getEngineClass());
 
         sysReport = new ServiceReport(comp, userEngine, session);
@@ -79,7 +78,7 @@ class Service extends AbstractActor {
         enginePool = new ServiceEngine[comp.getSubscriptionPoolSize()];
 
         // Fill the object pool
-        ServiceActor engineActor = new ServiceActor(comp, frontEnd, connectionPools);
+        var engineActor = new ServiceActor(comp, frontEnd, connectionPools);
         for (int i = 0; i < comp.getSubscriptionPoolSize(); i++) {
             enginePool[i] = new ServiceEngine(userEngine, engineActor, sysConfig, sysReport);
         }
@@ -107,9 +106,9 @@ class Service extends AbstractActor {
         }
 
         // subscribe and register
-        Topic topic = base.getMe().getTopic();
-        Callback callback = new ServiceCallBack();
-        String description = base.getDescription();
+        var topic = base.getMe().getTopic();
+        var callback = new ServiceCallBack();
+        var description = base.getDescription();
         subscription = startRegisteredSubscription(topic, callback, description);
     }
 
@@ -174,10 +173,10 @@ class Service extends AbstractActor {
 
 
     private void setup(Message msg) throws RequestException {
-        RequestParser setup = RequestParser.build(msg);
-        String report = setup.nextString();
-        int value = setup.nextInteger();
-        boolean publishReport = value > 0; // 0 is used to cancel reports
+        var parser = RequestParser.build(msg);
+        var report = parser.nextString();
+        var value = parser.nextInteger();
+        var publishReport = value > 0; // 0 is used to cancel reports
         switch (report) {
             case ClaraConstants.SERVICE_REPORT_DONE -> {
                 sysConfig.setDoneRequest(publishReport);
@@ -195,13 +194,13 @@ class Service extends AbstractActor {
                 throw new RequestException("Invalid report request: " + report);
         }
         if (msg.hasReplyTopic()) {
-            sendResponse(msg, MetaData.Status.INFO, setup.request());
+            sendResponse(msg, MetaData.Status.INFO, parser.request());
         }
     }
 
 
     private void printUnhandledException(Exception e) {
-        StringWriter errors = new StringWriter();
+        var errors = new StringWriter();
         errors.write(name + ": Clara error: ");
         e.printStackTrace(new PrintWriter(errors));
         System.err.println(errors);
@@ -260,7 +259,7 @@ class Service extends AbstractActor {
         @Override
         public void callback(Message msg) {
             try {
-                MetaData.Builder metadata = msg.getMetaData();
+                var metadata = msg.getMetaData();
                 if (!metadata.hasAction()) {
                     setup(msg);
                 } else if (metadata.getAction().equals(MetaData.ControlAction.CONFIGURE)) {

@@ -73,7 +73,7 @@ public abstract class Subscription {
 
         @Override
         public void run() {
-            try (ProxyPoller poller = new ProxyPoller(connection)) {
+            try (var poller = new ProxyPoller(connection)) {
                 waitMessages(poller);
             }
         }
@@ -141,8 +141,8 @@ public abstract class Subscription {
     }
 
     private String subscriptionError() {
-        int size = topics.size();
-        StringBuilder sb = new StringBuilder();
+        var size = topics.size();
+        var sb = new StringBuilder();
         sb.append("could not subscribe with ").append(connection.getAddress());
         sb.append(" [");
         sb.append(topics.get(0));
