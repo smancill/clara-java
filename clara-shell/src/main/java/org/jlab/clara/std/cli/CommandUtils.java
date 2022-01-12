@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,7 +59,7 @@ public final class CommandUtils {
         return EnvUtils.get("PATH")
                 .stream()
                 .flatMap(v -> Arrays.stream(v.split(PATH_SEP)))
-                .map(Paths::get)
+                .map(Path::of)
                 .anyMatch(path -> Files.exists(path.resolve(name)));
     }
 

@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Helper class to read configuration for the standard orchestrators.
@@ -96,8 +95,8 @@ public class OrchestratorConfigParser {
      *
      * @param configFilePath the path to the configuration file
      */
-    public OrchestratorConfigParser(String configFilePath) {
-        try (InputStream input = new FileInputStream(configFilePath)) {
+    public OrchestratorConfigParser(Path configFilePath) {
+        try (InputStream input = new FileInputStream(configFilePath.toFile())) {
             var yaml = new Yaml();
             Map<String, Object> config = yaml.load(input);
             this.config = new JSONObject(config);
@@ -397,13 +396,12 @@ public class OrchestratorConfigParser {
     }
 
 
-    static List<String> readInputFiles(String inputFilesList) {
-        try {
-            var pattern = Pattern.compile("^\\s*#.*$");
-            var files = Files.lines(Paths.get(inputFilesList))
-                    .filter(line -> !line.isEmpty())
-                    .filter(line -> !pattern.matcher(line).matches())
-                    .collect(Collectors.toList());
+    static List<String> readInputFiles(Path inputFilesList) {
+        var pattern = Pattern.compile("^\\s*#.*$");
+        try (var lines = Files.lines(inputFilesList)) {
+            var files = lines.filter(line -> !line.isEmpty())
+                             .filter(line -> !pattern.matcher(line).matches())
+                             .toList();
             if (files.isEmpty()) {
                 throw error("empty list of input files from " + inputFilesList);
             }

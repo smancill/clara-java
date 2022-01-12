@@ -12,10 +12,8 @@ import org.jlab.clara.engine.EngineDataType;
 import org.jlab.clara.util.FileUtils;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 /**
@@ -95,12 +93,12 @@ public abstract class AbstractEventWriterService<Writer> extends AbstractService
             fileName = config.getString(CONF_FILENAME);
             logger.info("request to open file {}", fileName);
             try {
-                var outputFile = new File(fileName);
-                var outputDir = outputFile.getParentFile();
+                var outputFile = Path.of(fileName);
+                var outputDir = outputFile.getParent();
                 if (outputDir != null) {
-                    FileUtils.createDirectories(outputDir.toPath());
+                    FileUtils.createDirectories(outputDir);
                 }
-                writer = createWriter(Paths.get(fileName), config);
+                writer = createWriter(outputFile, config);
                 eventCounter = 0;
                 logger.info("opened file {}", fileName);
             } catch (IOException | EventWriterException e) {

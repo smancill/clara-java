@@ -20,7 +20,9 @@ import org.jlab.clara.base.core.ClaraConstants;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingListener;
 import org.jlab.clara.util.EnvUtils;
+import org.jlab.clara.util.OptUtils;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -269,14 +271,14 @@ public class MonitorOrchestrator implements AutoCloseable {
 
     static class CommandLineBuilder {
 
-        private final OptionSpec<String> arguments;
+        private final OptionSpec<Path> arguments;
 
         private final OptionParser parser;
         private OptionSet options;
 
         CommandLineBuilder() {
             parser = new OptionParser();
-            arguments = parser.nonOptions();
+            arguments = parser.nonOptions().withValuesConvertedBy(OptUtils.PATH_CONVERTER);
 
             parser.acceptsAll(List.of("h", "help")).forHelp();
         }
@@ -303,7 +305,7 @@ public class MonitorOrchestrator implements AutoCloseable {
             return options.has("help");
         }
 
-        public String setupFile() {
+        public Path setupFile() {
             var argsList = arguments.values(options);
             return argsList.get(0);
         }

@@ -39,10 +39,10 @@ class SetCommandSpec extends Specification {
         var userFile = createTempFile("yaml")
 
         when:
-        command.execute("servicesFile", userFile)
+        command.execute("servicesFile", userFile.toString())
 
         then:
-        config.getString(Config.SERVICES_FILE) == userFile
+        config.getPath(Config.SERVICES_FILE) == userFile
     }
 
     def "Set file list"() {
@@ -50,10 +50,10 @@ class SetCommandSpec extends Specification {
         var userFile = createTempFile("fileList")
 
         when:
-        command.execute("fileList", userFile)
+        command.execute("fileList", userFile.toString())
 
         then:
-        config.getString(Config.FILES_LIST) == userFile
+        config.getPath(Config.FILES_LIST) == userFile
     }
 
     def "Set max threads"() {
@@ -69,10 +69,10 @@ class SetCommandSpec extends Specification {
         var userDir = createTempDir("input")
 
         when:
-        command.execute("inputDir", userDir)
+        command.execute("inputDir", userDir.toString())
 
         then:
-        config.getString(Config.INPUT_DIR) == userDir
+        config.getPath(Config.INPUT_DIR) == userDir
     }
 
     def "Set output directory"() {
@@ -80,21 +80,21 @@ class SetCommandSpec extends Specification {
         var userDir = createTempDir("output")
 
         when:
-        command.execute("outputDir", userDir)
+        command.execute("outputDir", userDir.toString())
 
         then:
-        config.getString(Config.OUTPUT_DIR) == userDir
+        config.getPath(Config.OUTPUT_DIR) == userDir
     }
 
-    private static String createTempDir(String prefix) {
+    private static Path createTempDir(String prefix) {
         Path tmpDir = Files.createTempDirectory(prefix)
         tmpDir.toFile().deleteOnExit()
-        return tmpDir.toString()
+        return tmpDir
     }
 
-    private static String createTempFile(String prefix) {
-        var tmpFile = File.createTempFile(prefix, "")
-        tmpFile.deleteOnExit()
-        return tmpFile.toString()
+    private static Path createTempFile(String prefix) {
+        Path tmpFile = Files.createTempFile(prefix, "")
+        tmpFile.toFile().deleteOnExit()
+        return tmpFile
     }
 }

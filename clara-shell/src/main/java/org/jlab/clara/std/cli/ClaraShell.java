@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,7 +69,7 @@ public final class ClaraShell implements AutoCloseable {
                 System.err.println("usage: clara-shell [ <script> ]");
                 System.exit(0);
             }
-            builder.withScript(Paths.get(args[0]));
+            builder.withScript(Path.of(args[0]));
         } else if (args.length > 1) {
             System.err.println("usage: clara-shell [ <script> ]");
             System.exit(1);

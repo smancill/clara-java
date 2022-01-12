@@ -14,6 +14,8 @@ import org.json.JSONObject
 import spock.lang.Specification
 import spock.lang.Subject
 
+import java.nio.file.Path
+
 class WorkerNodeSpec extends Specification {
 
     CoreOrchestrator orchestrator
@@ -119,8 +121,9 @@ class WorkerNodeSpec extends Specification {
         ])
 
         and: "file paths"
-        var file = new FileInfo("in.dat", "out.dat")
-        var paths = new OrchestratorPaths.Builder("/mnt/data/in.dat", "/mnt/data/out.dat").build()
+        var input = Path.of("/mnt/data/in.dat")
+        var output = Path.of("/mnt/data/out.dat")
+        var paths = new OrchestratorPaths.Builder(input, output).build()
 
         and: "mock reader service config responses"
         var events = new EngineData()
@@ -133,7 +136,7 @@ class WorkerNodeSpec extends Specification {
 
         when: "configure and open input/output files"
         node.setConfiguration(config)
-        node.setFiles(paths, file)
+        node.setFiles(paths, paths.allFiles[0])
         node.openFiles()
 
         then: "the reader configuration is sent to the reader"

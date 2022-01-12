@@ -20,6 +20,7 @@ import org.jlab.clara.util.EnvUtils;
 import org.jlab.clara.util.OptUtils;
 import org.jlab.clara.util.VersionUtils;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,29 +99,20 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
          * @param inputFiles the list of files to be processed (only names).
          * @throws OrchestratorConfigException in case of any error in the application description
          */
-        public Builder(String servicesFile, List<String> inputFiles) {
-            Objects.requireNonNull(servicesFile, "servicesFile parameter is null");
-            Objects.requireNonNull(inputFiles, "inputFiles parameter is null");
-            if (inputFiles.isEmpty()) {
-                throw new IllegalArgumentException("inputFiles list is empty");
-            }
-
+        public Builder(Path servicesFile, List<String> inputFiles) {
             this.setup = initialSetup(servicesFile);
             this.paths = new OrchestratorPaths.Builder(inputFiles);
             this.options = new OrchestratorOptions.Builder();
         }
 
-        private Builder(String servicesFile, String inputFile, String outputFile) {
-            Objects.requireNonNull(servicesFile, "servicesFile parameter is null");
-            Objects.requireNonNull(inputFile, "inputFile parameter is null");
-            Objects.requireNonNull(outputFile, "outputFile parameter is null");
-
+        private Builder(Path servicesFile, Path inputFile, Path outputFile) {
             this.setup = initialSetup(servicesFile);
             this.paths = new OrchestratorPaths.Builder(inputFile, outputFile);
             this.options = new OrchestratorOptions.Builder();
         }
 
-        private OrchestratorSetup.Builder initialSetup(String servicesFile) {
+        private OrchestratorSetup.Builder initialSetup(Path servicesFile) {
+            Objects.requireNonNull(servicesFile, "servicesFile parameter is null");
             var parser = new OrchestratorConfigParser(servicesFile);
             return new OrchestratorSetup
                     .Builder(parser.parseInputOutputServices(),
@@ -191,7 +183,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
          * directory.
          *
          * @return this object, so methods can be chained
-         * @see #withStageDirectory(String)
+         * @see #withStageDirectory(Path)
          */
         public Builder useStageDirectory() {
             options.stageFiles();
@@ -273,11 +265,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
          * @param inputDir the input directory
          * @return this object, so methods can be chained
          */
-        public Builder withInputDirectory(String inputDir) {
-            Objects.requireNonNull(inputDir, "inputDir parameter is null");
-            if (inputDir.isEmpty()) {
-                throw new IllegalArgumentException("inputDir parameter is empty");
-            }
+        public Builder withInputDirectory(Path inputDir) {
             paths.withInputDir(inputDir);
             return this;
         }
@@ -289,11 +277,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
          * @param outputDir the output directory
          * @return this object, so methods can be chained
          */
-        public Builder withOutputDirectory(String outputDir) {
-            Objects.requireNonNull(outputDir, "outputDir parameter is null");
-            if (outputDir.isEmpty()) {
-                throw new IllegalArgumentException("outputDir parameter is empty");
-            }
+        public Builder withOutputDirectory(Path outputDir) {
             paths.withOutputDir(outputDir);
             return this;
         }
@@ -306,11 +290,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
          * @param stageDir the local staging directory
          * @return this object, so methods can be chained
          */
-        public Builder withStageDirectory(String stageDir) {
-            Objects.requireNonNull(stageDir, "stageDir parameter is null");
-            if (stageDir.isEmpty()) {
-                throw new IllegalArgumentException("stageDir parameter is empty");
-            }
+        public Builder withStageDirectory(Path stageDir) {
             paths.withStageDir(stageDir);
             return this;
         }
@@ -607,9 +587,9 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
         private final OptionSpec<String> frontEnd;
         private final OptionSpec<String> session;
-        private final OptionSpec<String> inputDir;
-        private final OptionSpec<String> outputDir;
-        private final OptionSpec<String> stageDir;
+        private final OptionSpec<Path> inputDir;
+        private final OptionSpec<Path> outputDir;
+        private final OptionSpec<Path> stageDir;
         private final OptionSpec<Integer> poolSize;
         private final OptionSpec<Integer> maxNodes;
         private final OptionSpec<Integer> maxThreads;
@@ -617,7 +597,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
         private final OptionSpec<Integer> skipEvents;
         private final OptionSpec<Integer> maxEvents;
 
-        private final OptionSpec<String> arguments;
+        private final OptionSpec<Path> arguments;
 
         private final OptionParser parser;
         private OptionSet options;
@@ -639,14 +619,17 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
 
             inputDir = parser.accepts("i")
                     .withRequiredArg()
+                    .withValuesConvertedBy(OptUtils.PATH_CONVERTER)
                     .defaultsTo(OrchestratorPaths.INPUT_DIR);
 
             outputDir = parser.accepts("o")
                     .withRequiredArg()
+                    .withValuesConvertedBy(OptUtils.PATH_CONVERTER)
                     .defaultsTo(OrchestratorPaths.OUTPUT_DIR);
 
             stageDir = parser.accepts("l")
                     .withRequiredArg()
+                    .withValuesConvertedBy(OptUtils.PATH_CONVERTER)
                     .defaultsTo(OrchestratorPaths.STAGE_DIR);
 
             poolSize = parser.accepts("p")
@@ -678,7 +661,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
                     .ofType(Integer.class)
                     .defaultsTo(0);
 
-            arguments = parser.nonOptions();
+            arguments = parser.nonOptions().withValuesConvertedBy(OptUtils.PATH_CONVERTER);
 
             parser.acceptsAll(List.of("version"));
             parser.acceptsAll(List.of("h", "help")).forHelp();
@@ -760,7 +743,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
             }
         }
 
-        private List<String> parseInputFiles(String filesList) {
+        private List<String> parseInputFiles(Path filesList) {
             return OrchestratorConfigParser.readInputFiles(filesList);
         }
 

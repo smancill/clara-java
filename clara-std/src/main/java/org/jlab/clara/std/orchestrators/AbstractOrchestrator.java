@@ -312,7 +312,7 @@ abstract class AbstractOrchestrator {
             while (!requestedFiles.isEmpty()) {
                 var file = requestedFiles.element();
                 var path = paths.inputFilePath(file);
-                if (path.toFile().exists()) {
+                if (Files.exists(path)) {
                     processingQueue.add(file);
                     requestedFiles.remove();
                     Logging.info("File %s is cached", path);

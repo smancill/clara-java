@@ -76,10 +76,13 @@ class SourceCommand extends AbstractCommand {
 
     private static List<String> readLines(Path sourceFile) throws IOException {
         var pattern = Pattern.compile("^\\s*#.*$");
-        return Files.lines(sourceFile)
-                    .filter(line -> !line.isEmpty())
-                    .filter(line -> !pattern.matcher(line).matches())
-                    .collect(Collectors.toList());
+        try (var lines = Files.lines(sourceFile)) {
+            return lines.filter(line -> !line.isEmpty())
+                        .filter(line -> !pattern.matcher(line).matches())
+                        .collect(Collectors.toList());
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 
     @Override

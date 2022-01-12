@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -67,7 +67,7 @@ class HelpCommand extends BaseCommand {
             if (terminal.getHeight() - 2 > countLines(help)) {
                 writer.print(help);
             } else {
-                var less = new Less(terminal, Paths.get(""));
+                var less = new Less(terminal, Path.of(""));
                 var sources = new ArrayList<Source>();
                 sources.add(new Source() {
                     @Override

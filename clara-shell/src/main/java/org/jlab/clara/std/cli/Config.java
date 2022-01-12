@@ -12,6 +12,7 @@ import org.jlab.clara.util.FileUtils;
 import org.jline.builtins.Completers;
 import org.jline.reader.Completer;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -210,13 +211,13 @@ public class Config {
 
         addBuilder.apply(INPUT_DIR,
                 "The input directory where the files to be processed are located.")
-                .withInitialValue(FileUtils.claraPath("data", "input").toString())
+                .withInitialValue(FileUtils.claraPath("data", "input"))
                 .withParser(ConfigParsers::toExistingDirectory)
                 .withCompleter(fileCompleter());
 
         addBuilder.apply(OUTPUT_DIR,
                 "The output directory where processed files will be saved.")
-                .withInitialValue(FileUtils.claraPath("data", "output").toString())
+                .withInitialValue(FileUtils.claraPath("data", "output"))
                 .withParser(ConfigParsers::toDirectory)
                 .withCompleter(fileCompleter());
 
@@ -238,7 +239,7 @@ public class Config {
 
         addBuilder.apply(LOG_DIR,
                 "The directory where log files will be saved.")
-                .withInitialValue(FileUtils.claraPath("log").toString())
+                .withInitialValue(FileUtils.claraPath("log"))
                 .withParser(ConfigParsers::toDirectory)
                 .withCompleter(fileCompleter());
 
@@ -402,6 +403,23 @@ public class Config {
             return s.equalsIgnoreCase("true");
         }
         throw new IllegalArgumentException("variable \"" + variable + "\" is not a boolean");
+    }
+
+    /**
+     * Get the path value of a variable.
+     *
+     * @param variable the name of the variable
+     * @return the current path value of the variable, if set
+     */
+    public Path getPath(String variable) {
+        Object obj = getValue(variable);
+        if (obj instanceof Path p) {
+            return p;
+        }
+        if (obj instanceof String s) {
+            return Path.of(s);
+        }
+        throw new IllegalArgumentException("variable \"" + variable + "\" is not a Path");
     }
 
     void addVariable(ConfigVariable variable) {

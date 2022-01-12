@@ -23,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 /**
@@ -315,9 +314,9 @@ public class DataManager implements Engine {
         private final Path stagePath;
 
         DirectoryPaths(String baseDir) {
-            inputPath = Paths.get(baseDir, "data", "input");
-            outputPath = Paths.get(baseDir, "data", "output");
-            stagePath = Paths.get("/scratch");
+            inputPath = Path.of(baseDir, "data", "input");
+            outputPath = Path.of(baseDir, "data", "output");
+            stagePath = Path.of("/scratch");
         }
 
         DirectoryPaths(JSONObject data) {
@@ -325,7 +324,7 @@ public class DataManager implements Engine {
             outputPath = getPath(data, CONF_OUTPUT_PATH, "output");
             stagePath = data.has(CONF_STAGE_PATH)
                     ? getPath(data, CONF_STAGE_PATH, "stage")
-                    : Paths.get("/scratch");
+                    : Path.of("/scratch");
         }
 
         JSONObject getConfiguration() {
@@ -366,7 +365,7 @@ public class DataManager implements Engine {
 
 
     private static Path getPath(JSONObject data, String key, String type) {
-        var path = Paths.get(data.getString(key));
+        var path = Path.of(data.getString(key));
         if (path.toString().isEmpty()) {
             throw new IllegalArgumentException("empty " + type + " path");
         }

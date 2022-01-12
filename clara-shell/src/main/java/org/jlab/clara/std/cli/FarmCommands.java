@@ -19,7 +19,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -125,28 +125,28 @@ final class FarmCommands {
         variables.forEach(builder::withConfigVariable);
     }
 
-    private static String defaultConfigFile() {
+    private static Path defaultConfigFile() {
         var yamlPath = PLUGIN.resolve("config/services.yaml");
         if (Files.exists(yamlPath)) {
-            return yamlPath.toString();
+            return yamlPath;
         }
         var compatibilityPath = PLUGIN.resolve("config/services.yml");
         if (Files.exists(compatibilityPath)) {
-            return compatibilityPath.toString();
+            return compatibilityPath;
         }
-        return yamlPath.toString();
+        return yamlPath;
     }
 
-    private static String defaultFileList() {
+    private static Path defaultFileList() {
         var filesPath = PLUGIN.resolve("config/files.txt");
         if (Files.exists(filesPath)) {
-            return filesPath.toString();
+            return filesPath;
         }
         var compatibilityPath = PLUGIN.resolve("config/files.list");
         if (Files.exists(compatibilityPath)) {
-            return compatibilityPath.toString();
+            return compatibilityPath;
         }
-        return filesPath.toString();
+        return filesPath;
     }
 
     static boolean hasPlugin() {
@@ -230,8 +230,8 @@ final class FarmCommands {
             var wrapper = FileUtils.claraPath("lib", "clara", "run-clara");
             var cmd = new SystemCommandBuilder(wrapper);
 
-            cmd.addOption("-i", config.getString(Config.INPUT_DIR));
-            cmd.addOption("-o", config.getString(Config.OUTPUT_DIR));
+            cmd.addOption("-i", config.getPath(Config.INPUT_DIR));
+            cmd.addOption("-o", config.getPath(Config.OUTPUT_DIR));
 
             if (config.hasValue(FARM_STAGE)) {
                 cmd.addOption("-l", config.getString(FARM_STAGE));
@@ -257,8 +257,8 @@ final class FarmCommands {
             if (config.hasValue(Config.FRONTEND_PORT)) {
                 cmd.addOption("-P", config.getInt(Config.FRONTEND_PORT));
             }
-            cmd.addArgument(config.getString(Config.SERVICES_FILE));
-            cmd.addArgument(config.getString(Config.FILES_LIST));
+            cmd.addArgument(config.getPath(Config.SERVICES_FILE));
+            cmd.addArgument(config.getPath(Config.FILES_LIST));
 
             cmd.multiLine(true);
 
@@ -271,8 +271,7 @@ final class FarmCommands {
                 processTemplate("farm-script.ftl", model, printer);
                 model.put("farm", "script", wrapper);
             }
-            wrapper.toFile().setExecutable(true);
-
+            Files.setPosixFilePermissions(wrapper, PosixFilePermissions.fromString("rwxr-xr-x"));
             return wrapper;
         }
 
@@ -438,7 +437,7 @@ final class FarmCommands {
 
     private static Path getTemplatesDir() {
         return EnvUtils.get("CLARA_TEMPLATES_DIR")
-                .map(Paths::get)
+                .map(Path::of)
                 .orElse(FileUtils.claraPath("lib", "clara", "templates"));
     }
 

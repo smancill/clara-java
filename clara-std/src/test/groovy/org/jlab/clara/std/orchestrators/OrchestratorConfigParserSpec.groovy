@@ -14,6 +14,8 @@ import org.json.JSONObject
 import spock.lang.Specification
 import spock.lang.Subject
 
+import java.nio.file.Path
+
 @Integration
 class OrchestratorConfigParserSpec extends Specification {
 
@@ -187,7 +189,7 @@ class OrchestratorConfigParserSpec extends Specification {
 
     def "Parse list of input files"() {
         given:
-        var fileList = getClass().getResource("/files.list").path
+        var fileList = resourcePath("/files.list")
 
         when:
         var inputFiles = OrchestratorConfigParser.readInputFiles(fileList)
@@ -211,6 +213,10 @@ class OrchestratorConfigParserSpec extends Specification {
     }
 
     private OrchestratorConfigParser makeParser(String resource) {
-        new OrchestratorConfigParser(getClass().getResource(resource).path)
+        new OrchestratorConfigParser(resourcePath(resource))
+    }
+
+    private Path resourcePath(String resource) {
+        Path.of(getClass().getResource(resource).path)
     }
 }

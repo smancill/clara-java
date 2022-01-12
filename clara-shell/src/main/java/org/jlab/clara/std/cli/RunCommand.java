@@ -89,17 +89,17 @@ class RunCommand extends BaseCommand {
             if (config.hasValue(Config.MAX_EVENTS)) {
                 cmd.addOption("-e", config.getInt(Config.MAX_EVENTS));
             }
-            cmd.addOption("-i", config.getString(Config.INPUT_DIR));
-            cmd.addOption("-o", config.getString(Config.OUTPUT_DIR));
+            cmd.addOption("-i", config.getPath(Config.INPUT_DIR));
+            cmd.addOption("-o", config.getPath(Config.OUTPUT_DIR));
 
-            cmd.addArgument(config.getString(Config.SERVICES_FILE));
-            cmd.addArgument(config.getString(Config.FILES_LIST));
+            cmd.addArgument(config.getPath(Config.SERVICES_FILE));
+            cmd.addArgument(config.getPath(Config.FILES_LIST));
 
             return cmd.toArray();
         }
 
         private DpeName startLocalDpes() throws IOException {
-            var configFile = config.getString(Config.SERVICES_FILE);
+            var configFile = config.getPath(Config.SERVICES_FILE);
             var configParser = new OrchestratorConfigParser(configFile);
             var languages = configParser.parseLanguages();
 
