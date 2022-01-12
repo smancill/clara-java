@@ -1,4 +1,4 @@
-# Clara
+# Clara Framework
 
 [![Build status](https://github.com/smancill/clara-java/actions/workflows/build.yaml/badge.svg)](https://github.com/smancill/clara-java/actions/workflows/build.yaml)
 
