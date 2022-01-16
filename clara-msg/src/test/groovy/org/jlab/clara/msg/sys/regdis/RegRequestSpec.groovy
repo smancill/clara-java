@@ -41,21 +41,6 @@ class RegRequestSpec extends Specification {
         }
     }
 
-    def "Send and parse a registration request with string data"() {
-        given: "a request with string data"
-        var sendRequest = new RegRequest("foo:bar", "foo_service", "10.2.9.2")
-
-        when: "parsing the request from the ZMQ raw message"
-        var recvRequest = new RegRequest(sendRequest.msg())
-
-        then: "all values are parsed correctly"
-        with(recvRequest) {
-            topic() == "foo:bar"
-            sender() == "foo_service"
-            text() == "10.2.9.2"
-        }
-    }
-
     def "Parsing a request from a malformed ZMQ message throws an exception"() {
         given: "a ZMQ message without the right number of parts"
         var msg = new ZMsg().tap {

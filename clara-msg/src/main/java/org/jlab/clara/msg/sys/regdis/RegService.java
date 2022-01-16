@@ -150,10 +150,15 @@ public class RegService implements Runnable {
                     subscribers.remove(data);
                     yield response(topic, NO_DATA);
                 }
-                case RegConstants.REMOVE_ALL_REGISTRATION -> {
-                    var host = request.text();
-                    LOGGER.fine(() -> "removed all host = " + host);
+                case RegConstants.REMOVE_ALL_PUBLISHER -> {
+                    var host = request.data().getHost();
+                    LOGGER.fine(() -> "removed all publishers from host = " + host);
                     publishers.remove(host);
+                    yield response(topic, NO_DATA);
+                }
+                case RegConstants.REMOVE_ALL_SUBSCRIBER -> {
+                    var host = request.data().getHost();
+                    LOGGER.fine(() -> "removed all subscribers from host = " + host);
                     subscribers.remove(host);
                     yield response(topic, NO_DATA);
                 }

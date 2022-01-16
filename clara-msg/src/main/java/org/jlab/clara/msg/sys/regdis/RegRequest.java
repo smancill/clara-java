@@ -11,8 +11,6 @@ import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.zeromq.ZMsg;
 
-import java.util.Arrays;
-
 /**
  * A wrapper for a registration request.
  */
@@ -20,7 +18,7 @@ class RegRequest {
 
     private final String topic;
     private final String sender;
-    private final byte[] data;
+    private final RegData data;
 
     /**
      * Constructs a data request.
@@ -32,29 +30,17 @@ class RegRequest {
     RegRequest(String topic, String sender, RegData data) {
         this.topic = topic;
         this.sender = sender;
-        this.data = data.toByteArray();
-    }
-
-    /**
-     * Constructs a text request.
-     *
-     * @param topic the request being responded
-     * @param sender the sender of the response
-     * @param text the registration text of the request
-     */
-    RegRequest(String topic, String sender, String text) {
-        this.topic = topic;
-        this.sender = sender;
-        this.data = text.getBytes();
+        this.data = data;
     }
 
     /**
      * De-serializes the request from the given message.
      *
      * @param msg the message with the response
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException when the message is malformed
+     * @throws InvalidProtocolBufferException when the data is corrupted
      */
-    RegRequest(ZMsg msg) throws ClaraMsgException {
+    RegRequest(ZMsg msg) throws ClaraMsgException, InvalidProtocolBufferException {
 
         if (msg.size() != 3) {
             throw new ClaraMsgException("invalid registrar server request format");
@@ -66,7 +52,7 @@ class RegRequest {
 
         topic = new String(topicFrame.getData());
         sender = new String(senderFrame.getData());
-        data = dataFrame.getData();
+        data = RegData.parseFrom(dataFrame.getData());
     }
 
     /**
@@ -78,7 +64,7 @@ class RegRequest {
         var msg = new ZMsg();
         msg.addString(topic);
         msg.addString(sender);
-        msg.add(data);
+        msg.add(data.toByteArray());
         return msg;
     }
 
@@ -98,18 +84,9 @@ class RegRequest {
 
     /**
      * Returns the data of the request.
-     *
-     * @throws InvalidProtocolBufferException when the data is corrupted
      */
-    public RegData data() throws InvalidProtocolBufferException {
-        return RegData.parseFrom(data);
-    }
-
-    /**
-     * Returns the text of the request.
-     */
-    public String text() {
-        return new String(data);
+    public RegData data() {
+        return data;
     }
 
 
@@ -117,7 +94,7 @@ class RegRequest {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(data);
+        result = prime * result + data.hashCode();
         result = prime * result + sender.hashCode();
         result = prime * result + topic.hashCode();
         return result;
@@ -136,7 +113,7 @@ class RegRequest {
             return false;
         }
         RegRequest other = (RegRequest) obj;
-        if (!Arrays.equals(data, other.data)) {
+        if (!data.equals(other.data)) {
             return false;
         }
         if (!sender.equals(other.sender)) {

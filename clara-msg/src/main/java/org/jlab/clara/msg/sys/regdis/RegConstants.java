@@ -16,7 +16,8 @@ public final class RegConstants {
 
     public static final String REMOVE_PUBLISHER = "removePublisherRegistration";
     public static final String REMOVE_SUBSCRIBER = "removeSubscriberRegistration";
-    public static final String REMOVE_ALL_REGISTRATION = "removeAllRegistration";
+    public static final String REMOVE_ALL_PUBLISHER = "removeAllPublisherRegistration";
+    public static final String REMOVE_ALL_SUBSCRIBER = "removeAllSubscriberRegistration";
 
     public static final String FIND_PUBLISHER = "findPublisher";
     public static final String FIND_SUBSCRIBER = "findSubscriber";

@@ -174,8 +174,17 @@ public class RegDriver {
      */
     public void removeAllRegistration(String sender, String host, long timeout)
             throws ClaraMsgException {
-        var topic = RegConstants.REMOVE_ALL_REGISTRATION;
-        var request = new RegRequest(topic, sender, host);
+        removeAllRegistration(sender, host, RegData.OwnerType.PUBLISHER, timeout);
+        removeAllRegistration(sender, host, RegData.OwnerType.SUBSCRIBER, timeout);
+    }
+
+    private void removeAllRegistration(String sender, String host, RegData.OwnerType type, long timeout)
+            throws ClaraMsgException {
+        var topic = selectTopic(type,
+                                RegConstants.REMOVE_ALL_PUBLISHER,
+                                RegConstants.REMOVE_ALL_SUBSCRIBER);
+        var data = RegFactory.newFilter(type).setHost(host).build();
+        var request = new RegRequest(topic, sender, data);
         request(request, timeout);
     }
 

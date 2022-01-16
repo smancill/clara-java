@@ -71,7 +71,8 @@ class RegDriverSpec extends Specification {
 
         then:
         interaction {
-            verifyRequest(REMOVE_ALL_REGISTRATION, "10.2.9.1", REGISTRATION_TIMEOUT)
+            verifyRequest(REMOVE_ALL_PUBLISHER, regFilter(PUBLISHER, "10.2.9.1"), REGISTRATION_TIMEOUT)
+            verifyRequest(REMOVE_ALL_SUBSCRIBER, regFilter(SUBSCRIBER, "10.2.9.1"), REGISTRATION_TIMEOUT)
         }
     }
 
@@ -157,7 +158,11 @@ class RegDriverSpec extends Specification {
         return RegFactory.newRegistration(name, "10.0.0.1", type, Topic.wrap(topic))
     }
 
-    private void verifyRequest(String topic, var data, int timeout) {
+    private static RegData regFilter(RegData.OwnerType type, String host) {
+        return RegFactory.newFilter(type).setHost(host).build()
+    }
+
+    private void verifyRequest(String topic, RegData data, int timeout) {
         1 * driver.request(_ as RegRequest, _ as Long) >> { requestArg, timeoutArg ->
             assert requestArg == new RegRequest(topic, sender, data)
             assert timeoutArg == timeout
