@@ -110,10 +110,7 @@ public class RegDriver {
      */
     public void addRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.REGISTER_PUBLISHER,
-                                RegConstants.REGISTER_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.REGISTER, sender, data);
         request(request, timeout);
     }
 
@@ -139,10 +136,7 @@ public class RegDriver {
      */
     public void removeRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.REMOVE_PUBLISHER,
-                                RegConstants.REMOVE_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.REMOVE, sender, data);
         request(request, timeout);
     }
 
@@ -180,11 +174,8 @@ public class RegDriver {
 
     private void removeAllRegistration(String sender, String host, RegData.OwnerType type, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(type,
-                                RegConstants.REMOVE_ALL_PUBLISHER,
-                                RegConstants.REMOVE_ALL_SUBSCRIBER);
         var data = RegFactory.newFilter(type).setHost(host).build();
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.REMOVE_ALL, sender, data);
         request(request, timeout);
     }
 
@@ -216,10 +207,7 @@ public class RegDriver {
      */
     public Set<RegData> findRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.FIND_PUBLISHER,
-                                RegConstants.FIND_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.FIND_MATCHING, sender, data);
         var response = request(request, timeout);
         return response.data();
     }
@@ -272,10 +260,7 @@ public class RegDriver {
      */
     public Set<RegData> filterRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.FILTER_PUBLISHER,
-                                RegConstants.FILTER_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.FILTER, sender, data);
         var response = request(request, timeout);
         return response.data();
     }
@@ -326,10 +311,7 @@ public class RegDriver {
      */
     public Set<RegData> sameRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.EXACT_PUBLISHER,
-                                RegConstants.EXACT_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.FIND_EXACT, sender, data);
         var response = request(request, timeout);
         return response.data();
     }
@@ -360,10 +342,7 @@ public class RegDriver {
      */
     public Set<RegData> allRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.ALL_PUBLISHER,
-                                RegConstants.ALL_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.FIND_ALL, sender, data);
         var response = request(request, timeout);
         return response.data();
     }
@@ -381,13 +360,5 @@ public class RegDriver {
      */
     public RegAddress getAddress() {
         return address;
-    }
-
-
-    private static String selectTopic(RegData.OwnerType type, String pubTopic, String subTopic) {
-        return switch (type) {
-            case PUBLISHER -> pubTopic;
-            case SUBSCRIBER -> subTopic;
-        };
     }
 }

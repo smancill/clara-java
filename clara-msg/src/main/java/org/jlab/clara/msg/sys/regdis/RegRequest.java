@@ -16,19 +16,19 @@ import org.zeromq.ZMsg;
  */
 class RegRequest {
 
-    private final String topic;
+    private final String action;
     private final String sender;
     private final RegData data;
 
     /**
      * Constructs a data request.
      *
-     * @param topic the request being responded
+     * @param action the registrar action being requested
      * @param sender the sender of the response
      * @param data the registration data of the request
      */
-    RegRequest(String topic, String sender, RegData data) {
-        this.topic = topic;
+    RegRequest(String action, String sender, RegData data) {
+        this.action = action;
         this.sender = sender;
         this.data = data;
     }
@@ -46,11 +46,11 @@ class RegRequest {
             throw new ClaraMsgException("invalid registrar server request format");
         }
 
-        var topicFrame = msg.pop();
+        var actionFrame = msg.pop();
         var senderFrame = msg.pop();
         var dataFrame = msg.pop();
 
-        topic = new String(topicFrame.getData());
+        action = new String(actionFrame.getData());
         sender = new String(senderFrame.getData());
         data = RegData.parseFrom(dataFrame.getData());
     }
@@ -62,17 +62,17 @@ class RegRequest {
      */
     public ZMsg msg() {
         var msg = new ZMsg();
-        msg.addString(topic);
+        msg.addString(action);
         msg.addString(sender);
         msg.add(data.toByteArray());
         return msg;
     }
 
     /**
-     * Returns the topic of the request.
+     * Returns the registrar action of the request.
      */
-    public String topic() {
-        return topic;
+    public String action() {
+        return action;
     }
 
     /**
@@ -96,7 +96,7 @@ class RegRequest {
         int result = 1;
         result = prime * result + data.hashCode();
         result = prime * result + sender.hashCode();
-        result = prime * result + topic.hashCode();
+        result = prime * result + action.hashCode();
         return result;
     }
 
@@ -119,6 +119,6 @@ class RegRequest {
         if (!sender.equals(other.sender)) {
             return false;
         }
-        return topic.equals(other.topic);
+        return action.equals(other.action);
     }
 }

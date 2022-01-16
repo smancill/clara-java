@@ -28,14 +28,14 @@ class RegRequestSpec extends Specification {
 
     def "Send and parse a registration request with protobuf registration data"() {
         given: "a request with protobuf registration data"
-        var sendRequest = new RegRequest("foo:bar", "foo_service", regData)
+        var sendRequest = new RegRequest("reg_action", "foo_service", regData)
 
         when: "parsing the request from the ZMQ raw message"
         var recvRequest = new RegRequest(sendRequest.msg())
 
         then: "all values are parsed correctly"
         with(recvRequest) {
-            topic() == "foo:bar"
+            action() == "reg_action"
             sender() == "foo_service"
             data() == regData
         }
@@ -44,7 +44,7 @@ class RegRequestSpec extends Specification {
     def "Parsing a request from a malformed ZMQ message throws an exception"() {
         given: "a ZMQ message without the right number of parts"
         var msg = new ZMsg().tap {
-            addString "foo:bar"
+            addString "reg_action"
             addString "foo_service"
         }
 
@@ -60,7 +60,7 @@ class RegRequestSpec extends Specification {
         var invalidData = regData.toByteArray()[0..-10] as byte[]
 
         var msg = new ZMsg().tap {
-            addString "foo:bar"
+            addString "reg_action"
             addString "foo_service"
             add invalidData
         }
