@@ -104,7 +104,7 @@ class ActorSpec extends Specification {
 
     def "Send discovery request to filter #type actors"() {
         given:
-        RegQuery query = factory().withDomain("domain")
+        RegQuery query = factory().withPrefix("domain")
 
         when:
         actor.discover(query, regAddr, 2000)

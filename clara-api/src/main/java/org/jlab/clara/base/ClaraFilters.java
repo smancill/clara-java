@@ -298,7 +298,7 @@ public final class ClaraFilters {
     }
 
     private static DpeFilter dpes() {
-        return new DpeFilter(RegQuery.subscribers().withDomain("dpe"));
+        return new DpeFilter(RegQuery.subscribers().withPrefix("dpe"));
     }
 
     private static DpeFilter dpes(String host) {
@@ -308,7 +308,7 @@ public final class ClaraFilters {
     }
 
     private static ContainerFilter containers() {
-        return new ContainerFilter(RegQuery.subscribers().withDomain("container"));
+        return new ContainerFilter(RegQuery.subscribers().withPrefix("container"));
     }
 
 

@@ -185,42 +185,18 @@ public class RegistrarTest {
 
 
     private void checkFilter(OwnerType regType) throws ClaraMsgException {
-        checkFilterByDomain(regType);
-        checkFilterBySubject(regType);
-        checkFilterByType(regType);
+        checkFilterByPrefix(regType);
         checkFilterByHost(regType);
     }
 
 
-    private void checkFilterByDomain(OwnerType regType) throws ClaraMsgException {
-        var reg = new RegistrationHelper(regType, "domain");
-        for (var domain : testDomains()) {
-            var result = reg.request(RegDriver::filterRegistration, r -> r.withDomain(domain));
-            var expected = reg.findLocal(r -> r.getDomain().equals(domain));
+    private void checkFilterByPrefix(OwnerType regType) throws ClaraMsgException {
+        var reg = new RegistrationHelper(regType, "prefix");
+        for (var prefix : testPrefixes()) {
+            var result = reg.request(RegDriver::filterRegistration, r -> r.withPrefix(prefix));
+            var expected = reg.findLocal(r -> Topic.wrap(prefix).isParent(getTopic(r)));
 
-            reg.assertThat(domain, result, expected);
-        }
-    }
-
-
-    private void checkFilterBySubject(OwnerType regType) throws ClaraMsgException {
-        var reg = new RegistrationHelper(regType, "subject");
-        for (var subject : testSubjects()) {
-            var result = reg.request(RegDriver::filterRegistration, r -> r.withSubject(subject));
-            var expected = reg.findLocal(r -> r.getSubject().equals(subject));
-
-            reg.assertThat(subject, result, expected);
-        }
-    }
-
-
-    private void checkFilterByType(OwnerType regType) throws ClaraMsgException {
-        var reg = new RegistrationHelper(regType, "type");
-        for (var type : testTypes()) {
-            var result = reg.request(RegDriver::filterRegistration, r -> r.withType(type));
-            var expected = reg.findLocal(r -> r.getType().equals(type));
-
-            reg.assertThat(type, result, expected);
+            reg.assertThat(prefix, result, expected);
         }
     }
 
@@ -269,30 +245,10 @@ public class RegistrarTest {
     }
 
 
-    private static String[] testDomains() {
+    private static String[] testPrefixes() {
         return Stream.of(RegDataFactory.testTopics)
                      .map(Topic::wrap)
                      .map(Topic::domain)
-                     .filter(t -> !t.equals(Topic.ANY))
-                     .distinct()
-                     .toArray(String[]::new);
-    }
-
-
-    private static String[] testSubjects() {
-        return Stream.of(RegDataFactory.testTopics)
-                     .map(Topic::wrap)
-                     .map(Topic::subject)
-                     .filter(t -> !t.equals(Topic.ANY))
-                     .distinct()
-                     .toArray(String[]::new);
-    }
-
-
-    private static String[] testTypes() {
-        return Stream.of(RegDataFactory.testTopics)
-                     .map(Topic::wrap)
-                     .map(Topic::type)
                      .filter(t -> !t.equals(Topic.ANY))
                      .distinct()
                      .toArray(String[]::new);

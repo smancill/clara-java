@@ -102,38 +102,14 @@ public final class RegQuery {
         }
 
         /**
-         * A query for registered actors with this exact domain.
+         * A query for registered actors with this topic prefix.
          *
-         * @param domain the expected domain
-         * @return a query for actors registered to the given domain
+         * @param prefix the expected prefix
+         * @return a query for actors registered to the given prefix
          *         (subject and type are ignored)
          */
-        public RegQuery withDomain(String domain) {
-            data.setDomain(domain);
-            return new RegQuery(data, Category.FILTER);
-        }
-
-        /**
-         * A query for registered actors with this exact subject.
-         *
-         * @param subject the expected subject
-         * @return a query for actors registered to the given subject
-         *         (domain and type are ignored)
-         */
-        public RegQuery withSubject(String subject) {
-            data.setSubject(subject);
-            return new RegQuery(data, Category.FILTER);
-        }
-
-        /**
-         * A query for registered actor with this exact type.
-         *
-         * @param type the expected type
-         * @return a query for actors registered to the given type
-         *         (domain and subject are ignored)
-         */
-        public RegQuery withType(String type) {
-            data.setType(type);
+        public RegQuery withPrefix(String prefix) {
+            data.setDomain(prefix);
             return new RegQuery(data, Category.FILTER);
         }
 

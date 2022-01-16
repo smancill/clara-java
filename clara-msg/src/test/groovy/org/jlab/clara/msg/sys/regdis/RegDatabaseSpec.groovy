@@ -301,13 +301,9 @@ class RegDatabaseSpec extends Specification {
         filter                                  || matched
         regFilter { domain = "writer" }         || setOf(asimov1, asimov2, bradbury1, bradbury2,
                                                          twain1, twain2, tolkien1)
-        regFilter { subject = "adventure" }     || setOf(twain1, twain2, tolkien1)
-        regFilter { type = "books" }            || setOf(asimov1, asimov2, bradbury1, bradbury2)
         regFilter { host = "10.2.9.2" }         || setOf(asimov2, bradbury2, brando2, twain2)
 
         regFilter { domain = "artist" }         || [] as Set
-        regFilter { subject = "comedy" }        || [] as Set
-        regFilter { type = "script" }           || [] as Set
         regFilter { host = "10.2.9.3" }         || [] as Set
     }
 

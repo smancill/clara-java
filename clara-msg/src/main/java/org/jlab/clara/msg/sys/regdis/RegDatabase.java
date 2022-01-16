@@ -184,20 +184,18 @@ class RegDatabase {
      * <p>
      * The search terms can be:
      * <ul>
-     * <li>domain
-     * <li>subject
-     * <li>type
+     * <li>topic prefix
      * <li>address
      * </ul>
      * Only defined terms will be used for matching actors.
-     * The topic parts are undefined if its value is {@link Topic#ANY}.
+     * The topic prefix is undefined if its value is {@link Topic#ANY}.
      * The address is undefined if its value is {@link RegConstants#UNDEFINED}.
      *
      * @param data the searched terms
      * @return the set of all actors that match the terms
      */
     public Set<RegData> filter(RegData data) {
-        var filter = new Filter(data);
+        var filter = new Filter(data, TopicMatch.PREFIX_MATCHING);
         db.entrySet().stream()
                 .filter(e -> filter.matchIndex(e.getKey()))
                 .flatMap(e -> e.getValue().entrySet().stream())
@@ -285,30 +283,16 @@ class RegDatabase {
 
         private final Set<RegData> result = new HashSet<>();
 
-        private final TopicFilter domain;
-        private final TopicFilter subject;
-        private final TopicFilter type;
+        private final TopicMatch topicMatch;
+        private final @Nullable Topic topic;
         private final @Nullable String host;
         private final int port;
 
-        /**
-         * Cache a topic term.
-         * Avoid checking if the value is any for every actor.
-         */
-        private static final class TopicFilter {
-            private final boolean any;
-            private final String value;
-
-            private TopicFilter(String value) {
-                this.any = value.equals(Topic.ANY);
-                this.value = value;
-            }
-        }
-
-        private Filter(RegData data) {
-            this.domain = new TopicFilter(data.getDomain());
-            this.subject = new TopicFilter(data.getSubject());
-            this.type = new TopicFilter(data.getType());
+        private Filter(RegData data, TopicMatch topicMatch) {
+            this.topicMatch = topicMatch;
+            this.topic = data.getDomain().equals(Topic.ANY)
+                    ? null
+                    : Topic.build(data.getDomain(), data.getSubject(), data.getType());
             this.host = data.getHost().equals(RegConstants.UNDEFINED) ? null : data.getHost();
             this.port = data.getPort();
         }
@@ -328,13 +312,11 @@ class RegDatabase {
         }
 
         public boolean matchIndex(String indexKey) {
-            return domain.any || indexKey.equals(domain.value);
+            return topic == null || indexKey.equals(topic.domain());
         }
 
         private boolean matchTopic(Topic topic) {
-            return (domain.any  || topic.domain().equals(domain.value))
-                && (subject.any || topic.subject().equals(subject.value))
-                && (type.any    || topic.type().equals(type.value));
+            return this.topic == null || topicMatch.test(this.topic, topic);
         }
 
         private boolean matchAddress(RegData actor) {

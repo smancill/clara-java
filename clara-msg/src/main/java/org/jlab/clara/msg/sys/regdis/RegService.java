@@ -208,13 +208,7 @@ public class RegService implements Runnable {
             var sb = new StringBuilder();
             sb.append("filter ").append(getType(data, true));
             if (!data.getDomain().equals(ANY)) {
-                sb.append("  domain = ").append(data.getDomain());
-            }
-            if (!data.getSubject().equals(ANY)) {
-                sb.append("  subject = ").append(data.getSubject());
-            }
-            if (!data.getType().equals(ANY)) {
-                sb.append("  type = ").append(data.getType());
+                sb.append("  prefix = ").append(getTopic(data));
             }
             if (!data.getHost().equals(RegConstants.UNDEFINED)) {
                 sb.append("  address = ").append(data.getHost());

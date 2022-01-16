@@ -73,7 +73,7 @@ public final class SyncPublishTest {
         var threadPool = ActorUtils.newThreadPool(cores, "sync-pub-");
 
         try (var actor = new Actor("sync_tester", regAddress)) {
-            var query = RegQuery.subscribers().withDomain(TOPIC);
+            var query = RegQuery.subscribers().withPrefix(TOPIC);
             var regListeners = actor.discover(query);
             var numListeners = regListeners.size();
             if (numListeners == 0) {
