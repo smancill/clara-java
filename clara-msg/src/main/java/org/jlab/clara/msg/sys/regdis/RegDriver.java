@@ -37,7 +37,7 @@ public class RegDriver {
      *
      * @param address registrar service address
      * @param factory factory for the ZMQ socket
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the socket to the registrar could not be created
      */
     public RegDriver(RegAddress address, SocketFactory factory) throws ClaraMsgException {
         this.address = address;
@@ -93,7 +93,7 @@ public class RegDriver {
      *
      * @param sender the sender of the request
      * @param data the registration data
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void addRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -106,7 +106,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data
      * @param timeout the milliseconds to wait for a response
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void addRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
@@ -122,7 +122,7 @@ public class RegDriver {
      *
      * @param sender the sender of the request
      * @param data the registration data
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void removeRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -135,7 +135,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data
      * @param timeout the milliseconds to wait for a response
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void removeRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
@@ -154,7 +154,7 @@ public class RegDriver {
      *
      * @param sender the sender of the request
      * @param host the host of the actors to be removed
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void removeAllRegistration(String sender, String host)
             throws ClaraMsgException {
@@ -170,7 +170,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param host the host of the actors to be removed
      * @param timeout the milliseconds to wait for a response
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void removeAllRegistration(String sender, String host, long timeout)
             throws ClaraMsgException {
@@ -187,7 +187,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data object
      * @return set of publishers or subscribers to the required topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> findRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -203,7 +203,7 @@ public class RegDriver {
      * @param data the registration data object
      * @param timeout the milliseconds to wait for a response
      * @return set of publishers or subscribers to the required topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> findRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
@@ -233,7 +233,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data object
      * @return set of publishers or subscribers that match the given terms.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> filterRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -259,7 +259,7 @@ public class RegDriver {
      * @param data the registration data object
      * @param timeout the milliseconds to wait for a response
      * @return set of publishers or subscribers that match the given terms.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> filterRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
@@ -288,7 +288,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data object
      * @return set of publishers or subscribers that have the exact same topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> sameRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -313,7 +313,7 @@ public class RegDriver {
      * @param data the registration data object
      * @param timeout the milliseconds to wait for a response
      * @return set of publishers or subscribers that have the exact same topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> sameRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
@@ -331,8 +331,8 @@ public class RegDriver {
      *
      * @param sender the sender of the request
      * @param data the registration data object
-     * @return set of publishers or subscribers to the required topic.
-     * @throws ClaraMsgException
+     * @return set of all publishers or subscribers
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> allRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -347,7 +347,7 @@ public class RegDriver {
      * @param data the registration data object
      * @param timeout the milliseconds to wait for a response
      * @return set of publishers or subscribers to the required topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> allRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
