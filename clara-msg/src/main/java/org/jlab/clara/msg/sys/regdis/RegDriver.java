@@ -168,11 +168,11 @@ public class RegDriver {
      */
     public void removeAllRegistration(String sender, String host, long timeout)
             throws ClaraMsgException {
-        removeAllRegistration(sender, host, RegData.OwnerType.PUBLISHER, timeout);
-        removeAllRegistration(sender, host, RegData.OwnerType.SUBSCRIBER, timeout);
+        removeAllRegistration(sender, host, RegData.Type.PUBLISHER, timeout);
+        removeAllRegistration(sender, host, RegData.Type.SUBSCRIBER, timeout);
     }
 
-    private void removeAllRegistration(String sender, String host, RegData.OwnerType type, long timeout)
+    private void removeAllRegistration(String sender, String host, RegData.Type type, long timeout)
             throws ClaraMsgException {
         var data = RegFactory.newFilter(type).setHost(host).build();
         var request = new RegRequest(RegConstants.REMOVE_ALL, sender, data);

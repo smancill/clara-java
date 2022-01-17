@@ -12,20 +12,16 @@ package org.jlab.clara.msg.data;
 
 message RegData {
 
-    required string name = 1;
-    optional string description = 2 [default = "undefined"];
-    required string host = 3;
-    required sfixed32 port = 4;
+    optional string name = 1;
+    optional string description = 2;
+    optional string host = 3;
+    optional int32 port = 4;
 
-    // Actor topic definition
-    required string domain = 5;
-    optional string subject = 6 [default = "undefined"];
-    optional string type = 7 [default = "undefined"];
-    optional OwnerType ownerType = 8;
+    optional string topic = 5;
+    optional Type type = 8;
 
-    // Type of a an actor that sends the registration data
-    enum OwnerType {
-        PUBLISHER = 1;
-        SUBSCRIBER = 2;
+    enum Type {
+        PUBLISHER = 0;
+        SUBSCRIBER = 1;
     }
 }

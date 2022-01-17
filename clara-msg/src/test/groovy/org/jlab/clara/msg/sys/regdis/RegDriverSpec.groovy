@@ -14,8 +14,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
-import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.PUBLISHER
-import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.SUBSCRIBER
+import static org.jlab.clara.msg.data.RegDataProto.RegData.Type.PUBLISHER
+import static org.jlab.clara.msg.data.RegDataProto.RegData.Type.SUBSCRIBER
 import static org.jlab.clara.msg.sys.regdis.RegConstants.*  // codenarc-disable-line NoWildcardImports
 
 class RegDriverSpec extends Specification {
@@ -142,11 +142,11 @@ class RegDriverSpec extends Specification {
         type << [PUBLISHER, SUBSCRIBER]
     }
 
-    private static RegData regData(String name, RegData.OwnerType type, String topic) {
+    private static RegData regData(String name, RegData.Type type, String topic) {
         return RegFactory.newRegistration(name, "10.0.0.1", type, Topic.wrap(topic))
     }
 
-    private static RegData regFilter(RegData.OwnerType type, String host) {
+    private static RegData regFilter(RegData.Type type, String host) {
         return RegFactory.newFilter(type).setHost(host).build()
     }
 

@@ -35,7 +35,7 @@ public final class RegQuery {
      * @return a queries factory
      */
     public static Factory publishers() {
-        return new Factory(RegData.OwnerType.PUBLISHER);
+        return new Factory(RegData.Type.PUBLISHER);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class RegQuery {
      * @return a queries factory
      */
     public static Factory subscribers() {
-        return new Factory(RegData.OwnerType.SUBSCRIBER);
+        return new Factory(RegData.Type.SUBSCRIBER);
     }
 
 
@@ -84,7 +84,7 @@ public final class RegQuery {
 
         private final RegData.Builder data;
 
-        private Factory(RegData.OwnerType type) {
+        private Factory(RegData.Type type) {
             data = RegFactory.newFilter(type);
         }
 
@@ -95,9 +95,7 @@ public final class RegQuery {
          * @return a query for actors with topics matching the given topic
          */
         public RegQuery matching(Topic topic) {
-            data.setDomain(topic.domain());
-            data.setSubject(topic.subject());
-            data.setType(topic.type());
+            data.setTopic(topic.toString());
             return new RegQuery(data, Category.MATCHING);
         }
 
@@ -109,7 +107,7 @@ public final class RegQuery {
          *         (subject and type are ignored)
          */
         public RegQuery withPrefix(String prefix) {
-            data.setDomain(prefix);
+            data.setTopic(prefix);
             return new RegQuery(data, Category.FILTER);
         }
 
@@ -120,9 +118,7 @@ public final class RegQuery {
          * @return a query for actors with the same topic as the given topic
          */
         public RegQuery withSame(Topic topic) {
-            data.setDomain(topic.domain());
-            data.setSubject(topic.subject());
-            data.setType(topic.type());
+            data.setTopic(topic.toString());
             return new RegQuery(data, Category.EXACT);
         }
 

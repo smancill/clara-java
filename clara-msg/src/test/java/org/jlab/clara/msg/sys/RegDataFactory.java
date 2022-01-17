@@ -8,7 +8,6 @@ package org.jlab.clara.msg.sys;
 
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegDataProto.RegData;
-import org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType;
 import org.jlab.clara.msg.sys.regdis.RegFactory;
 
 import java.util.Random;
@@ -70,7 +69,7 @@ final class RegDataFactory {
         var name = random(testNames);
         var host = random(testHosts);
         var topic = random(testTopics);
-        var type = rnd.nextBoolean() ? OwnerType.PUBLISHER : OwnerType.SUBSCRIBER;
+        var type = rnd.nextBoolean() ? RegData.Type.PUBLISHER : RegData.Type.SUBSCRIBER;
         return RegFactory.newRegistration(name, host, type, Topic.wrap(topic));
     }
 }

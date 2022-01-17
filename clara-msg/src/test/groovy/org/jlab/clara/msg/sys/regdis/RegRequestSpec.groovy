@@ -14,7 +14,6 @@ import org.zeromq.ZMsg
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.SUBSCRIBER
 import static org.jlab.clara.msg.sys.regdis.RegFactory.newRegistration
 
 class RegRequestSpec extends Specification {
@@ -23,7 +22,7 @@ class RegRequestSpec extends Specification {
 
     void setupSpec() {
         var topic = Topic.wrap("writer.scifi:books")
-        regData = newRegistration("asimov", "10.2.9.1", SUBSCRIBER, topic)
+        regData = newRegistration("asimov", "10.2.9.1", RegData.Type.SUBSCRIBER, topic)
     }
 
     def "Send and parse a registration request with protobuf registration data"() {

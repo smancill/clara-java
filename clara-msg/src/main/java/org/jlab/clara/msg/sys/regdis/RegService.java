@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static org.jlab.clara.msg.core.Topic.ANY;
-
 /**
  * The main registrar service or registrar (names are used interchangeably).
  * Note that the object of this class always running in a separate thread.
@@ -127,31 +125,33 @@ public class RegService implements Runnable {
             action = request.action();
 
             var data = request.data();
-            var database = switch (data.getOwnerType()) {
+            var database = switch (data.getType()) {
                 case PUBLISHER -> publishers;
                 case SUBSCRIBER -> subscribers;
             };
 
             reply = switch (action) {
                 case RegConstants.REGISTER -> {
+                    checkRegistration(data);
                     logRegistration("register", data);
                     database.register(data);
                     yield response(action, NO_DATA);
                 }
                 case RegConstants.REMOVE -> {
+                    checkRegistration(data);
                     logRegistration("remove", data);
                     database.remove(data);
                     yield response(action, NO_DATA);
                 }
                 case RegConstants.REMOVE_ALL -> {
-                    var host = data.getHost();
+                    var host = checkHost(data);
                     LOGGER.fine(() -> "remove all " + getType(data, true) + " from host = " + host);
                     database.remove(host);
                     yield response(action, NO_DATA);
                 }
                 case RegConstants.FIND_MATCHING -> {
-                    var topic = getTopic(data);
-                    var match = switch (data.getOwnerType()) {
+                    var topic = checkTopic(data);
+                    var match = switch (data.getType()) {
                         case PUBLISHER -> RegDatabase.TopicMatch.PREFIX_MATCHING;
                         case SUBSCRIBER -> RegDatabase.TopicMatch.REVERSE_MATCHING;
                     };
@@ -159,11 +159,12 @@ public class RegService implements Runnable {
                     yield response(action, database.find(topic, match));
                 }
                 case RegConstants.FILTER -> {
+                    checkFilter(data);
                     logFilter(data);
                     yield response(action, database.filter(data));
                 }
                 case RegConstants.FIND_EXACT -> {
-                    var topic = getTopic(data);
+                    var topic = checkTopic(data);
                     var match = RegDatabase.TopicMatch.EXACT;
                     logDiscovery(data, "with");
                     yield response(action, database.find(topic, match));
@@ -192,27 +193,55 @@ public class RegService implements Runnable {
         return new RegResponse(action, sender, msg);
     }
 
+    private static void checkRegistration(RegData data) throws ClaraMsgException {
+        if (data.getName().isEmpty() || data.getHost().isEmpty() || data.getTopic().isEmpty()) {
+            throw new ClaraMsgException("invalid registration data: missing fields");
+        }
+    }
+
+    private static String checkHost(RegData data) throws ClaraMsgException {
+        var host = data.getHost();
+        if (host.isEmpty()) {
+            throw new ClaraMsgException("invalid registration request: missing host");
+        }
+        return host;
+    }
+
+    private static Topic checkTopic(RegData data) throws ClaraMsgException {
+        var topic = data.getTopic();
+        if (topic.isEmpty()) {
+            throw new ClaraMsgException("invalid registration request: missing topic");
+        }
+        return Topic.wrap(topic);
+    }
+
+    private static void checkFilter(RegData data) throws ClaraMsgException {
+        if (data.getTopic().isEmpty() && data.getHost().isEmpty()) {
+            throw new ClaraMsgException("invalid registration filter: missing field");
+        }
+    }
+
     private static void logRegistration(String action, RegData data) {
         LOGGER.fine(() -> String.format("%s %s name = %s  host = %s  port = %d  topic = %s",
                 action, getType(data, false), data.getName(),
-                data.getHost(), data.getPort(), getTopic(data)));
+                data.getHost(), data.getPort(), data.getTopic()));
     }
 
     private static void logDiscovery(RegData data, String match) {
         LOGGER.fine(() -> String.format("search %s %s topic = %s",
-                getType(data, true), match, getTopic(data)));
+                getType(data, true), match, data.getTopic()));
     }
 
     private static void logFilter(RegData data) {
         LOGGER.fine(() -> {
             var sb = new StringBuilder();
             sb.append("filter ").append(getType(data, true));
-            if (!data.getDomain().equals(ANY)) {
-                sb.append("  prefix = ").append(getTopic(data));
+            if (!data.getTopic().isEmpty()) {
+                sb.append("  prefix = ").append(data.getTopic());
             }
-            if (!data.getHost().equals(RegConstants.UNDEFINED)) {
+            if (!data.getHost().isEmpty()) {
                 sb.append("  address = ").append(data.getHost());
-                if (data.getPort() != 0) {
+                if (data.getPort() > 0) {
                     sb.append(':').append(data.getPort());
                 }
             }
@@ -222,13 +251,9 @@ public class RegService implements Runnable {
 
     private static String getType(RegData data, boolean plural) {
         var suffix = plural ? "s" : "";
-        return switch (data.getOwnerType()) {
+        return switch (data.getType()) {
             case PUBLISHER -> "publisher" + suffix + " ";
             case SUBSCRIBER -> "subscriber" + suffix;
         };
-    }
-
-    private static Topic getTopic(RegData data) {
-        return Topic.build(data.getDomain(), data.getSubject(), data.getType());
     }
 }

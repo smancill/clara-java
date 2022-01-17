@@ -61,7 +61,7 @@ abstract class ClaraQueriesSpec extends Specification {
 
     protected static class TestData {
 
-        private static final RegData.OwnerType TYPE = RegData.OwnerType.SUBSCRIBER
+        private static final RegData.Type TYPE = RegData.Type.SUBSCRIBER
 
         private static final String DATE = LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern(ClaraConstants.DATE_FORMAT))

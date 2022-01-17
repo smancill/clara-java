@@ -265,7 +265,7 @@ class RegDatabase {
 
 
     private static Topic getTopic(RegData regData) {
-        return Topic.build(regData.getDomain(), regData.getSubject(), regData.getType());
+        return Topic.wrap(regData.getTopic());
     }
 
 
@@ -290,10 +290,8 @@ class RegDatabase {
 
         private Filter(RegData data, TopicMatch topicMatch) {
             this.topicMatch = topicMatch;
-            this.topic = data.getDomain().equals(Topic.ANY)
-                    ? null
-                    : Topic.build(data.getDomain(), data.getSubject(), data.getType());
-            this.host = data.getHost().equals(RegConstants.UNDEFINED) ? null : data.getHost();
+            this.topic = data.hasTopic() ? Topic.wrap(data.getTopic()) : null;
+            this.host = data.hasHost() ? data.getHost() : null;
             this.port = data.getPort();
         }
 

@@ -17,7 +17,7 @@ import spock.lang.Subject
 
 class RegDatabaseSpec extends Specification {
 
-    static final RegData.OwnerType TYPE = RegData.OwnerType.PUBLISHER
+    static final RegData.Type TYPE = RegData.Type.PUBLISHER
 
     @Shared RegData asimov1
     @Shared RegData bradbury1
@@ -299,11 +299,11 @@ class RegDatabaseSpec extends Specification {
 
         where:
         filter                                  || matched
-        regFilter { domain = "writer" }         || setOf(asimov1, asimov2, bradbury1, bradbury2,
+        regFilter { topic = "writer" }          || setOf(asimov1, asimov2, bradbury1, bradbury2,
                                                          twain1, twain2, tolkien1)
         regFilter { host = "10.2.9.2" }         || setOf(asimov2, bradbury2, brando2, twain2)
 
-        regFilter { domain = "artist" }         || [] as Set
+        regFilter { topic = "artist" }          || [] as Set
         regFilter { host = "10.2.9.3" }         || [] as Set
     }
 

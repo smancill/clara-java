@@ -18,8 +18,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
-import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.PUBLISHER
-import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.SUBSCRIBER
+import static org.jlab.clara.msg.data.RegDataProto.RegData.Type.PUBLISHER
+import static org.jlab.clara.msg.data.RegDataProto.RegData.Type.SUBSCRIBER
 
 class ActorSpec extends Specification {
 
@@ -134,7 +134,7 @@ class ActorSpec extends Specification {
         RegQuery::subscribers   | SUBSCRIBER
     }
 
-    private RegData regOf(RegData.OwnerType regType, Topic topic, String description = "") {
+    private RegData regOf(RegData.Type regType, Topic topic, String description = "") {
         return RegFactory.newRegistration(name, description, localAddr, regType, topic)
     }
 }
