@@ -150,21 +150,23 @@ public class RegService implements Runnable {
                     yield response(action, NO_DATA);
                 }
                 case RegConstants.FIND_MATCHING -> {
-                    logDiscovery(data);
-                    var rs = switch (data.getOwnerType()) {
-                        case PUBLISHER -> publishers.find(data.getDomain(), data.getSubject(), data.getType());
-                        case SUBSCRIBER -> subscribers.rfind(data.getDomain(), data.getSubject(), data.getType());
+                    var topic = getTopic(data);
+                    var match = switch (data.getOwnerType()) {
+                        case PUBLISHER -> RegDatabase.TopicMatch.PREFIX_MATCHING;
+                        case SUBSCRIBER -> RegDatabase.TopicMatch.REVERSE_MATCHING;
                     };
-                    yield response(action, rs);
+                    logDiscovery(data, "matching");
+                    yield response(action, database.find(topic, match));
                 }
                 case RegConstants.FILTER -> {
                     logFilter(data);
                     yield response(action, database.filter(data));
                 }
                 case RegConstants.FIND_EXACT -> {
-                    logFilter(data);
-                    var rs = database.same(data.getDomain(), data.getSubject(), data.getType());
-                    yield response(action, rs);
+                    var topic = getTopic(data);
+                    var match = RegDatabase.TopicMatch.EXACT;
+                    logDiscovery(data, "with");
+                    yield response(action, database.find(topic, match));
                 }
                 case RegConstants.FIND_ALL -> {
                     LOGGER.fine(() -> "get all " + getType(data, true));
@@ -196,15 +198,15 @@ public class RegService implements Runnable {
                 data.getHost(), data.getPort(), getTopic(data)));
     }
 
-    private static void logDiscovery(RegData data) {
-        LOGGER.fine(() -> String.format("search %s  topic = %s",
-                getType(data, true), getTopic(data)));
+    private static void logDiscovery(RegData data, String match) {
+        LOGGER.fine(() -> String.format("search %s %s topic = %s",
+                getType(data, true), match, getTopic(data)));
     }
 
     private static void logFilter(RegData data) {
         LOGGER.fine(() -> {
             var sb = new StringBuilder();
-            sb.append("search ").append(getType(data, true));
+            sb.append("filter ").append(getType(data, true));
             if (!data.getDomain().equals(ANY)) {
                 sb.append("  domain = ").append(data.getDomain());
             }
@@ -215,8 +217,10 @@ public class RegService implements Runnable {
                 sb.append("  type = ").append(data.getType());
             }
             if (!data.getHost().equals(RegConstants.UNDEFINED)) {
-                sb.append("  address = ")
-                  .append(data.getHost()).append(':').append(data.getPort());
+                sb.append("  address = ").append(data.getHost());
+                if (data.getPort() != 0) {
+                    sb.append(':').append(data.getPort());
+                }
             }
             return sb.toString();
         });
