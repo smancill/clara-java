@@ -126,7 +126,7 @@ project(':clara-platform') {
 configure(subprojectList) {
     ext.libs = [
         json: 'org.json:json:20220924',
-        snakeyaml: 'org.yaml:snakeyaml:1.28',
+        snakeyaml: 'org.yaml:snakeyaml:1.33',
         jeromq: 'org.zeromq:jeromq:0.5.2',
         protobuf: 'com.google.protobuf:protobuf-java:3.15.5',
         protoc: 'com.google.protobuf:protoc:3.15.5',
