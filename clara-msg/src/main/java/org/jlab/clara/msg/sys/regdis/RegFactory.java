@@ -28,7 +28,7 @@ public final class RegFactory {
      */
     public static RegData newRegistration(String name,
                                           String host,
-                                          RegData.OwnerType type,
+                                          RegData.Type type,
                                           Topic topic) {
         return newRegistration(name, "", new ProxyAddress(host), type, topic);
     }
@@ -45,17 +45,15 @@ public final class RegFactory {
     public static RegData newRegistration(String name,
                                           String description,
                                           ProxyAddress address,
-                                          RegData.OwnerType type,
+                                          RegData.Type type,
                                           Topic topic) {
         var reg = RegData.newBuilder();
         reg.setName(name);
         reg.setDescription(description);
         reg.setHost(address.host());
         reg.setPort(address.pubPort());
-        reg.setDomain(topic.domain());
-        reg.setSubject(topic.subject());
-        reg.setType(topic.type());
-        reg.setOwnerType(type);
+        reg.setTopic(topic.toString());
+        reg.setType(type);
         return reg.build();
     }
 
@@ -66,15 +64,9 @@ public final class RegFactory {
      * @param type the type of the actor (publisher or subscriber)
      * @return the registration data to filter actors
      */
-    public static RegData.Builder newFilter(RegData.OwnerType type) {
+    public static RegData.Builder newFilter(RegData.Type type) {
         var filter = RegData.newBuilder();
-        filter.setName(RegConstants.UNDEFINED);
-        filter.setHost(RegConstants.UNDEFINED);
-        filter.setPort(0);
-        filter.setDomain(Topic.ANY);
-        filter.setSubject(Topic.ANY);
-        filter.setType(Topic.ANY);
-        filter.setOwnerType(type);
+        filter.setType(type);
         return filter;
     }
 }

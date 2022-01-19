@@ -9,7 +9,6 @@ package org.jlab.clara.msg.sys;
 import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegDataProto.RegData;
-import org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType;
 import org.jlab.clara.msg.data.RegQuery;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
@@ -141,30 +140,30 @@ public class RegistrarTest {
 
 
     public void checkActorsByTopic() throws ClaraMsgException {
-        checkMatchingTopic(OwnerType.PUBLISHER);
-        checkMatchingTopic(OwnerType.SUBSCRIBER);
+        checkMatchingTopic(RegData.Type.PUBLISHER);
+        checkMatchingTopic(RegData.Type.SUBSCRIBER);
     }
 
 
     public void checkActorsByFilter() throws ClaraMsgException {
-        checkFilter(OwnerType.PUBLISHER);
-        checkFilter(OwnerType.SUBSCRIBER);
+        checkFilter(RegData.Type.PUBLISHER);
+        checkFilter(RegData.Type.SUBSCRIBER);
     }
 
 
     public void checkActorsBySameTopic() throws ClaraMsgException {
-        checkSameTopic(OwnerType.PUBLISHER);
-        checkSameTopic(OwnerType.SUBSCRIBER);
+        checkSameTopic(RegData.Type.PUBLISHER);
+        checkSameTopic(RegData.Type.SUBSCRIBER);
     }
 
 
     public void checkAllActors() throws ClaraMsgException {
-        checkAll(OwnerType.PUBLISHER);
-        checkAll(OwnerType.SUBSCRIBER);
+        checkAll(RegData.Type.PUBLISHER);
+        checkAll(RegData.Type.SUBSCRIBER);
     }
 
 
-    private void checkMatchingTopic(OwnerType regType) throws ClaraMsgException {
+    private void checkMatchingTopic(RegData.Type regType) throws ClaraMsgException {
         var reg = new RegistrationHelper(regType, "topic");
         for (var topic : testTopics()) {
             var result = reg.request(RegDriver::findRegistration, r -> r.matching(topic));
@@ -175,57 +174,32 @@ public class RegistrarTest {
     }
 
 
-    private static Predicate<RegData> matchTopic(OwnerType regType, Topic topic) {
-        if (regType == OwnerType.PUBLISHER) {
-            return r -> topic.isParent(getTopic(r));
-        } else {
-            return r -> getTopic(r).isParent(topic);
-        }
+    private static Predicate<RegData> matchTopic(RegData.Type regType, Topic topic) {
+        return switch (regType) {
+            case PUBLISHER -> (r -> topic.isParent(getTopic(r)));
+            case SUBSCRIBER -> (r -> getTopic(r).isParent(topic));
+        };
     }
 
 
-    private void checkFilter(OwnerType regType) throws ClaraMsgException {
-        checkFilterByDomain(regType);
-        checkFilterBySubject(regType);
-        checkFilterByType(regType);
+    private void checkFilter(RegData.Type regType) throws ClaraMsgException {
+        checkFilterByPrefix(regType);
         checkFilterByHost(regType);
     }
 
 
-    private void checkFilterByDomain(OwnerType regType) throws ClaraMsgException {
-        var reg = new RegistrationHelper(regType, "domain");
-        for (var domain : testDomains()) {
-            var result = reg.request(RegDriver::filterRegistration, r -> r.withDomain(domain));
-            var expected = reg.findLocal(r -> r.getDomain().equals(domain));
+    private void checkFilterByPrefix(RegData.Type regType) throws ClaraMsgException {
+        var reg = new RegistrationHelper(regType, "prefix");
+        for (var prefix : testPrefixes()) {
+            var result = reg.request(RegDriver::filterRegistration, r -> r.withPrefix(prefix));
+            var expected = reg.findLocal(r -> Topic.wrap(prefix).isParent(getTopic(r)));
 
-            reg.assertThat(domain, result, expected);
+            reg.assertThat(prefix, result, expected);
         }
     }
 
 
-    private void checkFilterBySubject(OwnerType regType) throws ClaraMsgException {
-        var reg = new RegistrationHelper(regType, "subject");
-        for (var subject : testSubjects()) {
-            var result = reg.request(RegDriver::filterRegistration, r -> r.withSubject(subject));
-            var expected = reg.findLocal(r -> r.getSubject().equals(subject));
-
-            reg.assertThat(subject, result, expected);
-        }
-    }
-
-
-    private void checkFilterByType(OwnerType regType) throws ClaraMsgException {
-        var reg = new RegistrationHelper(regType, "type");
-        for (var type : testTypes()) {
-            var result = reg.request(RegDriver::filterRegistration, r -> r.withType(type));
-            var expected = reg.findLocal(r -> r.getType().equals(type));
-
-            reg.assertThat(type, result, expected);
-        }
-    }
-
-
-    private void checkFilterByHost(OwnerType regType) throws ClaraMsgException {
+    private void checkFilterByHost(RegData.Type regType) throws ClaraMsgException {
         var reg = new RegistrationHelper(regType, "host");
         for (var host : RegDataFactory.testHosts) {
             var result = reg.request(RegDriver::filterRegistration, r -> r.withHost(host));
@@ -236,7 +210,7 @@ public class RegistrarTest {
     }
 
 
-    private void checkSameTopic(OwnerType regType) throws ClaraMsgException {
+    private void checkSameTopic(RegData.Type regType) throws ClaraMsgException {
         var reg = new RegistrationHelper(regType, "topic");
         for (var topic : testTopics()) {
             var result = reg.request(RegDriver::sameRegistration, r -> r.withSame(topic));
@@ -247,7 +221,7 @@ public class RegistrarTest {
     }
 
 
-    private void checkAll(OwnerType regType) throws ClaraMsgException {
+    private void checkAll(RegData.Type regType) throws ClaraMsgException {
         var reg = new RegistrationHelper(regType, "all");
 
         var result = reg.request(RegDriver::allRegistration, RegQuery.Factory::all);
@@ -258,7 +232,7 @@ public class RegistrarTest {
 
 
     private static Topic getTopic(RegData reg) {
-        return Topic.build(reg.getDomain(), reg.getSubject(), reg.getType());
+        return Topic.wrap(reg.getTopic());
     }
 
 
@@ -269,30 +243,10 @@ public class RegistrarTest {
     }
 
 
-    private static String[] testDomains() {
+    private static String[] testPrefixes() {
         return Stream.of(RegDataFactory.testTopics)
                      .map(Topic::wrap)
                      .map(Topic::domain)
-                     .filter(t -> !t.equals(Topic.ANY))
-                     .distinct()
-                     .toArray(String[]::new);
-    }
-
-
-    private static String[] testSubjects() {
-        return Stream.of(RegDataFactory.testTopics)
-                     .map(Topic::wrap)
-                     .map(Topic::subject)
-                     .filter(t -> !t.equals(Topic.ANY))
-                     .distinct()
-                     .toArray(String[]::new);
-    }
-
-
-    private static String[] testTypes() {
-        return Stream.of(RegDataFactory.testTopics)
-                     .map(Topic::wrap)
-                     .map(Topic::type)
                      .filter(t -> !t.equals(Topic.ANY))
                      .distinct()
                      .toArray(String[]::new);
@@ -307,10 +261,10 @@ public class RegistrarTest {
 
     private class RegistrationHelper {
 
-        private final OwnerType regType;
+        private final RegData.Type regType;
         private final String valueType;
 
-        RegistrationHelper(OwnerType regType, String valueType) {
+        RegistrationHelper(RegData.Type regType, String valueType) {
             this.regType = regType;
             this.valueType = valueType;
         }
@@ -324,7 +278,7 @@ public class RegistrarTest {
 
         Set<RegData> findLocal(Predicate<RegData> predicate) {
             return registration.stream()
-                    .filter(r -> r.getOwnerType() == regType)
+                    .filter(r -> r.getType() == regType)
                     .filter(predicate)
                     .collect(Collectors.toSet());
         }
@@ -343,7 +297,10 @@ public class RegistrarTest {
                         Set<RegData> expected,
                         Supplier<String> successSuffix,
                         Supplier<String> errorSuffix) {
-            var type = regType == OwnerType.PUBLISHER ? "publishers" : "subscribers";
+            var type = switch (regType) {
+                case PUBLISHER -> "publishers";
+                case SUBSCRIBER -> "subscribers";
+            };
             if (result.equals(expected)) {
                 System.out.printf("Found %3d %s%s%n", result.size(), type, successSuffix.get());
             } else {
@@ -354,12 +311,11 @@ public class RegistrarTest {
             }
         }
 
-        private static RegQuery.Factory queryFactory(OwnerType regType) {
-            if (regType == OwnerType.PUBLISHER) {
-                return RegQuery.publishers();
-            } else {
-                return RegQuery.subscribers();
-            }
+        private static RegQuery.Factory queryFactory(RegData.Type regType) {
+            return switch (regType) {
+                case PUBLISHER -> RegQuery.publishers();
+                case SUBSCRIBER -> RegQuery.subscribers();
+            };
         }
 
         private static String capitalize(String arg) {

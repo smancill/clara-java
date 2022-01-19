@@ -42,8 +42,8 @@ public class RegRecord {
      *
      * @return the type of the actor
      */
-    public RegData.OwnerType type() {
-        return data.getOwnerType();
+    public RegData.Type type() {
+        return data.getType();
     }
 
     /**
@@ -61,7 +61,7 @@ public class RegRecord {
      * @return the topic used by the actor
      */
     public Topic topic() {
-        return Topic.build(data.getDomain(), data.getSubject(), data.getType());
+        return Topic.wrap(data.getTopic());
     }
 
     /**

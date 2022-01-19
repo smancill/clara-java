@@ -35,7 +35,7 @@ public final class RegQuery {
      * @return a queries factory
      */
     public static Factory publishers() {
-        return new Factory(RegData.OwnerType.PUBLISHER);
+        return new Factory(RegData.Type.PUBLISHER);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class RegQuery {
      * @return a queries factory
      */
     public static Factory subscribers() {
-        return new Factory(RegData.OwnerType.SUBSCRIBER);
+        return new Factory(RegData.Type.SUBSCRIBER);
     }
 
 
@@ -84,7 +84,7 @@ public final class RegQuery {
 
         private final RegData.Builder data;
 
-        private Factory(RegData.OwnerType type) {
+        private Factory(RegData.Type type) {
             data = RegFactory.newFilter(type);
         }
 
@@ -95,45 +95,19 @@ public final class RegQuery {
          * @return a query for actors with topics matching the given topic
          */
         public RegQuery matching(Topic topic) {
-            data.setDomain(topic.domain());
-            data.setSubject(topic.subject());
-            data.setType(topic.type());
+            data.setTopic(topic.toString());
             return new RegQuery(data, Category.MATCHING);
         }
 
         /**
-         * A query for registered actors with this exact domain.
+         * A query for registered actors with this topic prefix.
          *
-         * @param domain the expected domain
-         * @return a query for actors registered to the given domain
+         * @param prefix the expected prefix
+         * @return a query for actors registered to the given prefix
          *         (subject and type are ignored)
          */
-        public RegQuery withDomain(String domain) {
-            data.setDomain(domain);
-            return new RegQuery(data, Category.FILTER);
-        }
-
-        /**
-         * A query for registered actors with this exact subject.
-         *
-         * @param subject the expected subject
-         * @return a query for actors registered to the given subject
-         *         (domain and type are ignored)
-         */
-        public RegQuery withSubject(String subject) {
-            data.setSubject(subject);
-            return new RegQuery(data, Category.FILTER);
-        }
-
-        /**
-         * A query for registered actor with this exact type.
-         *
-         * @param type the expected type
-         * @return a query for actors registered to the given type
-         *         (domain and subject are ignored)
-         */
-        public RegQuery withType(String type) {
-            data.setType(type);
+        public RegQuery withPrefix(String prefix) {
+            data.setTopic(prefix);
             return new RegQuery(data, Category.FILTER);
         }
 
@@ -144,9 +118,7 @@ public final class RegQuery {
          * @return a query for actors with the same topic as the given topic
          */
         public RegQuery withSame(Topic topic) {
-            data.setDomain(topic.domain());
-            data.setSubject(topic.subject());
-            data.setType(topic.type());
+            data.setTopic(topic.toString());
             return new RegQuery(data, Category.EXACT);
         }
 

@@ -13,7 +13,6 @@ import org.zeromq.ZMsg
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static org.jlab.clara.msg.data.RegDataProto.RegData.OwnerType.SUBSCRIBER
 import static org.jlab.clara.msg.sys.regdis.RegFactory.newRegistration
 
 class RegResponseSpec extends Specification {
@@ -23,21 +22,21 @@ class RegResponseSpec extends Specification {
 
     void setupSpec() {
         var topic = Topic.wrap("writer.scifi:books")
-        regData1 = newRegistration("asimov", "10.2.9.1", SUBSCRIBER, topic)
-        regData2 = newRegistration("bradbury", "10.2.9.1", SUBSCRIBER, topic)
+        regData1 = newRegistration("asimov", "10.2.9.1", RegData.Type.SUBSCRIBER, topic)
+        regData2 = newRegistration("bradbury", "10.2.9.1", RegData.Type.SUBSCRIBER, topic)
     }
 
     def "Send and parse a success response for a registration request"() {
         given: "a success response"
-        var sendResponse = new RegResponse("foo:bar", "registration_fe")
+        var sendResponse = new RegResponse("reg_action", "reg_fe")
 
         when: "parsing the response from the ZMQ raw message"
         var recvResponse = new RegResponse(sendResponse.msg())
 
         then: "all values are parsed correctly"
         with(recvResponse) {
-            topic() == "foo:bar"
-            sender() == "registration_fe"
+            action() == "reg_action"
+            sender() == "reg_fe"
             status() == RegConstants.SUCCESS
             data().empty
         }
@@ -46,7 +45,7 @@ class RegResponseSpec extends Specification {
     def "Send and parse an error response for a registration request"() {
         given: "an error response"
         var error = "could not handle request"
-        var sendResponse = new RegResponse("foo:bar", "registration_fe", error)
+        var sendResponse = new RegResponse("reg_action", "reg_fe", error)
 
         when: "parsing the response from the ZMQ raw message"
         new RegResponse(sendResponse.msg())
@@ -59,15 +58,15 @@ class RegResponseSpec extends Specification {
     def "Create a response with registration data for a registration request"() {
         given: "a registration response with a set of registration data"
         var regDataSet = [regData1, regData2] as Set
-        var sendResponse = new RegResponse("foo:bar", "registration_fe", regDataSet)
+        var sendResponse = new RegResponse("reg_action", "reg_fe", regDataSet)
 
         when: "parsing the response from the ZMQ raw message"
         var recvResponse = new RegResponse(sendResponse.msg())
 
         then: "all values are parsed correctly"
         with(recvResponse) {
-            topic() == "foo:bar"
-            sender() == "registration_fe"
+            action() == "reg_action"
+            sender() == "reg_fe"
             status() == RegConstants.SUCCESS
             data() == regDataSet
         }
@@ -76,8 +75,8 @@ class RegResponseSpec extends Specification {
     def "Parsing a response from a malformed ZMQ message throws an exception"() {
         given: "a ZMQ message without the right number of parts"
         var msg = new ZMsg().tap {
-            addString "foo:bar"
-            addString "foo_service"
+            addString "reg_action"
+            addString "registrar"
         }
 
         when: "parsing the response from the malformed message"
@@ -93,8 +92,8 @@ class RegResponseSpec extends Specification {
         var invalidData = regData2.toByteArray()[0..-10] as byte[]
 
         var msg = new ZMsg().tap {
-            addString "foo:bar"
-            addString "foo_service"
+            addString "reg_action"
+            addString "registrar"
             addString RegConstants.SUCCESS
             add regData1.toByteArray()
             add invalidData

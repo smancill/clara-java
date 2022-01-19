@@ -8,6 +8,8 @@ package org.jlab.clara.msg.sys.regdis
 
 import org.jlab.clara.msg.core.Topic
 import org.jlab.clara.msg.data.RegDataProto.RegData
+import org.jlab.clara.msg.sys.regdis.RegDatabase.TopicMatch
+
 import spock.lang.Rollup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -15,7 +17,7 @@ import spock.lang.Subject
 
 class RegDatabaseSpec extends Specification {
 
-    static final RegData.OwnerType TYPE = RegData.OwnerType.PUBLISHER
+    static final RegData.Type TYPE = RegData.Type.PUBLISHER
 
     @Shared RegData asimov1
     @Shared RegData bradbury1
@@ -241,24 +243,24 @@ class RegDatabaseSpec extends Specification {
         register(asimov1, bradbury2, brando2, tolkien1)
 
         expect: "all actors that are matched by the topic"
-        db.find(domain, subject, type) == matched
+        db.find(Topic.wrap(topic), TopicMatch.PREFIX_MATCHING) == matched
 
         where:
-        domain    | subject      | type      || matched
-        "writer"  | "*"          | "*"       || setOf(asimov1, bradbury2, tolkien1)
-        "actor"   | "*"          | "*"       || setOf(brando2)
+        topic                       || matched
+        "writer"                    || setOf(asimov1, bradbury2, tolkien1)
+        "actor"                     || setOf(brando2)
 
-        "writer"  | "scifi"      | "*"       || setOf(asimov1, bradbury2)
-        "writer"  | "adventure"  | "*"       || setOf(tolkien1)
-        "actor"   | "romance"    | "*"       || [] as Set
+        "writer:scifi"              || setOf(asimov1, bradbury2)
+        "writer:adventure"          || setOf(tolkien1)
+        "actor:romance"             || [] as Set
 
-        "writer"  | "scifi"      | "books"   || setOf(asimov1, bradbury2)
-        "writer"  | "adventure"  | "tales"   || setOf(tolkien1)
-        "actor"   | "drama"      | "movies"  || [] as Set
+        "writer:scifi:books"        || setOf(asimov1, bradbury2)
+        "writer:adventure:tales"    || setOf(tolkien1)
+        "actor:drama:movies"        || [] as Set
 
-        "player"  | "*"          | "*"       || [] as Set
-        "actor"   | "drama"      | "*"       || [] as Set
-        "writer"  | "adventure"  | "books"   || [] as Set
+        "player"                    || [] as Set
+        "actor:drama"               || [] as Set
+        "writer:adventure:books"    || [] as Set
     }
 
     @Rollup
@@ -267,24 +269,24 @@ class RegDatabaseSpec extends Specification {
         register(asimov1, bradbury2, twain1, twain2, brando2, tolkien1)
 
         expect: "all the actors the topic is matched by"
-        db.rfind(domain, subject, type) == matchers
+        db.find(Topic.wrap(topic), TopicMatch.REVERSE_MATCHING) == matched
 
         where:
-        domain    | subject      | type      || matchers
-        "writer"  | "*"          | "*"       || [] as Set
-        "actor"   | "*"          | "*"       || setOf(brando2)
+        topic                       || matched
+        "writer"                    || [] as Set
+        "actor"                     || setOf(brando2)
 
-        "writer"  | "scifi"      | "*"       || [] as Set
-        "writer"  | "adventure"  | "*"       || setOf(twain1, twain2)
-        "actor"   | "drama"      | "*"       || setOf(brando2)
+        "writer:scifi"              || [] as Set
+        "writer:adventure"          || setOf(twain1, twain2)
+        "actor:drama"               || setOf(brando2)
 
-        "writer"  | "scifi"      | "books"   || setOf(asimov1, bradbury2)
-        "writer"  | "adventure"  | "tales"   || setOf(twain1, twain2, tolkien1)
-        "actor"   | "drama"      | "movies"  || setOf(brando2)
+        "writer:scifi:books"        || setOf(asimov1, bradbury2)
+        "writer:adventure:tales"    || setOf(twain1, twain2, tolkien1)
+        "actor:drama:movies"        || setOf(brando2)
 
-        "player"  | "*"          | "*"       || [] as Set
-        "writer"  | "children"   | "*"       || [] as Set
-        "writer"  | "scifi"      | "comics"  || [] as Set
+        "player"                    || [] as Set
+        "writer:children"           || [] as Set
+        "writer:scifi:comics"       || [] as Set
     }
 
     @Rollup
@@ -297,15 +299,11 @@ class RegDatabaseSpec extends Specification {
 
         where:
         filter                                  || matched
-        regFilter { domain = "writer" }         || setOf(asimov1, asimov2, bradbury1, bradbury2,
+        regFilter { topic = "writer" }          || setOf(asimov1, asimov2, bradbury1, bradbury2,
                                                          twain1, twain2, tolkien1)
-        regFilter { subject = "adventure" }     || setOf(twain1, twain2, tolkien1)
-        regFilter { type = "books" }            || setOf(asimov1, asimov2, bradbury1, bradbury2)
         regFilter { host = "10.2.9.2" }         || setOf(asimov2, bradbury2, brando2, twain2)
 
-        regFilter { domain = "artist" }         || [] as Set
-        regFilter { subject = "comedy" }        || [] as Set
-        regFilter { type = "script" }           || [] as Set
+        regFilter { topic = "artist" }          || [] as Set
         regFilter { host = "10.2.9.3" }         || [] as Set
     }
 
@@ -315,17 +313,17 @@ class RegDatabaseSpec extends Specification {
         register(asimov1, bradbury2, brando2, twain1, twain2, tolkien1)
 
         expect:
-        db.same(domain, subject, type) == matched
+        db.find(Topic.wrap(topic), TopicMatch.EXACT) == matched
 
         where:
-        domain    | subject      | type      || matched
-        "actor"   | "*"          | "*"       || setOf(brando2)
-        "writer"  | "adventure"  | "*"       || setOf(twain1, twain2)
-        "writer"  | "scifi"      | "books"   || setOf(asimov1, bradbury2)
+        topic                   || matched
+        "actor"                 || setOf(brando2)
+        "writer:adventure"      || setOf(twain1, twain2)
+        "writer:scifi:books"    || setOf(asimov1, bradbury2)
 
-        "writer"  | "*"          | "*"       || [] as Set
-        "writer"  | "scifi"      | "*"       || [] as Set
-        "writer"  | "scifi"      | "comics"  || [] as Set
+        "writer"                || [] as Set
+        "writer:scifi"          || [] as Set
+        "writer:scifi:comics"   || [] as Set
     }
 
     def "Get all registered actors in the database"() {

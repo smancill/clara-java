@@ -37,7 +37,7 @@ public class RegDriver {
      *
      * @param address registrar service address
      * @param factory factory for the ZMQ socket
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the socket to the registrar could not be created
      */
     public RegDriver(RegAddress address, SocketFactory factory) throws ClaraMsgException {
         this.address = address;
@@ -93,7 +93,7 @@ public class RegDriver {
      *
      * @param sender the sender of the request
      * @param data the registration data
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void addRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -106,14 +106,11 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data
      * @param timeout the milliseconds to wait for a response
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void addRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.REGISTER_PUBLISHER,
-                                RegConstants.REGISTER_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.REGISTER, sender, data);
         request(request, timeout);
     }
 
@@ -122,7 +119,7 @@ public class RegDriver {
      *
      * @param sender the sender of the request
      * @param data the registration data
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void removeRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -135,14 +132,11 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data
      * @param timeout the milliseconds to wait for a response
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void removeRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.REMOVE_PUBLISHER,
-                                RegConstants.REMOVE_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.REMOVE, sender, data);
         request(request, timeout);
     }
 
@@ -154,7 +148,7 @@ public class RegDriver {
      *
      * @param sender the sender of the request
      * @param host the host of the actors to be removed
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void removeAllRegistration(String sender, String host)
             throws ClaraMsgException {
@@ -170,12 +164,18 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param host the host of the actors to be removed
      * @param timeout the milliseconds to wait for a response
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public void removeAllRegistration(String sender, String host, long timeout)
             throws ClaraMsgException {
-        var topic = RegConstants.REMOVE_ALL_REGISTRATION;
-        var request = new RegRequest(topic, sender, host);
+        removeAllRegistration(sender, host, RegData.Type.PUBLISHER, timeout);
+        removeAllRegistration(sender, host, RegData.Type.SUBSCRIBER, timeout);
+    }
+
+    private void removeAllRegistration(String sender, String host, RegData.Type type, long timeout)
+            throws ClaraMsgException {
+        var data = RegFactory.newFilter(type).setHost(host).build();
+        var request = new RegRequest(RegConstants.REMOVE_ALL, sender, data);
         request(request, timeout);
     }
 
@@ -187,7 +187,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data object
      * @return set of publishers or subscribers to the required topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> findRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -203,14 +203,11 @@ public class RegDriver {
      * @param data the registration data object
      * @param timeout the milliseconds to wait for a response
      * @return set of publishers or subscribers to the required topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> findRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.FIND_PUBLISHER,
-                                RegConstants.FIND_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.FIND_MATCHING, sender, data);
         var response = request(request, timeout);
         return response.data();
     }
@@ -233,7 +230,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data object
      * @return set of publishers or subscribers that match the given terms.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> filterRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -259,14 +256,11 @@ public class RegDriver {
      * @param data the registration data object
      * @param timeout the milliseconds to wait for a response
      * @return set of publishers or subscribers that match the given terms.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> filterRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.FILTER_PUBLISHER,
-                                RegConstants.FILTER_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.FILTER, sender, data);
         var response = request(request, timeout);
         return response.data();
     }
@@ -288,7 +282,7 @@ public class RegDriver {
      * @param sender the sender of the request
      * @param data the registration data object
      * @return set of publishers or subscribers that have the exact same topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> sameRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -313,14 +307,11 @@ public class RegDriver {
      * @param data the registration data object
      * @param timeout the milliseconds to wait for a response
      * @return set of publishers or subscribers that have the exact same topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> sameRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.EXACT_PUBLISHER,
-                                RegConstants.EXACT_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.FIND_EXACT, sender, data);
         var response = request(request, timeout);
         return response.data();
     }
@@ -331,8 +322,8 @@ public class RegDriver {
      *
      * @param sender the sender of the request
      * @param data the registration data object
-     * @return set of publishers or subscribers to the required topic.
-     * @throws ClaraMsgException
+     * @return set of all publishers or subscribers
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> allRegistration(String sender, RegData data)
             throws ClaraMsgException {
@@ -347,14 +338,11 @@ public class RegDriver {
      * @param data the registration data object
      * @param timeout the milliseconds to wait for a response
      * @return set of publishers or subscribers to the required topic.
-     * @throws ClaraMsgException
+     * @throws ClaraMsgException if the request to the registrar failed
      */
     public Set<RegData> allRegistration(String sender, RegData data, long timeout)
             throws ClaraMsgException {
-        var topic = selectTopic(data.getOwnerType(),
-                                RegConstants.ALL_PUBLISHER,
-                                RegConstants.ALL_SUBSCRIBER);
-        var request = new RegRequest(topic, sender, data);
+        var request = new RegRequest(RegConstants.FIND_ALL, sender, data);
         var response = request(request, timeout);
         return response.data();
     }
@@ -372,13 +360,5 @@ public class RegDriver {
      */
     public RegAddress getAddress() {
         return address;
-    }
-
-
-    private static String selectTopic(RegData.OwnerType type, String pubTopic, String subTopic) {
-        return switch (type) {
-            case PUBLISHER -> pubTopic;
-            case SUBSCRIBER -> subTopic;
-        };
     }
 }

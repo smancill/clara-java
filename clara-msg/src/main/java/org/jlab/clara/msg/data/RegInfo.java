@@ -14,7 +14,7 @@ import org.jlab.clara.msg.data.RegDataProto.RegData;
  */
 public final class RegInfo {
 
-    private final RegData.OwnerType type;
+    private final RegData.Type type;
     private final Topic topic;
     private final String description;
 
@@ -26,7 +26,7 @@ public final class RegInfo {
      * @return the information required to (de)register an actor as a publisher
      */
     public static RegInfo publisher(Topic topic, String description) {
-        return new RegInfo(RegData.OwnerType.PUBLISHER, topic, description);
+        return new RegInfo(RegData.Type.PUBLISHER, topic, description);
     }
 
     /**
@@ -47,7 +47,7 @@ public final class RegInfo {
      * @return the information required to (de)register an actor as a subscriber
      */
     public static RegInfo subscriber(Topic topic, String description) {
-        return new RegInfo(RegData.OwnerType.SUBSCRIBER, topic, description);
+        return new RegInfo(RegData.Type.SUBSCRIBER, topic, description);
     }
 
     /**
@@ -60,7 +60,7 @@ public final class RegInfo {
         return subscriber(topic, "");
     }
 
-    private RegInfo(RegData.OwnerType type, Topic topic, String description) {
+    private RegInfo(RegData.Type type, Topic topic, String description) {
         this.type = type;
         this.topic = topic;
         this.description = description;
@@ -71,7 +71,7 @@ public final class RegInfo {
      *
      * @return the registration type
      */
-    public RegData.OwnerType type() {
+    public RegData.Type type() {
         return type;
     }
 

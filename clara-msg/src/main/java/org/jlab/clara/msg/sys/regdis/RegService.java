@@ -7,6 +7,7 @@
 package org.jlab.clara.msg.sys.regdis;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.jlab.clara.msg.net.Context;
@@ -22,8 +23,6 @@ import org.zeromq.ZMsg;
 import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import static org.jlab.clara.msg.core.Topic.ANY;
 
 /**
  * The main registrar service or registrar (names are used interchangeably).
@@ -118,137 +117,143 @@ public class RegService implements Runnable {
      * @return serialized response: 0MQ message ready to go over the wire
      */
     ZMsg processRequest(ZMsg requestMsg) {
-        String topic = RegConstants.UNDEFINED;
+        String action = RegConstants.UNDEFINED;
         RegRequest request;
         RegResponse reply;
         try {
             request = new RegRequest(requestMsg);
-            topic = request.topic();
+            action = request.action();
 
-            reply = switch (topic) {
-                case RegConstants.REGISTER_PUBLISHER -> {
-                    var data = request.data();
-                    logRegistration("registered", "publisher ", data);
-                    publishers.register(data);
-                    yield response(topic, NO_DATA);
+            var data = request.data();
+            var database = switch (data.getType()) {
+                case PUBLISHER -> publishers;
+                case SUBSCRIBER -> subscribers;
+            };
+
+            reply = switch (action) {
+                case RegConstants.REGISTER -> {
+                    checkRegistration(data);
+                    logRegistration("register", data);
+                    database.register(data);
+                    yield response(action, NO_DATA);
                 }
-                case RegConstants.REGISTER_SUBSCRIBER -> {
-                    var data = request.data();
-                    logRegistration("registered", "subscriber", data);
-                    subscribers.register(data);
-                    yield response(topic, NO_DATA);
+                case RegConstants.REMOVE -> {
+                    checkRegistration(data);
+                    logRegistration("remove", data);
+                    database.remove(data);
+                    yield response(action, NO_DATA);
                 }
-                case RegConstants.REMOVE_PUBLISHER -> {
-                    var data = request.data();
-                    logRegistration("removed", "publisher ", data);
-                    publishers.remove(data);
-                    yield response(topic, NO_DATA);
+                case RegConstants.REMOVE_ALL -> {
+                    var host = checkHost(data);
+                    LOGGER.fine(() -> "remove all " + getType(data, true) + " from host = " + host);
+                    database.remove(host);
+                    yield response(action, NO_DATA);
                 }
-                case RegConstants.REMOVE_SUBSCRIBER -> {
-                    var data = request.data();
-                    logRegistration("removed", "subscriber", data);
-                    subscribers.remove(data);
-                    yield response(topic, NO_DATA);
+                case RegConstants.FIND_MATCHING -> {
+                    var topic = checkTopic(data);
+                    var match = switch (data.getType()) {
+                        case PUBLISHER -> RegDatabase.TopicMatch.PREFIX_MATCHING;
+                        case SUBSCRIBER -> RegDatabase.TopicMatch.REVERSE_MATCHING;
+                    };
+                    logDiscovery(data, "matching");
+                    yield response(action, database.find(topic, match));
                 }
-                case RegConstants.REMOVE_ALL_REGISTRATION -> {
-                    var host = request.text();
-                    LOGGER.fine(() -> "removed all host = " + host);
-                    publishers.remove(host);
-                    subscribers.remove(host);
-                    yield response(topic, NO_DATA);
+                case RegConstants.FILTER -> {
+                    checkFilter(data);
+                    logFilter(data);
+                    yield response(action, database.filter(data));
                 }
-                case RegConstants.FIND_PUBLISHER -> {
-                    var data = request.data();
-                    logDiscovery("publishers ", data);
-                    var rs = publishers.find(data.getDomain(), data.getSubject(), data.getType());
-                    yield response(topic, rs);
+                case RegConstants.FIND_EXACT -> {
+                    var topic = checkTopic(data);
+                    var match = RegDatabase.TopicMatch.EXACT;
+                    logDiscovery(data, "with");
+                    yield response(action, database.find(topic, match));
                 }
-                case RegConstants.FIND_SUBSCRIBER -> {
-                    var data = request.data();
-                    logDiscovery("subscribers", data);
-                    var rs = subscribers.rfind(data.getDomain(), data.getSubject(), data.getType());
-                    yield response(topic, rs);
-                }
-                case RegConstants.FILTER_PUBLISHER -> {
-                    var data = request.data();
-                    logFilter("publishers ", data);
-                    yield response(topic, publishers.filter(data));
-                }
-                case RegConstants.FILTER_SUBSCRIBER -> {
-                    var data = request.data();
-                    logFilter("subscribers", data);
-                    yield response(topic, subscribers.filter(data));
-                }
-                case RegConstants.EXACT_PUBLISHER -> {
-                    var data = request.data();
-                    logFilter("publishers with exact topic ", data);
-                    var rs = publishers.same(data.getDomain(), data.getSubject(), data.getType());
-                    yield response(topic, rs);
-                }
-                case RegConstants.EXACT_SUBSCRIBER -> {
-                    var data = request.data();
-                    logFilter("subscribers with exact topic ", data);
-                    var rs = subscribers.same(data.getDomain(), data.getSubject(), data.getType());
-                    yield response(topic, rs);
-                }
-                case RegConstants.ALL_PUBLISHER -> {
-                    LOGGER.fine(() -> "get all publishers");
-                    yield response(topic, publishers.all());
-                }
-                case RegConstants.ALL_SUBSCRIBER -> {
-                    LOGGER.fine(() -> "get all subscribers");
-                    yield response(topic, subscribers.all());
+                case RegConstants.FIND_ALL -> {
+                    LOGGER.fine(() -> "get all " + getType(data, true));
+                    yield response(action, database.all());
                 }
                 default -> {
-                    LOGGER.warning("unknown registration request type: " + topic);
-                    yield response(topic, "unknown registration request");
+                    LOGGER.warning("unknown registration request: " + action);
+                    yield response(action, "unknown registration request");
                 }
             };
         } catch (ClaraMsgException | InvalidProtocolBufferException e) {
             LOGGER.warning(LogUtils.exceptionReporter(e));
-            reply = response(topic, e.getMessage());
+            reply = response(action, e.getMessage());
         }
         return reply.msg();
     }
 
-    private RegResponse response(String topic, Set<RegData> data) {
-        return new RegResponse(topic, sender, data);
+    private RegResponse response(String action, Set<RegData> data) {
+        return new RegResponse(action, sender, data);
     }
 
-    private RegResponse response(String topic, String msg) {
-        return new RegResponse(topic, sender, msg);
+    private RegResponse response(String action, String msg) {
+        return new RegResponse(action, sender, msg);
     }
 
-    private void logRegistration(String action, String type, RegData data) {
-        LOGGER.fine(() -> String.format("%s %s name = %s  host = %s  port = %d  topic = %s:%s:%s",
-                action, type, data.getName(),
-                data.getHost(), data.getPort(),
-                data.getDomain(), data.getSubject(), data.getType()));
+    private static void checkRegistration(RegData data) throws ClaraMsgException {
+        if (data.getName().isEmpty() || data.getHost().isEmpty() || data.getTopic().isEmpty()) {
+            throw new ClaraMsgException("invalid registration data: missing fields");
+        }
     }
 
-    private void logDiscovery(String type, RegData data) {
-        LOGGER.fine(() -> String.format("search %s topic = %s:%s:%s",
-                type, data.getDomain(), data.getSubject(), data.getType()));
+    private static String checkHost(RegData data) throws ClaraMsgException {
+        var host = data.getHost();
+        if (host.isEmpty()) {
+            throw new ClaraMsgException("invalid registration request: missing host");
+        }
+        return host;
     }
 
-    private void logFilter(String type, RegData data) {
+    private static Topic checkTopic(RegData data) throws ClaraMsgException {
+        var topic = data.getTopic();
+        if (topic.isEmpty()) {
+            throw new ClaraMsgException("invalid registration request: missing topic");
+        }
+        return Topic.wrap(topic);
+    }
+
+    private static void checkFilter(RegData data) throws ClaraMsgException {
+        if (data.getTopic().isEmpty() && data.getHost().isEmpty()) {
+            throw new ClaraMsgException("invalid registration filter: missing field");
+        }
+    }
+
+    private static void logRegistration(String action, RegData data) {
+        LOGGER.fine(() -> String.format("%s %s name = %s  host = %s  port = %d  topic = %s",
+                action, getType(data, false), data.getName(),
+                data.getHost(), data.getPort(), data.getTopic()));
+    }
+
+    private static void logDiscovery(RegData data, String match) {
+        LOGGER.fine(() -> String.format("search %s %s topic = %s",
+                getType(data, true), match, data.getTopic()));
+    }
+
+    private static void logFilter(RegData data) {
         LOGGER.fine(() -> {
             var sb = new StringBuilder();
-            sb.append("search ").append(type);
-            if (!data.getDomain().equals(ANY)) {
-                sb.append("  domain = ").append(data.getDomain());
+            sb.append("filter ").append(getType(data, true));
+            if (!data.getTopic().isEmpty()) {
+                sb.append("  prefix = ").append(data.getTopic());
             }
-            if (!data.getSubject().equals(ANY)) {
-                sb.append("  subject = ").append(data.getSubject());
-            }
-            if (!data.getType().equals(ANY)) {
-                sb.append("  type = ").append(data.getType());
-            }
-            if (!data.getHost().equals(RegConstants.UNDEFINED)) {
-                sb.append("  address = ")
-                  .append(data.getHost()).append(':').append(data.getPort());
+            if (!data.getHost().isEmpty()) {
+                sb.append("  address = ").append(data.getHost());
+                if (data.getPort() > 0) {
+                    sb.append(':').append(data.getPort());
+                }
             }
             return sb.toString();
         });
+    }
+
+    private static String getType(RegData data, boolean plural) {
+        var suffix = plural ? "s" : "";
+        return switch (data.getType()) {
+            case PUBLISHER -> "publisher" + suffix + " ";
+            case SUBSCRIBER -> "subscriber" + suffix;
+        };
     }
 }

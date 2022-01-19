@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class RegResponse {
 
-    private final String topic;
+    private final String action;
     private final String sender;
     private final String status;
     private final Set<RegData> data;
@@ -35,11 +35,11 @@ public class RegResponse {
      * {@link RegConstants#SUCCESS}.
      * This response is used to signal that a request was successful.
      *
-     * @param topic the request being responded
+     * @param action the registrar action being responded
      * @param sender the sender of the response
      */
-    public RegResponse(String topic, String sender) {
-        this.topic = topic;
+    public RegResponse(String action, String sender) {
+        this.action = action;
         this.sender = sender;
         this.status = RegConstants.SUCCESS;
         this.data = new HashSet<>();
@@ -52,12 +52,12 @@ public class RegResponse {
      * {@link RegConstants#SUCCESS}.
      * This response is used to return registration data for discovery requests.
      *
-     * @param topic the request being responded
+     * @param action the registrar action being responded
      * @param sender the sender of the response
      * @param data the registration data
      */
-    public RegResponse(String topic, String sender, Set<RegData> data) {
-        this.topic = topic;
+    public RegResponse(String action, String sender, Set<RegData> data) {
+        this.action = action;
         this.sender = sender;
         this.status = RegConstants.SUCCESS;
         this.data = data;
@@ -70,12 +70,12 @@ public class RegResponse {
      * In case there is an error response status will indicate the description
      * of an error.
      *
-     * @param topic the request being responded
+     * @param action the registrar action being responded
      * @param sender the sender of the response
      * @param statusOrData the error description or string data.
      */
-    public RegResponse(String topic, String sender, String statusOrData) {
-        this.topic = topic;
+    public RegResponse(String action, String sender, String statusOrData) {
+        this.action = action;
         this.sender = sender;
         this.status = statusOrData;
         this.data = new HashSet<>();
@@ -97,11 +97,11 @@ public class RegResponse {
             throw new ClaraMsgException("invalid registrar server response format");
         }
 
-        var topicFrame = msg.pop();
+        var actionFrame = msg.pop();
         var senderFrame = msg.pop();
         var statusFrame = msg.pop();
 
-        topic = new String(topicFrame.getData());
+        action = new String(actionFrame.getData());
         sender = new String(senderFrame.getData());
         status = new String(statusFrame.getData());
         if (!status.equals(RegConstants.SUCCESS)) {
@@ -127,7 +127,7 @@ public class RegResponse {
      */
     public ZMsg msg() {
         var msg = new ZMsg();
-        msg.addString(topic);
+        msg.addString(action);
         msg.addString(sender);
         msg.addString(status);
         for (var reg : data) {
@@ -138,10 +138,10 @@ public class RegResponse {
 
 
     /**
-     * Returns the topic of the response.
+     * Returns the registrar action that created the response.
      */
-    public String topic() {
-        return topic;
+    public String action() {
+        return action;
     }
 
 
@@ -181,7 +181,7 @@ public class RegResponse {
         result = prime * result + data.hashCode();
         result = prime * result + sender.hashCode();
         result = prime * result + status.hashCode();
-        result = prime * result + topic.hashCode();
+        result = prime * result + action.hashCode();
         return result;
     }
 
@@ -207,6 +207,6 @@ public class RegResponse {
         if (!status.equals(other.status)) {
             return false;
         }
-        return topic.equals(other.topic);
+        return action.equals(other.action);
     }
 }
