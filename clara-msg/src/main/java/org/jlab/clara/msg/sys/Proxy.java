@@ -247,7 +247,7 @@ public class Proxy {
                 // since it is never actually used except here.
                 Field zctx = ctx.getClass().getDeclaredField("ctx");
                 zctx.setAccessible(true);
-                return ZContext.shadow((ZContext) zctx.get(ctx));
+                return ((ZContext) zctx.get(ctx)).shadow();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
