@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 plugins {
-    id 'com.google.protobuf' version '0.8.17' apply false
-    id 'com.github.spotbugs' version '4.7.9' apply false
+    id 'com.google.protobuf' version '0.9.1' apply false
+    id 'com.github.spotbugs' version '5.0.13' apply false
 }
 
 allprojects {
@@ -138,10 +138,12 @@ configure(subprojectList) {
     ]
 
     ext.test_libs = [
-        jupiter_api: 'org.junit.jupiter:junit-jupiter-api:5.8.1',
-        jupiter_engine: 'org.junit.jupiter:junit-jupiter-engine:5.8.1',
-        groovy: 'org.codehaus.groovy:groovy:3.0.9',
-        spock: 'org.spockframework:spock-core:2.0-groovy-3.0',
+        jupiter_api: 'org.junit.jupiter:junit-jupiter-api:5.9.1',
+        jupiter_engine: 'org.junit.jupiter:junit-jupiter-engine:5.9.1',
+        groovy: 'org.apache.groovy:groovy:4.0.7',
+        spock: 'org.spockframework:spock-core:2.3-groovy-4.0',
+        bytebuddy: 'net.bytebuddy:byte-buddy:1.12.20',
+        objenesis: 'org.objenesis:objenesis:3.3',
         hamcrest: 'org.hamcrest:hamcrest:2.2',
     ]
 
@@ -157,6 +159,8 @@ configure(subprojectList) {
         testImplementation test_libs.jupiter_api
         testImplementation test_libs.groovy
         testImplementation test_libs.spock
+        testImplementation test_libs.bytebuddy
+        testImplementation test_libs.objenesis
         testRuntimeOnly test_libs.jupiter_engine
         testImplementation test_libs.hamcrest
     }
@@ -203,11 +207,6 @@ project(':clara-msg') {
                 path = protocPath
             }
         }
-    }
-
-    sourcesJar {
-        from generatedProtoDir
-        dependsOn jar
     }
 
     javadoc {
@@ -502,13 +501,13 @@ ext {
 
 configure(subprojectList) {
     checkstyle {
-        toolVersion = '9.1'
+        toolVersion = '10.6.0'
         configFile = rootProject.file('config/quality/checkstyle.xml')
         configProperties['samedir'] = rootProject.file('config/quality')
     }
 
     codenarc {
-        toolVersion = '2.2.0'
+        toolVersion = '3.1.0'
         ignoreFailures = true
         configFile = rootProject.file('config/quality/codenarc.groovy')
         if (ciMode.toBoolean()) {
@@ -517,7 +516,7 @@ configure(subprojectList) {
     }
 
     spotbugs {
-        toolVersion = '4.4.2'
+        toolVersion = '4.7.3'
         ignoreFailures = true
         effort = 'max'
         reportLevel = 'medium'
@@ -539,7 +538,7 @@ task checkSpotBugsResults {
         subprojectList.each { subproject ->
             [subproject.spotbugsMain, subproject.spotbugsTest].each { task ->
                 try {
-                    bugsFound += printSpotBugs task.reports.getByName('XML').destination
+                    bugsFound += printSpotBugs task.reports.getByName('xml').destination
                 } catch (FileNotFoundException e) {
                     logger.info e.message
                 }

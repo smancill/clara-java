@@ -10,6 +10,9 @@ SPDX-License-Identifier: MIT-0
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
+  <!-- ignore generated Protobuf sources -->
+  <suppress checks=".*" files="generated[\\/]source[\\/]proto"/>
+
   <!-- ignore Javadoc -->
   <suppress checks="Javadoc.*" files="org[\\/]jlab[\\/]clara[\\/]base[\\/]core"/>
   <suppress checks="Javadoc.*" files="org[\\/]jlab[\\/]clara[\\/]msg[\\/]sys[\\/].+[\\/]"/>
