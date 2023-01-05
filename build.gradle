@@ -127,7 +127,7 @@ configure(subprojectList) {
     ext.libs = [
         json: 'org.json:json:20220924',
         snakeyaml: 'org.yaml:snakeyaml:1.33',
-        jeromq: 'org.zeromq:jeromq:0.5.2',
+        jeromq: 'org.zeromq:jeromq:0.5.3',
         protobuf: 'com.google.protobuf:protobuf-java:3.21.12',
         protoc: 'com.google.protobuf:protoc:3.21.12',
         jline: 'org.jline:jline:3.21.0',
