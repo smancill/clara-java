@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 plugins {
-    id 'com.google.protobuf' version '0.8.17' apply false
+    id 'com.google.protobuf' version '0.9.1' apply false
     id 'com.github.spotbugs' version '5.0.13' apply false
 }
 
@@ -203,11 +203,6 @@ project(':clara-msg') {
                 path = protocPath
             }
         }
-    }
-
-    sourcesJar {
-        from generatedProtoDir
-        dependsOn jar
     }
 
     javadoc {
