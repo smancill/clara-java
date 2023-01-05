@@ -114,7 +114,7 @@ class OrchestratorConfigParserSpec extends Specification {
             callback(callback: "EC_histo", state: "histogram", session: "clas12_group1"),
             callback(callback: "EC_data", state: "data_filter", session: "clas12_group1", engine: "ECMonitor"),
             callback(callback: "DPE_reg"),
-            callback(callback: "DPE_run", session: "clas12_group1")
+            callback(callback: "DPE_run", session: "clas12_group1"),
         ]
         // codenarc-enable LineLength
     }
