@@ -140,8 +140,10 @@ configure(subprojectList) {
     ext.test_libs = [
         jupiter_api: 'org.junit.jupiter:junit-jupiter-api:5.9.1',
         jupiter_engine: 'org.junit.jupiter:junit-jupiter-engine:5.9.1',
-        groovy: 'org.codehaus.groovy:groovy:3.0.9',
-        spock: 'org.spockframework:spock-core:2.0-groovy-3.0',
+        groovy: 'org.apache.groovy:groovy:4.0.7',
+        spock: 'org.spockframework:spock-core:2.3-groovy-4.0',
+        bytebuddy: 'net.bytebuddy:byte-buddy:1.12.20',
+        objenesis: 'org.objenesis:objenesis:3.3',
         hamcrest: 'org.hamcrest:hamcrest:2.2',
     ]
 
@@ -157,6 +159,8 @@ configure(subprojectList) {
         testImplementation test_libs.jupiter_api
         testImplementation test_libs.groovy
         testImplementation test_libs.spock
+        testImplementation test_libs.bytebuddy
+        testImplementation test_libs.objenesis
         testRuntimeOnly test_libs.jupiter_engine
         testImplementation test_libs.hamcrest
     }
