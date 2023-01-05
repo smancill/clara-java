@@ -4,7 +4,7 @@
 
 plugins {
     id 'com.google.protobuf' version '0.8.17' apply false
-    id 'com.github.spotbugs' version '4.7.9' apply false
+    id 'com.github.spotbugs' version '5.0.13' apply false
 }
 
 allprojects {
@@ -517,7 +517,7 @@ configure(subprojectList) {
     }
 
     spotbugs {
-        toolVersion = '4.4.2'
+        toolVersion = '4.7.3'
         ignoreFailures = true
         effort = 'max'
         reportLevel = 'medium'
@@ -539,7 +539,7 @@ task checkSpotBugsResults {
         subprojectList.each { subproject ->
             [subproject.spotbugsMain, subproject.spotbugsTest].each { task ->
                 try {
-                    bugsFound += printSpotBugs task.reports.getByName('XML').destination
+                    bugsFound += printSpotBugs task.reports.getByName('xml').destination
                 } catch (FileNotFoundException e) {
                     logger.info e.message
                 }
