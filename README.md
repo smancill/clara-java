@@ -12,37 +12,32 @@ Clara requires the [Java 17 JDK](https://whichjdk.com/).
 Prefer [Eclipse Temurin](https://adoptium.net/) for Java binaries,
 and a Java version manager to install and switch JDKs.
 
-[SDKMAN!], [Jabba] or [JEnv] can be used to manage multiple Java versions.
-See this [StackOverflow answer](https://stackoverflow.com/a/52524114) for more details
-(the answer is for macOS but they work with any Unix system).
+[SDKMAN!] or [asdf-java] can be used to manage multiple Java versions.
 
 [SDKMAN!]: https://sdkman.io/
-[Jabba]: https://github.com/shyiko/jabba
-[JEnv]: https://www.jenv.be/
+[asdf-java]: https://github.com/halcyon/asdf-java
 
 With [SDKMAN!]:
 
 ``` console
 $ sdk list java
-$ sdk install java 17.0.1-tem                   # there may be a newer version listed above
-$ sdk use java 17.0.1-tem
+$ sdk install java 17.0.5-tem           # there may be a newer version listed above
+$ sdk use java 17.0.5-tem
 ```
 
-With [Jabba] (no Temurin yet):
+With [asdf-java]:
 
 ``` console
-$ jabba ls-remote
-$ jabba install amazon-corretto@1.17.0-0.35.1   # there may be a newer version listed above
-$ jabba use amazon-corretto@1.17.0-0.35.1
+$ asdf list-all java
+$ asdf install java temurin-17.0.5+8    # there may be a newer version listed above
+$ asdf local java temurin-17.0.5+8      # or global
 ```
 
-To install Java 17 system wide,
-then use the OpenJDK 17 package from the Linux distribution if available,
-or the [Amazon Corretto DEB repo][] for Ubuntu/Debian,
-or [Homebrew](https://brew.sh/) with the [temurin cask] for macOS.
+To install Temurin 17 system wide,
+follow the [instructions in the official site][temurin-install].
 
-[Amazon Corretto DEB repo]: https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/generic-linux-install.html
-[temurin cask]: https://formulae.brew.sh/cask/temurin
+[temurin-binaries]: https://github.com/adoptium/temurin17-binaries/releases
+[temurin-install]: https://adoptium.net/installation/
 
 
 ### Installation
