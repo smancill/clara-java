@@ -47,13 +47,13 @@ It will download the required Gradle version and all the Clara dependencies.
 
     $ ./gradlew
 
-To install the Clara artifact to the local Maven repository:
-
-    $ ./gradlew install
-
 To deploy the binary distribution to `$CLARA_HOME`:
 
     $ ./gradlew deploy
+
+To publish the Clara artifacts to the local Maven repository:
+
+    $ ./gradlew publishToMavenLocal
 
 
 ### Importing the project into your IDE
