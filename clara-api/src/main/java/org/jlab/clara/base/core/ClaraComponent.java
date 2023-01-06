@@ -597,7 +597,7 @@ public final class ClaraComponent {
     /**
      * Note: candidate to be deprecated. Do not use to define the
      * canonical names for DPE, container or service.
-     *
+     * <p>
      * The canonical name of a Clara component is defined internally,
      * yet this method is used to set the name of an orchestrator, which
      * considers to be non-critical.

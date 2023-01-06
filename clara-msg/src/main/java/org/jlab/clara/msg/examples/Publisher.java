@@ -15,7 +15,7 @@ import org.jlab.clara.msg.data.RegInfo;
  * An example of a publisher that publishes data for ever.
  * It does not matter who is subscribing to the messages.
  * This publisher uses the default proxy running on localhost.
- *
+ * <p>
  * Published data is a byte array with a specified size.
  */
 public class Publisher extends Actor {

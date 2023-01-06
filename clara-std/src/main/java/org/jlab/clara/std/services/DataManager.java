@@ -131,7 +131,7 @@ public class DataManager implements Engine {
     /**
      * Executes the engine with the given input data.
      * Accepts a JSON text with an action and an input file name.
-     *
+     * <p>
      * Current version assumes that there is a CLAS12 convention
      * that reconstructed/output file name is constructed as:
      * {@code "out_" + input_file_name}

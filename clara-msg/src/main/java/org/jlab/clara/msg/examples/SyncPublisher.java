@@ -18,7 +18,7 @@ import org.jlab.clara.msg.data.RegInfo;
  * should be able to detect that the received message is a sync request and
  * respond back.
  * This publisher uses the default proxy running on localhost.
- *
+ * <p>
  * Published data is a hard-coded integer.
  */
 public class SyncPublisher extends Actor {

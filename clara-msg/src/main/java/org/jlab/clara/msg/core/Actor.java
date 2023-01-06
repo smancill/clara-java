@@ -374,10 +374,10 @@ public class Actor implements AutoCloseable {
     /**
      * Publishes a message through the default proxy connection and blocks
      * waiting for a response.
-     *
+     * <p>
      * The subscriber must publish the response to the topic given by the
      * {@code replyto} metadata field, through the same proxy.
-     *
+     * <p>
      * This method will throw if a response is not received before the timeout
      * expires.
      *
@@ -397,10 +397,10 @@ public class Actor implements AutoCloseable {
     /**
      * Publishes a message through the specified proxy and blocks
      * waiting for a response.
-     *
+     * <p>
      * The subscriber must publish the response to the topic given by the
      * {@code replyto} metadata field, through the same proxy.
-     *
+     * <p>
      * This method will throw if a response is not received before the timeout
      * expires.
      *
@@ -421,10 +421,10 @@ public class Actor implements AutoCloseable {
     /**
      * Publishes a message through the specified proxy connection and blocks
      * waiting for a response.
-     *
+     * <p>
      * The subscriber must publish the response to the topic given by the
      * {@code replyto} metadata field, through the same proxy.
-     *
+     * <p>
      * This method will throw if a response is not received before the timeout
      * expires.
      *
