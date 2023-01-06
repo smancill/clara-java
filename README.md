@@ -2,7 +2,7 @@
 
 [![Build status](https://github.com/smancill/clara-java/actions/workflows/build.yaml/badge.svg)](https://github.com/smancill/clara-java/actions/workflows/build.yaml)
 
-A micro-services framework to provide a heterogeneous computing environment for efficient
+A microservices framework to provide a heterogeneous computing environment for efficient
 Big Data processing.
 
 
@@ -33,7 +33,7 @@ $ asdf install java temurin-17.0.5+8    # there may be a newer version listed ab
 $ asdf local java temurin-17.0.5+8      # or global
 ```
 
-To install Temurin 17 system wide,
+To install Temurin 17 system-wide,
 follow the [instructions in the official site][temurin-install].
 
 [temurin-binaries]: https://github.com/adoptium/temurin17-binaries/releases

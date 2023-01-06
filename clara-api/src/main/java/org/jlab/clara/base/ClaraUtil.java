@@ -326,7 +326,7 @@ public final class ClaraUtil {
     }
 
     /**
-     * Returns the stack trace of a exception as a string.
+     * Returns the stack trace of an exception as a string.
      * @param e an exception
      * @return a string with the stack trace of the exception
      */

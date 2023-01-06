@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  * connections, to avoid creating too many new connections. All connections will
  * be closed when the actor is destroyed.
  * <p>
- * Multi-threaded publication of messages is fully supported, but every thread
+ * Multithreaded publication of messages is fully supported, but every thread
  * must use its own connection. Subscriptions of messages always run in their
  * own background thread. It is recommended to always obtain and release the
  * necessary connections inside the thread that uses them. The <em>connect</em> methods
@@ -561,7 +561,7 @@ public class Actor implements AutoCloseable {
     /**
      * Stops the given subscription. This will not cancel the callbacks of the
      * subscription that are still pending or running in the internal
-     * threadpool.
+     * thread pool.
      *
      * @param handle an active subscription
      */
@@ -572,12 +572,12 @@ public class Actor implements AutoCloseable {
 
     /**
      * Stops all subscriptions. This will not stop the callbacks that are still
-     * pending or running in the internal threadpool.
+     * pending or running in the internal thread pool.
      * <p>
      * Usually, {@link #close()} takes cares of stopping all running
      * subscriptions and callbacks. Use this method when you want to run some
      * actions between stopping the subscriptions and closing the actor
-     * (like publishing a shutdown report). Otherwise just use {@link #close()}.
+     * (like publishing a shutdown report). Otherwise, just use {@link #close()}.
      */
     protected final void unsubscribeAll() {
         mySubscriptions.values().forEach(Subscription::stop);
@@ -597,7 +597,7 @@ public class Actor implements AutoCloseable {
      * subscriptions and terminating callbacks. Use this method when you want to
      * run some actions between finishing the callbacks and closing the actor,
      * (like publishing a shutdown report).
-     * Otherwise just use {@link #close()}.
+     * Otherwise, just use {@link #close()}.
      */
     protected final void terminateCallbacks() {
         threadPool.shutdown();

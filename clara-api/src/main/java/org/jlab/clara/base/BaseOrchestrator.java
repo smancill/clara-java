@@ -219,7 +219,7 @@ public class BaseOrchestrator implements AutoCloseable {
      *
      * @param service the Clara service to be configured
      * @return a builder to choose how to configure the service
-     *         (with data, with report frequency, etc)
+     *         (with data, with report frequency, etc.)
      */
     public ServiceConfigRequestBuilder configure(ServiceName service) {
         var dpeName = ClaraUtil.getDpeName(service.canonicalName());
@@ -232,7 +232,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * Returns a request builder to execute the given service.
      *
      * @param service the Clara service to be executed
-     * @return a builder to setup the execution request
+     * @return a builder to set up the execution request
      *         (with data, data types, etc)
      */
     public ServiceExecuteRequestBuilder execute(ServiceName service) {
@@ -245,7 +245,7 @@ public class BaseOrchestrator implements AutoCloseable {
      * Returns a request builder to execute the given composition.
      *
      * @param composition the Clara composition to be executed
-     * @return a builder to to configure the execute request
+     * @return a builder to configure the execute request
      *         (with data, data types, etc)
      */
     public ServiceExecuteRequestBuilder execute(Composition composition) {

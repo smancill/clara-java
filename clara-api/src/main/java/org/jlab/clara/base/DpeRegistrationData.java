@@ -87,7 +87,7 @@ public class DpeRegistrationData implements ClaraReportData<DpeName> {
     /**
      * Gets the maximum number of cores assigned to the DPE.
      *
-     * @return the number of cores the can be used by the DPE.
+     * @return the number of cores that can be used by the DPE.
      */
     public int numCores() {
         return numCores;

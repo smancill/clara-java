@@ -11,7 +11,7 @@ import org.jlab.clara.msg.data.RegDataProto.RegData;
 import org.jlab.clara.msg.net.ProxyAddress;
 
 /**
- * Ensures the egistration requests are properly constructed.
+ * Ensures the registration requests are properly constructed.
  */
 public final class RegFactory {
 

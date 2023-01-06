@@ -391,7 +391,7 @@ public final class ClaraRequests {
     }
 
     /**
-     * A request to setup the reports of a service.
+     * A request to set up the reports of a service.
      */
     public static class ServiceReportRequest extends DataRequest<ServiceReportRequest> {
 

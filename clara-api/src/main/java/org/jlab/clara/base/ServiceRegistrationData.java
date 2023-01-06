@@ -78,7 +78,7 @@ public class ServiceRegistrationData implements ClaraReportData<ServiceName> {
     /**
      * Gets information about the developer(s) of the service class.
      * <p>
-     * It may contain the name, email, etc of the person or group that
+     * It may contain the name, email, etc. of the person or group that
      * developed and released the service.
      *
      * @return the author(s) of the service

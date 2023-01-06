@@ -320,7 +320,7 @@ class WorkerNode {
         }
         this.totalEvents.set(totalEvents);
 
-        // endiannes of the file
+        // endianness of the file
         var fileOrder = requestFileOrder();
 
         // open output file
