@@ -146,8 +146,8 @@ class ApplicationConfigSpec extends Specification {
         then:
         var serviceData = config.get(new ServiceName("10.1.1.1_java:master:Test"))
         with(serviceData) {
-            config_file == "run10_20180101.conf"
-            user == "John Doe"
+            getString("config_file") == "run10_20180101.conf"
+            getString("user") == "John Doe"
         }
     }
 }

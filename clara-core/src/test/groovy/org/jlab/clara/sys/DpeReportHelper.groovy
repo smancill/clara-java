@@ -6,6 +6,7 @@
 
 package org.jlab.clara.sys
 
+import groovy.transform.CompileStatic
 import org.jlab.clara.base.core.ClaraConstants
 import org.jlab.clara.msg.core.Actor
 import org.jlab.clara.msg.core.ActorUtils
@@ -14,6 +15,7 @@ import org.jlab.clara.msg.errors.ClaraMsgException
 import org.jlab.clara.msg.net.ProxyAddress
 import org.json.JSONObject
 
+@CompileStatic
 class DpeReportHelper {
     static void main(String... args) {
         var dpeAddress = args.length == 0

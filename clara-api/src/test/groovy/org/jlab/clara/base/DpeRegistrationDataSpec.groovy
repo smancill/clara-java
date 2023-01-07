@@ -6,14 +6,16 @@
 
 package org.jlab.clara.base
 
-import org.jlab.clara.tests.Integration
 import org.json.JSONArray
 import org.json.JSONObject
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Tag
 
-@Integration
+@Tag("integration")
 class DpeRegistrationDataSpec extends Specification {
 
+    @Shared
     JSONObject json = JsonDataUtil.parseRegistrationExample()
 
     def "Parse DPE registration data with registered containers"() {
@@ -42,7 +44,7 @@ class DpeRegistrationDataSpec extends Specification {
 
     def "Parse DPE registration with empty containers"() {
         given:
-        var json = json.put("containers", new JSONArray())
+        var json = new JSONObject(json.toMap() << [containers: new JSONArray()])
         var data = new DpeRegistrationData(json)
 
         expect:

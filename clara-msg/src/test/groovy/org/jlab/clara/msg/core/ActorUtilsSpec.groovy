@@ -82,10 +82,10 @@ class ActorUtilsSpec extends Specification {
 
     def "Encoding actor identity creates a string of length 8"() {
         when:
-        var encode = ActorUtils.encodeIdentity("10.0.0.1", "test_actor")
+        var encoded = ActorUtils.encodeIdentity("10.0.0.1", "test_actor")
 
         then:
-        encode.length() == 8
+        encoded.length() == 8
     }
 
     def "Serializing object as byte array and deserializing the bytes creates an equal object"() {

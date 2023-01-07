@@ -6,14 +6,16 @@
 
 package org.jlab.clara.base
 
-import org.jlab.clara.tests.Integration
 import org.jlab.clara.util.report.JsonUtils
 import org.json.JSONObject
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Tag
 
-@Integration
+@Tag("integration")
 class ServiceRuntimeDataSpec extends Specification {
 
+    @Shared
     JSONObject json = JsonDataUtil.parseRuntimeExample()
 
     def "Parse service registration data"() {

@@ -26,7 +26,7 @@ class BaseOrchestratorSpec extends Specification {
     private static final Composition COMPOSITION =
             new Composition("10.2.9.96_java:master:E1+10.2.9.96_java:master:E2;")
 
-    ClaraBase baseMock = Mock(ClaraBase)
+    ClaraBase baseMock
 
     BaseRequest request
     BaseSubscription subscription
@@ -35,7 +35,7 @@ class BaseOrchestratorSpec extends Specification {
     BaseOrchestrator orchestrator
 
     def setup() {
-        baseMock = Mock(ClaraBase) {
+        baseMock = Stub(ClaraBase) {
             getFrontEnd() >> ClaraComponent.dpe(FE_HOST)
             getName() >> "test_orchestrator"
         }

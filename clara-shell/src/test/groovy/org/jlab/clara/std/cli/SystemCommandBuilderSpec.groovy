@@ -30,7 +30,7 @@ class SystemCommandBuilderSpec extends Specification {
             '-t', '10',
             '-i', '$CLAS12DIR/exp/input',
             'custom services.yaml', 'data/files.txt',
-        ]
+        ] as String[]
     }
 
     def "Output string needs quotes"() {

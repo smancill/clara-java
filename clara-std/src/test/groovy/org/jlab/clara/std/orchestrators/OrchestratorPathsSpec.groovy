@@ -198,11 +198,11 @@ class OrchestratorPathsSpec extends Specification {
 
     static class OrchestratorPathsExtensions {
         static List<String> getInputNames(OrchestratorPaths paths) {
-            paths.allFiles.collect { it.inputName }
+            paths.allFiles*.inputName
         }
 
         static List<String> getOutputNames(OrchestratorPaths paths) {
-            paths.allFiles.collect { it.outputName }
+            paths.allFiles*.outputName
         }
     }
 }

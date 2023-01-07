@@ -13,6 +13,7 @@ import org.jlab.clara.base.error.ClaraException
 import org.jlab.clara.msg.core.Message
 import org.jlab.clara.msg.errors.ClaraMsgException
 import spock.lang.Rollup
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -21,8 +22,8 @@ import java.util.concurrent.TimeoutException
 
 class ClaraRequestsSpec extends Specification {
 
-    private static final ClaraComponent FRONT_END = ClaraComponent.dpe("10.2.9.1_java")
-    private static final String TOPIC = "dpe:10.2.9.6_java"
+    @Shared ClaraComponent frontEnd = ClaraComponent.dpe("10.2.9.1_java")
+    @Shared String topic = "dpe:10.2.9.6_java"
 
     ClaraBase base = Mock(ClaraBase)
     MessageHandler handler = Mock(MessageHandler)
@@ -31,7 +32,7 @@ class ClaraRequestsSpec extends Specification {
     BaseRequest request
 
     def setup() {
-        request = new BaseRequest(base, FRONT_END, TOPIC) {
+        request = new BaseRequest(base, frontEnd, topic) {
             @Override Message msg() { handler.msg()  }
             @Override String parseData(Message msg) { handler.parse(msg) }
         }
@@ -46,7 +47,7 @@ class ClaraRequestsSpec extends Specification {
 
         then:
         1 * handler.msg() >> msg
-        1 * base.send(FRONT_END, msg)
+        1 * base.send(frontEnd, msg)
     }
 
     def "Request throws on send failure"() {
@@ -80,7 +81,7 @@ class ClaraRequestsSpec extends Specification {
 
         then:
         1 * handler.msg() >> msg
-        1 * base.syncSend(FRONT_END, msg, _)
+        1 * base.syncSend(frontEnd, msg, _)
     }
 
     @Rollup

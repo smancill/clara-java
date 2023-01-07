@@ -6,9 +6,12 @@
 
 package org.jlab.clara.std.orchestrators
 
+import groovy.transform.TypeChecked
 import org.hamcrest.Matcher
+import org.jlab.clara.base.ClaraLang
 import org.jlab.clara.base.DpeName
 import org.jlab.clara.std.orchestrators.GenericOrchestrator.DpeReportCB
+import spock.lang.Shared
 import spock.lang.Specification
 
 import java.util.concurrent.Callable
@@ -21,8 +24,15 @@ import static spock.util.matcher.HamcrestSupport.expect
 
 class GenericOrchestratorSpec extends Specification {
 
-    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(3)
-    private static final DpeInfo FRONT_END = AppData.dpe("10.1.1.254_java")
+    // codenarc-disable PropertyName
+    @Shared FE = new TestNode("10.1.1.254")
+    @Shared N1 = new TestNode("10.1.1.1")
+    @Shared N2 = new TestNode("10.1.1.2")
+    @Shared N3 = new TestNode("10.1.1.3")
+    @Shared N4 = new TestNode("10.1.1.4")
+    // codenarc-enable
+
+    @Shared ExecutorService executor = Executors.newFixedThreadPool(3)
 
     ApplicationInfo app
     CoreOrchestrator orchestrator
@@ -31,12 +41,9 @@ class GenericOrchestratorSpec extends Specification {
 
     void setup() {
         orchestrator = Mock(CoreOrchestrator) {
-            getFrontEnd() >> FRONT_END.name
+            getFrontEnd() >> new DpeName(FE.host, ClaraLang.JAVA)
         }
     }
-
-    static final List<Node> NODES = ([254] + (1..5)).collect { new Node("10.1.1." + it) }
-    static final int FE = 0
 
     def "Single-lang local-mode: only process local front-end"() {
         given:
@@ -44,18 +51,18 @@ class GenericOrchestratorSpec extends Specification {
         cb = localModeCallback(app)
 
         when:
-        toNodes(reported).each {
+        reported.each {
             cb.receiveFrom(it.java)
         }
 
         then:
-        cb.acceptedNodes() == makeNodes(expected)
+        cb.acceptedNodes() == workerNodes(expected)
 
         where:
-        reported   || expected
-        [FE]       || [FE]
-        [1, 2]     || []
-        [1, 2, FE] || [FE]
+        reported     || expected
+        [FE]         || [FE]
+        [N1, N2]     || []
+        [N1, N2, FE] || [FE]
     }
 
     def "Single-lang local mode: only process front-end node once"() {
@@ -65,11 +72,11 @@ class GenericOrchestratorSpec extends Specification {
 
         when:
         3.times {
-            cb.receiveFrom(NODES[FE].java)
+            cb.receiveFrom(FE.java)
         }
 
         then:
-        cb.acceptedNodes() == makeNodes([FE])
+        cb.acceptedNodes() == workerNodes([FE])
     }
 
     def "Single-lang cloud mode: use available nodes"() {
@@ -78,7 +85,7 @@ class GenericOrchestratorSpec extends Specification {
         cb = cloudModeCallback(app, useFE, 10)
 
         when:
-        toNodes(nodes).each {
+        reported.each {
             cb.receiveFrom(it.java)
         }
 
@@ -86,11 +93,11 @@ class GenericOrchestratorSpec extends Specification {
         expect cb.acceptedNodes(), containsNodes(expected)
 
         where:
-        useFE | nodes      || expected
-        true  | [FE]       || [FE]
-        true  | [FE, 1, 2] || [FE, 1, 2]
-        false | [FE]       || []
-        false | [FE, 1, 2] || [1, 2]
+        useFE | reported     || expected
+        true  | [FE]         || [FE]
+        true  | [FE, N1, N2] || [FE, N1, N2]
+        false | [FE]         || []
+        false | [FE, N1, N2] || [N1, N2]
     }
 
     def "Single-lang cloud mode: only process each node once"() {
@@ -99,7 +106,7 @@ class GenericOrchestratorSpec extends Specification {
         cb = cloudModeCallback(app, useFE, 10)
 
         when:
-        toNodes(reported).each {
+        reported.each {
             cb.receiveFrom(it.java)
         }
 
@@ -107,13 +114,13 @@ class GenericOrchestratorSpec extends Specification {
         expect cb.acceptedNodes(), containsNodes(expected)
 
         where:
-        useFE | reported              || expected
-        true  | [FE, FE, FE]          || [FE]
-        true  | [1, 2, FE, 1, 2, FE]  || [FE, 1, 2]
-        true  | [FE, 1, FE, 1, FE, 1] || [FE, 1]
-        false | [1, 1, 1]             || [1]
-        false | [1, 2, 3, 1, 2, 3]    || [1, 2, 3]
-        false | [1, 2, 1, 2, 1, 2]    || [1, 2]
+        useFE | reported                    || expected
+        true  | [FE, FE, FE]                || [FE]
+        true  | [N1, N2, FE, N1, N2, FE]    || [FE, N1, N2]
+        true  | [FE, N1, FE, N1, FE, N1]    || [FE, N1]
+        false | [N1, N1, N1]                || [N1]
+        false | [N1, N2, N3, N1, N2, N3]    || [N1, N2, N3]
+        false | [N1, N2, N1, N2, N1, N2]    || [N1, N2]
     }
 
     def "Single lang cloud mode: limit number of nodes"() {
@@ -122,19 +129,19 @@ class GenericOrchestratorSpec extends Specification {
         cb = cloudModeCallback(app, useFE, 3)
 
         when:
-        cb.receiveFrom(NODES[FE].java)
-        cb.receiveFrom(NODES[3].java)
+        cb.receiveFrom(FE.java)
+        cb.receiveFrom(N3.java)
 
         cb.waitCallbacks()
 
-        cb.receiveFrom(NODES[3].java)
-        cb.receiveFrom(NODES[2].java)
-        cb.receiveFrom(NODES[1].java)
+        cb.receiveFrom(N3.java)
+        cb.receiveFrom(N2.java)
+        cb.receiveFrom(N1.java)
 
         then:
         with(cb.acceptedNodes()) { nodes ->
             nodes.size() == 3
-            useFE ? makeNode(FE) in nodes : makeNode(FE) !in nodes
+            workerNode(FE) in nodes == useFE
         }
 
         where:
@@ -148,19 +155,19 @@ class GenericOrchestratorSpec extends Specification {
         cb = localModeCallback(app)
 
         when:
-        toNodes(reported).each {
+        reported.each {
             cb.receiveFrom(it.java)
             cb.receiveFrom(it.cpp)
         }
 
         then:
-        cb.acceptedNodes() == makeNodes(expected)
+        cb.acceptedNodes() == workerNodes(expected)
 
         where:
-        reported   || expected
-        [FE]       || [FE]
-        [1, 2]     || []
-        [1, 2, FE] || [FE]
+        reported     || expected
+        [FE]         || [FE]
+        [N1, N2]     || []
+        [N1, N2, FE] || [FE]
     }
 
     def "Multi-lang local mode: only process front-end node once"() {
@@ -170,12 +177,12 @@ class GenericOrchestratorSpec extends Specification {
 
         when:
         3.times {
-            cb.receiveFrom(NODES[FE].java)
-            cb.receiveFrom(NODES[FE].cpp)
+            cb.receiveFrom(FE.java)
+            cb.receiveFrom(FE.cpp)
         }
 
         then:
-        cb.acceptedNodes() == makeNodes([FE])
+        cb.acceptedNodes() == workerNodes([FE])
     }
 
     def "Multi-lang local-mode: support all combination of languages"() {
@@ -185,17 +192,19 @@ class GenericOrchestratorSpec extends Specification {
 
         when:
         langs.each {
-            cb.receiveFrom(NODES[FE]."${it}")
+            cb.receiveFrom(FE."$it")
         }
 
         then:
-        cb.acceptedNodes() == makeNodes([FE])
+        cb.acceptedNodes() == workerNodes([FE])
 
         where:
-        langs                     | services
-        ["java", "cpp"]           | [AppData.J1, AppData.C1]
-        ["java", "python"]        | [AppData.J1, AppData.P1]
-        ["java", "cpp", "python"] | [AppData.J1, AppData.C2, AppData.P1]
+        _ | services
+        _ | [AppData.J1, AppData.C1]
+        _ | [AppData.J1, AppData.P1]
+        _ | [AppData.J1, AppData.C2, AppData.P1]
+
+        langs = getLanguages(services)
     }
 
     def "Multi-lang local mode: ignore incomplete front-end"() {
@@ -204,7 +213,7 @@ class GenericOrchestratorSpec extends Specification {
         cb = localModeCallback(app)
 
         when:
-        cb.receiveFrom(NODES[FE].java)
+        cb.receiveFrom(FE.java)
 
         then:
         cb.acceptedNodes().empty
@@ -216,7 +225,7 @@ class GenericOrchestratorSpec extends Specification {
         cb = cloudModeCallback(app, useFE, 10)
 
         when:
-        toNodes(nodes).each {
+        nodes.each {
             cb.receiveFrom(it.java)
             cb.receiveFrom(it.cpp)
         }
@@ -225,11 +234,11 @@ class GenericOrchestratorSpec extends Specification {
         expect cb.acceptedNodes(), containsNodes(expected)
 
         where:
-        useFE | nodes      || expected
-        true  | [FE]       || [FE]
-        true  | [FE, 1, 2] || [FE, 1, 2]
-        false | [FE]       || []
-        false | [FE, 1, 2] || [1, 2]
+        useFE | nodes        || expected
+        true  | [FE]         || [FE]
+        true  | [FE, N1, N2] || [FE, N1, N2]
+        false | [FE]         || []
+        false | [FE, N1, N2] || [N1, N2]
     }
 
     def "Multi-lang cloud mode: only process each node once"() {
@@ -238,7 +247,7 @@ class GenericOrchestratorSpec extends Specification {
         cb = cloudModeCallback(app, useFE, 10)
 
         when:
-        toNodes(reported).each {
+        reported.each {
             cb.receiveFrom(it.java)
             cb.receiveFrom(it.cpp)
         }
@@ -247,13 +256,13 @@ class GenericOrchestratorSpec extends Specification {
         expect cb.acceptedNodes(), containsNodes(expected)
 
         where:
-        useFE | reported              || expected
-        true  | [FE, FE, FE]          || [FE]
-        true  | [1, 2, FE, 1, 2, FE]  || [FE, 1, 2]
-        true  | [FE, 1, FE, 1, FE, 1] || [FE, 1]
-        false | [1, 1, 1]             || [1]
-        false | [1, 2, 3, 1, 2, 3]    || [1, 2, 3]
-        false | [1, 2, 1, 2, 1, 2]    || [1, 2]
+        useFE | reported                 || expected
+        true  | [FE, FE, FE]             || [FE]
+        true  | [N1, N2, FE, N1, N2, FE] || [FE, N1, N2]
+        true  | [FE, N1, FE, N1, FE, N1] || [FE, N1]
+        false | [N1, N1, N1]             || [N1]
+        false | [N1, N2, N3, N1, N2, N3] || [N1, N2, N3]
+        false | [N1, N2, N1, N2, N1, N2] || [N1, N2]
     }
 
     def "Multi lang cloud mode: limit number of nodes"() {
@@ -262,26 +271,26 @@ class GenericOrchestratorSpec extends Specification {
         cb = cloudModeCallback(app, useFE, 3)
 
         when:
-        cb.receiveFrom(NODES[FE].java)
-        cb.receiveFrom(NODES[3].java)
+        cb.receiveFrom(FE.java)
+        cb.receiveFrom(N3.java)
 
-        cb.receiveFrom(NODES[FE].cpp)
-        cb.receiveFrom(NODES[3].cpp)
+        cb.receiveFrom(FE.cpp)
+        cb.receiveFrom(N3.cpp)
 
         cb.waitCallbacks()
 
-        cb.receiveFrom(NODES[3].java)
-        cb.receiveFrom(NODES[2].java)
-        cb.receiveFrom(NODES[1].java)
+        cb.receiveFrom(N3.java)
+        cb.receiveFrom(N2.java)
+        cb.receiveFrom(N1.java)
 
-        cb.receiveFrom(NODES[3].cpp)
-        cb.receiveFrom(NODES[2].cpp)
-        cb.receiveFrom(NODES[1].cpp)
+        cb.receiveFrom(N3.cpp)
+        cb.receiveFrom(N2.cpp)
+        cb.receiveFrom(N1.cpp)
 
         then:
         with(cb.acceptedNodes()) { nodes ->
             nodes.size() == 3
-            useFE ? makeNode(FE) in nodes : makeNode(FE) !in nodes
+            workerNode(FE) in nodes == useFE
         }
 
         where:
@@ -295,18 +304,20 @@ class GenericOrchestratorSpec extends Specification {
 
         when:
         langs.each {
-            cb.receiveFrom(NODES[1]."${it}")
-            cb.receiveFrom(NODES[2]."${it}")
+            cb.receiveFrom(N1."$it")
+            cb.receiveFrom(N2."$it")
         }
 
         then:
-        expect cb.acceptedNodes(), containsNodes([1, 2])
+        expect cb.acceptedNodes(), containsNodes([N1, N2])
 
         where:
-        langs                     | services
-        ["java", "cpp"]           | [AppData.J1, AppData.C1]
-        ["java", "python"]        | [AppData.J1, AppData.P1]
-        ["java", "cpp", "python"] | [AppData.J1, AppData.C2, AppData.P1]
+        _ | services
+        _ | [AppData.J1, AppData.C1]
+        _ | [AppData.J1, AppData.P1]
+        _ | [AppData.J1, AppData.C2, AppData.P1]
+
+        langs = getLanguages(services)
     }
 
     def "Multi-lang cloud mode: ignore incomplete nodes"() {
@@ -315,32 +326,34 @@ class GenericOrchestratorSpec extends Specification {
         cb = cloudModeCallback(app, false, 10)
 
         when:
-        cb.receiveFrom(NODES[1].java)
-        cb.receiveFrom(NODES[3].cpp)
-        cb.receiveFrom(NODES[2].java)
+        cb.receiveFrom(N1.java)
+        cb.receiveFrom(N3.cpp)
+        cb.receiveFrom(N2.java)
 
-        cb.receiveFrom(NODES[3].java)
-        cb.receiveFrom(NODES[4].cpp)
-        cb.receiveFrom(NODES[1].cpp)
+        cb.receiveFrom(N3.java)
+        cb.receiveFrom(N4.cpp)
+        cb.receiveFrom(N1.cpp)
 
         then:
-        expect cb.acceptedNodes(), containsNodes([1, 3])
+        expect cb.acceptedNodes(), containsNodes([N1, N3])
     }
 
-
+    @TypeChecked
     static ApplicationInfo singleLangData() {
         AppData.newAppInfo(AppData.J1)
     }
 
+    @TypeChecked
     static ApplicationInfo multiLangData() {
         AppData.newAppInfo(AppData.J1, AppData.C1)
     }
 
-
+    @TypeChecked
     private DpeReportCBTest localModeCallback(ApplicationInfo app) {
         return new DpeReportCBTest(app, OrchestratorOptions.builder().build())
     }
 
+    @TypeChecked
     private DpeReportCBTest cloudModeCallback(ApplicationInfo app,
                                               boolean includeFrontEnd,
                                               int maxNodes) {
@@ -354,36 +367,36 @@ class GenericOrchestratorSpec extends Specification {
         return new DpeReportCBTest(app, builder.build())
     }
 
+    @TypeChecked
+    private WorkerNode workerNode(TestNode node) {
+        DpeInfo[] dpes = app.languages.collect { lang -> new DpeName(node.host, lang) }
+                                      .collect { name -> new DpeInfo(name, AppData.CORES, "") }
 
-    private WorkerNode makeNode(int id) {
-        var dpes = { String host ->
-            app.languages
-                .collect { lang -> new DpeName(host, lang) }
-                .collect { name -> new DpeInfo(name, AppData.CORES, "") }
-                .toArray(DpeInfo[]::new)
-        }
-
-        WorkerApplication app = AppData.builder().withDpes(dpes(NODES[id].host)).build()
+        WorkerApplication app = AppData.builder().withDpes(dpes).build()
         return new WorkerNode(orchestrator, app)
     }
 
-    private List<WorkerNode> makeNodes(ids) {
-        return ids.collect { makeNode(it) }
+    @TypeChecked
+    private List<WorkerNode> workerNodes(List<TestNode> nodes) {
+        return nodes.collect { workerNode(it) }
     }
 
-    private static Node[] toNodes(List<Integer> idx) {
-        idx.collect { NODES[it] }
+    @TypeChecked
+    private Matcher<Iterable<? extends WorkerNode>> containsNodes(List<TestNode> nodes) {
+        WorkerNode[] workers = workerNodes(nodes)
+        containsInAnyOrder(workers)
     }
 
-    private Matcher<List<WorkerNode>> containsNodes(List<Integer> ids) {
-        containsInAnyOrder(*makeNodes(ids))
+    private List<String> getLanguages(Iterable<ServiceInfo> services) {
+        services.collect { it.lang().name().toLowerCase() }
     }
 
 
-    static class Node {
+    @TypeChecked
+    static class TestNode {
         final String host
 
-        Node(String host) {
+        TestNode(String host) {
             this.host = host
         }
 
@@ -393,6 +406,7 @@ class GenericOrchestratorSpec extends Specification {
     }
 
 
+    @TypeChecked
     private class DpeReportCBTest {
 
         private final List<Callable<Object>> tasks
@@ -413,13 +427,16 @@ class GenericOrchestratorSpec extends Specification {
         }
 
         void waitCallbacks() throws Exception {
-            EXECUTOR.invokeAll(tasks)
+            executor.invokeAll(tasks)
             tasks.clear()
         }
 
+        /**
+         * The list of alive nodes processed by the DPE report callback, in order.
+         */
         List<WorkerNode> acceptedNodes() throws Exception {
             waitCallbacks()
-            return nodes
+            nodes
         }
     }
 }

@@ -9,14 +9,14 @@ package org.jlab.clara.std.orchestrators
 import org.jlab.clara.base.ClaraLang
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingCallbackInfo
 import org.jlab.clara.std.orchestrators.CallbackInfo.RingTopic
-import org.jlab.clara.tests.Integration
 import org.json.JSONObject
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Tag
 
 import java.nio.file.Path
 
-@Integration
+@Tag("integration")
 class OrchestratorConfigParserSpec extends Specification {
 
     private static final String CONT = OrchestratorConfigParser.getDefaultContainer()
