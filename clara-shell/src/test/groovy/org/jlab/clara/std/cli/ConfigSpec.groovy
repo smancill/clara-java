@@ -26,8 +26,8 @@ class ConfigSpec extends Specification {
         ]
 
         when:
-        variables.each {
-            addVariable(config, it.key, it.value)
+        variables.each { name, value ->
+            addVariable(config, name, value)
         }
 
         then:
@@ -61,6 +61,7 @@ class ConfigSpec extends Specification {
     def "Parse the variable value using the right type if initially stored as string"() {
         given:
         var config = new Config()
+
         when:
         addVariable(config, name, value)
 

@@ -6,6 +6,7 @@
 
 package org.jlab.clara.std.cli
 
+import org.jlab.clara.tests.Integration
 import org.jlab.clara.util.EnvUtils
 import org.jline.terminal.Terminal
 import spock.lang.Specification
@@ -34,6 +35,7 @@ class SetCommandSpec extends Specification {
         config.getString(Config.SESSION) == "trevor"
     }
 
+    @Integration
     def "Set services file"() {
         given:
         var userFile = createTempFile("yaml")
@@ -45,6 +47,7 @@ class SetCommandSpec extends Specification {
         config.getPath(Config.SERVICES_FILE) == userFile
     }
 
+    @Integration
     def "Set file list"() {
         given:
         var userFile = createTempFile("fileList")
@@ -64,6 +67,7 @@ class SetCommandSpec extends Specification {
         config.getInt(Config.MAX_THREADS) == 5
     }
 
+    @Integration
     def "Set input directory"() {
         given:
         var userDir = createTempDir("input")
@@ -75,6 +79,7 @@ class SetCommandSpec extends Specification {
         config.getPath(Config.INPUT_DIR) == userDir
     }
 
+    @Integration
     def "Set output directory"() {
         given:
         var userDir = createTempDir("output")
@@ -87,14 +92,14 @@ class SetCommandSpec extends Specification {
     }
 
     private static Path createTempDir(String prefix) {
-        Path tmpDir = Files.createTempDirectory(prefix)
-        tmpDir.toFile().deleteOnExit()
-        return tmpDir
+        Files.createTempDirectory(prefix).tap {
+            toFile().deleteOnExit()
+        }
     }
 
     private static Path createTempFile(String prefix) {
-        Path tmpFile = Files.createTempFile(prefix, "")
-        tmpFile.toFile().deleteOnExit()
-        return tmpFile
+        Files.createTempFile(prefix, "").tap {
+            toFile().deleteOnExit()
+        }
     }
 }

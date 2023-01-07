@@ -13,11 +13,12 @@ import org.jlab.clara.base.error.ClaraException
 import org.jlab.clara.msg.core.Callback
 import org.jlab.clara.msg.core.Subscription
 import org.jlab.clara.msg.core.Topic
+import spock.lang.Shared
 import spock.lang.Specification
 
 class ClaraSubscriptionsSpec extends Specification {
 
-    private static final ClaraComponent FRONT_END = ClaraComponent.dpe("10.2.9.1_java")
+    @Shared ClaraComponent frontEnd = ClaraComponent.dpe("10.2.9.1_java")
 
     ClaraBase base = Mock(ClaraBase)
     CallbackWrapper wrapper = Mock(CallbackWrapper)
@@ -30,7 +31,7 @@ class ClaraSubscriptionsSpec extends Specification {
         makeSubscription("data:10.2.9.96_java:master:Simple").start(callback)
 
         then:
-        1 * base.listen(FRONT_END, _, _)
+        1 * base.listen(frontEnd, _, _)
     }
 
     def "Start subscription matches topic"() {
@@ -122,7 +123,7 @@ class ClaraSubscriptionsSpec extends Specification {
 
     private BaseSubscription makeSubscription(String topic) {
         return new BaseSubscription<BaseSubscription, EngineCallback>(
-                base, subscriptions, FRONT_END, Topic.wrap(topic)
+                base, subscriptions, frontEnd, Topic.wrap(topic)
         ) {
             @Override
             protected Callback wrap(EngineCallback callback) {

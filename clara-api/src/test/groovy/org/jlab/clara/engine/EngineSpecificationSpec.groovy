@@ -9,13 +9,17 @@ package org.jlab.clara.engine
 import org.jlab.clara.engine.EngineSpecification.ParseException
 import org.jlab.clara.tests.Integration
 import spock.lang.Specification
+import spock.lang.Subject
 
 @Integration
 class EngineSpecificationSpec extends Specification {
 
+    @Subject
+    EngineSpecification specification
+
     def "Constructor throws if specification file is not found"() {
         when:
-        new EngineSpecification("std.services.convertors.EvioToNothing")
+        specification = new EngineSpecification("std.services.convertors.EvioToNothing")
 
         then:
         var ex = thrown(ParseException)
@@ -24,7 +28,7 @@ class EngineSpecificationSpec extends Specification {
 
     def "Constructor throws if YAML specification is malformed"() {
         when:
-        new EngineSpecification("resources/service-spec-bad-1")
+        specification = new EngineSpecification("resources/service-spec-bad-1")
 
         then:
         var ex = thrown(ParseException)
@@ -33,10 +37,10 @@ class EngineSpecificationSpec extends Specification {
 
     def "Parse service specification"() {
         given:
-        var spec = new EngineSpecification("resources/service-spec-simple")
+        specification = new EngineSpecification("resources/service-spec-simple")
 
         expect:
-        with(spec) {
+        with(specification) {
             name() == "SomeService"
             engine() == "std.services.SomeService"
             type() == "java"
@@ -45,10 +49,10 @@ class EngineSpecificationSpec extends Specification {
 
     def "Parse author specification"() {
         given:
-        var spec = new EngineSpecification("resources/service-spec-simple")
+        specification = new EngineSpecification("resources/service-spec-simple")
 
         expect:
-        with(spec) {
+        with(specification) {
             author() == "Sebastian Mancilla"
             email() == "smancill@jlab.org"
         }
@@ -56,10 +60,10 @@ class EngineSpecificationSpec extends Specification {
 
     def "Parse version specification of #type value"() {
         given:
-        var spec = new EngineSpecification(specFile)
+        specification = new EngineSpecification(specFile)
 
         expect:
-        spec.version() == version
+        specification.version() == version
 
         where:
         type      | specFile                        || version
@@ -69,7 +73,7 @@ class EngineSpecificationSpec extends Specification {
 
     def "Constructor throws if specification file has missing required key"() {
         when:
-        new EngineSpecification("resources/service-spec-bad-2")
+        specification = new EngineSpecification("resources/service-spec-bad-2")
 
         then:
         var ex = thrown(ParseException)
@@ -78,7 +82,7 @@ class EngineSpecificationSpec extends Specification {
 
     def "Constructor throws if specification file has key of wrong type"() {
         when:
-        new EngineSpecification("resources/service-spec-bad-3")
+        specification = new EngineSpecification("resources/service-spec-bad-3")
 
         then:
         var ex = thrown(ParseException)

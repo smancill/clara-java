@@ -9,11 +9,13 @@ package org.jlab.clara.base
 import org.jlab.clara.tests.Integration
 import org.jlab.clara.util.report.JsonUtils
 import org.json.JSONObject
+import spock.lang.Shared
 import spock.lang.Specification
 
 @Integration
 class ContainerRuntimeDataSpec extends Specification {
 
+    @Shared
     JSONObject json = JsonDataUtil.parseRuntimeExample()
 
     def "Parse container runtime data with registered services"() {

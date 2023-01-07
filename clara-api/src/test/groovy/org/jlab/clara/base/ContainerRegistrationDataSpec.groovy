@@ -9,11 +9,13 @@ package org.jlab.clara.base
 import org.jlab.clara.tests.Integration
 import org.jlab.clara.util.report.JsonUtils
 import org.json.JSONObject
+import spock.lang.Shared
 import spock.lang.Specification
 
 @Integration
 class ContainerRegistrationDataSpec extends Specification {
 
+    @Shared
     JSONObject json = JsonDataUtil.parseRegistrationExample()
 
     def "Parse container registration data with registered services"() {

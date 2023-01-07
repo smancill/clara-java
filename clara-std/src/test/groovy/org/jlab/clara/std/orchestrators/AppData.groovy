@@ -6,9 +6,11 @@
 
 package org.jlab.clara.std.orchestrators
 
+import groovy.transform.TypeChecked
 import org.jlab.clara.base.ClaraLang
 import org.jlab.clara.base.DpeName
 
+@TypeChecked
 final class AppData {
 
     public static final int CORES = 5
@@ -48,22 +50,22 @@ final class AppData {
         private AppBuilder() {
             services = [J1, J2, J3]
             monitoring = []
-            dpes = [(DPE1.name.language()): DPE1]
+            dpes = [(DPE1.name().language()): DPE1]
         }
 
         AppBuilder withServices(ServiceInfo... services) {
-            this.services = services
+            this.services = services.toList()
             this
         }
 
         AppBuilder withMonitoring(ServiceInfo... services) {
-            this.monitoring = services
+            this.monitoring = services.toList()
             this
         }
 
         AppBuilder withDpes(DpeInfo... dpes) {
             dpes.each {
-                this.dpes[it.name.language()] = it
+                this.dpes[it.name().language()] = it
             }
             this
         }

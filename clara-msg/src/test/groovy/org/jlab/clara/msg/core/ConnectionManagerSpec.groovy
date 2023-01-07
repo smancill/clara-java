@@ -15,6 +15,10 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
+import java.util.function.BiConsumer
+import java.util.function.BiFunction
+import java.util.function.Function
+
 class ConnectionManagerSpec extends Specification {
 
     @Subject ConnectionManager manager
@@ -22,14 +26,14 @@ class ConnectionManagerSpec extends Specification {
     def setup() {
         var factory = Stub(ConnectionFactory) {
             createPublisherConnection(_, _) >> { ProxyAddress addr, _ ->
-                var d = Stub(ProxyDriver)
-                d.address >> addr
-                return d
+                return Stub(ProxyDriver) {
+                    address >> addr
+                }
             }
             createRegistrarConnection(_) >> { RegAddress addr ->
-                var d = Stub(RegDriver)
-                d.address >> addr
-                return d
+                return Stub(RegDriver) {
+                    address >> addr
+                }
             }
         }
 
@@ -37,7 +41,11 @@ class ConnectionManagerSpec extends Specification {
     }
 
     @Unroll("Create new #connectionType connections as needed")
-    def "Create new connections as needed"() {
+    <A, C> "Create new connections as needed"(
+            Function<String, A> newAddress,
+            BiFunction<ConnectionManager, A, C> getConnection,
+            Function<C, A> getAddress
+    ) {
         given:
         var a1 = newAddress("10.2.9.1")
         var a2 = newAddress("10.2.9.2")
@@ -47,7 +55,7 @@ class ConnectionManagerSpec extends Specification {
         var conn = addr.collect { a -> getConnection(manager, a) }
 
         then: "the connections are created to the requested addresses"
-        conn.address == addr
+        conn.collect { c -> getAddress(c) } == addr
 
         and: "all connections are new, different instances"
         conn[0] !== conn[1]
@@ -55,13 +63,21 @@ class ConnectionManagerSpec extends Specification {
         conn[1] !== conn[2]
 
         where:
-        connectionType  | newAddress            | getConnection
-        "proxy"         | ProxyAddress::new     | ConnectionManager::getProxyConnection
-        "registrar"     | RegAddress::new       | ConnectionManager::getRegistrarConnection
+        connectionType  | newAddress
+        "proxy"         | ProxyAddress::new
+        "registrar"     | RegAddress::new
+        ___
+        getConnection                               | getAddress
+        ConnectionManager::getProxyConnection       | ProxyDriver::getAddress
+        ConnectionManager::getRegistrarConnection   | RegDriver::getAddress
     }
 
     @Unroll("Reuse #connectionType connections when available")
-    def "Reuse connections when available"() {
+    <A, C> "Reuse connections when available"(
+            Function<String, A> newAddress,
+            BiFunction<ConnectionManager, A, C> getConnection,
+            BiConsumer<ConnectionManager, C > releaseConnection
+    ) {
         given: "existing connections to multiple and/or repeated addresses"
         var a1 = newAddress("10.2.9.1")
         var a2 = newAddress("10.2.9.2")

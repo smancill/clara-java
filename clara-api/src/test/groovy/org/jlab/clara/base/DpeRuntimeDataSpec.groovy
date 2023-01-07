@@ -9,11 +9,13 @@ package org.jlab.clara.base
 import org.jlab.clara.tests.Integration
 import org.json.JSONArray
 import org.json.JSONObject
+import spock.lang.Shared
 import spock.lang.Specification
 
 @Integration
 class DpeRuntimeDataSpec extends Specification {
 
+    @Shared
     JSONObject json = JsonDataUtil.parseRuntimeExample()
 
     def "Parse DPE runtime data with registered containers"() {
@@ -41,7 +43,7 @@ class DpeRuntimeDataSpec extends Specification {
 
     def "Parse DPE runtime with empty containers"() {
         given:
-        var json = json.put("containers", new JSONArray())
+        var json = new JSONObject(json.toMap() << [containers: new JSONArray()])
         var data = new DpeRuntimeData(json)
 
         expect:

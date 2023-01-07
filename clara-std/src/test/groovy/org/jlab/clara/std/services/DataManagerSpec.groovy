@@ -34,9 +34,9 @@ class DataManagerSpec extends Specification {
 
         expect: "the default input/output paths have the given base directory as prefix"
         with(dm.configuration) {
-            input_path == "/clara/data/input"
-            output_path == "/clara/data/output"
-            stage_path == "/scratch"
+            getString("input_path") == "/clara/data/input"
+            getString("output_path") == "/clara/data/output"
+            getString("stage_path") == "/scratch"
         }
     }
 
@@ -53,9 +53,9 @@ class DataManagerSpec extends Specification {
 
         then:
         with(dm.configuration) {
-            input_path == "/mnt/exp/in"
-            output_path == "/mnt/exp/out"
-            stage_path == "/tmp/files"
+            getString("input_path") == "/mnt/exp/in"
+            getString("output_path") == "/mnt/exp/out"
+            getString("stage_path") == "/tmp/files"
         }
     }
 
@@ -71,16 +71,15 @@ class DataManagerSpec extends Specification {
 
         then:
         with(dm.configuration) {
-            input_path == "/mnt/exp/in"
-            output_path == "/mnt/exp/out"
-            stage_path == "/scratch"
+            getString("input_path") == "/mnt/exp/in"
+            getString("output_path") == "/mnt/exp/out"
+            getString("stage_path") == "/scratch"
         }
     }
 
     def "Config returns error on empty #path"() {
         given: "an empty #path"
-        var paths = [input_path: "/in", output_path: "/out", stage_path: "/tmp"]
-        paths[path] = ""
+        var paths = [input_path: "/in", output_path: "/out", stage_path: "/tmp"] << [(path): ""]
 
         when:
         EngineData result = dm.configure(createJsonRequest(paths))
@@ -98,8 +97,8 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Config returns error when #path exists and is not a directory"() {
         given: "#path incorrectly set to an existing file name"
-        var paths = [input_path: "/in", output_path: "/out", stage_path: "/tmp"]
-        paths[path] = makeFile("tmp.tmp").toString()
+        var tmp = makeFile("tmp.tmp")
+        var paths = [input_path: "/in", output_path: "/out", stage_path: "/tmp"] << [(path): tmp]
 
         when:
         EngineData result = dm.configure(createJsonRequest(paths))
@@ -116,8 +115,9 @@ class DataManagerSpec extends Specification {
 
     def "Config returns error on missing #path"() {
         given: "a missing value for #path"
-        var paths = [input_path: "/in", output_path: "/out", stage_path: "/tmp"]
-        paths.remove(path)
+        var paths = [input_path: "/in", output_path: "/out", stage_path: "/tmp"].tap {
+            remove(path)
+        }
 
         when:
         EngineData result = dm.configure(createJsonRequest(paths))
@@ -133,8 +133,7 @@ class DataManagerSpec extends Specification {
 
     def "Config returns error on request with wrong mime-type"() {
         given: "a request that is not JSON"
-        var config = new EngineData()
-        config.setData("text/string", "bad config")
+        EngineData config = new EngineData().tap { setData("text/string", "bad config") }
 
         when:
         EngineData result = dm.configure(config)
@@ -146,7 +145,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'stage_input' creates directory before staging input file"() {
         given: "a non-existing stage directory"
-        var paths = configTestPaths { paths ->
+        TestPaths paths = configTestPaths { paths ->
             Files.delete(paths.stageDir)
         }
 
@@ -173,7 +172,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'stage_input' stages input file"() {
         given:
-        var paths = configTestPaths { }
+        TestPaths paths = configTestPaths { }
 
         and:
         EngineData request = createJsonRequest(
@@ -195,7 +194,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'stage_input' stages input file into existing symlink directory"() {
         given:
-        var paths = configTestPaths { paths ->
+        TestPaths paths = configTestPaths { paths ->
             paths.stageDir = makeSymlink(paths.stageDir)
         }
 
@@ -222,7 +221,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'remove_input' removes staged input file"() {
         given:
-        var paths = configTestPaths { paths ->
+        TestPaths paths = configTestPaths { paths ->
             Files.copy(paths.inputFile, paths.stagedInputFile)
         }
 
@@ -249,7 +248,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'save_output' creates directory before saving output file"() {
         given:
-        var paths = configTestPaths { paths ->
+        TestPaths paths = configTestPaths { paths ->
             Files.copy(paths.inputFile, paths.stagedOutputFile)
             Files.delete(paths.outputDir)
         }
@@ -278,7 +277,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'save_output' saves output file"() {
         given:
-        var paths = configTestPaths { paths ->
+        TestPaths paths = configTestPaths { paths ->
             Files.copy(paths.inputFile, paths.stagedOutputFile)
         }
 
@@ -308,7 +307,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'save_output' saves output file into existing symlink directory"() {
         given:
-        var paths = configTestPaths { paths ->
+        TestPaths paths = configTestPaths { paths ->
             Files.copy(paths.inputFile, paths.stagedOutputFile)
             paths.outputDir = makeSymlink(paths.outputDir)
         }
@@ -337,7 +336,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'clear_stage' removes stage directory"() {
         given:
-        var paths = configTestPaths { paths ->
+        TestPaths paths = configTestPaths { paths ->
             Files.copy(paths.inputFile, paths.stagedInputFile)
         }
 
@@ -363,7 +362,7 @@ class DataManagerSpec extends Specification {
     @Integration
     def "Execute action 'clear_stage' does not fail if stage directory is already removed"() {
         given:
-        var paths = configTestPaths() { paths ->
+        TestPaths paths = configTestPaths() { paths ->
             Files.delete(paths.stageDir)
         }
 
@@ -465,8 +464,7 @@ class DataManagerSpec extends Specification {
 
     def "Execute returns error on missing mime-type"() {
         given:
-        EngineData request = new EngineData()
-        request.setData("text/number", 42)
+        EngineData request = new EngineData().tap { setData("text/number", 42) }
 
         when:
         EngineData result = dm.execute(request)
@@ -504,9 +502,10 @@ class DataManagerSpec extends Specification {
     }
 
     private static EngineData createJsonRequest(Map data) {
-        var request = new EngineData()
-        request.setData(EngineDataType.JSON.mimeType(), new JSONObject(data).toString())
-        return request
+        var request = new JSONObject(data)
+        new EngineData().tap {
+            setData(EngineDataType.JSON.mimeType(), request.toString())
+        }
     }
 
     private static class TestPaths {
@@ -524,7 +523,7 @@ class DataManagerSpec extends Specification {
 
         Path getInputDir() { inputFile.parent }
 
-        String getInputFileName() { inputFile.fileName.toString() }
+        String getInputFileName() { inputFile.fileName }
 
         Path getOutputFile() { outputDir.resolve("out_" + inputFileName) }
 

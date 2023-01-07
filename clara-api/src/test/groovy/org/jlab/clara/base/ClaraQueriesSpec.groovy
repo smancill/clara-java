@@ -23,6 +23,7 @@ import org.jlab.clara.msg.sys.regdis.RegFactory
 import org.jlab.clara.tests.Integration
 import org.json.JSONObject
 import spock.lang.AutoCleanup
+import spock.lang.Narrative
 import spock.lang.Rollup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -53,6 +54,7 @@ abstract class ClaraQueriesSpec extends Specification {
         new ClaraBase(ClaraComponent.dpe(), ClaraComponent.dpe()) {
             @Override
             Message syncPublish(ProxyAddress address, Message msg, long timeout) {
+                // Mock DPE JSON report response
                 var report = data.jsonReport(msg.topic.subject())
                 MessageUtil.buildRequest(msg.topic, report.toString())
             }
@@ -61,9 +63,9 @@ abstract class ClaraQueriesSpec extends Specification {
 
     protected static class TestData {
 
-        private static final RegData.Type TYPE = RegData.Type.SUBSCRIBER
+        private static final TYPE = RegData.Type.SUBSCRIBER
 
-        private static final String DATE = LocalDateTime.now()
+        private static final DATE = LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern(ClaraConstants.DATE_FORMAT))
 
         private static final SERVICE_DATA = [
@@ -117,7 +119,7 @@ abstract class ClaraQueriesSpec extends Specification {
         private final Registrar server
         private final RegDriver driver
 
-        private final Map data = [:]
+        private final Map<String, Map<String, Object>> data = new HashMap<>()
 
         TestData() {
             var addr = new RegAddress("localhost", 7775)
@@ -158,21 +160,21 @@ abstract class ClaraQueriesSpec extends Specification {
 
         private void makeJsonReport() {
             for (dpe in DPE_DATA) {
-                var dpeKey = dpe['key']
+                var dpeKey = dpe.key
                 var dpeName = new DpeName(dpe.host, dpe.lang)
 
                 var dpeRegData = regData(dpeName, [containers: []])
                 var dpeRunData = runData(dpeName, [containers: []])
 
                 for (container in dpe.containers) {
-                    var contKey = "${dpeKey}:${container['name']}"
+                    var contKey = "${dpeKey}:${container['name']}" as String
                     var contName = new ContainerName(dpeName, container.name)
 
                     var contRegData = regData(contName, [services: []])
                     var contRunData = runData(contName, [services: []])
 
                     for (service in container['services'].collect { SERVICE_DATA[it] }) {
-                        var servKey = "${contKey}:${service.name}"
+                        var servKey = "${contKey}:${service.name}" as String
                         var servName = new ServiceName(contName, service.name)
 
                         var servRegData = regData(servName, [
@@ -198,34 +200,34 @@ abstract class ClaraQueriesSpec extends Specification {
             }
         }
 
-        private static def regData(ClaraName name, Map extra_values = [:]) {
-            new JSONObject([name: name.canonicalName(), start_time: DATE] + extra_values)
+        private static JSONObject regData(ClaraName name, Map extraValues = [:]) {
+            new JSONObject([name: name.canonicalName(), start_time: DATE] + extraValues)
         }
 
-        private static def runData(ClaraName name, Map extra_values = [:]) {
-            new JSONObject([name: name.canonicalName(), snapshot_time: DATE] + extra_values)
+        private static JSONObject runData(ClaraName name, Map extraValues = [:]) {
+            new JSONObject([name: name.canonicalName(), snapshot_time: DATE] + extraValues)
         }
 
-        private def register(ClaraName name, String topicPrefix = "") {
+        private void register(ClaraName name, String topicPrefix = "") {
             var addr = name.address().proxyAddress()
             var topic = Topic.wrap(topicPrefix + name.canonicalName())
             var data = RegFactory.newRegistration(name.canonicalName(), "", addr, TYPE, topic)
             driver.addRegistration("test", data)
         }
 
-        def name(String key) {
-            data[key].name
+        ClaraName name(String key) {
+            data[key]['name'] as ClaraName
         }
 
-        def names(String... keys) {
-            keys.collect { data[it].name } as Set
+        Set<ClaraName> names(String... keys) {
+            keys.collect { data[it]['name'] as ClaraName } as Set
         }
 
         def jsonReport(String dpeName) {
-            var dpeData = data.find { it.value.regData.get('name') == dpeName }.value
+            var dpeData = data.find { it.value.regData['name'] == dpeName }.value
             new JSONObject(
-                "${ClaraConstants.REGISTRATION_KEY}": dpeData.regData,
-                "${ClaraConstants.RUNTIME_KEY}": dpeData.runData,
+                ("${ClaraConstants.REGISTRATION_KEY}" as String): dpeData.regData,
+                ("${ClaraConstants.RUNTIME_KEY}" as String): dpeData.runData,
             )
         }
     }
@@ -233,6 +235,9 @@ abstract class ClaraQueriesSpec extends Specification {
 
 
 @Rollup
+@Narrative("""Check a specific query type (defined by each subclass)
+against all available filters. The specific query for each result type T:
+DPE (D), container (C) or service (S), shall be returned by #query(selector).""")
 abstract class AbstractQueriesSpec<D, C, S> extends ClaraQueriesSpec {
 
     def "Query all DPEs"() {
@@ -497,6 +502,8 @@ abstract class AbstractQueriesSpec<D, C, S> extends ClaraQueriesSpec {
 @Integration
 @Rollup
 @Title("Query canonical names")
+@Narrative("""Check the canonical name queries against all available filters,
+plus the discovery queries that also return canonical names but do not take a filter.""")
 class CanonicalNameQueriesSpec
         extends AbstractQueriesSpec<DpeName, ContainerName, ServiceName> {
 
@@ -558,6 +565,9 @@ class CanonicalNameQueriesSpec
 
 
 @Rollup
+@Narrative("""Check a specific data query type (defined by each subclass)
+against all available filters, plus the data query wrappers
+that accept a name instead of a filter.""")
 abstract class DataQueriesSpec<D, C, S> extends AbstractQueriesSpec<D, C, S> {
 
     def "Get DPE by canonical name"() {
@@ -565,7 +575,7 @@ abstract class DataQueriesSpec<D, C, S> extends AbstractQueriesSpec<D, C, S> {
         var name = new DpeName(dpe)
 
         when:
-        Optional<DpeRuntimeData> result = run query(name)
+        Optional<D> result = run query(name)
 
         then:
         with(result, check)
@@ -581,7 +591,7 @@ abstract class DataQueriesSpec<D, C, S> extends AbstractQueriesSpec<D, C, S> {
         var name = new ContainerName(container)
 
         when:
-        Optional<ContainerRuntimeData> result = run query(name)
+        Optional<C> result = run query(name)
 
         then:
         with(result, check)
@@ -597,7 +607,7 @@ abstract class DataQueriesSpec<D, C, S> extends AbstractQueriesSpec<D, C, S> {
         var name = new ServiceName(service)
 
         when:
-        Optional<ServiceRuntimeData> result = run query(name)
+        Optional<S> result = run query(name)
 
         then:
         with(result, check)
@@ -621,6 +631,7 @@ abstract class DataQueriesSpec<D, C, S> extends AbstractQueriesSpec<D, C, S> {
 
 @Integration
 @Title("Query registration data")
+@Narrative("""Check the registration data queries against all available filters.""")
 class RegistrationDataQueriesSpec extends DataQueriesSpec<
         DpeRegistrationData,
         ContainerRegistrationData,
@@ -635,6 +646,7 @@ class RegistrationDataQueriesSpec extends DataQueriesSpec<
 
 @Integration
 @Title("Query runtime data")
+@Narrative("""Check the runtime data queries against all available filters.""")
 class RuntimeDataQueriesSpec extends DataQueriesSpec<
         DpeRuntimeData,
         ContainerRuntimeData,
@@ -644,4 +656,4 @@ class RuntimeDataQueriesSpec extends DataQueriesSpec<
     protected BaseQuery query(selector) {
         queryBuilder.runtimeData(selector)
     }
- }
+}

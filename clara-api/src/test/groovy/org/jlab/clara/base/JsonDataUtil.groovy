@@ -6,12 +6,14 @@
 
 package org.jlab.clara.base
 
+import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.jlab.clara.base.core.ClaraConstants
 import org.jlab.clara.util.report.JsonUtils
 import org.json.JSONObject
 
 @PackageScope
+@CompileStatic
 class JsonDataUtil {
     static JSONObject parseRegistrationExample() {
         JsonUtils.readJson("/registration-data.json").getJSONObject(ClaraConstants.REGISTRATION_KEY)

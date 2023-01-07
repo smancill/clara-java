@@ -118,12 +118,12 @@ class DpeOptionsParserSpec extends Specification {
         [DPE_PORT_OPT, "8500"]                           || proxy(DEFAULT_HOST, 8500)
         [DPE_HOST_OPT, "10.2.9.4", DPE_PORT_OPT, "8500"] || proxy("10.2.9.4", 8500)
 
-        args = [FE_HOST_OPT, "10.2.9.100"] + options
+        args = [FE_HOST_OPT, "10.2.9.100", *options]
     }
 
     def "Worker DPE: require both front-end host and port if front-end port is set"() {
         when:
-        parser.parse(*[FE_PORT_OPT, "9000"])
+        parser.parse(FE_PORT_OPT, "9000")
 
         then:
         var ex = thrown(DpeOptionsParser.DpeOptionsException)

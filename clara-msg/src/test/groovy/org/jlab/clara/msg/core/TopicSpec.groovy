@@ -40,7 +40,6 @@ class TopicSpec extends Specification {
         build("rock", "metal", "metallica:lars:*")      || "rock:metal:metallica:lars"
     }
 
-
     def "Build topic with undefined domain throws an exception"() {
         when:
         builder()

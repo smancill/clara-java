@@ -8,12 +8,16 @@ package org.jlab.clara.base.core
 
 import org.jlab.clara.msg.core.Topic
 import spock.lang.Specification
+import spock.lang.Subject
 
 class ClaraComponentSpec extends Specification {
 
+    @Subject
+    ClaraComponent component
+
     def "Create a Java DPE component"() {
         given:
-        var component = ClaraComponent.dpe("10.2.9.1_java")
+        component = ClaraComponent.dpe("10.2.9.1_java")
 
         expect:
         with(component) {
@@ -28,7 +32,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a Java container component"() {
         given:
-        var component = ClaraComponent.container("10.2.9.1_java:master")
+        component = ClaraComponent.container("10.2.9.1_java:master")
 
         expect:
         with(component) {
@@ -46,7 +50,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a Java service component"() {
         given:
-        var component = ClaraComponent.service("10.2.9.1_java:master:E1")
+        component = ClaraComponent.service("10.2.9.1_java:master:E1")
 
         expect:
         with(component) {
@@ -65,7 +69,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a C++ DPE component"() {
         given:
-        var component = ClaraComponent.dpe("10.2.9.1_cpp")
+        component = ClaraComponent.dpe("10.2.9.1_cpp")
 
         expect:
         with(component) {
@@ -81,7 +85,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a C++ container component"() {
         given:
-        var component = ClaraComponent.container("10.2.9.1_cpp:master")
+        component = ClaraComponent.container("10.2.9.1_cpp:master")
 
         expect:
         with(component) {
@@ -99,7 +103,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a C++ service component"() {
         given:
-        var component = ClaraComponent.service("10.2.9.1_cpp:master:E1")
+        component = ClaraComponent.service("10.2.9.1_cpp:master:E1")
 
         expect:
         with(component) {
@@ -118,7 +122,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a Python DPE component"() {
         given:
-        var component = ClaraComponent.dpe("10.2.9.1_python")
+        component = ClaraComponent.dpe("10.2.9.1_python")
 
         expect:
         with(component) {
@@ -134,7 +138,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a Python container component"() {
         given:
-        var component = ClaraComponent.container("10.2.9.1_python:master")
+        component = ClaraComponent.container("10.2.9.1_python:master")
 
         expect:
         with(component) {
@@ -152,7 +156,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a Python service component"() {
         given:
-        var component = ClaraComponent.service("10.2.9.1_python:master:E1")
+        component = ClaraComponent.service("10.2.9.1_python:master:E1")
 
         expect:
         with(component) {
@@ -171,7 +175,7 @@ class ClaraComponentSpec extends Specification {
 
     def "Create a component with custom port"() {
         given:
-        var component = ClaraComponent.dpe("10.2.9.1%9999_java")
+        component = ClaraComponent.dpe("10.2.9.1%9999_java")
 
         expect:
         with(component) {
