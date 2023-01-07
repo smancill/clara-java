@@ -9,11 +9,11 @@ package org.jlab.clara.std.services
 import org.jlab.clara.engine.EngineData
 import org.jlab.clara.engine.EngineDataType
 import org.jlab.clara.engine.EngineStatus
-import org.jlab.clara.tests.Integration
 import org.json.JSONObject
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Tag
 import spock.lang.TempDir
 
 import java.nio.file.Files
@@ -94,7 +94,7 @@ class DataManagerSpec extends Specification {
         "stage_path"  || "empty stage"
     }
 
-    @Integration
+    @Tag("integration")
     def "Config returns error when #path exists and is not a directory"() {
         given: "#path incorrectly set to an existing file name"
         var tmp = makeFile("tmp.tmp")
@@ -142,7 +142,7 @@ class DataManagerSpec extends Specification {
         assertEngineError result, "wrong mime-type: text/string"
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'stage_input' creates directory before staging input file"() {
         given: "a non-existing stage directory"
         TestPaths paths = configTestPaths { paths ->
@@ -169,7 +169,7 @@ class DataManagerSpec extends Specification {
         Files.exists paths.stageDir
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'stage_input' stages input file"() {
         given:
         TestPaths paths = configTestPaths { }
@@ -191,7 +191,7 @@ class DataManagerSpec extends Specification {
         Files.exists paths.stagedInputFile
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'stage_input' stages input file into existing symlink directory"() {
         given:
         TestPaths paths = configTestPaths { paths ->
@@ -218,7 +218,7 @@ class DataManagerSpec extends Specification {
         Files.exists paths.stagedInputFile
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'remove_input' removes staged input file"() {
         given:
         TestPaths paths = configTestPaths { paths ->
@@ -245,7 +245,7 @@ class DataManagerSpec extends Specification {
         Files.notExists paths.stagedInputFile
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'save_output' creates directory before saving output file"() {
         given:
         TestPaths paths = configTestPaths { paths ->
@@ -274,7 +274,7 @@ class DataManagerSpec extends Specification {
         Files.exists paths.outputDir
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'save_output' saves output file"() {
         given:
         TestPaths paths = configTestPaths { paths ->
@@ -304,7 +304,7 @@ class DataManagerSpec extends Specification {
         Files.exists paths.outputFile
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'save_output' saves output file into existing symlink directory"() {
         given:
         TestPaths paths = configTestPaths { paths ->
@@ -333,7 +333,7 @@ class DataManagerSpec extends Specification {
         Files.exists paths.outputFile
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'clear_stage' removes stage directory"() {
         given:
         TestPaths paths = configTestPaths { paths ->
@@ -359,7 +359,7 @@ class DataManagerSpec extends Specification {
         Files.notExists paths.stageDir
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'clear_stage' does not fail if stage directory is already removed"() {
         given:
         TestPaths paths = configTestPaths() { paths ->
@@ -400,7 +400,7 @@ class DataManagerSpec extends Specification {
         assertEngineError result, "could not complete request"
     }
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'remove_input' returns error on IO error"() {
         given:
         EngineData request = createJsonRequest(
@@ -417,7 +417,7 @@ class DataManagerSpec extends Specification {
     }
 
 
-    @Integration
+    @Tag("integration")
     def "Execute action 'save_output' returns error on IO error"() {
         given:
         EngineData request = createJsonRequest(

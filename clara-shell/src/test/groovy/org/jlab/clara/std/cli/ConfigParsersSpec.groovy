@@ -6,8 +6,8 @@
 
 package org.jlab.clara.std.cli
 
-import org.jlab.clara.tests.Integration
 import spock.lang.Specification
+import spock.lang.Tag
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -135,7 +135,7 @@ class ConfigParsersSpec extends Specification {
         _ | []
     }
 
-    @Integration
+    @Tag("integration")
     def "Parser 'toFile' parses a file path"() {
         expect:
         ConfigParsers.toFile(*args) == Path.of(expected)
@@ -147,7 +147,7 @@ class ConfigParsersSpec extends Specification {
         ["path/to/no-file.doc"] || "path/to/no-file.doc"
     }
 
-    @Integration
+    @Tag("integration")
     def "Parser 'toFile' throws on invalid or missing arg"() {
         when:
         ConfigParsers.toFile(*args)
@@ -162,7 +162,7 @@ class ConfigParsersSpec extends Specification {
         _ | []
     }
 
-    @Integration
+    @Tag("integration")
     def "Parser 'toExistingFile' parses an existing file path"() {
         given:
         var tmp = Files.createTempFile("tmp", ".txt")
@@ -174,7 +174,7 @@ class ConfigParsersSpec extends Specification {
         Files.delete(tmp)
     }
 
-    @Integration
+    @Tag("integration")
     def "Parser 'toExistingFile' throws on invalid or missing arg"() {
         when:
         ConfigParsers.toExistingFile(*args)
@@ -190,7 +190,7 @@ class ConfigParsersSpec extends Specification {
         _ | []
     }
 
-    @Integration
+    @Tag("integration")
     def "Parser 'toDirectory' parses a directory path"() {
         expect:
         ConfigParsers.toDirectory(*args) == Path.of(expected)
@@ -201,7 +201,7 @@ class ConfigParsersSpec extends Specification {
         ["non/existing/"] || "non/existing"
     }
 
-    @Integration
+    @Tag("integration")
     def "Parser 'toDirectory' throws on invalid or missing arg"() {
         when:
         ConfigParsers.toDirectory(*args)
@@ -216,13 +216,13 @@ class ConfigParsersSpec extends Specification {
         _ | []
     }
 
-    @Integration
+    @Tag("integration")
     def "Parser 'toExistingDirectory' parses an existing directory path"() {
         expect:
         ConfigParsers.toExistingDirectory("/tmp") == Path.of("/tmp")
     }
 
-    @Integration
+    @Tag("integration")
     def "Parser 'toExistingDirectory' throws on invalid or missing arg"() {
         when:
         ConfigParsers.toExistingDirectory(*args)

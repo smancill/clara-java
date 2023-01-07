@@ -20,7 +20,6 @@ import org.jlab.clara.msg.net.SocketFactory
 import org.jlab.clara.msg.sys.Registrar
 import org.jlab.clara.msg.sys.regdis.RegDriver
 import org.jlab.clara.msg.sys.regdis.RegFactory
-import org.jlab.clara.tests.Integration
 import org.json.JSONObject
 import spock.lang.AutoCleanup
 import spock.lang.Narrative
@@ -28,6 +27,7 @@ import spock.lang.Rollup
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Tag
 import spock.lang.Title
 
 import java.time.LocalDateTime
@@ -499,7 +499,7 @@ abstract class AbstractQueriesSpec<D, C, S> extends ClaraQueriesSpec {
 }
 
 
-@Integration
+@Tag("integration")
 @Rollup
 @Title("Query canonical names")
 @Narrative("""Check the canonical name queries against all available filters,
@@ -629,7 +629,7 @@ abstract class DataQueriesSpec<D, C, S> extends AbstractQueriesSpec<D, C, S> {
 }
 
 
-@Integration
+@Tag("integration")
 @Title("Query registration data")
 @Narrative("""Check the registration data queries against all available filters.""")
 class RegistrationDataQueriesSpec extends DataQueriesSpec<
@@ -644,7 +644,7 @@ class RegistrationDataQueriesSpec extends DataQueriesSpec<
 }
 
 
-@Integration
+@Tag("integration")
 @Title("Query runtime data")
 @Narrative("""Check the runtime data queries against all available filters.""")
 class RuntimeDataQueriesSpec extends DataQueriesSpec<

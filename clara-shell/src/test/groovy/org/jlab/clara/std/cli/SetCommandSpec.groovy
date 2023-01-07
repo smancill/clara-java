@@ -6,11 +6,11 @@
 
 package org.jlab.clara.std.cli
 
-import org.jlab.clara.tests.Integration
 import org.jlab.clara.util.EnvUtils
 import org.jline.terminal.Terminal
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Tag
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -35,7 +35,7 @@ class SetCommandSpec extends Specification {
         config.getString(Config.SESSION) == "trevor"
     }
 
-    @Integration
+    @Tag("integration")
     def "Set services file"() {
         given:
         var userFile = createTempFile("yaml")
@@ -47,7 +47,7 @@ class SetCommandSpec extends Specification {
         config.getPath(Config.SERVICES_FILE) == userFile
     }
 
-    @Integration
+    @Tag("integration")
     def "Set file list"() {
         given:
         var userFile = createTempFile("fileList")
@@ -67,7 +67,7 @@ class SetCommandSpec extends Specification {
         config.getInt(Config.MAX_THREADS) == 5
     }
 
-    @Integration
+    @Tag("integration")
     def "Set input directory"() {
         given:
         var userDir = createTempDir("input")
@@ -79,7 +79,7 @@ class SetCommandSpec extends Specification {
         config.getPath(Config.INPUT_DIR) == userDir
     }
 
-    @Integration
+    @Tag("integration")
     def "Set output directory"() {
         given:
         var userDir = createTempDir("output")

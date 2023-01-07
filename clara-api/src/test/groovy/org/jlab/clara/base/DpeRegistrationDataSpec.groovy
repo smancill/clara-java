@@ -6,13 +6,13 @@
 
 package org.jlab.clara.base
 
-import org.jlab.clara.tests.Integration
 import org.json.JSONArray
 import org.json.JSONObject
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Tag
 
-@Integration
+@Tag("integration")
 class DpeRegistrationDataSpec extends Specification {
 
     @Shared

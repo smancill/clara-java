@@ -25,7 +25,6 @@ ext {
 
 configure(subprojectList) {
     apply plugin: 'java-library'
-    apply plugin: 'java-test-fixtures'
     apply plugin: 'groovy'
     apply plugin: 'maven-publish'
 
@@ -74,7 +73,9 @@ configure(subprojectList) {
     }
 
     task integrationTest(type: Test) {
-        useJUnitPlatform()
+        useJUnitPlatform {
+            includeTags 'integration'
+        }
         systemProperty 'spock.configuration', rootProject.file('config/test/SpockConfigIntegration.groovy')
         testLogging {
             exceptionFormat = 'full'
@@ -150,8 +151,6 @@ project(':clara-core') {
         implementation project(':clara-api')
 
         implementation libs.jopt
-
-        testImplementation testFixtures(project(":clara-msg"))
     }
 
     javadoc {
@@ -204,8 +203,6 @@ project(':clara-api') {
         api libs.json
         implementation libs.snakeyaml
         implementation libs.jopt
-
-        testImplementation testFixtures(project(":clara-msg"))
     }
 
     javadoc {
@@ -223,8 +220,6 @@ project(':clara-std') {
         implementation libs.commons.exec
         implementation libs.freemarker
         implementation libs.jopt
-
-        testImplementation testFixtures(project(":clara-msg"))
     }
 
     javadoc {
@@ -239,8 +234,6 @@ project(':clara-shell') {
 
         api libs.jline
         implementation libs.freemarker
-
-        testImplementation testFixtures(project(":clara-msg"))
     }
 
     processResources {
@@ -559,19 +552,14 @@ gradle.taskGraph.whenReady { taskGraph ->
     subprojectList.each {
         it.spotbugsMain.onlyIf { taskGraph.hasTask(spotbugs) }
         it.spotbugsTest.onlyIf { taskGraph.hasTask(spotbugs) }
-        it.spotbugsTestFixtures.onlyIf { taskGraph.hasTask(spotbugs) }
 
         it.codenarcMain.onlyIf { taskGraph.hasTask(codenarc) }
         it.codenarcTest.onlyIf { taskGraph.hasTask(codenarc) }
-        it.codenarcTestFixtures.onlyIf { taskGraph.hasTask(codenarc) }
     }
 
     tasks.checkSpotBugsResults.onlyIf {
         taskGraph.hasTask(tasks.spotbugs)
     }
-
-    project(':clara-msg').extractIncludeTestFixturesProto.onlyIf { false }
-    project(':clara-msg').extractIncludeTestProto.onlyIf { false }
 }
 
 //////////////////////////////////////////////////////////////////////////////

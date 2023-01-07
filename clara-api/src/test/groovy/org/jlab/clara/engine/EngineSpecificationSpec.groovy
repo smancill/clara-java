@@ -7,11 +7,11 @@
 package org.jlab.clara.engine
 
 import org.jlab.clara.engine.EngineSpecification.ParseException
-import org.jlab.clara.tests.Integration
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Tag
 
-@Integration
+@Tag("integration")
 class EngineSpecificationSpec extends Specification {
 
     @Subject
