@@ -376,7 +376,7 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
     /**
      * Prints a startup message when the orchestrator starts to run.
      */
-    protected void printStartup() {
+    void printStartup() {
         System.out.println("==========================================");
         System.out.println("            Clara Orchestrator            ");
         System.out.println("==========================================");

@@ -22,10 +22,10 @@ public class RegRecord {
     /**
      * Creates a record wrapping the given registration data.
      *
-     * @param regb the registration data
+     * @param regData the registration data
      */
-    public RegRecord(RegData regb) {
-        data = regb;
+    public RegRecord(RegData regData) {
+        data = regData;
     }
 
     /**
