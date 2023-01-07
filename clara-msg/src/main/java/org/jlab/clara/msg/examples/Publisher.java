@@ -12,10 +12,10 @@ import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegInfo;
 
 /**
- * An example of a publisher that publishes data for ever.
+ * An example of a publisher that publishes data forever.
  * It does not matter who is subscribing to the messages.
  * This publisher uses the default proxy running on localhost.
- *
+ * <p>
  * Published data is a byte array with a specified size.
  */
 public class Publisher extends Actor {
@@ -58,7 +58,7 @@ public class Publisher extends Actor {
 
             // connect to the local proxy
             try (var con = publisher.getConnection()) {
-                // publish data for ever
+                // publish data forever
                 while (true) {
                     publisher.publish(con, msg);
                 }

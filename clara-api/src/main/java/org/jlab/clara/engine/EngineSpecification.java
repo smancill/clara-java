@@ -58,7 +58,7 @@ public class EngineSpecification {
 
     /**
      * Uses the service class to detect the YAML file.
-     *
+     * <p>
      * Example:
      * <pre>
      * package std.services.Simple;

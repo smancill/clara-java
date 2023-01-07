@@ -13,12 +13,12 @@ import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.RegInfo;
 
 /**
- * An example of a publisher that sync publishes data for ever.
+ * An example of a publisher that sync publishes data forever.
  * It does not matter who is subscribing to the messages, but subscriber
  * should be able to detect that the received message is a sync request and
  * respond back.
  * This publisher uses the default proxy running on localhost.
- *
+ * <p>
  * Published data is a hard-coded integer.
  */
 public class SyncPublisher extends Actor {

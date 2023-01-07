@@ -308,7 +308,7 @@ public class Proxy {
                         if (msg == null) {
                             break;
                         }
-                        processRequet(msg);
+                        processRequest(msg);
                     } catch (ZMQException e) {
                         if (e.getErrorCode() == ZMQ.Error.ETERM.getCode()) {
                             break;
@@ -323,7 +323,7 @@ public class Proxy {
             }
         }
 
-        private void processRequet(ZMsg msg) {
+        private void processRequest(ZMsg msg) {
             /* ZFrame topicFrame = */ msg.pop();
             var typeFrame = msg.pop();
             var idFrame = msg.pop();

@@ -25,7 +25,7 @@ public final class AddressUtils {
 
     /**
      * Returns the localhost IPv4.
-     *
+     * <p>
      * In case of multiple network cards, this method will return the first one
      * in the list of addresses of all network cards, with {@code
      * InetAddress.getLocalHost()} being preferred.
@@ -135,7 +135,7 @@ public final class AddressUtils {
 
     /**
      * Determines the IP address of the specified host.
-     *
+     * <p>
      * In case of multiple network cards in the local host, this method will
      * return the first one in the list of addresses of all network cards,
      * with {@code InetAddress.getLocalHost()} being preferred.

@@ -28,8 +28,11 @@ public final class JsonUtils {
 
     public static JSONObject readJson(String resource) {
         var stream = JsonUtils.class.getResourceAsStream(resource);
+        if (stream == null) {
+            throw new IllegalArgumentException("Unknown resource");
+        }
         try (var reader = new BufferedReader(new InputStreamReader(stream))) {
-            var content =  reader.lines().collect(Collectors.joining("\n"));
+            var content = reader.lines().collect(Collectors.joining("\n"));
             return new JSONObject(content);
         } catch (IOException e) {
             throw new UncheckedIOException(e);

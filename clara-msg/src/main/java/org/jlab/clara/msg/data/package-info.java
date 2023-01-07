@@ -22,7 +22,7 @@
  * to handle the registration of an actor with a
  * {@link org.jlab.clara.msg.sys.Registrar registrar server},
  * and the {@link org.jlab.clara.msg.data.RegQuery RegQuery}
- * class helps creating a query to a registrar for the specified matching
+ * class helps to create a query to a registrar for the specified matching
  * actors.
  * The registration data is returned as
  * {@link org.jlab.clara.msg.data.RegDataProto.RegData RegData}

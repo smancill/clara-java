@@ -62,7 +62,7 @@ public class EngineDataType {
     public static final EngineDataType STRING = buildPrimitive(MimeType.STRING);
     /**
      * Raw bytes.
-     * On Java a {@link ByteBuffer} is used to wrap the byte array and its endianess.
+     * On Java a {@link ByteBuffer} is used to wrap the byte array and its endianness.
      */
     public static final EngineDataType BYTES = buildRawBytes();
     /**

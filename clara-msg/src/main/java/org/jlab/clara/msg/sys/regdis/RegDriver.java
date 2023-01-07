@@ -20,7 +20,7 @@ import java.util.Set;
 
 /**
  * Registration driver.
- *
+ * <p>
  * Provides methods for registration and discovery of actors (i.e.
  * publishers and subscribers) on the specified
  * {@link RegService registrar service},

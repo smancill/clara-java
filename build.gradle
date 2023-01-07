@@ -345,7 +345,7 @@ def deploySpec = copySpec {
         fileMode 0755
     }
 
-    // trick Gradle to "create" empy directories
+    // trick Gradle to "create" empty directories
     def tempDir = "${project(':clara-core').buildDir}/distributions/clara_home"
 
     file("${tempDir}/log").mkdirs()
