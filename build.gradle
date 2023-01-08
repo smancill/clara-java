@@ -83,7 +83,7 @@ configure(subprojectList) {
         outputs.upToDateWhen { false }
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.compilerArgs << "-Xlint:deprecation"
     }
 
