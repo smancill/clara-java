@@ -6,7 +6,10 @@
 
 package org.jlab.clara.engine;
 
-import com.google.protobuf.ByteString;
+import com.google.protobuf.DoubleValue;
+import com.google.protobuf.FloatValue;
+import com.google.protobuf.Int32Value;
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.base.error.ClaraException;
 import org.jlab.clara.msg.data.PlainDataProto.PayloadData;
@@ -233,7 +236,6 @@ public class EngineDataType {
     private static class PrimitiveSerializer implements ClaraSerializer {
 
         private final MimeType mimeType;
-        private final NativeSerializer nativeSerializer = new NativeSerializer();
 
         PrimitiveSerializer(MimeType mimeType) {
             this.mimeType = mimeType;
@@ -241,29 +243,30 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            var proto = PlainData.newBuilder();
-            switch (mimeType) {
-                case INT32 -> proto.setVLSINT32((Integer) data);
-                case INT64 -> proto.setVLSINT64((Long) data);
-                case DOUBLE -> proto.setDOUBLE((Double) data);
-                case FLOAT -> proto.setFLOAT((Float) data);
-                case BYTES -> proto.setBYTES((ByteString) data);
-                default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
-            }
-            return nativeSerializer.write(proto.build());
+            var bytes = switch (mimeType) {
+                case INT32 -> Int32Value.of((Integer) data).toByteArray();
+                case INT64 -> Int64Value.of((Long) data).toByteArray();
+                case FLOAT -> FloatValue.of((Float) data).toByteArray();
+                case DOUBLE -> DoubleValue.of((Double) data).toByteArray();
+                default -> throw new IllegalStateException("invalid mime-type: " + mimeType);
+            };
+            return ByteBuffer.wrap(bytes);
         }
 
         @Override
         public Object read(ByteBuffer data) throws ClaraException {
-            var proto = (PlainData) nativeSerializer.read(data);
-            return switch (mimeType) {
-                case INT32 -> proto.getVLSINT32();
-                case INT64 -> proto.getVLSINT64();
-                case DOUBLE -> proto.getDOUBLE();
-                case FLOAT -> proto.getFLOAT();
-                case BYTES -> proto.getBYTES();
-                default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
-            };
+            var bytes = data.array();
+            try {
+                return switch (mimeType) {
+                    case INT32 -> Int32Value.parseFrom(bytes).getValue();
+                    case INT64 -> Int64Value.parseFrom(bytes).getValue();
+                    case FLOAT -> FloatValue.parseFrom(bytes).getValue();
+                    case DOUBLE -> DoubleValue.parseFrom(bytes).getValue();
+                    default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
+                };
+            } catch (InvalidProtocolBufferException e) {
+                throw new ClaraException(e.getMessage());
+            }
         }
     }
 }

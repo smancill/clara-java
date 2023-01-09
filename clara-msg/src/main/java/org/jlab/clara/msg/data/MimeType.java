@@ -9,14 +9,8 @@ package org.jlab.clara.msg.data;
 /**
  * Predefined supported types.
  * <p>
- * Primitives will be stored inside a
- * {@link org.jlab.clara.msg.core.Message Message} as part of a protocol buffers
- * {@link org.jlab.clara.msg.data.PlainDataProto.PlainData PlainData} object.
  * Language specific types will be serialized and stored as a byte-array
  * (serialization for these types only work on actors of the same language).
- *
- * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">
- *      Protocol Buffers Encoding</a>
  */
 public final class MimeType {
 

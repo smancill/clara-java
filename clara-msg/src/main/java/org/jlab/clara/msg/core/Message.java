@@ -6,10 +6,13 @@
 
 package org.jlab.clara.msg.core;
 
+import com.google.protobuf.DoubleValue;
+import com.google.protobuf.FloatValue;
+import com.google.protobuf.Int32Value;
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.msg.data.MimeType;
-import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.zeromq.ZMsg;
 
@@ -234,9 +237,8 @@ public class Message {
      */
     public static Message createFrom(Topic topic, Object data) {
 
-        byte[] ba = null;
+        final byte[] ba;
         final String mimeType;
-        PlainData.Builder pd = PlainData.newBuilder();
 
         if (data instanceof String value) {
             mimeType = MimeType.STRING;
@@ -244,19 +246,19 @@ public class Message {
 
         } else if (data instanceof Integer value) {
             mimeType = MimeType.INT32;
-            pd.setFLSINT32(value);
+            ba = Int32Value.of(value).toByteArray();
 
         } else if (data instanceof Long value) {
             mimeType = MimeType.INT64;
-            pd.setFLSINT64(value);
+            ba = Int64Value.of(value).toByteArray();
 
         } else if (data instanceof Float value) {
             mimeType = MimeType.FLOAT;
-            pd.setFLOAT(value);
+            ba = FloatValue.of(value).toByteArray();
 
         } else if (data instanceof Double value) {
             mimeType = MimeType.DOUBLE;
-            pd.setDOUBLE(value);
+            ba = DoubleValue.of(value).toByteArray();
 
         } else if (data instanceof byte[] bytes) {
             mimeType = MimeType.BYTES;
@@ -269,10 +271,6 @@ public class Message {
             } catch (IOException e) {
                 throw new UncheckedIOException("could not serialize object", e);
             }
-        }
-
-        if (ba == null) {
-            ba = pd.build().toByteArray();
         }
 
         return new Message(topic, mimeType, ba);
@@ -294,27 +292,27 @@ public class Message {
                 return new String(data, StandardCharsets.UTF_8);
 
             } else if (dataType.equals(MimeType.INT32)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLSINT32()) {
-                    return pd.getFLSINT32();
+                var value = Int32Value.parseFrom(data);
+                if (value.isInitialized()) {
+                    return value.getValue();
                 }
 
             } else if (dataType.equals(MimeType.INT64)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLSINT64()) {
-                    return pd.getFLSINT64();
+                var value = Int64Value.parseFrom(data);
+                if (value.isInitialized()) {
+                    return value.getValue();
                 }
 
             } else if (dataType.equals(MimeType.FLOAT)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLOAT()) {
-                    return pd.getFLOAT();
+                var value = FloatValue.parseFrom(data);
+                if (value.isInitialized()) {
+                    return value.getValue();
                 }
 
             } else if (dataType.equals(MimeType.DOUBLE)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasDOUBLE()) {
-                    return pd.getDOUBLE();
+                var value = DoubleValue.parseFrom(data);
+                if (value.isInitialized()) {
+                    return value.getValue();
                 }
 
             } else {
@@ -357,27 +355,27 @@ public class Message {
                 return dataType.cast(value);
 
             } else if (dataType.equals(Integer.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLSINT32()) {
-                    return dataType.cast(pd.getFLSINT32());
+                var value = Int32Value.parseFrom(data);
+                if (value.isInitialized()) {
+                    return dataType.cast(value.getValue());
                 }
 
             } else if (dataType.equals(Long.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLSINT64()) {
-                    return dataType.cast(pd.getFLSINT64());
+                var value = Int64Value.parseFrom(data);
+                if (value.isInitialized()) {
+                    return dataType.cast(value.getValue());
                 }
 
             } else if (dataType.equals(Float.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLOAT()) {
-                    return dataType.cast(pd.getFLOAT());
+                var value = FloatValue.parseFrom(data);
+                if (value.isInitialized()) {
+                    return dataType.cast(value.getValue());
                 }
 
             } else if (dataType.equals(Double.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasDOUBLE()) {
-                    return dataType.cast(pd.getDOUBLE());
+                var value = DoubleValue.parseFrom(data);
+                if (value.isInitialized()) {
+                    return dataType.cast(value.getValue());
                 }
 
             } else if (dataType.equals(Object.class)) {
