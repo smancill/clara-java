@@ -21,7 +21,7 @@ class MessageSpec extends Specification {
     @Shared byte[] testData = [0x0, 0x1, 0x2, 0xa, 0xb]
 
     @Unroll("Create and parse a message from a <#klass.simpleName> value")
-    def "Helpers to create and parse message can detect the type of primitive/array values"() {
+    def "Helpers to create and parse message can detect the type of primitive values"() {
         when: "creating a message from an object"
         var msg = Message.createFrom(testTopic, value)
 
@@ -42,11 +42,6 @@ class MessageSpec extends Specification {
         520L                                | MimeType.SFIXED64         | Long.class
         100.2f                              | MimeType.FLOAT            | Float.class
         2000.5d                             | MimeType.DOUBLE           | Double.class
-        ["foo", "bar"] as String[]          | MimeType.ARRAY_STRING     | String[].class
-        [3, 4, 5] as Integer[]              | MimeType.ARRAY_SFIXED32   | Integer[].class
-        [8, 100] as Long[]                  | MimeType.ARRAY_SFIXED64   | Long[].class
-        [1.0f, 2.0f] as Float[]             | MimeType.ARRAY_FLOAT      | Float[].class
-        [3.2d, 40.7d, 58.5d] as Double[]    | MimeType.ARRAY_DOUBLE     | Double[].class
         ["a", "b", "c"] as Set              | MimeType.JOBJECT          | Object.class
     }
 

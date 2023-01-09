@@ -14,7 +14,6 @@ import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -36,6 +35,7 @@ public class EngineDataType {
      * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
      */
     public static final EngineDataType SINT64 = buildPrimitive(MimeType.SINT64);
+
     /**
      * Signed fixed integer of 32 bits.
      *
@@ -48,63 +48,33 @@ public class EngineDataType {
      * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
      */
     public static final EngineDataType SFIXED64 = buildPrimitive(MimeType.SFIXED64);
+
     /**
      * A float (32 bits floating-point number).
      */
     public static final EngineDataType FLOAT = buildPrimitive(MimeType.FLOAT);
+
     /**
      * A double (64 bits floating-point number).
      */
     public static final EngineDataType DOUBLE = buildPrimitive(MimeType.DOUBLE);
+
     /**
      * A string.
      */
     public static final EngineDataType STRING = buildPrimitive(MimeType.STRING);
+
     /**
      * Raw bytes.
      * On Java a {@link ByteBuffer} is used to wrap the byte array and its endianness.
      */
     public static final EngineDataType BYTES = buildRawBytes();
-    /**
-     * An array of signed varints of 32 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType ARRAY_SINT32 = buildPrimitive(MimeType.ARRAY_SINT32);
-    /**
-     * An array of signed varints of 64 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType ARRAY_SINT64 = buildPrimitive(MimeType.ARRAY_SINT64);
-    /**
-     * An array of signed fixed integers of 32 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType ARRAY_SFIXED32 = buildPrimitive(MimeType.ARRAY_SFIXED32);
-    /**
-     * An array of signed fixed integers of 64 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType ARRAY_SFIXED64 = buildPrimitive(MimeType.ARRAY_SFIXED64);
-    /**
-     * An array of floats (32 bits floating-point numbers).
-     */
-    public static final EngineDataType ARRAY_FLOAT = buildPrimitive(MimeType.ARRAY_FLOAT);
-    /**
-     * An array of doubles (64 bits floating-point numbers).
-     */
-    public static final EngineDataType ARRAY_DOUBLE = buildPrimitive(MimeType.ARRAY_DOUBLE);
-    /**
-     * An array of strings.
-     */
-    public static final EngineDataType ARRAY_STRING = buildPrimitive(MimeType.ARRAY_STRING);
+
     /**
      * JSON text.
      */
     public static final EngineDataType JSON = buildJson();
+
     /**
      * A native data object.
      */
@@ -191,15 +161,6 @@ public class EngineDataType {
         DOUBLE          ("binary/double"),
         STRING          ("text/string"),
         BYTES           ("binary/bytes"),
-
-        ARRAY_SINT32    ("binary/array-sint32"),
-        ARRAY_SINT64    ("binary/array-sint64"),
-        ARRAY_SFIXED32  ("binary/array-sfixed32"),
-        ARRAY_SFIXED64  ("binary/array-sfixed32"),
-        ARRAY_FLOAT     ("binary/array-float"),
-        ARRAY_DOUBLE    ("binary/array-double"),
-        ARRAY_STRING    ("binary/array-string"),
-        ARRAY_BYTES     ("binary/array-string"),
 
         JSON            ("application/json"),
 
@@ -308,15 +269,6 @@ public class EngineDataType {
                 case FLOAT -> proto.setFLOAT((Float) data);
                 case STRING -> proto.setSTRING((String) data);
                 case BYTES -> proto.setBYTES((ByteString) data);
-
-                case ARRAY_SINT32 -> proto.addAllVLSINT32A(Arrays.asList((Integer[]) data));
-                case ARRAY_SINT64 -> proto.addAllVLSINT64A(Arrays.asList((Long[]) data));
-                case ARRAY_SFIXED32 -> proto.addAllFLSINT32A(Arrays.asList((Integer[]) data));
-                case ARRAY_SFIXED64 -> proto.addAllFLSINT64A(Arrays.asList((Long[]) data));
-                case ARRAY_DOUBLE -> proto.addAllDOUBLEA(Arrays.asList((Double[]) data));
-                case ARRAY_FLOAT -> proto.addAllFLOATA(Arrays.asList((Float[]) data));
-                case ARRAY_STRING -> proto.addAllSTRINGA(Arrays.asList((String[]) data));
-
                 default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
             }
             return nativeSerializer.write(proto.build());
@@ -334,15 +286,6 @@ public class EngineDataType {
                 case FLOAT -> proto.getFLOAT();
                 case STRING -> proto.getSTRING();
                 case BYTES -> proto.getBYTES();
-
-                case ARRAY_SINT32 -> proto.getVLSINT32AList().toArray(new Integer[0]);
-                case ARRAY_SINT64 -> proto.getVLSINT64AList().toArray(new Long[0]);
-                case ARRAY_SFIXED32 -> proto.getFLSINT32AList().toArray(new Integer[0]);
-                case ARRAY_SFIXED64 -> proto.getFLSINT64AList().toArray(new Long[0]);
-                case ARRAY_DOUBLE -> proto.getDOUBLEAList().toArray(new Double[0]);
-                case ARRAY_FLOAT -> proto.getFLOATAList().toArray(new Float[0]);
-                case ARRAY_STRING -> proto.getSTRINGAList().toArray(new String[0]);
-
                 default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
             };
         }

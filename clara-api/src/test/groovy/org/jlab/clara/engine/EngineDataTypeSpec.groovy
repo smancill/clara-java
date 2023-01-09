@@ -51,45 +51,6 @@ class EngineDataTypeSpec extends Specification {
         result == "high-energy physics"
     }
 
-    def "Serialize an integer array"() {
-        given: "the default integer array serializer"
-        var serializer = EngineDataType.ARRAY_SINT32.serializer()
-
-        when: "serializing and deserializing an integer array"
-        var data = [4, 5, 6] as Integer[]
-        var buffer = serializer.write(data)
-        var result = serializer.read(buffer) as Integer[]
-
-        then: "the result has the same value than the original"
-        result == data
-    }
-
-    def "Serialize a floating-point array"() {
-        given: "the default floating-point array serializer"
-        var serializer = EngineDataType.ARRAY_FLOAT.serializer()
-
-        when: "serializing and deserializing a floating-point array"
-        var data = [4.1, 5.7] as Float[]
-        var buffer = serializer.write(data)
-        var result = serializer.read(buffer) as Float[]
-
-        then: "the result has the same value than the original"
-        result == data
-    }
-
-    def "Serialize a string array"() {
-        given: "the default string array serializer"
-        var serializer = EngineDataType.ARRAY_STRING.serializer()
-
-        when: "serializing and deserializing a string array"
-        var data = ["proton", "electron"] as String[]
-        var buffer = serializer.write(data)
-        var result = serializer.read(buffer) as String[]
-
-        then: "the result has the same value than the original"
-        result == data
-    }
-
     def "Serialize a native data object"() {
         given: "the default native data serializer"
         var serializer = EngineDataType.NATIVE_DATA.serializer()

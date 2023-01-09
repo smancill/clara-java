@@ -16,8 +16,6 @@ import org.zeromq.ZMsg;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteOrder;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The user-data message for pub/sub communications.
@@ -259,26 +257,6 @@ public class Message {
             mimeType = MimeType.DOUBLE;
             pd.setDOUBLE(value);
 
-        } else if (data instanceof String[] array) {
-            mimeType = MimeType.ARRAY_STRING;
-            pd.addAllSTRINGA(Arrays.asList(array));
-
-        } else if (data instanceof Integer[] array) {
-            mimeType = MimeType.ARRAY_SFIXED32;
-            pd.addAllFLSINT32A(Arrays.asList(array));
-
-        } else if (data instanceof Long[] array) {
-            mimeType = MimeType.ARRAY_SFIXED64;
-            pd.addAllFLSINT64A(Arrays.asList(array));
-
-        } else if (data instanceof Float[] array) {
-            mimeType = MimeType.ARRAY_FLOAT;
-            pd.addAllFLOATA(Arrays.asList(array));
-
-        } else if (data instanceof Double[] array) {
-            mimeType = MimeType.ARRAY_DOUBLE;
-            pd.addAllDOUBLEA(Arrays.asList(array));
-
         } else if (data instanceof byte[] bytes) {
             mimeType = MimeType.BYTES;
             ba = bytes;
@@ -339,41 +317,6 @@ public class Message {
                 var pd = PlainData.parseFrom(data);
                 if (pd.hasDOUBLE()) {
                     return pd.getDOUBLE();
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_STRING)) {
-                var pd = PlainData.parseFrom(data);
-                List<String> list = pd.getSTRINGAList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new String[0]);
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_SFIXED32)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLSINT32AList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new Integer[0]);
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_SFIXED64)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLSINT64AList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new Long[0]);
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_FLOAT)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLOATAList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new Float[0]);
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_DOUBLE)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getDOUBLEAList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new Double[0]);
                 }
 
             } else {
@@ -439,46 +382,6 @@ public class Message {
                 var pd = PlainData.parseFrom(data);
                 if (pd.hasDOUBLE()) {
                     return dataType.cast(pd.getDOUBLE());
-                }
-
-            } else if (dataType.equals(String[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getSTRINGAList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new String[0]);
-                    return dataType.cast(array);
-                }
-
-            } else if (dataType.equals(Integer[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLSINT32AList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new Integer[0]);
-                    return dataType.cast(array);
-                }
-
-            } else if (dataType.equals(Long[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLSINT64AList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new Long[0]);
-                    return dataType.cast(array);
-                }
-
-            } else if (dataType.equals(Float[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLOATAList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new Float[0]);
-                    return dataType.cast(array);
-                }
-
-            } else if (dataType.equals(Double[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getDOUBLEAList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new Double[0]);
-                    return dataType.cast(array);
                 }
 
             } else if (dataType.equals(Object.class)) {

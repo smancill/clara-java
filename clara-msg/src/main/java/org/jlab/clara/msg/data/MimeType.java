@@ -9,7 +9,7 @@ package org.jlab.clara.msg.data;
 /**
  * Predefined supported types.
  * <p>
- * Primitive and arrays of primitives will be stored inside a
+ * Primitives will be stored inside a
  * {@link org.jlab.clara.msg.core.Message Message} as part of a protocol buffers
  * {@link org.jlab.clara.msg.data.PlainDataProto.PlainData PlainData} object.
  * Language specific types will be serialized and stored as a byte-array
@@ -59,47 +59,6 @@ public final class MimeType {
      * Binary data.
      */
     public static final String BYTES = "binary/bytes";
-
-
-    /**
-     * An array of signed integers of 32 bytes and variable length.
-     */
-    public static final String ARRAY_SINT32 = "binary/array-sint32";
-
-    /**
-     * An array of signed integers of 64 bytes and variable length.
-     */
-    public static final String ARRAY_SINT64 = "binary/array-sint64";
-
-    /**
-     * An array of signed integers of 32 bytes and fixed length.
-     */
-    public static final String ARRAY_SFIXED32 = "binary/array-sfixed32";
-
-    /**
-     * An array of signed integers of 32 bytes and fixed length.
-     */
-    public static final String ARRAY_SFIXED64 = "binary/array-sfixed64";
-
-    /**
-     * An array of 32 bytes single-precision floating-point numbers.
-     */
-    public static final String ARRAY_FLOAT = "binary/array-float";
-
-    /**
-     * An array of 64 bytes single-precision floating-point numbers.
-     */
-    public static final String ARRAY_DOUBLE = "binary/array-double";
-
-    /**
-     * An array of strings.
-     */
-    public static final String ARRAY_STRING = "binary/array-string";
-
-    /**
-     * A array of binary data.
-     */
-    public static final String ARRAY_BYTES = "binary/array-bytes";
 
     /**
      * A {@link org.jlab.clara.msg.data.PlainDataProto.PlainData PlainData} object.

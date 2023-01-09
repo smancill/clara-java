@@ -6,18 +6,14 @@
 
 package org.jlab.clara.msg.examples;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.msg.core.Actor;
 import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Callback;
 import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.core.Topic;
 import org.jlab.clara.msg.data.MimeType;
-import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 import org.jlab.clara.msg.data.RegInfo;
 import org.jlab.clara.msg.errors.ClaraMsgException;
-
-import java.util.List;
 
 /**
  * An example of a subscriber. It will receive any message of the given topic
@@ -91,7 +87,7 @@ public class Subscriber extends Actor {
             if (!msg.getMetaData().hasReplyTo()) {
                 // we get the data, but will not do anything with it for
                 // communication benchmarking purposes.
-                /* List<Integer> data = */ parseData(msg);
+                Message.parseData(msg);
 
                 if (nr == 0) {
                     t1 = System.currentTimeMillis();
@@ -111,26 +107,6 @@ public class Subscriber extends Actor {
                 // sends back "Done" string
                 respondBack(msg, "Done");
             }
-        }
-
-        /**
-         * De-serializes received message and retrieves List of integers
-         * Note this method is not checking the metadata for the mimeType.
-         *
-         * @param msg a received message
-         * @return data of the message, otherwise null
-         */
-        private List<Integer> parseData(Message msg) {
-            try {
-                var metadata = msg.getMetaData();
-                if (metadata.getDataType().equals(MimeType.ARRAY_SFIXED32)) {
-                    var data = PlainData.parseFrom(msg.getData());
-                    return data.getFLSINT32AList();
-                }
-            } catch (InvalidProtocolBufferException e) {
-                e.printStackTrace();
-            }
-            return null;
         }
     }
 }
