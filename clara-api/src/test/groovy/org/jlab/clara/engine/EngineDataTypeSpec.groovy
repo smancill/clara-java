@@ -6,8 +6,6 @@
 
 package org.jlab.clara.engine
 
-import org.jlab.clara.msg.data.PlainDataProto.PayloadData
-import org.jlab.clara.msg.data.PlainDataProto.PlainData
 import spock.lang.Specification
 
 import java.nio.ByteBuffer
@@ -49,55 +47,6 @@ class EngineDataTypeSpec extends Specification {
 
         then: "the result has the same value than the original"
         result == "high-energy physics"
-    }
-
-    def "Serialize a native data object"() {
-        given: "the default native data serializer"
-        var serializer = EngineDataType.NATIVE_DATA.serializer()
-
-        and: "a native data object"
-        var data = PlainData.newBuilder()
-            .setFLSINT32(56)
-            .setDOUBLE(5.6)
-            .addSTRINGA("pion")
-            .addSTRINGA("muon")
-            .addSTRINGA("neutrino")
-            .build()
-
-        when: "serializing and deserializing a native data objet"
-        var buffer = serializer.write(data)
-        var result = serializer.read(buffer) as PlainData
-
-        then: "the result has the same value than the original"
-        result == data
-    }
-
-    def "Serialize a native payload object"() {
-        given: "the default native payload serializer"
-        var serializer = EngineDataType.NATIVE_PAYLOAD.serializer()
-
-        and: "a native payload object"
-        var data1 = PlainData.newBuilder()
-            .addDOUBLEA(1)
-            .addDOUBLEA(4.5)
-            .addDOUBLEA(5.8)
-            .build()
-        var data2 = PlainData.newBuilder()
-            .addFLOATA(4.3f)
-            .addFLOATA(4.5f)
-            .addFLOATA(5.8f)
-            .build()
-        var payload = PayloadData.newBuilder()
-            .addItem(PayloadData.Item.newBuilder().setData(data1).setName("doubles"))
-            .addItem(PayloadData.Item.newBuilder().setData(data2).setName("floats"))
-            .build()
-
-        when: "serializing and deserializing a native payload objet"
-        var buffer = serializer.write(payload)
-        var result = serializer.read(buffer) as PayloadData
-
-        then: "the result has the same value than the original"
-        result == payload
     }
 
     def "Serialize raw bytes"() {

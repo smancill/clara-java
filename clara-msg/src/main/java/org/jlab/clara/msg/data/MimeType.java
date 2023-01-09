@@ -41,10 +41,5 @@ public final class MimeType {
      */
     public static final String BYTES = "binary/bytes";
 
-    /**
-     * A {@link org.jlab.clara.msg.data.PlainDataProto.PlainData PlainData} object.
-     */
-    public static final String PLAIN_DATA = "binary/clara-plain";
-
     private MimeType() { }
 }

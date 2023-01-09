@@ -12,8 +12,6 @@ import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.data.PlainDataProto.PayloadData;
-import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -62,16 +60,6 @@ public class EngineDataType {
      */
     public static final EngineDataType JSON = buildString(MimeType.JSON);
 
-    /**
-     * A native data object.
-     */
-    public static final EngineDataType NATIVE_DATA = buildNative();
-
-    /**
-     * A native payload object.
-     */
-    public static final EngineDataType NATIVE_PAYLOAD = buildPayload();
-
     private final String mimeType;
     private final ClaraSerializer serializer;
 
@@ -106,13 +94,6 @@ public class EngineDataType {
         return new EngineDataType(mimeType.toString(), new StringSerializer());
     }
 
-    private static EngineDataType buildNative() {
-        return new EngineDataType(MimeType.NATIVE_PLAIN.toString(), new NativeSerializer());
-    }
-
-    private static EngineDataType buildPayload() {
-        return new EngineDataType(MimeType.NATIVE_PAYLOAD.toString(), new PayloadSerializer());
-    }
 
     /**
      * Returns the name of this data type.
@@ -146,11 +127,7 @@ public class EngineDataType {
         DOUBLE          ("binary/double"),
         STRING          ("text/string"),
         BYTES           ("binary/bytes"),
-
-        JSON            ("application/json"),
-
-        NATIVE_PLAIN    ("binary/clara-plain"),
-        NATIVE_PAYLOAD  ("binary/clara-payload");
+        JSON            ("application/json");
 
         private final String name;
 
@@ -164,44 +141,6 @@ public class EngineDataType {
         }
     }
     // checkstyle.on: MethodParamPad
-
-
-    private static class NativeSerializer implements ClaraSerializer {
-
-        @Override
-        public ByteBuffer write(Object data) throws ClaraException {
-            var xData = (PlainData) data;
-            return ByteBuffer.wrap(xData.toByteArray());
-        }
-
-        @Override
-        public Object read(ByteBuffer data) throws ClaraException {
-            try {
-                return PlainData.parseFrom(data.array());
-            } catch (InvalidProtocolBufferException e) {
-                throw new ClaraException(e.getMessage());
-            }
-        }
-    }
-
-
-    private static class PayloadSerializer implements ClaraSerializer {
-
-        @Override
-        public ByteBuffer write(Object data) throws ClaraException {
-            var payload = (PayloadData) data;
-            return ByteBuffer.wrap(payload.toByteArray());
-        }
-
-        @Override
-        public Object read(ByteBuffer data) throws ClaraException {
-            try {
-                return PayloadData.parseFrom(data.array());
-            } catch (InvalidProtocolBufferException e) {
-                throw new ClaraException(e.getMessage());
-            }
-        }
-    }
 
 
     private static class StringSerializer implements ClaraSerializer {
