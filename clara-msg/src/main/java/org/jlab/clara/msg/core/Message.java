@@ -16,6 +16,7 @@ import org.zeromq.ZMsg;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The user-data message for pub/sub communications.
@@ -239,7 +240,7 @@ public class Message {
 
         if (data instanceof String value) {
             mimeType = MimeType.STRING;
-            pd.setSTRING(value);
+            ba = value.getBytes(StandardCharsets.UTF_8);
 
         } else if (data instanceof Integer value) {
             mimeType = MimeType.INT32;
@@ -290,10 +291,7 @@ public class Message {
             String dataType = message.getMimeType();
 
             if (dataType.equals(MimeType.STRING)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasSTRING()) {
-                    return pd.getSTRING();
-                }
+                return new String(data, StandardCharsets.UTF_8);
 
             } else if (dataType.equals(MimeType.INT32)) {
                 var pd = PlainData.parseFrom(data);
@@ -355,10 +353,8 @@ public class Message {
             byte[] data = message.getData();
 
             if (dataType.equals(String.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasSTRING()) {
-                    return dataType.cast(pd.getSTRING());
-                }
+                var value = new String(data, StandardCharsets.UTF_8);
+                return dataType.cast(value);
 
             } else if (dataType.equals(Integer.class)) {
                 var pd = PlainData.parseFrom(data);

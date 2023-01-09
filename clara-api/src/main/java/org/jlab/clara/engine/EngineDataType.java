@@ -46,7 +46,7 @@ public class EngineDataType {
     /**
      * A string.
      */
-    public static final EngineDataType STRING = buildPrimitive(MimeType.STRING);
+    public static final EngineDataType STRING = buildString(MimeType.STRING);
 
     /**
      * Raw bytes.
@@ -57,7 +57,7 @@ public class EngineDataType {
     /**
      * JSON text.
      */
-    public static final EngineDataType JSON = buildJson();
+    public static final EngineDataType JSON = buildString(MimeType.JSON);
 
     /**
      * A native data object.
@@ -99,8 +99,8 @@ public class EngineDataType {
         return new EngineDataType(MimeType.BYTES.toString(), new RawBytesSerializer());
     }
 
-    private static EngineDataType buildJson() {
-        return new EngineDataType(MimeType.JSON.toString(), new StringSerializer());
+    private static EngineDataType buildString(MimeType mimeType) {
+        return new EngineDataType(mimeType.toString(), new StringSerializer());
     }
 
     private static EngineDataType buildNative() {
@@ -247,7 +247,6 @@ public class EngineDataType {
                 case INT64 -> proto.setVLSINT64((Long) data);
                 case DOUBLE -> proto.setDOUBLE((Double) data);
                 case FLOAT -> proto.setFLOAT((Float) data);
-                case STRING -> proto.setSTRING((String) data);
                 case BYTES -> proto.setBYTES((ByteString) data);
                 default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
             }
@@ -262,7 +261,6 @@ public class EngineDataType {
                 case INT64 -> proto.getVLSINT64();
                 case DOUBLE -> proto.getDOUBLE();
                 case FLOAT -> proto.getFLOAT();
-                case STRING -> proto.getSTRING();
                 case BYTES -> proto.getBYTES();
                 default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
             };
