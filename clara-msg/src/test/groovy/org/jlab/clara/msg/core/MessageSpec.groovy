@@ -12,6 +12,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 class MessageSpec extends Specification {
@@ -43,6 +44,7 @@ class MessageSpec extends Specification {
         100.2f                              | MimeType.FLOAT            | Float.class
         2000.5d                             | MimeType.DOUBLE           | Double.class
         ["a", "b", "c"] as Set              | MimeType.JOBJECT          | Object.class
+        ByteBuffer.wrap(testData)           | MimeType.BYTES            | ByteBuffer.class
     }
 
     def "Creating a message without setting the byte order uses the default order for the data"() {

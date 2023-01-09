@@ -18,6 +18,7 @@ import org.zeromq.ZMsg;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
@@ -260,9 +261,9 @@ public class Message {
             mimeType = MimeType.DOUBLE;
             ba = DoubleValue.of(value).toByteArray();
 
-        } else if (data instanceof byte[] bytes) {
+        } else if (data instanceof ByteBuffer value) {
             mimeType = MimeType.BYTES;
-            ba = bytes;
+            ba = value.array();
 
         } else {
             mimeType = MimeType.JOBJECT;
@@ -314,6 +315,9 @@ public class Message {
                 if (value.isInitialized()) {
                     return value.getValue();
                 }
+
+            } else if (dataType.equals(MimeType.BYTES)) {
+                return ByteBuffer.wrap(data);
 
             } else {
                 try {
@@ -377,6 +381,10 @@ public class Message {
                 if (value.isInitialized()) {
                     return dataType.cast(value.getValue());
                 }
+
+            } else if (dataType.equals(ByteBuffer.class)) {
+                var value = ByteBuffer.wrap(data);
+                return dataType.cast(value);
 
             } else if (dataType.equals(Object.class)) {
                 try {
