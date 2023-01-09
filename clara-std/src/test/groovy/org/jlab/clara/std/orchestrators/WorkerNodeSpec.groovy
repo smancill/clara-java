@@ -126,7 +126,7 @@ class WorkerNodeSpec extends Specification {
 
         and: "mock reader service config responses"
         var events = new EngineData().tap {
-            setData(EngineDataType.SINT32, 1200)
+            setData(EngineDataType.INT32, 1200)
         }
         var order = new EngineData().tap {
             setData("reader_order")

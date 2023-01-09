@@ -50,7 +50,7 @@ class CoreOrchestrator {
 
         base.registerDataTypes(EngineDataType.JSON,
                                EngineDataType.STRING,
-                               EngineDataType.SFIXED32);
+                               EngineDataType.INT32);
         base.registerDataTypes(setup.dataTypes);
     }
 

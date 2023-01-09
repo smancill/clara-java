@@ -6,15 +6,15 @@
 
 package org.jlab.clara.engine;
 
-import com.google.protobuf.ByteString;
+import com.google.protobuf.DoubleValue;
+import com.google.protobuf.FloatValue;
+import com.google.protobuf.Int32Value;
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.base.error.ClaraException;
-import org.jlab.clara.msg.data.PlainDataProto.PayloadData;
-import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -25,95 +25,40 @@ import java.util.Objects;
 public class EngineDataType {
 
     /**
-     * Signed int of 32 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
+     * An integer of 32 bits.
      */
-    public static final EngineDataType SINT32 = buildPrimitive(MimeType.SINT32);
+    public static final EngineDataType INT32 = buildPrimitive(MimeType.INT32);
+
     /**
-     * Signed int of 64 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
+     * An integer of 64 bits.
      */
-    public static final EngineDataType SINT64 = buildPrimitive(MimeType.SINT64);
-    /**
-     * Signed fixed integer of 32 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType SFIXED32 = buildPrimitive(MimeType.SFIXED32);
-    /**
-     * Signed fixed integer of 64 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType SFIXED64 = buildPrimitive(MimeType.SFIXED64);
+    public static final EngineDataType INT64 = buildPrimitive(MimeType.INT64);
+
     /**
      * A float (32 bits floating-point number).
      */
     public static final EngineDataType FLOAT = buildPrimitive(MimeType.FLOAT);
+
     /**
      * A double (64 bits floating-point number).
      */
     public static final EngineDataType DOUBLE = buildPrimitive(MimeType.DOUBLE);
+
     /**
      * A string.
      */
-    public static final EngineDataType STRING = buildPrimitive(MimeType.STRING);
+    public static final EngineDataType STRING = buildString(MimeType.STRING);
+
     /**
      * Raw bytes.
      * On Java a {@link ByteBuffer} is used to wrap the byte array and its endianness.
      */
     public static final EngineDataType BYTES = buildRawBytes();
-    /**
-     * An array of signed varints of 32 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType ARRAY_SINT32 = buildPrimitive(MimeType.ARRAY_SINT32);
-    /**
-     * An array of signed varints of 64 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType ARRAY_SINT64 = buildPrimitive(MimeType.ARRAY_SINT64);
-    /**
-     * An array of signed fixed integers of 32 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType ARRAY_SFIXED32 = buildPrimitive(MimeType.ARRAY_SFIXED32);
-    /**
-     * An array of signed fixed integers of 64 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType ARRAY_SFIXED64 = buildPrimitive(MimeType.ARRAY_SFIXED64);
-    /**
-     * An array of floats (32 bits floating-point numbers).
-     */
-    public static final EngineDataType ARRAY_FLOAT = buildPrimitive(MimeType.ARRAY_FLOAT);
-    /**
-     * An array of doubles (64 bits floating-point numbers).
-     */
-    public static final EngineDataType ARRAY_DOUBLE = buildPrimitive(MimeType.ARRAY_DOUBLE);
-    /**
-     * An array of strings.
-     */
-    public static final EngineDataType ARRAY_STRING = buildPrimitive(MimeType.ARRAY_STRING);
+
     /**
      * JSON text.
      */
-    public static final EngineDataType JSON = buildJson();
-    /**
-     * A native data object.
-     */
-    public static final EngineDataType NATIVE_DATA = buildNative();
-
-    /**
-     * A native payload object.
-     */
-    public static final EngineDataType NATIVE_PAYLOAD = buildPayload();
+    public static final EngineDataType JSON = buildString(MimeType.JSON);
 
     private final String mimeType;
     private final ClaraSerializer serializer;
@@ -145,17 +90,10 @@ public class EngineDataType {
         return new EngineDataType(MimeType.BYTES.toString(), new RawBytesSerializer());
     }
 
-    private static EngineDataType buildJson() {
-        return new EngineDataType(MimeType.JSON.toString(), new StringSerializer());
+    private static EngineDataType buildString(MimeType mimeType) {
+        return new EngineDataType(mimeType.toString(), new StringSerializer());
     }
 
-    private static EngineDataType buildNative() {
-        return new EngineDataType(MimeType.NATIVE_PLAIN.toString(), new NativeSerializer());
-    }
-
-    private static EngineDataType buildPayload() {
-        return new EngineDataType(MimeType.NATIVE_PAYLOAD.toString(), new PayloadSerializer());
-    }
 
     /**
      * Returns the name of this data type.
@@ -183,28 +121,13 @@ public class EngineDataType {
 
     // checkstyle.off: MethodParamPad
     private enum MimeType {
-        SINT32          ("binary/sint32"),
-        SINT64          ("binary/sint64"),
-        SFIXED32        ("binary/sfixed32"),
-        SFIXED64        ("binary/sfixed64"),
+        INT32           ("binary/int32"),
+        INT64           ("binary/int64"),
         FLOAT           ("binary/float"),
         DOUBLE          ("binary/double"),
         STRING          ("text/string"),
         BYTES           ("binary/bytes"),
-
-        ARRAY_SINT32    ("binary/array-sint32"),
-        ARRAY_SINT64    ("binary/array-sint64"),
-        ARRAY_SFIXED32  ("binary/array-sfixed32"),
-        ARRAY_SFIXED64  ("binary/array-sfixed32"),
-        ARRAY_FLOAT     ("binary/array-float"),
-        ARRAY_DOUBLE    ("binary/array-double"),
-        ARRAY_STRING    ("binary/array-string"),
-        ARRAY_BYTES     ("binary/array-string"),
-
-        JSON            ("application/json"),
-
-        NATIVE_PLAIN    ("binary/clara-plain"),
-        NATIVE_PAYLOAD  ("binary/clara-payload");
+        JSON            ("application/json");
 
         private final String name;
 
@@ -218,44 +141,6 @@ public class EngineDataType {
         }
     }
     // checkstyle.on: MethodParamPad
-
-
-    private static class NativeSerializer implements ClaraSerializer {
-
-        @Override
-        public ByteBuffer write(Object data) throws ClaraException {
-            var xData = (PlainData) data;
-            return ByteBuffer.wrap(xData.toByteArray());
-        }
-
-        @Override
-        public Object read(ByteBuffer data) throws ClaraException {
-            try {
-                return PlainData.parseFrom(data.array());
-            } catch (InvalidProtocolBufferException e) {
-                throw new ClaraException(e.getMessage());
-            }
-        }
-    }
-
-
-    private static class PayloadSerializer implements ClaraSerializer {
-
-        @Override
-        public ByteBuffer write(Object data) throws ClaraException {
-            var payload = (PayloadData) data;
-            return ByteBuffer.wrap(payload.toByteArray());
-        }
-
-        @Override
-        public Object read(ByteBuffer data) throws ClaraException {
-            try {
-                return PayloadData.parseFrom(data.array());
-            } catch (InvalidProtocolBufferException e) {
-                throw new ClaraException(e.getMessage());
-            }
-        }
-    }
 
 
     private static class StringSerializer implements ClaraSerializer {
@@ -290,7 +175,6 @@ public class EngineDataType {
     private static class PrimitiveSerializer implements ClaraSerializer {
 
         private final MimeType mimeType;
-        private final NativeSerializer nativeSerializer = new NativeSerializer();
 
         PrimitiveSerializer(MimeType mimeType) {
             this.mimeType = mimeType;
@@ -298,53 +182,30 @@ public class EngineDataType {
 
         @Override
         public ByteBuffer write(Object data) throws ClaraException {
-            var proto = PlainData.newBuilder();
-            switch (mimeType) {
-                case SINT32 -> proto.setVLSINT32((Integer) data);
-                case SINT64 -> proto.setVLSINT64((Long) data);
-                case SFIXED32 -> proto.setFLSINT32((Integer) data);
-                case SFIXED64 -> proto.setFLSINT64((Long) data);
-                case DOUBLE -> proto.setDOUBLE((Double) data);
-                case FLOAT -> proto.setFLOAT((Float) data);
-                case STRING -> proto.setSTRING((String) data);
-                case BYTES -> proto.setBYTES((ByteString) data);
-
-                case ARRAY_SINT32 -> proto.addAllVLSINT32A(Arrays.asList((Integer[]) data));
-                case ARRAY_SINT64 -> proto.addAllVLSINT64A(Arrays.asList((Long[]) data));
-                case ARRAY_SFIXED32 -> proto.addAllFLSINT32A(Arrays.asList((Integer[]) data));
-                case ARRAY_SFIXED64 -> proto.addAllFLSINT64A(Arrays.asList((Long[]) data));
-                case ARRAY_DOUBLE -> proto.addAllDOUBLEA(Arrays.asList((Double[]) data));
-                case ARRAY_FLOAT -> proto.addAllFLOATA(Arrays.asList((Float[]) data));
-                case ARRAY_STRING -> proto.addAllSTRINGA(Arrays.asList((String[]) data));
-
-                default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
-            }
-            return nativeSerializer.write(proto.build());
+            var bytes = switch (mimeType) {
+                case INT32 -> Int32Value.of((Integer) data).toByteArray();
+                case INT64 -> Int64Value.of((Long) data).toByteArray();
+                case FLOAT -> FloatValue.of((Float) data).toByteArray();
+                case DOUBLE -> DoubleValue.of((Double) data).toByteArray();
+                default -> throw new IllegalStateException("invalid mime-type: " + mimeType);
+            };
+            return ByteBuffer.wrap(bytes);
         }
 
         @Override
         public Object read(ByteBuffer data) throws ClaraException {
-            var proto = (PlainData) nativeSerializer.read(data);
-            return switch (mimeType) {
-                case SINT32 -> proto.getVLSINT32();
-                case SINT64 -> proto.getVLSINT64();
-                case SFIXED32 -> proto.getFLSINT32();
-                case SFIXED64 -> proto.getFLSINT64();
-                case DOUBLE -> proto.getDOUBLE();
-                case FLOAT -> proto.getFLOAT();
-                case STRING -> proto.getSTRING();
-                case BYTES -> proto.getBYTES();
-
-                case ARRAY_SINT32 -> proto.getVLSINT32AList().toArray(new Integer[0]);
-                case ARRAY_SINT64 -> proto.getVLSINT64AList().toArray(new Long[0]);
-                case ARRAY_SFIXED32 -> proto.getFLSINT32AList().toArray(new Integer[0]);
-                case ARRAY_SFIXED64 -> proto.getFLSINT64AList().toArray(new Long[0]);
-                case ARRAY_DOUBLE -> proto.getDOUBLEAList().toArray(new Double[0]);
-                case ARRAY_FLOAT -> proto.getFLOATAList().toArray(new Float[0]);
-                case ARRAY_STRING -> proto.getSTRINGAList().toArray(new String[0]);
-
-                default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
-            };
+            var bytes = data.array();
+            try {
+                return switch (mimeType) {
+                    case INT32 -> Int32Value.parseFrom(bytes).getValue();
+                    case INT64 -> Int64Value.parseFrom(bytes).getValue();
+                    case FLOAT -> FloatValue.parseFrom(bytes).getValue();
+                    case DOUBLE -> DoubleValue.parseFrom(bytes).getValue();
+                    default -> throw new IllegalStateException("Invalid mime-type: " + mimeType);
+                };
+            } catch (InvalidProtocolBufferException e) {
+                throw new ClaraException(e.getMessage());
+            }
         }
     }
 }

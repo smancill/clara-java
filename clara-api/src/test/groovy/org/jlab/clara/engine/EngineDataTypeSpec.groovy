@@ -6,8 +6,6 @@
 
 package org.jlab.clara.engine
 
-import org.jlab.clara.msg.data.PlainDataProto.PayloadData
-import org.jlab.clara.msg.data.PlainDataProto.PlainData
 import spock.lang.Specification
 
 import java.nio.ByteBuffer
@@ -17,7 +15,7 @@ class EngineDataTypeSpec extends Specification {
 
     def "Serialize an integer value"() {
         given: "the default integer serializer"
-        var serializer = EngineDataType.SINT32.serializer()
+        var serializer = EngineDataType.INT32.serializer()
 
         when: "serializing and deserializing an integer"
         var buffer = serializer.write(18)
@@ -49,94 +47,6 @@ class EngineDataTypeSpec extends Specification {
 
         then: "the result has the same value than the original"
         result == "high-energy physics"
-    }
-
-    def "Serialize an integer array"() {
-        given: "the default integer array serializer"
-        var serializer = EngineDataType.ARRAY_SINT32.serializer()
-
-        when: "serializing and deserializing an integer array"
-        var data = [4, 5, 6] as Integer[]
-        var buffer = serializer.write(data)
-        var result = serializer.read(buffer) as Integer[]
-
-        then: "the result has the same value than the original"
-        result == data
-    }
-
-    def "Serialize a floating-point array"() {
-        given: "the default floating-point array serializer"
-        var serializer = EngineDataType.ARRAY_FLOAT.serializer()
-
-        when: "serializing and deserializing a floating-point array"
-        var data = [4.1, 5.7] as Float[]
-        var buffer = serializer.write(data)
-        var result = serializer.read(buffer) as Float[]
-
-        then: "the result has the same value than the original"
-        result == data
-    }
-
-    def "Serialize a string array"() {
-        given: "the default string array serializer"
-        var serializer = EngineDataType.ARRAY_STRING.serializer()
-
-        when: "serializing and deserializing a string array"
-        var data = ["proton", "electron"] as String[]
-        var buffer = serializer.write(data)
-        var result = serializer.read(buffer) as String[]
-
-        then: "the result has the same value than the original"
-        result == data
-    }
-
-    def "Serialize a native data object"() {
-        given: "the default native data serializer"
-        var serializer = EngineDataType.NATIVE_DATA.serializer()
-
-        and: "a native data object"
-        var data = PlainData.newBuilder()
-            .setFLSINT32(56)
-            .setDOUBLE(5.6)
-            .addSTRINGA("pion")
-            .addSTRINGA("muon")
-            .addSTRINGA("neutrino")
-            .build()
-
-        when: "serializing and deserializing a native data objet"
-        var buffer = serializer.write(data)
-        var result = serializer.read(buffer) as PlainData
-
-        then: "the result has the same value than the original"
-        result == data
-    }
-
-    def "Serialize a native payload object"() {
-        given: "the default native payload serializer"
-        var serializer = EngineDataType.NATIVE_PAYLOAD.serializer()
-
-        and: "a native payload object"
-        var data1 = PlainData.newBuilder()
-            .addDOUBLEA(1)
-            .addDOUBLEA(4.5)
-            .addDOUBLEA(5.8)
-            .build()
-        var data2 = PlainData.newBuilder()
-            .addFLOATA(4.3f)
-            .addFLOATA(4.5f)
-            .addFLOATA(5.8f)
-            .build()
-        var payload = PayloadData.newBuilder()
-            .addItem(PayloadData.Item.newBuilder().setData(data1).setName("doubles"))
-            .addItem(PayloadData.Item.newBuilder().setData(data2).setName("floats"))
-            .build()
-
-        when: "serializing and deserializing a native payload objet"
-        var buffer = serializer.write(payload)
-        var result = serializer.read(buffer) as PayloadData
-
-        then: "the result has the same value than the original"
-        result == payload
     }
 
     def "Serialize raw bytes"() {

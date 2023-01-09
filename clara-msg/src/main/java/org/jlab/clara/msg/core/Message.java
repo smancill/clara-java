@@ -6,18 +6,20 @@
 
 package org.jlab.clara.msg.core;
 
+import com.google.protobuf.DoubleValue;
+import com.google.protobuf.FloatValue;
+import com.google.protobuf.Int32Value;
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.jlab.clara.msg.data.MetaDataProto.MetaData;
 import org.jlab.clara.msg.data.MimeType;
-import org.jlab.clara.msg.data.PlainDataProto.PlainData;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.zeromq.ZMsg;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The user-data message for pub/sub communications.
@@ -235,65 +237,35 @@ public class Message {
      */
     public static Message createFrom(Topic topic, Object data) {
 
-        byte[] ba = null;
+        final byte[] ba;
         final String mimeType;
-        PlainData.Builder pd = PlainData.newBuilder();
 
         if (data instanceof String value) {
             mimeType = MimeType.STRING;
-            pd.setSTRING(value);
+            ba = value.getBytes(StandardCharsets.UTF_8);
 
         } else if (data instanceof Integer value) {
-            mimeType = MimeType.SFIXED32;
-            pd.setFLSINT32(value);
+            mimeType = MimeType.INT32;
+            ba = Int32Value.of(value).toByteArray();
 
         } else if (data instanceof Long value) {
-            mimeType = MimeType.SFIXED64;
-            pd.setFLSINT64(value);
+            mimeType = MimeType.INT64;
+            ba = Int64Value.of(value).toByteArray();
 
         } else if (data instanceof Float value) {
             mimeType = MimeType.FLOAT;
-            pd.setFLOAT(value);
+            ba = FloatValue.of(value).toByteArray();
 
         } else if (data instanceof Double value) {
             mimeType = MimeType.DOUBLE;
-            pd.setDOUBLE(value);
+            ba = DoubleValue.of(value).toByteArray();
 
-        } else if (data instanceof String[] array) {
-            mimeType = MimeType.ARRAY_STRING;
-            pd.addAllSTRINGA(Arrays.asList(array));
-
-        } else if (data instanceof Integer[] array) {
-            mimeType = MimeType.ARRAY_SFIXED32;
-            pd.addAllFLSINT32A(Arrays.asList(array));
-
-        } else if (data instanceof Long[] array) {
-            mimeType = MimeType.ARRAY_SFIXED64;
-            pd.addAllFLSINT64A(Arrays.asList(array));
-
-        } else if (data instanceof Float[] array) {
-            mimeType = MimeType.ARRAY_FLOAT;
-            pd.addAllFLOATA(Arrays.asList(array));
-
-        } else if (data instanceof Double[] array) {
-            mimeType = MimeType.ARRAY_DOUBLE;
-            pd.addAllDOUBLEA(Arrays.asList(array));
-
-        } else if (data instanceof byte[] bytes) {
+        } else if (data instanceof ByteBuffer value) {
             mimeType = MimeType.BYTES;
-            ba = bytes;
+            ba = value.array();
 
         } else {
-            mimeType = MimeType.JOBJECT;
-            try {
-                ba = ActorUtils.serializeToBytes(data);
-            } catch (IOException e) {
-                throw new UncheckedIOException("could not serialize object", e);
-            }
-        }
-
-        if (ba == null) {
-            ba = pd.build().toByteArray();
+            throw new IllegalArgumentException("unsupported type: " + data.getClass());
         }
 
         return new Message(topic, mimeType, ba);
@@ -312,76 +284,37 @@ public class Message {
             String dataType = message.getMimeType();
 
             if (dataType.equals(MimeType.STRING)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasSTRING()) {
-                    return pd.getSTRING();
+                return new String(data, StandardCharsets.UTF_8);
+
+            } else if (dataType.equals(MimeType.INT32)) {
+                var value = Int32Value.parseFrom(data);
+                if (value.isInitialized()) {
+                    return value.getValue();
                 }
 
-            } else if (dataType.equals(MimeType.SFIXED32)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLSINT32()) {
-                    return pd.getFLSINT32();
-                }
-
-            } else if (dataType.equals(MimeType.SFIXED64)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLSINT64()) {
-                    return pd.getFLSINT64();
+            } else if (dataType.equals(MimeType.INT64)) {
+                var value = Int64Value.parseFrom(data);
+                if (value.isInitialized()) {
+                    return value.getValue();
                 }
 
             } else if (dataType.equals(MimeType.FLOAT)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLOAT()) {
-                    return pd.getFLOAT();
+                var value = FloatValue.parseFrom(data);
+                if (value.isInitialized()) {
+                    return value.getValue();
                 }
 
             } else if (dataType.equals(MimeType.DOUBLE)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasDOUBLE()) {
-                    return pd.getDOUBLE();
+                var value = DoubleValue.parseFrom(data);
+                if (value.isInitialized()) {
+                    return value.getValue();
                 }
 
-            } else if (dataType.equals(MimeType.ARRAY_STRING)) {
-                var pd = PlainData.parseFrom(data);
-                List<String> list = pd.getSTRINGAList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new String[0]);
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_SFIXED32)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLSINT32AList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new Integer[0]);
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_SFIXED64)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLSINT64AList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new Long[0]);
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_FLOAT)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLOATAList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new Float[0]);
-                }
-
-            } else if (dataType.equals(MimeType.ARRAY_DOUBLE)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getDOUBLEAList();
-                if (!list.isEmpty()) {
-                    return list.toArray(new Double[0]);
-                }
+            } else if (dataType.equals(MimeType.BYTES)) {
+                return ByteBuffer.wrap(data);
 
             } else {
-                try {
-                    return ActorUtils.deserialize(data);
-                } catch (ClassNotFoundException | IOException e) {
-                    throw new RuntimeException("could not deserialize data", e);
-                }
+                throw new IllegalArgumentException("unsupported mime-type:" + dataType);
             }
 
             throw new IllegalArgumentException("the message data doesn't match the mime-type:"
@@ -412,81 +345,39 @@ public class Message {
             byte[] data = message.getData();
 
             if (dataType.equals(String.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasSTRING()) {
-                    return dataType.cast(pd.getSTRING());
-                }
+                var value = new String(data, StandardCharsets.UTF_8);
+                return dataType.cast(value);
 
             } else if (dataType.equals(Integer.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLSINT32()) {
-                    return dataType.cast(pd.getFLSINT32());
+                var value = Int32Value.parseFrom(data);
+                if (value.isInitialized()) {
+                    return dataType.cast(value.getValue());
                 }
 
             } else if (dataType.equals(Long.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLSINT64()) {
-                    return dataType.cast(pd.getFLSINT64());
+                var value = Int64Value.parseFrom(data);
+                if (value.isInitialized()) {
+                    return dataType.cast(value.getValue());
                 }
 
             } else if (dataType.equals(Float.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasFLOAT()) {
-                    return dataType.cast(pd.getFLOAT());
+                var value = FloatValue.parseFrom(data);
+                if (value.isInitialized()) {
+                    return dataType.cast(value.getValue());
                 }
 
             } else if (dataType.equals(Double.class)) {
-                var pd = PlainData.parseFrom(data);
-                if (pd.hasDOUBLE()) {
-                    return dataType.cast(pd.getDOUBLE());
+                var value = DoubleValue.parseFrom(data);
+                if (value.isInitialized()) {
+                    return dataType.cast(value.getValue());
                 }
 
-            } else if (dataType.equals(String[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getSTRINGAList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new String[0]);
-                    return dataType.cast(array);
-                }
+            } else if (dataType.equals(ByteBuffer.class)) {
+                var value = ByteBuffer.wrap(data);
+                return dataType.cast(value);
 
-            } else if (dataType.equals(Integer[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLSINT32AList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new Integer[0]);
-                    return dataType.cast(array);
-                }
-
-            } else if (dataType.equals(Long[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLSINT64AList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new Long[0]);
-                    return dataType.cast(array);
-                }
-
-            } else if (dataType.equals(Float[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getFLOATAList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new Float[0]);
-                    return dataType.cast(array);
-                }
-
-            } else if (dataType.equals(Double[].class)) {
-                var pd = PlainData.parseFrom(data);
-                var list = pd.getDOUBLEAList();
-                if (!list.isEmpty()) {
-                    var array = list.toArray(new Double[0]);
-                    return dataType.cast(array);
-                }
-
-            } else if (dataType.equals(Object.class)) {
-                try {
-                    return dataType.cast(ActorUtils.deserialize(data));
-                } catch (ClassNotFoundException | IOException e) {
-                    throw new RuntimeException("could not deserialize data", e);
-                }
+            } else {
+                throw new IllegalArgumentException("unsupported type:" + dataType);
             }
 
             throw new IllegalArgumentException("message doesn't contain data of type: " + dataType);

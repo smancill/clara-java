@@ -229,12 +229,12 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
                     if (processingEvents.isEmpty()) {
                         eofRequestCount++;
                         ServiceUtils.setError(output, END_OF_FILE, eofRequestCount + 1);
-                        output.setData(EngineDataType.SFIXED32.mimeType(), eofRequestCount);
+                        output.setData(EngineDataType.INT32.mimeType(), eofRequestCount);
                     } else {
-                        output.setData(EngineDataType.SFIXED32.mimeType(), EOF_WAITING_REC);
+                        output.setData(EngineDataType.INT32.mimeType(), EOF_WAITING_REC);
                     }
                 } else {
-                    output.setData(EngineDataType.SFIXED32.mimeType(), EOF_NOT_FROM_WRITER);
+                    output.setData(EngineDataType.INT32.mimeType(), EOF_NOT_FROM_WRITER);
                 }
             }
         }
@@ -281,7 +281,7 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
             if (reader == null) {
                 ServiceUtils.setError(output, openError, 1);
             } else {
-                output.setData(EngineDataType.SFIXED32.mimeType(), eventCount);
+                output.setData(EngineDataType.INT32.mimeType(), eventCount);
                 output.setDescription("event count");
             }
         }
@@ -343,7 +343,7 @@ public abstract class AbstractEventReaderService<Reader> extends AbstractService
         return ClaraUtil.buildDataTypes(
                 getDataType(),
                 EngineDataType.STRING,
-                EngineDataType.SFIXED32);
+                EngineDataType.INT32);
     }
 
 

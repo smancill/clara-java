@@ -13,10 +13,10 @@
  * store extra information about a {@link org.jlab.clara.msg.core.Message
  * message} and its data. Although the message class requires the data to be a
  * binary byte array, and the serialization is left to be handled by the
- * applications, the {@link org.jlab.clara.msg.data.PlainDataProto.PlainData PlainData}
- * class is provided as a quick container to send and serialize values of basic
- * types data between actors, working for all supported languages. The
- * default mime-types are listed in {@link org.jlab.clara.msg.data.MimeType MimeType}.
+ * applications, the {@link org.jlab.clara.msg.core.Message Message}
+ * class provides helper methods to send and serialize values of basic
+ * types data between actors, working for all supported languages. These
+ * supported mime-types are listed in {@link org.jlab.clara.msg.data.MimeType MimeType}.
  * <p>
  * The {@link org.jlab.clara.msg.data.RegInfo RegInfo} is used
  * to handle the registration of an actor with a
