@@ -17,7 +17,7 @@ class EngineDataTypeSpec extends Specification {
 
     def "Serialize an integer value"() {
         given: "the default integer serializer"
-        var serializer = EngineDataType.SINT32.serializer()
+        var serializer = EngineDataType.INT32.serializer()
 
         when: "serializing and deserializing an integer"
         var buffer = serializer.write(18)

@@ -24,30 +24,14 @@ import java.util.Objects;
 public class EngineDataType {
 
     /**
-     * Signed int of 32 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
+     * An integer of 32 bits.
      */
-    public static final EngineDataType SINT32 = buildPrimitive(MimeType.SINT32);
-    /**
-     * Signed int of 64 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType SINT64 = buildPrimitive(MimeType.SINT64);
+    public static final EngineDataType INT32 = buildPrimitive(MimeType.INT32);
 
     /**
-     * Signed fixed integer of 32 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
+     * An integer of 64 bits.
      */
-    public static final EngineDataType SFIXED32 = buildPrimitive(MimeType.SFIXED32);
-    /**
-     * Signed fixed integer of 64 bits.
-     *
-     * @see <a href="https://developers.google.com/protocol-buffers/docs/encoding">Wire types</a>
-     */
-    public static final EngineDataType SFIXED64 = buildPrimitive(MimeType.SFIXED64);
+    public static final EngineDataType INT64 = buildPrimitive(MimeType.INT64);
 
     /**
      * A float (32 bits floating-point number).
@@ -153,10 +137,8 @@ public class EngineDataType {
 
     // checkstyle.off: MethodParamPad
     private enum MimeType {
-        SINT32          ("binary/sint32"),
-        SINT64          ("binary/sint64"),
-        SFIXED32        ("binary/sfixed32"),
-        SFIXED64        ("binary/sfixed64"),
+        INT32           ("binary/int32"),
+        INT64           ("binary/int64"),
         FLOAT           ("binary/float"),
         DOUBLE          ("binary/double"),
         STRING          ("text/string"),
@@ -261,10 +243,8 @@ public class EngineDataType {
         public ByteBuffer write(Object data) throws ClaraException {
             var proto = PlainData.newBuilder();
             switch (mimeType) {
-                case SINT32 -> proto.setVLSINT32((Integer) data);
-                case SINT64 -> proto.setVLSINT64((Long) data);
-                case SFIXED32 -> proto.setFLSINT32((Integer) data);
-                case SFIXED64 -> proto.setFLSINT64((Long) data);
+                case INT32 -> proto.setVLSINT32((Integer) data);
+                case INT64 -> proto.setVLSINT64((Long) data);
                 case DOUBLE -> proto.setDOUBLE((Double) data);
                 case FLOAT -> proto.setFLOAT((Float) data);
                 case STRING -> proto.setSTRING((String) data);
@@ -278,10 +258,8 @@ public class EngineDataType {
         public Object read(ByteBuffer data) throws ClaraException {
             var proto = (PlainData) nativeSerializer.read(data);
             return switch (mimeType) {
-                case SINT32 -> proto.getVLSINT32();
-                case SINT64 -> proto.getVLSINT64();
-                case SFIXED32 -> proto.getFLSINT32();
-                case SFIXED64 -> proto.getFLSINT64();
+                case INT32 -> proto.getVLSINT32();
+                case INT64 -> proto.getVLSINT64();
                 case DOUBLE -> proto.getDOUBLE();
                 case FLOAT -> proto.getFLOAT();
                 case STRING -> proto.getSTRING();

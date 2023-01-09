@@ -242,11 +242,11 @@ public class Message {
             pd.setSTRING(value);
 
         } else if (data instanceof Integer value) {
-            mimeType = MimeType.SFIXED32;
+            mimeType = MimeType.INT32;
             pd.setFLSINT32(value);
 
         } else if (data instanceof Long value) {
-            mimeType = MimeType.SFIXED64;
+            mimeType = MimeType.INT64;
             pd.setFLSINT64(value);
 
         } else if (data instanceof Float value) {
@@ -295,13 +295,13 @@ public class Message {
                     return pd.getSTRING();
                 }
 
-            } else if (dataType.equals(MimeType.SFIXED32)) {
+            } else if (dataType.equals(MimeType.INT32)) {
                 var pd = PlainData.parseFrom(data);
                 if (pd.hasFLSINT32()) {
                     return pd.getFLSINT32();
                 }
 
-            } else if (dataType.equals(MimeType.SFIXED64)) {
+            } else if (dataType.equals(MimeType.INT64)) {
                 var pd = PlainData.parseFrom(data);
                 if (pd.hasFLSINT64()) {
                     return pd.getFLSINT64();

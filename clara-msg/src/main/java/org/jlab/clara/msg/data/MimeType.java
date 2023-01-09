@@ -21,24 +21,14 @@ package org.jlab.clara.msg.data;
 public final class MimeType {
 
     /**
-     * A signed integer of 32 bytes and variable length.
+     * An integer of 32 bytes.
      */
-    public static final String SINT32 = "binary/sint32";
+    public static final String INT32 = "binary/int32";
 
     /**
-     * A signed integer of 64 bytes and variable length.
+     * An integer of 64 bytes.
      */
-    public static final String SINT64 = "binary/sint64";
-
-    /**
-     * A signed integer of 32 bytes and fixed length.
-     */
-    public static final String SFIXED32 = "binary/sfixed32";
-
-    /**
-     * A signed integer of 32 bytes and fixed length.
-     */
-    public static final String SFIXED64 = "binary/sfixed64";
+    public static final String INT64 = "binary/int64";
 
     /**
      * A 32 bytes single-precision floating-point number.

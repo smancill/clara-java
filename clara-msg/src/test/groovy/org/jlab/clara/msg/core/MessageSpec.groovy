@@ -38,8 +38,8 @@ class MessageSpec extends Specification {
         where:
         value                               | mimeType                  | klass
         "test_data"                         | MimeType.STRING           | String.class
-        460                                 | MimeType.SFIXED32         | Integer.class
-        520L                                | MimeType.SFIXED64         | Long.class
+        460                                 | MimeType.INT32            | Integer.class
+        520L                                | MimeType.INT64            | Long.class
         100.2f                              | MimeType.FLOAT            | Float.class
         2000.5d                             | MimeType.DOUBLE           | Double.class
         ["a", "b", "c"] as Set              | MimeType.JOBJECT          | Object.class
@@ -103,7 +103,7 @@ class MessageSpec extends Specification {
 
         then: "the response uses the 'replyTo' as topic and has its own data"
         res.topic == Topic.wrap("return:321")
-        res.mimeType == MimeType.SFIXED32
+        res.mimeType == MimeType.INT32
         Message.parseData(res) == 1000
 
         and: "the response has the 'replyTo' field not set"
