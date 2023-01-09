@@ -8,9 +8,6 @@ package org.jlab.clara.msg.data;
 
 /**
  * Predefined supported types.
- * <p>
- * Language specific types will be serialized and stored as a byte-array
- * (serialization for these types only work on actors of the same language).
  */
 public final class MimeType {
 
@@ -48,21 +45,6 @@ public final class MimeType {
      * A {@link org.jlab.clara.msg.data.PlainDataProto.PlainData PlainData} object.
      */
     public static final String PLAIN_DATA = "binary/clara-plain";
-
-    /**
-     * A Java object.
-     */
-    public static final String JOBJECT = "binary/java";
-
-    /**
-     * A C++ object.
-     */
-    public static final String COBJECT = "binary/cpp";
-
-    /**
-     * A Python object.
-     */
-    public static final String POBJECT = "binary/python";
 
     private MimeType() { }
 }

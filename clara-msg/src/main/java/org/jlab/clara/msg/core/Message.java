@@ -16,7 +16,6 @@ import org.jlab.clara.msg.data.MimeType;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 import org.zeromq.ZMsg;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -266,12 +265,7 @@ public class Message {
             ba = value.array();
 
         } else {
-            mimeType = MimeType.JOBJECT;
-            try {
-                ba = ActorUtils.serializeToBytes(data);
-            } catch (IOException e) {
-                throw new UncheckedIOException("could not serialize object", e);
-            }
+            throw new IllegalArgumentException("unsupported type: " + data.getClass());
         }
 
         return new Message(topic, mimeType, ba);
@@ -320,11 +314,7 @@ public class Message {
                 return ByteBuffer.wrap(data);
 
             } else {
-                try {
-                    return ActorUtils.deserialize(data);
-                } catch (ClassNotFoundException | IOException e) {
-                    throw new RuntimeException("could not deserialize data", e);
-                }
+                throw new IllegalArgumentException("unsupported mime-type:" + dataType);
             }
 
             throw new IllegalArgumentException("the message data doesn't match the mime-type:"
@@ -386,12 +376,8 @@ public class Message {
                 var value = ByteBuffer.wrap(data);
                 return dataType.cast(value);
 
-            } else if (dataType.equals(Object.class)) {
-                try {
-                    return dataType.cast(ActorUtils.deserialize(data));
-                } catch (ClassNotFoundException | IOException e) {
-                    throw new RuntimeException("could not deserialize data", e);
-                }
+            } else {
+                throw new IllegalArgumentException("unsupported type:" + dataType);
             }
 
             throw new IllegalArgumentException("message doesn't contain data of type: " + dataType);

@@ -43,7 +43,6 @@ class MessageSpec extends Specification {
         520L                                | MimeType.INT64            | Long.class
         100.2f                              | MimeType.FLOAT            | Float.class
         2000.5d                             | MimeType.DOUBLE           | Double.class
-        ["a", "b", "c"] as Set              | MimeType.JOBJECT          | Object.class
         ByteBuffer.wrap(testData)           | MimeType.BYTES            | ByteBuffer.class
     }
 
