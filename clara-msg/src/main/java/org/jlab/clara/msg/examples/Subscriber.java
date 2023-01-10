@@ -11,7 +11,6 @@ import org.jlab.clara.msg.core.ActorUtils;
 import org.jlab.clara.msg.core.Callback;
 import org.jlab.clara.msg.core.Message;
 import org.jlab.clara.msg.core.Topic;
-import org.jlab.clara.msg.data.MimeType;
 import org.jlab.clara.msg.data.RegInfo;
 import org.jlab.clara.msg.errors.ClaraMsgException;
 
