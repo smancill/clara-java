@@ -6,4 +6,4 @@
 
 exec ./scripts/exec-class -t \
     clara-core \
-    org.jlab.clara.sys.DpeReportTest "$@"
+    org.jlab.clara.sys.DpeReportHelper "$@"
