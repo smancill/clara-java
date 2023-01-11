@@ -17,6 +17,8 @@ allprojects {
 ext {
     platformProject = project(':clara-platform')
     subprojectList = subprojects - platformProject
+
+    mavenRepoUrl = 'https://repo.repsy.io/mvn/smancill/m2/'
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,6 +57,12 @@ configure(subprojectList) {
     }
 
     publishing {
+        repositories {
+            maven {
+                url mavenRepoUrl
+                credentials PasswordCredentials
+            }
+        }
         publications {
             maven(MavenPublication) {
                 from components.java
@@ -117,6 +125,12 @@ project(':clara-platform') {
     }
 
     publishing {
+        repositories {
+            maven {
+                url mavenRepoUrl
+                credentials PasswordCredentials
+            }
+        }
         publications {
             myPlatform(MavenPublication) {
                 artifactId = 'clara-bom'
