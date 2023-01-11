@@ -17,7 +17,7 @@ and a Java version manager to install and switch JDKs.
 [SDKMAN!]: https://sdkman.io/
 [asdf-java]: https://github.com/halcyon/asdf-java
 
-With [SDKMAN!]:
+With SDKMAN!:
 
 ``` console
 $ sdk list java
@@ -25,7 +25,7 @@ $ sdk install java 17.0.5-tem           # there may be a newer version listed ab
 $ sdk use java 17.0.5-tem
 ```
 
-With [asdf-java]:
+With asdf-java:
 
 ``` console
 $ asdf list-all java
@@ -34,7 +34,7 @@ $ asdf local java temurin-17.0.5+8      # or global
 ```
 
 To install Temurin 17 system-wide,
-follow the [instructions in the official site][temurin-install].
+follow [the instructions in the official site][temurin-install].
 
 [temurin-binaries]: https://github.com/adoptium/temurin17-binaries/releases
 [temurin-install]: https://adoptium.net/installation/
