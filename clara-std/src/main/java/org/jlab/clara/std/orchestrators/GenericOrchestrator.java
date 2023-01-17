@@ -355,8 +355,8 @@ public final class GenericOrchestrator extends AbstractOrchestrator {
             try {
                 var localNode = dpeCallback.getLocalNode();
                 benchmark.update(localNode.getRuntimeData());
-                var printer = new BenchmarkPrinter(benchmark, stats.totalEvents());
-                printer.printBenchmark(setup.application);
+                var printer = new BenchmarkPrinter(benchmark, setup.application, stats.totalEvents());
+                printer.printBenchmark();
             } catch (OrchestratorException e) {
                 Logging.error("Could not generate benchmark: %s", e.getMessage());
             }

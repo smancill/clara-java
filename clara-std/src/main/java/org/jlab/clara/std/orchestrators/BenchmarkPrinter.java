@@ -9,28 +9,35 @@ package org.jlab.clara.std.orchestrators;
 class BenchmarkPrinter {
 
     private final Benchmark benchmark;
+    private final ApplicationInfo application;
 
-    private long totalTime = 0;
-    private long totalRequests = 0;
+    private final long totalRequests;
+    private long totalTime;
 
-    BenchmarkPrinter(Benchmark benchmark, long totalRequests) {
+    BenchmarkPrinter(Benchmark benchmark, ApplicationInfo application, long totalRequests) {
         this.benchmark = benchmark;
+        this.application = application;
         this.totalRequests = totalRequests;
+        this.totalTime = 0;
     }
 
-    void printBenchmark(ApplicationInfo application) {
+    void printBenchmark() {
         Logging.info("Benchmark results:");
-        printService(application.getReaderService(), "READER");
+        printService("READER", time(application.getReaderService()));
         for (var service : application.getDataProcessingServices()) {
-            printService(service, service.name());
+            printService(service.name(), time(service));
         }
-        printService(application.getWriterService(), "WRITER");
+        printService("WRITER", time(application.getWriterService()));
         printTotal();
     }
 
-    private void printService(ServiceInfo service, String label) {
+    private long time(ServiceInfo service) {
         long time = benchmark.time(service);
         totalTime += time;
+        return time;
+    }
+
+    private void printService(String label, long time) {
         print(label, time, totalRequests);
     }
 
