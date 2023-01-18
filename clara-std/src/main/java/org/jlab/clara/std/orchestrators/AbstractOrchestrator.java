@@ -11,7 +11,6 @@ import org.jlab.clara.engine.EngineData;
 
 import java.nio.file.Files;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
@@ -34,7 +33,7 @@ abstract class AbstractOrchestrator {
     final OrchestratorSetup setup;
     final OrchestratorPaths paths;
     final OrchestratorOptions options;
-    final ReconstructionStats stats;
+    final DataProcessingStats stats;
 
     private final BlockingQueue<WorkerNode> freeNodes;
     private final ExecutorService nodesExecutor;
@@ -48,16 +47,37 @@ abstract class AbstractOrchestrator {
     private volatile boolean recStatus;
     private volatile String recMsg = "Could not run data processing!";
 
-    static class ReconstructionStats {
+    private static class NodeStats {
+        private int events = 0;
+        private long totalTime = 0;
+
+        synchronized void update(int recEvents, long recTime) {
+            events += recEvents;
+            totalTime += recTime;
+        }
+
+        synchronized int events() {
+            return events;
+        }
+
+        synchronized long totalTime() {
+            return totalTime;
+        }
+
+        synchronized double averageTime() {
+            if (events > 0) {
+                return totalTime / (double) events;
+            }
+            return 0;
+        }
+    }
+
+    protected static class DataProcessingStats {
 
         private final Map<WorkerNode, NodeStats> recStats = new ConcurrentHashMap<>();
         private final AtomicLong startTime = new AtomicLong();
         private final AtomicLong endTime = new AtomicLong();
 
-        private static class NodeStats {
-            private int events = 0;
-            private long totalTime = 0;
-        }
 
         void add(WorkerNode node) {
             recStats.put(node, new NodeStats());
@@ -72,37 +92,15 @@ abstract class AbstractOrchestrator {
         }
 
         void update(WorkerNode node, int recEvents, long recTime) {
-            NodeStats nodeStats = recStats.get(node);
-            synchronized (nodeStats) {
-                nodeStats.events += recEvents;
-                nodeStats.totalTime += recTime;
-            }
+            recStats.get(node).update(recEvents, recTime);
         }
 
         long totalEvents() {
-            var sum = 0L;
-            for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
-                NodeStats stat = entry.getValue();
-                synchronized (stat) {
-                    if (stat.events > 0) {
-                        sum += stat.events;
-                    }
-                }
-            }
-            return sum;
+            return recStats.values().stream().mapToInt(NodeStats::events).sum();
         }
 
         long totalTime() {
-            var sum = 0L;
-            for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
-                NodeStats stat = entry.getValue();
-                synchronized (stat) {
-                    if (stat.events > 0) {
-                        sum += stat.totalTime;
-                    }
-                }
-            }
-            return sum;
+            return recStats.values().stream().mapToLong(NodeStats::totalTime).sum();
         }
 
         double globalTime() {
@@ -110,18 +108,9 @@ abstract class AbstractOrchestrator {
         }
 
         double localAverage() {
-            var avgSum = 0.0;
-            var avgCount = 0;
-            for (Entry<WorkerNode, NodeStats> entry : recStats.entrySet()) {
-                NodeStats stat = entry.getValue();
-                synchronized (stat) {
-                    if (stat.events > 0) {
-                        avgSum += stat.totalTime / (double) stat.events;
-                        avgCount++;
-                    }
-                }
-            }
-            return avgSum / avgCount;
+            var activeNodes = recStats.values().stream().filter(n -> n.events() > 0).toList();
+            var averageSum = activeNodes.stream().mapToDouble(NodeStats::averageTime).sum();
+            return averageSum / activeNodes.size();
         }
 
         double globalAverage() {
@@ -143,7 +132,7 @@ abstract class AbstractOrchestrator {
         this.nodesExecutor = Executors.newCachedThreadPool();
 
         this.recSem = new Semaphore(1);
-        this.stats = new ReconstructionStats();
+        this.stats = new DataProcessingStats();
     }
 
 
