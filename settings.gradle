@@ -30,7 +30,7 @@ dependencyResolutionManagement {
         testLibs {
             library('junit-jupiter', 'org.junit.jupiter:junit-jupiter:5.10.2')
             library('junit-platform', 'org.junit.platform:junit-platform-launcher:1.10.2')
-            library('groovy', 'org.apache.groovy:groovy:4.0.7')
+            library('groovy', 'org.apache.groovy:groovy:4.0.20')
             library('spock', 'org.spockframework:spock-core:2.3-groovy-4.0')
             library('objenesis', 'org.objenesis:objenesis:3.3')
             library('bytebuddy', 'net.bytebuddy:byte-buddy:1.12.20')
