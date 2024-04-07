@@ -212,7 +212,7 @@ public class DataManager implements Engine {
             cmdLine.addArgument(files.inputFile.toString());
             cmdLine.addArgument(files.stagedInputFile.toString());
 
-            var executor = new DefaultExecutor();
+            var executor = DefaultExecutor.builder().get();
             var streamHandler = new PumpStreamHandler(outputStream);
             executor.setStreamHandler(streamHandler);
 
@@ -235,7 +235,7 @@ public class DataManager implements Engine {
             var cmdLine = new CommandLine("rm");
             cmdLine.addArgument(files.stagedInputFile.toString());
 
-            var executor = new DefaultExecutor();
+            var executor = DefaultExecutor.builder().get();
             var streamHandler = new PumpStreamHandler(outputStream);
             executor.setStreamHandler(streamHandler);
 
@@ -262,7 +262,7 @@ public class DataManager implements Engine {
             cmdLine.addArgument(files.stagedOutputFile.toString());
             cmdLine.addArgument(files.outputFile.toString());
 
-            var executor = new DefaultExecutor();
+            var executor = DefaultExecutor.builder().get();
             var streamHandler = new PumpStreamHandler(outputStream);
             executor.setStreamHandler(streamHandler);
 
