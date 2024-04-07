@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         libs {
             version('protobuf', '3.21.12')
-            library('json', 'org.json:json:20220924')
+            library('json', 'org.json:json:20240303')
             library('snakeyaml', 'org.yaml:snakeyaml:1.33')
             library('jeromq', 'org.zeromq:jeromq:0.5.3')
             library('protobuf', 'com.google.protobuf', 'protobuf-java').versionRef('protobuf')
