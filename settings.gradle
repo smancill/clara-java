@@ -33,7 +33,7 @@ dependencyResolutionManagement {
             library('groovy', 'org.apache.groovy:groovy:4.0.20')
             library('spock', 'org.spockframework:spock-core:2.3-groovy-4.0')
             library('objenesis', 'org.objenesis:objenesis:3.3')
-            library('bytebuddy', 'net.bytebuddy:byte-buddy:1.12.20')
+            library('bytebuddy', 'net.bytebuddy:byte-buddy:1.14.13')
             library('hamcrest', 'org.hamcrest:hamcrest:2.2')
 
             bundle('spock', ['spock', 'groovy', 'objenesis', 'bytebuddy'])
