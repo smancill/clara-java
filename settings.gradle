@@ -17,7 +17,7 @@ dependencyResolutionManagement {
         libs {
             version('protobuf', '3.21.12')
             library('json', 'org.json:json:20240303')
-            library('snakeyaml', 'org.yaml:snakeyaml:1.33')
+            library('snakeyaml', 'org.yaml:snakeyaml:2.2')
             library('jeromq', 'org.zeromq:jeromq:0.5.3')
             library('protobuf', 'com.google.protobuf', 'protobuf-java').versionRef('protobuf')
             library('protoc', 'com.google.protobuf', 'protoc').versionRef('protobuf')
