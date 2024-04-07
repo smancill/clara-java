@@ -415,8 +415,8 @@ class GenericOrchestratorSpec extends Specification {
         private final DpeReportCB callback
 
         DpeReportCBTest(ApplicationInfo application, OrchestratorOptions options) {
-            tasks = Collections.synchronizedList(new ArrayList<>())
-            nodes = Collections.synchronizedList(new ArrayList<>())
+            tasks = Collections.synchronizedList(new ArrayList<Callable<Object>>())
+            nodes = Collections.synchronizedList(new ArrayList<WorkerNode>())
             nodeConsumer = nodes::add
             callback = new DpeReportCB(orchestrator, options, application, nodeConsumer)
         }
