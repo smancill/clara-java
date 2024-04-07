@@ -4,7 +4,7 @@
 
 plugins {
     id 'com.google.protobuf' version '0.9.1' apply false
-    id 'com.github.spotbugs' version '5.0.13' apply false
+    id 'com.github.spotbugs' version '6.0.9' apply false
 }
 
 allprojects {
@@ -501,10 +501,10 @@ configure(subprojectList) {
     }
 
     spotbugs {
-        toolVersion = '4.7.3'
+        toolVersion = '4.8.3'
         ignoreFailures = true
-        effort = 'max'
-        reportLevel = 'medium'
+        effort = com.github.spotbugs.snom.Effort.valueOf('MAX');
+        reportLevel = com.github.spotbugs.snom.Confidence.valueOf('MEDIUM');
         excludeFilter = rootProject.file('config/quality/findbugs-exclude.xml')
     }
 

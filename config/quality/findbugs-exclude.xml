@@ -29,16 +29,6 @@ SPDX-License-Identifier: MIT-0
     <Rank value="17" />
   </Match>
 
-  <!-- False positive in Java 11, see https://github.com/spotbugs/spotbugs/issues/756 -->
-  <Match>
-    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
-  </Match>
-
-  <!-- False positive in Java 11, see https://github.com/spotbugs/spotbugs/issues/756 -->
-  <Match>
-    <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
-  </Match>
-
   <!-- Do not trigger on Protobuf generated sources -->
   <Match>
     <Class name="~org.jlab.clara.msg.data.(\w+)Proto" />
@@ -61,5 +51,10 @@ SPDX-License-Identifier: MIT-0
   <Match>
     <Class name="~.*ActorUtils" />
     <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
+  </Match>
+
+  <!-- Exclude new detector added by 4.8.0 -->
+  <Match>
+    <Bug pattern="CT_CONSTRUCTOR_THROW" />
   </Match>
 </FindBugsFilter>
