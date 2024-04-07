@@ -21,7 +21,7 @@ dependencyResolutionManagement {
             library('jeromq', 'org.zeromq:jeromq:0.5.3')
             library('protobuf', 'com.google.protobuf', 'protobuf-java').versionRef('protobuf')
             library('protoc', 'com.google.protobuf', 'protoc').versionRef('protobuf')
-            library('jline', 'org.jline:jline:3.21.0')
+            library('jline', 'org.jline:jline:3.25.1')
             library('commons-exec', 'org.apache.commons:commons-exec:1.4.0')
             library('freemarker', 'org.freemarker:freemarker:2.3.32')
             library('jopt', 'net.sf.jopt-simple:jopt-simple:5.0.4')
