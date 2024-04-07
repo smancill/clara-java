@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 plugins {
-    id 'com.google.protobuf' version '0.9.1' apply false
-    id 'com.github.spotbugs' version '5.0.13' apply false
+    id 'com.google.protobuf' version '0.9.4' apply false
+    id 'com.github.spotbugs' version '6.0.9' apply false
 }
 
 allprojects {
@@ -37,9 +37,6 @@ configure(subprojectList) {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-
     repositories {
         mavenCentral()
     }
@@ -47,6 +44,9 @@ configure(subprojectList) {
     java {
         withSourcesJar()
         withJavadocJar()
+
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     javadoc {
@@ -88,6 +88,8 @@ configure(subprojectList) {
         testLogging {
             exceptionFormat = 'full'
         }
+        testClassesDirs = testing.suites.test.sources.output.classesDirs
+        classpath = testing.suites.test.sources.runtimeClasspath
         outputs.upToDateWhen { false }
     }
 
@@ -150,10 +152,10 @@ configure(subprojectList) {
 
         compileOnly libs.jsr305
 
-        testImplementation testLibs.jupiter.api
+        testImplementation testLibs.junit.jupiter
         testImplementation testLibs.bundles.spock
         testImplementation testLibs.hamcrest
-        testRuntimeOnly testLibs.jupiter.engine
+        testRuntimeOnly testLibs.junit.platform
     }
 }
 
@@ -292,7 +294,7 @@ configure(subprojectList) {
 
         inputs.property 'version', project.version
         inputs.property 'groupId', project.group
-        inputs.property 'artifactId', project.archivesBaseName
+        inputs.property 'artifactId', project.base.archivesName
         inputs.property 'gitBranch', gitBranch
         inputs.property 'gitRev', gitRev
         inputs.property 'gitDescribe', gitDescribe
@@ -301,7 +303,7 @@ configure(subprojectList) {
         doLast {
             propertiesFile.write "version=${project.version}\n"
             propertiesFile.append "groupId=${project.group}\n"
-            propertiesFile.append "artifactId=${project.archivesBaseName}\n"
+            propertiesFile.append "artifactId=${project.base.archivesName}\n"
             propertiesFile.append "builtBy=${System.getProperty('user.name')}\n"
             propertiesFile.append "builtJDK=${System.getProperty('java.version')}\n"
 
@@ -484,13 +486,13 @@ ext {
 
 configure(subprojectList) {
     checkstyle {
-        toolVersion = '10.6.0'
+        toolVersion = '10.15.0'
         configFile = rootProject.file('config/quality/checkstyle.xml')
         configProperties['samedir'] = rootProject.file('config/quality')
     }
 
     codenarc {
-        toolVersion = '3.1.0'
+        toolVersion = '3.4.0'
         ignoreFailures = true
         configFile = rootProject.file('config/quality/codenarc.groovy')
         if (ciMode.toBoolean()) {
@@ -499,10 +501,10 @@ configure(subprojectList) {
     }
 
     spotbugs {
-        toolVersion = '4.7.3'
+        toolVersion = '4.8.3'
         ignoreFailures = true
-        effort = 'max'
-        reportLevel = 'medium'
+        effort = com.github.spotbugs.snom.Effort.valueOf('MAX');
+        reportLevel = com.github.spotbugs.snom.Confidence.valueOf('MEDIUM');
         excludeFilter = rootProject.file('config/quality/findbugs-exclude.xml')
     }
 
