@@ -37,9 +37,6 @@ configure(subprojectList) {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-
     repositories {
         mavenCentral()
     }
@@ -47,6 +44,9 @@ configure(subprojectList) {
     java {
         withSourcesJar()
         withJavadocJar()
+
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     javadoc {
@@ -88,6 +88,8 @@ configure(subprojectList) {
         testLogging {
             exceptionFormat = 'full'
         }
+        testClassesDirs = testing.suites.test.sources.output.classesDirs
+        classpath = testing.suites.test.sources.runtimeClasspath
         outputs.upToDateWhen { false }
     }
 
@@ -150,10 +152,10 @@ configure(subprojectList) {
 
         compileOnly libs.jsr305
 
-        testImplementation testLibs.jupiter.api
+        testImplementation testLibs.junit.jupiter
         testImplementation testLibs.bundles.spock
         testImplementation testLibs.hamcrest
-        testRuntimeOnly testLibs.jupiter.engine
+        testRuntimeOnly testLibs.junit.platform
     }
 }
 
@@ -292,7 +294,7 @@ configure(subprojectList) {
 
         inputs.property 'version', project.version
         inputs.property 'groupId', project.group
-        inputs.property 'artifactId', project.archivesBaseName
+        inputs.property 'artifactId', project.base.archivesName
         inputs.property 'gitBranch', gitBranch
         inputs.property 'gitRev', gitRev
         inputs.property 'gitDescribe', gitDescribe
@@ -301,7 +303,7 @@ configure(subprojectList) {
         doLast {
             propertiesFile.write "version=${project.version}\n"
             propertiesFile.append "groupId=${project.group}\n"
-            propertiesFile.append "artifactId=${project.archivesBaseName}\n"
+            propertiesFile.append "artifactId=${project.base.archivesName}\n"
             propertiesFile.append "builtBy=${System.getProperty('user.name')}\n"
             propertiesFile.append "builtJDK=${System.getProperty('java.version')}\n"
 
