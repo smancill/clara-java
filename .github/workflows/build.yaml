@@ -37,5 +37,5 @@ jobs:
 
     - name: Build with Gradle
       run: |
-        ./gradlew -PciMode=true build codenarc spotbugs
-        ./gradlew integration
+        ./gradlew --warning-mode=all -PciMode=true build codenarc spotbugs
+        ./gradlew --warning-mode=all integration
